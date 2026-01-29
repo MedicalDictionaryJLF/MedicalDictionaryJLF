@@ -1,0 +1,101 @@
+key;English;Deutch;Slovensky;Spanish;Norwegian;Icelandic
+choose_language;Choose language;Sprache wählen;Vybrať jazyk;Elegir idioma;Velg språk;Veldu tungumál
+language_settings;May later change in settings;Später in den Einstellungen ändern;Neskôr zmeniť v nastaveniach;Puede cambiarse más tarde en la configuración;Kan endres senere i innstillinger;Má breytast síðar í stillingum
+please_note; Please note: This web version is still in development and you may encounter bugs or missing features. If you encounter any issues, feel free to report them to this email: marcok6@uniba.sk. Thank you for your understanding and support!;Bitte beachten Sie: Diese Webversion befindet sich noch in der Entwicklung und Sie können auf Fehler oder fehlende Funktionen stoßen. Wenn Sie auf Probleme stoßen, können Sie diese gerne an diese E-Mail melden: marcok6@uniba.sk. Vielen Dank für Ihr Verständnis und Ihre Unterstützung!; Upozornenie: Na tomto webe stále prebieha vývoj a môžete naraziť na chyby alebo chýbajúce funkcie. Ak narazíte na akékoľvek problémy, neváhajte ich nahlásiť na tento e-mail: marcok6@uniba.sk. Ďakujeme za vaše porozumenie a podporu!;Tenga en cuenta: Esta versión web aún está en desarrollo y puede encontrar errores o funciones faltantes. Si encuentra algún problema, no dude en informarlo a este correo electrónico: marcok6@uniba.sk. ¡Gracias por su comprensión y apoyo!;Vennligst merk: Denne nettversjonen er fortsatt under utvikling, og du kan støte på feil eller manglende funksjoner. Hvis du støter på problemer, kan du gjerne rapportere dem til denne e-posten: marcok6@uniba.sk. Takk for din forståelse og støtte!;Vinsamlegast athugið: Þessi vefútgáfa er enn í þróun og þú gætir rekist á villur eða vantar eiginleika. Ef þú rekst á einhver vandamál, ekki hika við að tilkynna þau á þessa netfang: marcok6@uniba.sk. Þakka þér fyrir skilninginn og stuðninginn!
+Login or Register;Login or Register;Anmelden oder Registrieren;Prihlásiť sa alebo zaregistrovať;Iniciar sesión o registrarse;Logg inn eller registrer deg;Skrá inn eða nýskrá
+Login;Login;Anmelden;Prihlásiť sa;Iniciar sesión;Logg inn;Skrá inn
+Register;Register;Registrieren;Registrovať;Registrarse;Registrer;Nýskrá
+Username;Username;Benutzername;Používateľské meno;Nombre de usuario;Brukernavn;Notandanafn
+Password;Password;Passwort;Heslo;Contraseña;Passord;Lykilorð
+Confirm Password;Confirm Password;Passwort bestätigen;Potvrďte heslo;Confirmar contraseña;Bekreft passord;Staðfesta lykilorð
+Enter;Enter;Eingeben;Vstúpiť;Entrar;Gå inn;Staðfesta
+Return;Return;Zurück;Späť;Volver;Tilbake;Til baka
+Please enter username and password.;Please enter username and password.;Bitte geben Sie Benutzername und Passwort ein.;Zadajte meno a heslo.;Por favor, introduzca el nombre de usuario y la contraseña.;Vennligst skriv inn brukernavn og passord.;Vinsamlegast sláðu inn notandanafn og lykilorð.
+Invalid credentials.;Invalid credentials.;Ungültige Anmeldedaten.;Neplatné prihlasovacie údaje.;Credenciales inválidas.;Ugyldige opplysninger.;Ógild notandaupplýsingar.
+Please fill all fields.;Please fill all fields.;Bitte füllen Sie alle Felder aus.;Vyplňte všetky polia.;Por favor, rellene todos los campos.;Vennligst fyll ut alle feltene.;Vinsamlegast fylltu út öll svæði.
+Passwords do not match.;Passwords do not match.;Passwörter stimmen nicht überein.;Heslá sa nezhodujú.;Las contraseñas no coinciden.;Passordene stemmer ikke overens.;Lykilorðin stemma ekki.
+Username already exists.;Username already exists.;Benutzername existiert bereits.;Používateľ už existuje.;El nombre de usuario ya existe.;Brukernavn finnes allerede.;Notandanafn er þegar til.
+Registration successful! You can now log in.;Registration successful! You can now log in.;Registrierung erfolgreich! Sie können sich jetzt anmelden.;Registrácia bola úspešná! Môžete sa prihlásiť.;¡Registro exitoso! Ahora puede iniciar sesión.;Registreringen var vellykket! Du kan nå logge inn.;Skráning tókst! Þú getur nú skráð þig inn.
+welcome;Welcome;Willkommen;Vitajte;Bienvenido;Velkommen;Velkomin
+search_term;Search Tool;Suchwerkzeug;Vyhľadávať pojem;Buscar término;Søk etter begrep;Leita eftir hugtaki
+add_term;Add New Term;Neuen Begriff hinzufügen;Pridať nový pojem;Añadir nuevo término;Legg til nytt begrep;Bæta við nýju hugtaki
+quiz;Quiz;Quiz;Kvíz;Cuestionario;Quiz;Próf
+back_lng;Back to Language selection;Zurück zur Sprachauswahl;Späť na výber jazyka;Volver a selección de idioma;Tilbake til språkutvalg;Til baka að tungumálaval
+enter_term;Enter term;Begriff eingeben;Zadajte pojem;Introduzca el término;Skriv inn begrep;Sláðu inn hugtak
+search;Search;Suchen;Hľadať;Buscar;Søk;Leita
+back;Back to Menu;Zurück zum Menü;Späť do menu;Volver al menú;Tilbake til meny;Til baka í valmynd
+back to search;Back to Search;Zurück zur Suche;Späť na vyhľadávanie;Volver a la búsqueda;Tilbake til søk;Til baka í leit
+Save Term;Save Term;Begriff speichern;Uložiť pojem;Guardar término;Lagre begrep;Vista hugtak
+Please enter a search term.;Please enter a search term.;Bitte geben Sie einen Suchbegriff ein.;Zadajte hľadaný pojem.;Por favor, introduzca un término de búsqueda.;Skriv inn et søkebegrep.;Sláðu inn hugtak til að leita.
+Search failed.;Search failed.;Suche fehlgeschlagen.;Hľadanie zlyhalo.;Búsqueda fallida.;Søk mislyktes.;Leit mistókst.
+No matching results found.;No matching results found.;Keine passenden Ergebnisse gefunden.;Nenašli sa žiadne zodpovedajúce výsledky.;No se encontraron resultados coincidentes.;Ingen treff funnet.;Engar niðurstöður fundust.
+Term saved successfully!;Term saved successfully!;Begriff erfolgreich gespeichert!;Pojem bol úspešne uložený!;¡Término guardado con éxito!;Begrepet ble lagret!;Hugtak var vistað!
+Please enter at least one field before saving.;Please enter at least one field before saving.;Bitte geben Sie mindestens ein Feld ein, bevor Sie speichern.;Zadajte aspoň jedno pole pred uložením.;Por favor, introduzca al menos un campo antes de guardar.;Skriv inn minst ett felt før lagring.;Sláðu inn að minnsta kosti eitt svæði áður en vistað er.
+Review data cleared.;Review data cleared.;Überprüfungsdaten gelöscht.;Údaje boli vymazané.;Datos de revisión borrados.;Gjennomgangslekt ble slettet.;Endurskoðun eydd.
+Quiz Settings;Quiz Settings;Quiz-Einstellungen;Nastavenia kvízu;Configuración del cuestionario;Innstillinger for quiz;Stillingar prófs
+Review Mistakes;Review Mistakes;Fehler überprüfen;Skontrolovať chyby;Revisar errores;Gjennomgå feil;Skoða villur
+Start Review Quiz;Start Review Quiz;Überprüfungsquiz starten;Spustiť opravný kvíz;Iniciar revisión;Start gjennomgang;Byrja endurtekningu
+Clear Review;Clear Review;Überprüfung löschen;Vymazať chyby;Borrar revisión;Tøm gjennomgang;Hreinsa endurskoðun
+Confirm Delete;Confirm Delete;Löschen bestätigen;Potvrdiť vymazanie;Confirmar eliminación;Bekreft sletting;Staðfesta eyðingu
+All content of the wrong answers will be lost. Do you want to delete?;All content of the wrong answers will be lost. Do you want to delete?;Alle falschen Antworten gehen verloren. Möchten Sie löschen?;Všetky nesprávne odpovede budú stratené. Chcete vymazať?;Todo el contenido de las respuestas incorrectas se perderá. ¿Desea borrar?;Alt innhold i feil svar vil gå tapt. Vil du slette?;Allt efni úr röngum svörum verður eytt. Viltu halda áfram?
+OK;OK;OK;OK;OK;OK;OK
+Cancel;Cancel;Abbrechen;Zrušiť;Cancelar;Avbryt;Hætta við
+Type of quiz;Type of quiz;Quiztyp;Typ kvízu;Tipo de cuestionario;Quiz-type;Tegund prófs
+Select 1st column;Select 1st column;1. Spalte auswählen;Vyberte 1. stĺpec;Seleccionar primera columna;Velg første kolonne;Veldu 1. dálk
+Select 2nd column;Select 2nd column;2. Spalte auswählen;Vyberte 2. stĺpec;Seleccionar segunda columna;Velg andre kolonne;Veldu 2. dálk
+Select fields to show;Select fields to show;Felder zum Anzeigen auswählen;Vyberte polia na zobrazenie;Seleccionar campos para mostrar;Velg felt å vise;Veldu reiti til að sýna
+source_words;Source Words;Ausgangswörter;Východiskové slová;Palabras fuente;Kildeord;Orð úr upprunamáli
+target_words;Target Words;Zielwörter;Cieľové slová;Palabras destino;Målord;Orð úr markmáli
+start_quiz;Start Quiz;Quiz starten;Spustiť kvíz;Iniciar cuestionario;Start quiz;Byrja próf
+translate_word;Translate;Übersetzen;Prelož;Traducir;Oversett;Þýða
+select_languages_warning;Please select both source and target languages.;Bitte wählen Sie sowohl Ausgangs- als auch Zielsprache aus.;Vyberte oba jazyky.;Seleccione ambos idiomas, por favor.;Velg begge språkene.;Veldu bæði tungumálin.
+reset_quiz;Reset Quiz;Quiz zurücksetzen;Spustiť kvíz znovu;Reiniciar cuestionario;Tilbakestill quiz;Endursetja próf
+score;Score;Punktzahl;Skóre;Puntuación;Poengsum;Stig
+incorrect;Incorrect;Falsch;Nesprávne;Incorrecto;Feil;Rangt
+correct;Correct;Richtig;Správne;Correcto;Riktig;Rétt
+wrong;Wrong;Falsch;Zle;Equivocado;Galt;Rangt svar
+source_language;Source Language;Ausgangssprache;Primárny jazyk;Idioma de origen;Kildespråk;Upprunamál
+target_language;Target Language;Zielsprache;Sekundárny jazyk;Idioma de destino;Målspråk;Markmál
+english;English;Englisch;Angličtina;Inglés;Engelsk;Enska
+slovak;Slovak;Slowakisch;Slovenčina;Eslovaco;Slovakisk;Slóvakíska
+latin;Latin;Latein;Latinčina;Latín;Latinsk;Latína
+german;German;Deutsch;Nemčina;Alemán;Tysk;Þýska
+spanish;Spanish;Spanisch;Španielčina;Español;Spansk;Spænska
+norwegian;Norwegian;Norwegisch;Nórčina;Noruego;Norsk;Norska
+icelandic;Icelandic;Isländisch;Islandčina;Islandés;Islandsk;Íslenska
+reset_before_language_change;Reset quiz before changing languages.;Quiz zurücksetzen, bevor Sie die Sprache ändern.;Reštartujte kvíz pred zmenou jazykov.;Reinicie el cuestionario antes de cambiar de idioma.;Tilbakestill før språkbytte.;Endurstilltu prófið áður en þú breytir tungumáli.
+quiz_already_started;Quiz already started. Press Reset to start again.;Quiz bereits gestartet. Drücken Sie Zurücksetzen.;Kvíz už prebieha. Stlačte reset.;El cuestionario ya comenzó. Pulse Reiniciar.;Quiz har allerede startet. Trykk Tilbakestill.;Próf hefur þegar hafist. Ýttu á Endursetja.
+source_set;Source language set to: ;Ausgangssprache gesetzt auf: ;Primárny jazyk nastavený na: ;Idioma de origen establecido en: ;Kildespråk satt til: ;Upprunamál stillt á: 
+target_set;Target language set to: ;Zielsprache gesetzt auf: ;Sekundárny jazyk nastavený na: ;Idioma de destino establecido en: ;Målspråk satt til: ;Markmál stillt á: 
+latin_translation;Latin Translation;Lateinische Übersetzung;Latinský preklad;Traducción al latín;Latinsk oversettelse;Þýðing á latínu
+genitive;Genitive;Genitiv;Genitív;Genitivo;Genitiv;Eignarfall
+accusative;Accusative;Akkusativ;Akuzatív;Acusativo;Akkusativ;Þolfall
+gender;Gender;Geschlecht;Rod;Género;Kjønn;Kyn
+declination;Declination;Deklination;Deklinácia;Declinación;Deklinasjon;Beyging
+english_translation;English Translation;Englische Übersetzung;Anglický preklad;Traducción al inglés;Engelsk oversettelse;Þýðing á ensku
+english_definition;English Definition;Englische Definition;Anglická definícia;Definición en inglés;Engelsk definisjon;Skilgreining á ensku
+german_translation;German Translation;Deutsche Übersetzung;Nemecký preklad;Traducción al alemán;Tysk oversettelse;Þýska þýðing
+german_definition;German Definition;Deutsche Definition;Nemecká definícia;Definición en alemán;Tysk definisjon;Skilgreining á þýsku
+slovak_translation;Slovak Translation;Slowakische Übersetzung;Slovenský preklad;Traducción al eslovaco;Slovakisk oversettelse;Slóvakísk þýðing
+slovak_definition;Slovak Definition;Slowakische Definition;Slovenská definícia;Definición en eslovaco;Slovakisk definisjon;Skilgreining á slóvakísku
+spanish_translation;Spanish Translation;Spanische Übersetzung;Španielsky preklad;Traducción al español;Spansk oversettelse;Spænsk þýðing
+spanish_definition;Spanish Definition;Spanische Definition;Španielska definícia;Definición en español;Spansk definisjon;Skilgreining á spænsku
+norwegian_translation;Norwegian Translation;Norwegische Übersetzung;Nórsky preklad;Traducción al noruego;Norsk oversettelse;Norsk þýðing
+norwegian_definition;Norwegian Definition;Norwegische Definition;Nórska definícia;Definición en noruego;Norsk definisjon;Skilgreining á norsku
+icelandic_translation;Icelandic Translation;Isländische Übersetzung;Islandský preklad;Traducción al islandés;Islandsk oversettelse;Íslensk þýðing
+icelandic_definition;Icelandic Definition;Isländische Definition;Islandská definícia;Definición en islandés;Islandsk definisjon;Skilgreining á íslensku
+2nd_definition;Second Definition;Zweite Definition;Druhá definícia;Segunda definición;Andre definisjon;Önnur skilgreining
+Word combinations;Word combinations;Wortkombinationen;Kombinácie slov;Combinaciones de palabras;Ord kombinasjoner;Orðasambönd
+Words and definitions;Words and definitions;Wörter und Definitionen;Slová a definície;Palabras y definiciones;Ord og definisjoner;Orð og skilgreiningar
+Great job in {app_name}!;;; ;¡Buen trabajo en {app_name}!;Flott jobb i {app_name}!;Frábær vinna í {app_name}!
+positive_feedback_1;Great job {app_name}!;Großartige Arbeit {app_name}!;Skvelá práca {app_name}!;¡Gran trabajo {app_name}!;Flott jobb {app_name}!;Góð vinna {app_name}!
+positive_feedback_2;Well done! Keep going {app_name}!;Gut gemacht! Weiter so {app_name}!;Výborne! Pokračuj ďalej {app_name}!;¡Sigue así {app_name}!;Bra jobbet! Fortsett sånn {app_name}!;Frábært! Haltu áfram {app_name}!
+positive_feedback_3;Excellent {app_name}! Be proud of youself!;Ausgezeichnet {app_name}! Sei stolz auf dich!;Vynikajúce {app_name}!;¡Excelente, {app_name}!;Utmerket {app_name}!;Framúrskarandi {app_name}!
+positive_feedback_4;You are mastering this {app_name}!;Du meisterst das {app_name}!;Ovládaš to dokonale {app_name}!;¡Lo estás dominando, {app_name}!;Du mestrer dette {app_name}!;Þú stendur þig vel {app_name}!
+positive_feedback_5;Fantastic job {app_name}! Applauds for your effort!;Fantastische Arbeit {app_name}! Applaus für deinen Einsatz!;Fantastické {app_name}. Zaslúžiš si potlest za snahu!;¡Fantástico esfuerzo, {app_name}!;Fantastisk innsats {app_name}!;Glæsilegt {app_name}! Þú átt hrós skilið!
+1st_column;Source;Quelle;Zdroj;Fuente;Kilde;Uppruni
+correct_answer_word;Correct Word;Richtiges Wort;Správne slovo;Palabra correcta;Riktig ord;Rétt orð
+wrong_answer_word;Your Word;Ihr Wort;Vaše slovo;Tu palabra;Ditt ord;Þitt orð
+correct_answer_definition;Correct Definition;Richtige Definition;Správna definícia;Definición correcta;Riktig definisjon;Rétt skilgreining
+wrong_answer_definition;Your Definition;Ihre Definition;Vaša definícia;Tu definición;Din definisjon;Þín skilgreining
+remove;Remove;Entfernen;Odstrániť;Eliminar;Fjern;Fjarlægja
