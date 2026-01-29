@@ -99,3 +99,13 @@ wrong_answer_word;Your Word;Ihr Wort;Vaše slovo;Tu palabra;Ditt ord;Þitt orð
 correct_answer_definition;Correct Definition;Richtige Definition;Správna definícia;Definición correcta;Riktig definisjon;Rétt skilgreining
 wrong_answer_definition;Your Definition;Ihre Definition;Vaša definícia;Tu definición;Din definisjon;Þín skilgreining
 remove;Remove;Entfernen;Odstrániť;Eliminar;Fjern;Fjarlægja
+muscle_search_placeholder;Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars)
+muscle_search_any;Any;Any;Any;Any;Any;Any
+muscle_search_region;Region;Region;Region;Region;Region;Region
+muscle_search_category;Category;Category;Category;Category;Category;Category
+muscle_search_english_name;English name;English name;English name;English name;English name;English name
+muscle_search_latin_name;Latin name;Latin name;Latin name;Latin name;Latin name;Latin name
+muscle_search_insercio;Insercio;Insercio;Insercio;Insercio;Insercio;Insercio
+muscle_search_origo;Origo;Origo;Origo;Origo;Origo;Origo
+muscle_search_blood_supply;Blood supply;Blood supply;Blood supply;Blood supply;Blood supply;Blood supply
+muscle_search_innervation;Innervation;Innervation;Innervation;Innervation;Innervation;Innervation

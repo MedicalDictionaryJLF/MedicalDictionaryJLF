@@ -113,6 +113,111 @@
   .muted{color:var(--muted);margin-top:8px}
   .small{font-size:13px;color:var(--muted)}
   .scrollable{max-height:62vh;overflow:auto;padding-right:4px}
+  .checkbox-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:8px;
+    margin:8px 0;
+  }
+  .checkbox-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 8px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#fff;
+  }
+  .muscle-result{
+    padding:10px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    margin-top:10px;
+    background:#fff;
+  }
+  .muscle-field{
+    display:flex;
+    gap:8px;
+    padding:6px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .muscle-field:last-child{border-bottom:none}
+  .muscle-field-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-width:28px;
+  }
+  .muscle-field-toggle.right{
+    margin-left:auto;
+    justify-content:flex-end;
+  }
+  .muscle-field-toggle input[type="checkbox"],
+  .checkbox-grid input[type="checkbox"],
+  .muscle-region-header input[type="checkbox"]{
+    width:14px;
+    height:14px;
+    margin:0;
+    padding:0;
+  }
+  .muscle-field-value{
+    flex:1;
+  }
+  .anam-section{
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fff;
+    margin-top:12px;
+  }
+  .anam-section h3{
+    margin:0 0 8px 0;
+    font-size:16px;
+  }
+  .anam-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+  }
+  .anam-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .anam-row label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  .anam-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+  }
+  .anam-table th,
+  .anam-table td{
+    border:1px solid var(--border);
+    padding:6px 8px;
+    vertical-align:top;
+  }
+  .muscle-region-item{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px 10px;
+    margin:8px 0;
+    background:#fff;
+  }
+  .muscle-region-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .muscle-region-categories{
+    margin-top:8px;
+  }
+  .muscle-field-label{min-width:140px;color:var(--muted)}
 
   /* Settings sidebar */
   #settings-sidebar{
@@ -484,6 +589,781 @@
         </div>
       </section>
 
+      <section id="screen-muscle-training" class="screen hidden">
+        <h2>Muscle training</h2>
+        <div class="card">
+          <h3 style="margin:0 0 8px 0">Search muscles</h3>
+          <div class="row" style="align-items:center">
+            <input id="muscle-search-input" placeholder="Search muscle name (min 2 chars)" data-i18n-placeholder="muscle_search_placeholder" />
+            <select id="muscle-search-field">
+              <option value="any" data-i18n="muscle_search_any">Any</option>
+              <option value="region" data-i18n="muscle_search_region">Region</option>
+              <option value="category" data-i18n="muscle_search_category">Category</option>
+              <option value="english_muscle_name" data-i18n="muscle_search_english_name">English name</option>
+              <option value="latin_muscle_name" data-i18n="muscle_search_latin_name">Latin name</option>
+              <option value="insercio" data-i18n="muscle_search_insercio">Insercio</option>
+              <option value="origo" data-i18n="muscle_search_origo">Origo</option>
+              <option value="blood_supply" data-i18n="muscle_search_blood_supply">Blood supply</option>
+              <option value="innervation" data-i18n="muscle_search_innervation">Innervation</option>
+            </select>
+          </div>
+          <div id="muscle-search-results" class="scrollable"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="margin:0 0 8px 0">Muscle quiz</h3>
+          <div id="muscle-region-list"></div>
+          <div class="row">
+            <button type="button" id="muscle-quiz-start" class="primary">Start</button>
+            <button type="button" id="muscle-training-back" data-i18n="back">Back</button>
+          </div>
+          <p id="muscle-quiz-msg" class="muted"></p>
+          <div id="muscle-quiz-area" class="hidden">
+            <div id="muscle-quiz-fields"></div>
+            <div class="row">
+              <button type="button" id="muscle-quiz-reveal">Reveal</button>
+              <button type="button" id="muscle-quiz-next" class="primary">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-anamnesis" class="screen hidden">
+        <h2>Anamnesis</h2>
+        <div class="card scrollable">
+          <form id="anamnesis-form">
+            <div class="anam-section">
+              <h3>1. Identification</h3>
+              <div class="anam-grid">
+                <input name="ident_full_name" placeholder="Full name" />
+                <input name="ident_dob_age" placeholder="Date of birth / Age" />
+                <div class="anam-row">
+                  <span>Sex</span>
+                  <label><input type="radio" name="ident_sex" value="male" /> Male</label>
+                  <label><input type="radio" name="ident_sex" value="female" /> Female</label>
+                </div>
+                <input name="ident_city" placeholder="Address (City)" />
+                <input name="ident_admitted" placeholder="Admitted on (date/time)" />
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3>2. Chief Complaint</h3>
+              <textarea name="chief_complaint" placeholder="Main reason for admission (caregiver's / patient's words)"></textarea>
+            </div>
+
+            <div class="anam-section">
+              <h3>3. History of Present Illness (SOCRATES)</h3>
+              <div class="anam-grid">
+                <input name="hpi_site" placeholder="Site / System involved" />
+                <input name="hpi_onset" placeholder="Onset (When did it start?)" />
+                <input name="hpi_onset_activity" placeholder="What were you doing at onset?" />
+                <input name="hpi_timing" placeholder="Timing / Duration" />
+                <input name="hpi_exacerbating" placeholder="Exacerbating factors" />
+                <input name="hpi_relieving" placeholder="Relieving factors" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Character / Type of symptoms</span>
+                <label><input type="checkbox" name="hpi_char_mild" /> Mild</label>
+                <label><input type="checkbox" name="hpi_char_moderate" /> Moderate</label>
+                <label><input type="checkbox" name="hpi_char_severe" /> Severe</label>
+                <label><input type="checkbox" name="hpi_char_progressive" /> Progressive</label>
+                <label><input type="checkbox" name="hpi_char_episodic" /> Episodic</label>
+                <label><input type="checkbox" name="hpi_char_fluctuating" /> Fluctuating</label>
+                <input name="hpi_char_other" placeholder="Other" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Character of pain</span>
+                <label><input type="checkbox" name="hpi_pain_sharp" /> Sharp</label>
+                <label><input type="checkbox" name="hpi_pain_dull" /> Dull</label>
+                <label><input type="checkbox" name="hpi_pain_burning" /> Burning</label>
+                <label><input type="checkbox" name="hpi_pain_pressing" /> Pressing</label>
+                <label><input type="checkbox" name="hpi_pain_colicky" /> Colicky</label>
+                <input name="hpi_pain_other" placeholder="Other" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Radiation</span>
+                <label><input type="radio" name="hpi_radiation" value="no" /> No</label>
+                <label><input type="radio" name="hpi_radiation" value="yes" /> Yes</label>
+                <input name="hpi_radiation_where" placeholder="Where?" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Associated symptoms</span>
+                <label><input type="checkbox" name="hpi_assoc_fever" /> Fever</label>
+                <label><input type="checkbox" name="hpi_assoc_headache" /> Headache</label>
+                <label><input type="checkbox" name="hpi_assoc_nausea" /> Nausea</label>
+                <label><input type="checkbox" name="hpi_assoc_vomiting" /> Vomiting</label>
+                <label><input type="checkbox" name="hpi_assoc_cough" /> Cough</label>
+                <label><input type="checkbox" name="hpi_assoc_dyspnea" /> Dyspnea</label>
+                <label><input type="checkbox" name="hpi_assoc_palpitations" /> Palpitations</label>
+                <input name="hpi_assoc_other" placeholder="Other" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Severity (VAS)</span>
+                <input name="hpi_vas" placeholder="1-10" />
+              </div>
+              <div class="anam-row" style="margin-top:8px">
+                <span>Course since onset</span>
+                <label><input type="checkbox" name="hpi_course_improving" /> Improving</label>
+                <label><input type="checkbox" name="hpi_course_worsening" /> Worsening</label>
+                <label><input type="checkbox" name="hpi_course_unchanged" /> Unchanged</label>
+                <label><input type="checkbox" name="hpi_course_recurrent" /> Recurrent</label>
+                <input name="hpi_course_other" placeholder="Other" />
+              </div>
+              <textarea name="hpi_notes" placeholder="Notes"></textarea>
+            </div>
+            <div class="anam-section">
+              <h3>4. Review of Systems</h3>
+              <div class="anam-row">
+                <strong>General</strong>
+                <label><input type="checkbox" name="ros_general_fever" /> Fever</label>
+                <label><input type="checkbox" name="ros_general_weight_loss" /> Weight loss (12 months)</label>
+                <label><input type="checkbox" name="ros_general_weight_gain" /> Weight gain (12 months)</label>
+                <label><input type="checkbox" name="ros_general_fatigue" /> Fatigue</label>
+                <label><input type="checkbox" name="ros_general_night_sweats" /> Night sweats</label>
+              </div>
+              <textarea name="ros_general_notes" placeholder="General - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Head & Neck</strong>
+                <label><input type="checkbox" name="ros_head_headache" /> Headache</label>
+                <label><input type="checkbox" name="ros_head_dizziness" /> Dizziness</label>
+                <label><input type="checkbox" name="ros_head_speech" /> Speech problems</label>
+                <label><input type="checkbox" name="ros_head_visual" /> Visual problems</label>
+                <label><input type="checkbox" name="ros_head_ear" /> Ear pain</label>
+                <label><input type="checkbox" name="ros_head_throat" /> Sore throat</label>
+              </div>
+              <textarea name="ros_head_notes" placeholder="Head & Neck - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Cardiovascular</strong>
+                <label><input type="checkbox" name="ros_cardio_chest_pain" /> Chest pain</label>
+                <label><input type="checkbox" name="ros_cardio_palpitations" /> Palpitations</label>
+                <label><input type="checkbox" name="ros_cardio_doe" /> Dyspnea on exertion</label>
+                <label><input type="checkbox" name="ros_cardio_mi" /> History of MI</label>
+              </div>
+              <textarea name="ros_cardio_notes" placeholder="Cardiovascular - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Respiratory</strong>
+                <label><input type="checkbox" name="ros_resp_dyspnea" /> Dyspnea</label>
+                <label><input type="checkbox" name="ros_resp_cough" /> Cough</label>
+                <label><input type="checkbox" name="ros_resp_productive" /> Productive cough</label>
+                <label><input type="checkbox" name="ros_resp_hemoptysis" /> Hemoptysis</label>
+              </div>
+              <textarea name="ros_resp_notes" placeholder="Respiratory - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Gastrointestinal</strong>
+                <label><input type="checkbox" name="ros_gi_dysphagia" /> Dysphagia</label>
+                <label><input type="checkbox" name="ros_gi_nausea" /> Nausea</label>
+                <label><input type="checkbox" name="ros_gi_vomiting" /> Vomiting</label>
+                <label><input type="checkbox" name="ros_gi_abd_pain" /> Abdominal pain</label>
+                <label><input type="checkbox" name="ros_gi_diarrhea" /> Diarrhea</label>
+                <label><input type="checkbox" name="ros_gi_constipation" /> Constipation</label>
+                <label><input type="checkbox" name="ros_gi_blood_stool" /> Blood in stool</label>
+              </div>
+              <textarea name="ros_gi_notes" placeholder="Gastrointestinal - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Genitourinary</strong>
+                <label><input type="checkbox" name="ros_gu_dysuria" /> Dysuria</label>
+                <label><input type="checkbox" name="ros_gu_frequency" /> Frequency</label>
+                <label><input type="checkbox" name="ros_gu_nocturia" /> Nocturia</label>
+                <label><input type="checkbox" name="ros_gu_incontinence" /> Incontinence</label>
+                <label><input type="checkbox" name="ros_gu_pain_urination" /> Pain on urination</label>
+              </div>
+              <textarea name="ros_gu_notes" placeholder="Genitourinary - Other/Notes"></textarea>
+            </div>
+
+            <div class="anam-section">
+              <h3>5. Past Medical History</h3>
+              <div class="anam-grid">
+                <div>
+                  <strong>Hypertension</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_htn" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_htn" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_htn_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Diabetes mellitus</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_dm" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_dm" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_dm_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Dyslipidemia</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_dyslip" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_dyslip" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_dyslip_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Ischemic heart disease / CAD</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_cad" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_cad" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_cad_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Chronic heart failure</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_chf" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_chf" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_chf_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Chronic kidney disease</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_ckd" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_ckd" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_ckd_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Chronic lung disease (COPD / asthma)</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_copd" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_copd" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_copd_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Thyroid disease (hypo / hyper)</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_thyroid" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_thyroid" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_thyroid_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Chronic liver disease</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_liver" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_liver" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_liver_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Other chronic diseases</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="pmh_other" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_other" value="no" /> No</label>
+                  </div>
+                  <input name="pmh_other_notes" placeholder="Notes" />
+                </div>
+              </div>
+              <textarea name="pmh_notes" placeholder="Notes"></textarea>
+              <div style="margin-top:8px">
+                <strong>Specialist Care</strong>
+                <div class="anam-row">
+                  <label><input type="radio" name="pmh_specialist" value="no" /> No</label>
+                  <label><input type="radio" name="pmh_specialist" value="yes" /> Yes</label>
+                  <label><input type="checkbox" name="pmh_spec_cardiologist" /> Cardiologist</label>
+                  <label><input type="checkbox" name="pmh_spec_diabetologist" /> Diabetologist</label>
+                  <label><input type="checkbox" name="pmh_spec_endocrinologist" /> Endocrinologist</label>
+                  <label><input type="checkbox" name="pmh_spec_nephrologist" /> Nephrologist</label>
+                  <label><input type="checkbox" name="pmh_spec_pulmonologist" /> Pulmonologist</label>
+                  <label><input type="checkbox" name="pmh_spec_gastro" /> Gastroenterologist</label>
+                  <label><input type="checkbox" name="pmh_spec_neuro" /> Neurologist</label>
+                  <label><input type="checkbox" name="pmh_spec_rheum" /> Rheumatologist</label>
+                  <label><input type="checkbox" name="pmh_spec_onco" /> Oncologist</label>
+                  <label><input type="checkbox" name="pmh_spec_urologist" /> Urologist</label>
+                  <label><input type="checkbox" name="pmh_spec_gyn" /> Gynaecologist</label>
+                  <label><input type="checkbox" name="pmh_spec_psych" /> Psychiatrist</label>
+                  <input name="pmh_spec_other" placeholder="Other" />
+                </div>
+              </div>
+              <div style="margin-top:8px">
+                <strong>Operations & Hospitalizations</strong>
+                <textarea name="pmh_operations" placeholder="Date - Procedure/Diagnosis - Outcome"></textarea>
+                <div class="anam-row">
+                  <span>Planned operation now</span>
+                  <label><input type="radio" name="pmh_planned_op" value="yes" /> Yes</label>
+                  <label><input type="radio" name="pmh_planned_op" value="no" /> No</label>
+                  <input name="pmh_planned_op_details" placeholder="If yes, details" />
+                </div>
+              </div>
+              <div style="margin-top:8px">
+                <strong>Previous Examinations</strong>
+                <div class="anam-row">
+                  <label><input type="checkbox" name="pmh_exam_ecg" /> ECG</label>
+                  <label><input type="checkbox" name="pmh_exam_blood" /> Blood tests</label>
+                  <label><input type="checkbox" name="pmh_exam_ultrasound" /> Ultrasound</label>
+                  <label><input type="checkbox" name="pmh_exam_ct" /> CT</label>
+                  <label><input type="checkbox" name="pmh_exam_mri" /> MRI</label>
+                  <input name="pmh_exam_other" placeholder="Other" />
+                </div>
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3>6. Allergies & Transfusions</h3>
+              <textarea name="allergies" placeholder="Allergy / Reaction"></textarea>
+              <div class="anam-row">
+                <span>Blood transfusion in past</span>
+                <label><input type="radio" name="blood_transfusion" value="no" /> No</label>
+                <label><input type="radio" name="blood_transfusion" value="yes" /> Yes</label>
+                <input name="blood_transfusion_number" placeholder="Number" />
+                <span>Reaction</span>
+                <label><input type="radio" name="blood_transfusion_reaction" value="no" /> No</label>
+                <label><input type="radio" name="blood_transfusion_reaction" value="yes" /> Yes</label>
+                <input name="blood_transfusion_reaction_desc" placeholder="Reaction details" />
+              </div>
+            </div>
+            <div class="anam-section">
+              <h3>7. Medication</h3>
+              <textarea name="medication_list" placeholder="Drug - Dose - Frequency - Indication"></textarea>
+              <div class="anam-row">
+                <label><input type="radio" name="med_otc" value="no" /> No OTC drugs</label>
+                <label><input type="radio" name="med_otc" value="yes" /> OTC drugs</label>
+                <input name="med_otc_details" placeholder="If yes, which" />
+              </div>
+              <div class="anam-row">
+                <label><input type="radio" name="med_supplements" value="no" /> No supplements</label>
+                <label><input type="radio" name="med_supplements" value="yes" /> Supplements / vitamins / herbal</label>
+                <input name="med_supplements_details" placeholder="If yes, which" />
+              </div>
+              <div class="anam-row">
+                <span>History of misuse of prescribed drugs</span>
+                <label><input type="radio" name="med_misuse" value="yes" /> Yes</label>
+                <label><input type="radio" name="med_misuse" value="no" /> No</label>
+                <input name="med_misuse_notes" placeholder="Notes" />
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3>8. Gynecological History (Females)</h3>
+              <div class="anam-grid">
+                <div>
+                  <strong>Regular menstruation</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_regular_menses" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_regular_menses" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_regular_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Menopause</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_menopause" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_menopause" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_menopause_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Contraception</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_contraception" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_contraception" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_contraception_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Children</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_children" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_children" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_children_number" placeholder="If yes, number" />
+                </div>
+                <div>
+                  <strong>Deliveries</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_deliveries" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_deliveries" value="no" /> No</label>
+                    <label><input type="checkbox" name="gyn_deliveries_vaginal" /> Vaginal</label>
+                    <label><input type="checkbox" name="gyn_deliveries_csection" /> C-section</label>
+                  </div>
+                  <input name="gyn_deliveries_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Miscarriage / abortion</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_miscarriage" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_miscarriage" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_miscarriage_number" placeholder="If yes, number" />
+                </div>
+                <div>
+                  <strong>Pelvic pain</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="gyn_pelvic_pain" value="yes" /> Yes</label>
+                    <label><input type="radio" name="gyn_pelvic_pain" value="no" /> No</label>
+                  </div>
+                  <input name="gyn_pelvic_pain_notes" placeholder="Notes" />
+                </div>
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3>9. Family History</h3>
+              <textarea name="family_history_details" placeholder="Disease - Type - Relation"></textarea>
+              <div class="anam-row">
+                <span>Parents alive</span>
+                <label><input type="checkbox" name="family_parents_both" /> Both</label>
+                <label><input type="checkbox" name="family_parents_one" /> One</label>
+                <label><input type="checkbox" name="family_parents_none" /> None</label>
+                <input name="family_mother_cause" placeholder="Mother cause of death" />
+                <input name="family_father_cause" placeholder="Father cause of death" />
+              </div>
+            </div>
+            <div class="anam-section">
+              <h3>10. Epidemiological History</h3>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_travel" /> Recent travel abroad (12 months)</label>
+                <input name="epi_travel_where" placeholder="Where" />
+                <label><input type="checkbox" name="epi_pets" /> Pets / farm animals</label>
+                <input name="epi_pets_which" placeholder="Which" />
+              </div>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_covid_vax" /> COVID-19 vaccination</label>
+                <input name="epi_covid_vax_number" placeholder="Number" />
+                <label><input type="checkbox" name="epi_covid_infection" /> COVID-19 infection</label>
+                <input name="epi_covid_infection_number" placeholder="Number" />
+              </div>
+              <textarea name="epi_notes" placeholder="Notes"></textarea>
+            </div>
+
+            <div class="anam-section">
+              <h3>11. Social History</h3>
+              <div class="anam-row">
+                <span>Employment</span>
+                <label><input type="checkbox" name="social_working" /> Working</label>
+                <label><input type="checkbox" name="social_retired" /> Retired</label>
+                <label><input type="checkbox" name="social_unemployed" /> Unemployed</label>
+                <input name="social_unemployed_how_long" placeholder="How long" />
+              </div>
+              <input name="social_occupation" placeholder="Occupation / previous jobs" />
+              <div class="anam-row">
+                <span>Marital status</span>
+                <label><input type="checkbox" name="social_single" /> Single</label>
+                <label><input type="checkbox" name="social_married" /> Married</label>
+                <label><input type="checkbox" name="social_divorced" /> Divorced</label>
+                <label><input type="checkbox" name="social_widowed" /> Widowed</label>
+              </div>
+              <div class="anam-row">
+                <span>Living situation</span>
+                <label><input type="checkbox" name="social_alone" /> Alone</label>
+                <label><input type="checkbox" name="social_family" /> With family</label>
+                <input name="social_other" placeholder="Other" />
+              </div>
+              <div class="anam-row">
+                <span>Housing</span>
+                <label><input type="checkbox" name="social_house" /> House</label>
+                <label><input type="checkbox" name="social_apartment" /> Apartment</label>
+                <input name="social_apartment_floor" placeholder="Which floor" />
+                <label><input type="checkbox" name="social_elevator_yes" /> Elevator yes</label>
+                <label><input type="checkbox" name="social_elevator_no" /> Elevator no</label>
+                <label><input type="checkbox" name="social_homeless" /> Homeless</label>
+              </div>
+              <textarea name="social_notes" placeholder="Notes"></textarea>
+            </div>
+
+            <div class="anam-section">
+              <h3>12. Abuses</h3>
+              <div class="anam-grid">
+                <div>
+                  <strong>Smoking</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="abuse_smoking" value="yes" /> Yes</label>
+                    <label><input type="radio" name="abuse_smoking" value="no" /> No</label>
+                  </div>
+                  <input name="abuse_smoking_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Alcohol</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="abuse_alcohol" value="yes" /> Yes</label>
+                    <label><input type="radio" name="abuse_alcohol" value="no" /> No</label>
+                  </div>
+                  <input name="abuse_alcohol_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Coffee</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="abuse_coffee" value="yes" /> Yes</label>
+                    <label><input type="radio" name="abuse_coffee" value="no" /> No</label>
+                  </div>
+                  <input name="abuse_coffee_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Black tea</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="abuse_black_tea" value="yes" /> Yes</label>
+                    <label><input type="radio" name="abuse_black_tea" value="no" /> No</label>
+                  </div>
+                  <input name="abuse_black_tea_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <strong>Drugs</strong>
+                  <div class="anam-row">
+                    <label><input type="radio" name="abuse_drugs" value="yes" /> Yes</label>
+                    <label><input type="radio" name="abuse_drugs" value="no" /> No</label>
+                  </div>
+                  <input name="abuse_drugs_notes" placeholder="Notes" />
+                </div>
+              </div>
+              <textarea name="abuse_notes" placeholder="Notes"></textarea>
+            </div>
+            <div class="anam-section">
+              <h3>13. Status Praesens Generalis (SPG)</h3>
+              <div class="anam-row">
+                <span>Consciousness</span>
+                <label><input type="checkbox" name="spg_alert" /> Alert</label>
+                <label><input type="checkbox" name="spg_responsive" /> Responsive</label>
+                <label><input type="checkbox" name="spg_lethargic" /> Lethargic</label>
+                <label><input type="checkbox" name="spg_nonresponsive" /> Non-responsive</label>
+              </div>
+              <div class="anam-row">
+                <span>Orientation</span>
+                <label><input type="checkbox" name="spg_orientation_person" /> Person</label>
+                <label><input type="checkbox" name="spg_orientation_place" /> Place</label>
+                <label><input type="checkbox" name="spg_orientation_time" /> Time</label>
+              </div>
+              <div class="anam-row">
+                <span>General appearance</span>
+                <label><input type="checkbox" name="spg_calm" /> Calm</label>
+                <label><input type="checkbox" name="spg_distressed" /> Distressed</label>
+                <label><input type="checkbox" name="spg_pain" /> In pain</label>
+                <label><input type="checkbox" name="spg_dyspneic" /> Dyspneic</label>
+                <label><input type="checkbox" name="spg_cachectic" /> Cachectic</label>
+              </div>
+              <div class="anam-row">
+                <span>Hydration</span>
+                <label><input type="checkbox" name="spg_hydration_normal" /> Normal</label>
+                <label><input type="checkbox" name="spg_hydration_mild" /> Mild dehydration</label>
+                <label><input type="checkbox" name="spg_hydration_moderate" /> Moderate</label>
+                <label><input type="checkbox" name="spg_hydration_severe" /> Severe</label>
+              </div>
+              <div class="anam-row">
+                <span>Nutrition status</span>
+                <label><input type="checkbox" name="spg_nutrition_normal" /> Normal</label>
+                <label><input type="checkbox" name="spg_nutrition_under" /> Underweight</label>
+                <label><input type="checkbox" name="spg_nutrition_over" /> Overweight</label>
+                <label><input type="checkbox" name="spg_nutrition_obese" /> Obese</label>
+              </div>
+              <div class="anam-row">
+                <span>Habitus</span>
+                <label><input type="checkbox" name="spg_habitus_asthenic" /> Asthenic</label>
+                <label><input type="checkbox" name="spg_habitus_normo" /> Normosthenic</label>
+                <label><input type="checkbox" name="spg_habitus_hyper" /> Hypersthenic</label>
+              </div>
+              <div class="anam-row">
+                <span>Gait / mobility</span>
+                <label><input type="checkbox" name="spg_gait_normal" /> Normal</label>
+                <label><input type="checkbox" name="spg_gait_ataxic" /> Ataxic</label>
+                <label><input type="checkbox" name="spg_gait_hemi" /> Hemiparetic</label>
+                <label><input type="checkbox" name="spg_gait_shuffling" /> Shuffling</label>
+                <label><input type="checkbox" name="spg_gait_aid" /> Uses aid</label>
+              </div>
+              <input name="spg_gait_aid_type" placeholder="Aid (cane / walker / wheelchair)" />
+              <div class="anam-row">
+                <span>Speech</span>
+                <label><input type="checkbox" name="spg_speech_normal" /> Normal</label>
+                <label><input type="checkbox" name="spg_speech_dysarthria" /> Dysarthria</label>
+                <label><input type="checkbox" name="spg_speech_aphasia" /> Aphasia</label>
+                <label><input type="checkbox" name="spg_speech_slurred" /> Slurred</label>
+              </div>
+              <div class="anam-row">
+                <span>Position</span>
+                <label><input type="checkbox" name="spg_position_active" /> Active</label>
+                <label><input type="checkbox" name="spg_position_passive" /> Passive</label>
+                <label><input type="checkbox" name="spg_position_forced" /> Forced</label>
+              </div>
+              <div class="anam-row">
+                <span>Skin</span>
+                <label><input type="checkbox" name="spg_skin_rashes" /> Rashes</label>
+                <label><input type="checkbox" name="spg_skin_lesions" /> Lesions</label>
+                <label><input type="checkbox" name="spg_skin_scars" /> Scars</label>
+                <label><input type="checkbox" name="spg_skin_icterus" /> Icterus</label>
+                <label><input type="checkbox" name="spg_skin_cyanosis" /> Cyanosis</label>
+                <label><input type="checkbox" name="spg_skin_pallor" /> Pallor</label>
+              </div>
+              <textarea name="spg_skin_notes" placeholder="Skin notes"></textarea>
+              <div class="anam-row">
+                <span>Peripheral edema</span>
+                <label><input type="checkbox" name="spg_edema_none" /> None</label>
+                <label><input type="checkbox" name="spg_edema_mild" /> Mild</label>
+                <label><input type="checkbox" name="spg_edema_moderate" /> Moderate</label>
+                <label><input type="checkbox" name="spg_edema_severe" /> Severe</label>
+                <label><input type="checkbox" name="spg_edema_pretibial" /> Pretibial</label>
+                <label><input type="checkbox" name="spg_edema_sacral" /> Sacral</label>
+              </div>
+              <div class="anam-row">
+                <span>Odor</span>
+                <label><input type="checkbox" name="spg_odor_alcohol" /> Alcohol</label>
+                <label><input type="checkbox" name="spg_odor_ketosis" /> Ketosis</label>
+                <label><input type="checkbox" name="spg_odor_uremic" /> Uremic</label>
+                <label><input type="checkbox" name="spg_odor_hepatic" /> Hepatic</label>
+                <input name="spg_odor_other" placeholder="Other" />
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3>14. Vital Signs and Values (Adult)</h3>
+              <div class="anam-grid">
+                <input name="vital_temp" placeholder="Temperature (C)" />
+                <input name="vital_spo2" placeholder="SpO2 (%)" />
+                <input name="vital_hr" placeholder="Heart rate (/min)" />
+                <input name="vital_weight" placeholder="Weight (kg)" />
+                <input name="vital_rr" placeholder="Respiratory rate (/min)" />
+                <input name="vital_height" placeholder="Height (cm)" />
+                <input name="vital_bp" placeholder="Blood pressure (mmHg)" />
+                <input name="vital_bmi" placeholder="BMI (kg/m2)" />
+              </div>
+              <div class="anam-row">
+                <span>Taken</span>
+                <label><input type="checkbox" name="vital_taken_monitor" /> From monitor</label>
+                <label><input type="checkbox" name="vital_taken_chart" /> From Pt. charts</label>
+                <input name="vital_taken_when" placeholder="If from charts, when" />
+              </div>
+              <textarea name="vital_notes" placeholder="Notes"></textarea>
+            </div>
+
+            <div class="anam-section">
+              <h3>15. Status Praesens Localis (SPL)</h3>
+              <strong>Medical Devices / Lines / Catheters</strong>
+              <div class="anam-grid">
+                <div>
+                  <span>Peripheral IV line</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_iv" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_iv" value="no" /> No</label>
+                  </div>
+                  <input name="spl_iv_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>Central venous catheter</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_cvc" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_cvc" value="no" /> No</label>
+                  </div>
+                  <input name="spl_cvc_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>Foley catheter</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_foley" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_foley" value="no" /> No</label>
+                  </div>
+                  <input name="spl_foley_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>Drains</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_drains" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_drains" value="no" /> No</label>
+                  </div>
+                  <input name="spl_drains_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>Oxygen therapy</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_o2" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_o2" value="no" /> No</label>
+                  </div>
+                  <input name="spl_o2_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>ECG monitoring</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_ecg" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_ecg" value="no" /> No</label>
+                  </div>
+                  <input name="spl_ecg_notes" placeholder="Notes" />
+                </div>
+                <div>
+                  <span>Vital function monitor</span>
+                  <div class="anam-row">
+                    <label><input type="radio" name="spl_vital_monitor" value="yes" /> Yes</label>
+                    <label><input type="radio" name="spl_vital_monitor" value="no" /> No</label>
+                  </div>
+                  <input name="spl_vital_monitor_notes" placeholder="Notes" />
+                </div>
+              </div>
+              <textarea name="spl_notes" placeholder="Notes"></textarea>
+
+              <div style="margin-top:10px">
+                <strong>Head</strong>
+                <textarea name="spl_head_notes" placeholder="Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <strong>Neck</strong>
+                <textarea name="spl_neck_notes" placeholder="Lymph nodes, thyroid, trachea, JVP, carotids, mobility"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <strong>Thorax</strong>
+                <textarea name="spl_thorax_notes" placeholder="Chest, lungs, heart"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <strong>Abdomen</strong>
+                <textarea name="spl_abdomen_notes" placeholder="Inspection, palpation, percussion, auscultation, special signs"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <strong>Limbs</strong>
+                <textarea name="spl_limbs_notes" placeholder="Inspection, skin changes, mobility, joints, pulses"></textarea>
+              </div>
+              <div style="margin-top:10px">
+                <strong>Spine</strong>
+                <textarea name="spl_spine_notes" placeholder="Posture, curvature, mobility"></textarea>
+              </div>
+            </div>
+            <details class="anam-section">
+              <summary><strong>16. Reference values</strong></summary>
+              <table class="anam-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                    <th>Units</th>
+                    <th>Pt. values</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Hemoglobin (Hb)</td><td>135-175</td><td>120-155</td><td>g/L</td><td><input name="ref_hb" /></td></tr>
+                  <tr><td>Red blood cells (RBC)</td><td>4.5-5.9</td><td>4.0-5.2</td><td>x10^12/L</td><td><input name="ref_rbc" /></td></tr>
+                  <tr><td>Hematocrit (Hct)</td><td>0.40-0.52</td><td>0.36-0.46</td><td>L/L</td><td><input name="ref_hct" /></td></tr>
+                  <tr><td>White blood cells (WBC)</td><td>4.0-10.0</td><td>4.0-10.0</td><td>x10^9/L</td><td><input name="ref_wbc" /></td></tr>
+                  <tr><td>Platelets (PLT)</td><td>150-400</td><td>150-400</td><td>x10^9/L</td><td><input name="ref_plt" /></td></tr>
+                  <tr><td>C-reactive protein (CRP)</td><td>&lt; 5</td><td>&lt; 5</td><td>mg/L</td><td><input name="ref_crp" /></td></tr>
+                  <tr><td>Creatinine</td><td>64-104</td><td>49-90</td><td>umol/L</td><td><input name="ref_crea" /></td></tr>
+                  <tr><td>Urea</td><td>2.5-7.8</td><td>2.5-7.8</td><td>mmol/L</td><td><input name="ref_urea" /></td></tr>
+                  <tr><td>Sodium (Na)</td><td>135-145</td><td>135-145</td><td>mmol/L</td><td><input name="ref_na" /></td></tr>
+                  <tr><td>Potassium (K)</td><td>3.5-5.1</td><td>3.5-5.1</td><td>mmol/L</td><td><input name="ref_k" /></td></tr>
+                  <tr><td>Chloride (Cl)</td><td>98-107</td><td>98-107</td><td>mmol/L</td><td><input name="ref_cl" /></td></tr>
+                  <tr><td>Calcium (total)</td><td>2.15-2.55</td><td>2.15-2.55</td><td>mmol/L</td><td><input name="ref_ca" /></td></tr>
+                  <tr><td>ALT</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_alt" /></td></tr>
+                  <tr><td>AST</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_ast" /></td></tr>
+                  <tr><td>Bilirubin - total</td><td>5-21</td><td>5-21</td><td>umol/L</td><td><input name="ref_bili_total" /></td></tr>
+                  <tr><td>Bilirubin - direct</td><td>&lt; 5</td><td>&lt; 5</td><td>umol/L</td><td><input name="ref_bili_direct" /></td></tr>
+                  <tr><td>Bilirubin - indirect</td><td>3-17</td><td>3-17</td><td>umol/L</td><td><input name="ref_bili_indirect" /></td></tr>
+                  <tr><td>Fasting glucose</td><td>3.9-5.5</td><td>3.9-5.5</td><td>mmol/L</td><td><input name="ref_glucose" /></td></tr>
+                  <tr><td>Total cholesterol</td><td>&lt; 5.0</td><td>&lt; 5.0</td><td>mmol/L</td><td><input name="ref_chol_total" /></td></tr>
+                  <tr><td>LDL cholesterol</td><td>&lt; 3.0</td><td>&lt; 3.0</td><td>mmol/L</td><td><input name="ref_ldl" /></td></tr>
+                  <tr><td>HDL cholesterol</td><td>&gt; 1.0</td><td>&gt; 1.2</td><td>mmol/L</td><td><input name="ref_hdl" /></td></tr>
+                  <tr><td>Triglycerides</td><td>&lt; 1.7</td><td>&lt; 1.7</td><td>mmol/L</td><td><input name="ref_trig" /></td></tr>
+                  <tr><td>TSH</td><td>0.4-4.0</td><td>0.4-4.0</td><td>mIU/L</td><td><input name="ref_tsh" /></td></tr>
+                </tbody>
+              </table>
+            </details>
+          </form>
+          <div class="row" style="margin-top:12px">
+            <button type="button" id="anamnesis-clear" class="danger">Clear form</button>
+            <button type="button" id="anamnesis-back" data-i18n="back">Back</button>
+          </div>
+          <p id="anamnesis-status" class="muted"></p>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -505,6 +1385,7 @@ const STORAGE_BUCKET = "Medical terms CSV";
 const STORAGE_FILES = [
   { filename: "medical_terms.csv", cacheId: "base/medical_terms.csv" },
   { filename: "App translations.csv", cacheId: "base/App translations.csv" },
+  { filename: "muscles.csv", cacheId: "base/muscles.csv" },
 ];
 let supabase = null;
 
@@ -1006,6 +1887,20 @@ async function loadMedicalTerms() {
   }
 }
 
+// --- Muscles loader ---
+let muscleTerms = [];
+async function loadMuscles() {
+  try {
+    const txt = await loadBaseFile('muscles.csv');
+    const rows = parseCSVLines(txt);
+    if(rows.length < 1) throw new Error('No data in muscles file');
+    muscleTerms = rowsToObjects(rows);
+  } catch(e) {
+    console.warn('Muscles load failed:', e.message);
+    muscleTerms = [];
+  }
+}
+
 // --- UI wiring and i18n ---
 let state = { language: localStorage.getItem('app_language') || 'English', currentUser: null, currentUserEmail: null };
 
@@ -1133,6 +2028,8 @@ async function setLanguage(lang){
   if(si && si.value && si.value.trim().length >= 2){
     si.dispatchEvent(new Event('input', { bubbles:true }));
   }
+
+  refreshMuscleTrainingUI();
 }
 
 
@@ -1152,6 +2049,374 @@ function applyTranslationsToDom(){
     const k = el.getAttribute('data-i18n-placeholder');
     el.placeholder = t(k);
   });
+}
+
+// --- Muscle training helpers ---
+const MUSCLE_HIDDEN = "****";
+const MUSCLE_SEARCH_FIELD_KEY = "muscle_search_field";
+const ANAMNESIS_STORAGE_KEY = "anamnesis_form_v1";
+let muscleQuizPool = [];
+let muscleQuizCurrent = null;
+let muscleQuizRevealed = false;
+let muscleQuizSelectedRegions = new Set();
+let muscleQuizSelectedCategories = new Set();
+let muscleQuizPersistentFields = new Set();
+let muscleQuizTempFields = new Set();
+
+function getMuscleRegionField(){
+  const lang = normalizeLanguage(state.language);
+  if(lang === 'Deutch') return 'muscle_region_ge';
+  if(lang === 'Slovensky') return 'muscle_region_sk';
+  return 'muscle_region_en';
+}
+
+function getMuscleCategoryField(){
+  const lang = normalizeLanguage(state.language);
+  if(lang === 'Deutch') return 'muscle_category_ge';
+  if(lang === 'Slovensky') return 'muscle_category_sk';
+  return 'muscle_category_en';
+}
+
+function getMuscleRegionKey(row){
+  return (row.muscle_region_en || row.muscle_region_sk || row.muscle_region_ge || '').trim();
+}
+
+function getMuscleCategoryKey(row){
+  return (row.muscle_category_en || row.muscle_category_sk || row.muscle_category_ge || '').trim();
+}
+
+function getMuscleRegionLabel(row){
+  const field = getMuscleRegionField();
+  return (row[field] || row.muscle_region_en || row.muscle_region_sk || row.muscle_region_ge || '').trim();
+}
+
+function getMuscleCategoryLabel(row){
+  const field = getMuscleCategoryField();
+  return (row[field] || row.muscle_category_en || row.muscle_category_sk || row.muscle_category_ge || '').trim();
+}
+
+function addMuscleField(container, label, value, key, showToggles){
+  const row = document.createElement('div');
+  row.className = 'muscle-field';
+
+  if(showToggles){
+    const leftWrap = document.createElement('label');
+    leftWrap.className = 'muscle-field-toggle';
+    const leftCb = document.createElement('input');
+    leftCb.type = 'checkbox';
+    leftCb.checked = muscleQuizPersistentFields.has(key);
+    leftCb.addEventListener('change', ()=>{
+      if(leftCb.checked) muscleQuizPersistentFields.add(key);
+      else muscleQuizPersistentFields.delete(key);
+      renderMuscleQuizFields();
+    });
+    leftWrap.appendChild(leftCb);
+    row.appendChild(leftWrap);
+  }
+
+  const l = document.createElement('div');
+  l.className = 'muscle-field-label';
+  l.textContent = label;
+  const v = document.createElement('div');
+  v.className = 'muscle-field-value';
+  v.textContent = value || '—';
+  row.appendChild(l);
+  row.appendChild(v);
+
+  if(showToggles){
+    const rightWrap = document.createElement('label');
+    rightWrap.className = 'muscle-field-toggle right';
+    const rightCb = document.createElement('input');
+    rightCb.type = 'checkbox';
+    rightCb.checked = muscleQuizTempFields.has(key);
+    rightCb.addEventListener('change', ()=>{
+      if(rightCb.checked) muscleQuizTempFields.add(key);
+      else muscleQuizTempFields.delete(key);
+      renderMuscleQuizFields();
+    });
+    rightWrap.appendChild(rightCb);
+    row.appendChild(rightWrap);
+  }
+
+  container.appendChild(row);
+}
+
+function renderMuscleSearchResults(){
+  const input = document.getElementById('muscle-search-input');
+  const fieldSel = document.getElementById('muscle-search-field');
+  const results = document.getElementById('muscle-search-results');
+  if(!input || !results) return;
+  const q = input.value.trim().toLowerCase();
+  results.innerHTML = '';
+  if(q.length < 2) return;
+
+  const regionField = getMuscleRegionField();
+  const categoryField = getMuscleCategoryField();
+  const mode = fieldSel ? fieldSel.value : 'any';
+  const matches = muscleTerms.filter(r => {
+    if(mode === 'region') return includesQuery(r[regionField], q);
+    if(mode === 'category') return includesQuery(r[categoryField], q);
+    if(mode === 'english_muscle_name') return includesQuery(r.english_muscle_name, q);
+    if(mode === 'latin_muscle_name') return includesQuery(r.latin_muscle_name, q);
+    if(mode === 'insercio') return includesQuery(r.insercio, q);
+    if(mode === 'origo') return includesQuery(r.origo, q);
+    if(mode === 'blood_supply') return includesQuery(r.blood_supply, q);
+    if(mode === 'innervation') return includesQuery(r.innervation, q);
+    return (
+      includesQuery(r.english_muscle_name, q) ||
+      includesQuery(r.latin_muscle_name, q) ||
+      includesQuery(r[regionField], q) ||
+      includesQuery(r[categoryField], q) ||
+      includesQuery(r.muscle_part, q) ||
+      includesQuery(r.innervation, q) ||
+      includesQuery(r.blood_supply, q) ||
+      includesQuery(r.origo, q) ||
+      includesQuery(r.insercio, q)
+    );
+  });
+
+  if(matches.length === 0){
+    results.textContent = 'No muscles found.';
+    return;
+  }
+
+  const limit = 50;
+  matches.slice(0, limit).forEach(r=>{
+    const card = document.createElement('div');
+    card.className = 'muscle-result';
+    addMuscleField(card, t('muscle_search_region') || 'Region', getMuscleRegionLabel(r), null, false);
+    addMuscleField(card, t('muscle_search_category') || 'Category', getMuscleCategoryLabel(r), null, false);
+    addMuscleField(card, 'Latin name', r.latin_muscle_name, null, false);
+    addMuscleField(card, 'English name', r.english_muscle_name, null, false);
+    addMuscleField(card, 'Muscle part', r.muscle_part, null, false);
+    addMuscleField(card, 'Innervation', r.innervation, null, false);
+    addMuscleField(card, 'Blood supply', r.blood_supply, null, false);
+    addMuscleField(card, 'Origo', r.origo, null, false);
+    addMuscleField(card, 'Insercio', r.insercio, null, false);
+    results.appendChild(card);
+  });
+  if(matches.length > limit){
+    const note = document.createElement('div');
+    note.className = 'muted';
+    note.textContent = `Showing first ${limit} results.`;
+    results.appendChild(note);
+  }
+}
+
+function renderMuscleRegionList(){
+  const list = document.getElementById('muscle-region-list');
+  if(!list) return;
+  const regionField = getMuscleRegionField();
+  const categoryField = getMuscleCategoryField();
+  const regions = new Map();
+  for(const r of muscleTerms){
+    const key = getMuscleRegionKey(r);
+    if(!key) continue;
+    const label = (r[regionField] || r.muscle_region_en || key).trim();
+    if(!regions.has(key)){
+      regions.set(key, { label: label || key, categories: new Map() });
+    }
+    const catKey = getMuscleCategoryKey(r);
+    if(!catKey) continue;
+    const catLabel = (r[categoryField] || r.muscle_category_en || catKey).trim();
+    regions.get(key).categories.set(catKey, catLabel || catKey);
+  }
+  const keys = [...regions.keys()].sort((a,b)=>a.localeCompare(b));
+  list.innerHTML = '';
+  if(keys.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'muted';
+    empty.textContent = 'No regions available.';
+    list.appendChild(empty);
+    return;
+  }
+  keys.forEach(regionKey=>{
+    const regionData = regions.get(regionKey);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'muscle-region-item';
+
+    const header = document.createElement('div');
+    header.className = 'muscle-region-header';
+    const regionCb = document.createElement('input');
+    regionCb.type = 'checkbox';
+    regionCb.checked = muscleQuizSelectedRegions.has(regionKey);
+    const label = document.createElement('span');
+    label.textContent = regionData.label;
+    header.appendChild(regionCb);
+    header.appendChild(label);
+    wrapper.appendChild(header);
+
+    const catWrap = document.createElement('div');
+    catWrap.className = 'muscle-region-categories checkbox-grid';
+    if(!regionCb.checked) catWrap.classList.add('hidden');
+
+    const catKeys = [...regionData.categories.keys()].sort((a,b)=>a.localeCompare(b));
+    if(catKeys.length === 0){
+      const none = document.createElement('div');
+      none.className = 'muted';
+      none.textContent = 'No categories for this region.';
+      catWrap.appendChild(none);
+    }else{
+      catKeys.forEach(catKey=>{
+        const catLabel = regionData.categories.get(catKey);
+        const item = document.createElement('label');
+        item.className = 'checkbox-item';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        const key = `${regionKey}||${catKey}`;
+        cb.value = key;
+        cb.checked = muscleQuizSelectedCategories.has(key);
+        cb.addEventListener('change', ()=>{
+          if(cb.checked){
+            muscleQuizSelectedCategories.add(key);
+            muscleQuizSelectedRegions.add(regionKey);
+            regionCb.checked = true;
+            catWrap.classList.remove('hidden');
+          } else {
+            muscleQuizSelectedCategories.delete(key);
+          }
+        });
+        const span = document.createElement('span');
+        span.textContent = catLabel;
+        item.appendChild(cb);
+        item.appendChild(span);
+        catWrap.appendChild(item);
+      });
+    }
+
+    regionCb.addEventListener('change', ()=>{
+      if(regionCb.checked){
+        muscleQuizSelectedRegions.add(regionKey);
+        catWrap.classList.remove('hidden');
+      } else {
+        muscleQuizSelectedRegions.delete(regionKey);
+        catWrap.classList.add('hidden');
+        [...catWrap.querySelectorAll('input[type="checkbox"]')].forEach(cb=>{
+          cb.checked = false;
+          muscleQuizSelectedCategories.delete(cb.value);
+        });
+      }
+    });
+
+    wrapper.appendChild(catWrap);
+    list.appendChild(wrapper);
+  });
+}
+
+function buildMuscleQuizPool(){
+  const regions = [...muscleQuizSelectedRegions];
+  const categories = [...muscleQuizSelectedCategories];
+  if(regions.length === 0 || categories.length === 0) return [];
+  return muscleTerms.filter(r => {
+    const regionKey = getMuscleRegionKey(r);
+    const catKey = getMuscleCategoryKey(r);
+    return regions.includes(regionKey) && categories.includes(`${regionKey}||${catKey}`);
+  });
+}
+
+function renderMuscleQuizFields(){
+  const fields = document.getElementById('muscle-quiz-fields');
+  const area = document.getElementById('muscle-quiz-area');
+  if(!fields || !area) return;
+  fields.innerHTML = '';
+  if(!muscleQuizCurrent){
+    area.classList.add('hidden');
+    return;
+  }
+  const v = (value, key)=> {
+    if(muscleQuizRevealed || muscleQuizPersistentFields.has(key) || muscleQuizTempFields.has(key)){
+      return value || '—';
+    }
+    return MUSCLE_HIDDEN;
+  };
+  addMuscleField(fields, t('muscle_search_region') || 'Region', v(getMuscleRegionLabel(muscleQuizCurrent), 'region'), 'region', true);
+  addMuscleField(fields, t('muscle_search_category') || 'Category', v(getMuscleCategoryLabel(muscleQuizCurrent), 'category'), 'category', true);
+  addMuscleField(fields, 'Latin name', v(muscleQuizCurrent.latin_muscle_name, 'latin'), 'latin', true);
+  addMuscleField(fields, 'English name', v(muscleQuizCurrent.english_muscle_name, 'english'), 'english', true);
+  addMuscleField(fields, 'Muscle part', v(muscleQuizCurrent.muscle_part, 'part'), 'part', true);
+  addMuscleField(fields, 'Innervation', v(muscleQuizCurrent.innervation, 'innervation'), 'innervation', true);
+  addMuscleField(fields, 'Blood supply', v(muscleQuizCurrent.blood_supply, 'blood_supply'), 'blood_supply', true);
+  addMuscleField(fields, 'Origo', v(muscleQuizCurrent.origo, 'origo'), 'origo', true);
+  addMuscleField(fields, 'Insercio', v(muscleQuizCurrent.insercio, 'insercio'), 'insercio', true);
+  area.classList.remove('hidden');
+}
+
+function showNextMuscle(){
+  if(!muscleQuizPool || muscleQuizPool.length === 0) return;
+  muscleQuizCurrent = muscleQuizPool[Math.floor(Math.random() * muscleQuizPool.length)];
+  muscleQuizRevealed = false;
+  muscleQuizTempFields.clear();
+  renderMuscleQuizFields();
+}
+
+function startMuscleQuiz(){
+  const msg = document.getElementById('muscle-quiz-msg');
+  if(msg) msg.textContent = '';
+  muscleQuizPool = buildMuscleQuizPool();
+  if(muscleQuizPool.length === 0){
+    if(msg) msg.textContent = 'Select a region and at least one group with data.';
+    muscleQuizCurrent = null;
+    renderMuscleQuizFields();
+    return;
+  }
+  showNextMuscle();
+}
+
+function refreshMuscleTrainingUI(){
+  renderMuscleRegionList();
+  renderMuscleQuizFields();
+  const input = document.getElementById('muscle-search-input');
+  if(input && input.value.trim().length >= 2) renderMuscleSearchResults();
+}
+
+// --- Anamnesis helpers ---
+let anamnesisSaveTimer = null;
+
+function saveAnamnesisForm(){
+  const form = document.getElementById('anamnesis-form');
+  if(!form) return;
+  const data = {};
+  form.querySelectorAll('input, textarea, select').forEach(el=>{
+    if(!el.name) return;
+    if(el.type === 'checkbox') data[el.name] = el.checked;
+    else if(el.type === 'radio'){
+      if(el.checked) data[el.name] = el.value;
+    } else {
+      data[el.name] = el.value;
+    }
+  });
+  localStorage.setItem(ANAMNESIS_STORAGE_KEY, JSON.stringify(data));
+  const status = document.getElementById('anamnesis-status');
+  if(status) status.textContent = 'Saved locally.';
+}
+
+function scheduleAnamnesisSave(){
+  clearTimeout(anamnesisSaveTimer);
+  anamnesisSaveTimer = setTimeout(saveAnamnesisForm, 300);
+}
+
+function loadAnamnesisForm(){
+  const form = document.getElementById('anamnesis-form');
+  if(!form) return;
+  const raw = localStorage.getItem(ANAMNESIS_STORAGE_KEY);
+  if(!raw) return;
+  let data = null;
+  try{ data = JSON.parse(raw); }catch(e){ data = null; }
+  if(!data) return;
+  form.querySelectorAll('input, textarea, select').forEach(el=>{
+    if(!el.name || !(el.name in data)) return;
+    if(el.type === 'checkbox') el.checked = !!data[el.name];
+    else if(el.type === 'radio') el.checked = (data[el.name] === el.value);
+    else el.value = data[el.name];
+  });
+}
+
+function clearAnamnesisForm(){
+  const form = document.getElementById('anamnesis-form');
+  if(form) form.reset();
+  localStorage.removeItem(ANAMNESIS_STORAGE_KEY);
+  const status = document.getElementById('anamnesis-status');
+  if(status) status.textContent = 'Cleared.';
 }
 
 function showScreen(id){
@@ -1200,10 +2465,10 @@ async function init(){
   // Always try to refresh base CSV cache first (newest possible version)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
 
-  await Promise.all([loadTranslations(), loadMedicalTerms()]);
+  await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles()]);
 
     // Apply language instantly (no reload needed)
-    await setLanguage(state.language);
+  await setLanguage(state.language);
 // Settings sidebar handling
   const settingsBtn = document.getElementById('settings-toggle');
   const sidebar = document.getElementById('settings-sidebar');
@@ -1340,8 +2605,9 @@ on('btn-show-register','click', ()=>{
 // Pull newest base CSVs into offline cache on login (if available), then reload from cache
 try{
   await refreshBaseFilesCache();
-  await Promise.all([loadTranslations(), loadMedicalTerms()]);
+  await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles()]);
   applyTranslationsToDom();
+  refreshMuscleTrainingUI();
 }catch(e){
   console.warn("Base CSV refresh failed (offline/local only):", e);
 }
@@ -1367,6 +2633,8 @@ try{
   on('to-search','click', ()=> { showScreen('screen-search'); });
   on('to-entry','click', ()=> { showScreen('screen-entry'); });
   on('to-quiz','click', ()=> { showScreen('screen-quiz'); });
+  on('to-muscle-training','click', ()=> { showScreen('screen-muscle-training'); });
+  on('to-anamnesis','click', ()=> { showScreen('screen-anamnesis'); loadAnamnesisForm(); });
 
   // moved to settings sidebar (same IDs)
   on('to-menu','click', ()=> { showScreen('screen-menu'); });
@@ -1377,6 +2645,34 @@ try{
 
   const searchInput = document.getElementById('search-input');
   const resultsDiv = document.getElementById('search-results');
+
+  const muscleSearchInput = document.getElementById('muscle-search-input');
+  if(muscleSearchInput){
+    muscleSearchInput.addEventListener('input', renderMuscleSearchResults);
+  }
+  const muscleSearchField = document.getElementById('muscle-search-field');
+  if(muscleSearchField){
+    const saved = localStorage.getItem(MUSCLE_SEARCH_FIELD_KEY);
+    if(saved && [...muscleSearchField.options].some(o=>o.value === saved)){
+      muscleSearchField.value = saved;
+    }
+    muscleSearchField.addEventListener('change', renderMuscleSearchResults);
+    muscleSearchField.addEventListener('change', ()=>{
+      localStorage.setItem(MUSCLE_SEARCH_FIELD_KEY, muscleSearchField.value);
+    });
+  }
+  on('muscle-quiz-start','click', ()=> startMuscleQuiz());
+  on('muscle-quiz-reveal','click', ()=>{ muscleQuizRevealed = true; renderMuscleQuizFields(); });
+  on('muscle-quiz-next','click', ()=> showNextMuscle());
+  on('muscle-training-back','click', ()=> showScreen('screen-submenu'));
+
+  const anamForm = document.getElementById('anamnesis-form');
+  if(anamForm){
+    anamForm.addEventListener('input', scheduleAnamnesisSave);
+    anamForm.addEventListener('change', scheduleAnamnesisSave);
+  }
+  on('anamnesis-clear','click', ()=> clearAnamnesisForm());
+  on('anamnesis-back','click', ()=> showScreen('screen-submenu'));
 
   searchInput.addEventListener('input', ()=>{
     const q = searchInput.value.trim().toLowerCase();
@@ -1520,42 +2816,73 @@ function startQuiz(){
   }
 
   shuffle(pool);
-  const quizItems = pool.slice(0, Math.min(5,pool.length));
   let score=0;
+  let answeredTotal=0;
+  let index=0;
 
-  quizItems.forEach((it, idx)=>{
-    const qdiv = document.createElement('div');
-    qdiv.className='quiz-item';
-    const q = document.createElement('div');
-    q.innerHTML = `<strong>Q${idx+1}:</strong> ${it.from}`;
-    qdiv.appendChild(q);
-
-    const choices = [it.to];
-    for(let i=0;i<20 && choices.length<4;i++){
-      const cand = pool[Math.floor(Math.random()*pool.length)].to;
-      if(cand && !choices.includes(cand)) choices.push(cand);
+  const renderBatch = () => {
+    area.innerHTML='';
+    const quizItems = pool.slice(index, index + 5);
+    if(quizItems.length === 0){
+      area.textContent = t('Quiz complete.') || 'Quiz complete.';
+      return;
     }
-    shuffle(choices);
+    let answeredInBatch=0;
 
-    const ul = document.createElement('div');
-    ul.className='choices';
-    choices.forEach(ch=>{
-      const btn = document.createElement('button');
-      btn.textContent=ch;
-      btn.addEventListener('click', ()=>{
-        if(btn.classList.contains('answered')) return;
-        btn.classList.add('answered');
-        if(ch===it.to){ btn.style.background='lightgreen'; score++; }
-        else { btn.style.background='indianred'; }
-        scoreEl.textContent = `${t('score')||'Score'}: ${score} / ${quizItems.length}`;
+    quizItems.forEach((it, idx)=>{
+      const qdiv = document.createElement('div');
+      qdiv.className='quiz-item';
+      const q = document.createElement('div');
+      q.innerHTML = `<strong>Q${index + idx + 1}:</strong> ${it.from}`;
+      qdiv.appendChild(q);
+
+      const choices = [it.to];
+      for(let i=0;i<20 && choices.length<4;i++){
+        const cand = pool[Math.floor(Math.random()*pool.length)].to;
+        if(cand && !choices.includes(cand)) choices.push(cand);
+      }
+      shuffle(choices);
+
+      const ul = document.createElement('div');
+      ul.className='choices';
+      let answered=false;
+      choices.forEach(ch=>{
+        const btn = document.createElement('button');
+        btn.textContent=ch;
+        btn.addEventListener('click', ()=>{
+          if(answered) return;
+          answered=true;
+          [...ul.querySelectorAll('button')].forEach(b=>{
+            b.disabled = true;
+            b.classList.add('answered');
+          });
+          if(ch===it.to){ btn.style.background='lightgreen'; score++; }
+          else { btn.style.background='indianred'; }
+          answeredInBatch++;
+          answeredTotal++;
+          scoreEl.textContent = `${t('score')||'Score'}: ${score} / ${answeredTotal}`;
+          if(answeredInBatch === quizItems.length){
+            index += quizItems.length;
+            if(index < pool.length){
+              setTimeout(renderBatch, 250);
+            }else{
+              const done = document.createElement('div');
+              done.className='muted';
+              done.textContent = t('Quiz complete.') || 'Quiz complete.';
+              area.appendChild(done);
+            }
+          }
+        });
+        ul.appendChild(btn);
       });
-      ul.appendChild(btn);
+      qdiv.appendChild(ul);
+      area.appendChild(qdiv);
     });
-    qdiv.appendChild(ul);
-    area.appendChild(qdiv);
-  });
 
-  scoreEl.textContent = `${t('score')||'Score'}: ${score} / ${quizItems.length}`;
+    scoreEl.textContent = `${t('score')||'Score'}: ${score} / ${answeredTotal}`;
+  };
+
+  renderBatch();
 }
 
 function shuffle(arr){
@@ -1567,7 +2894,6 @@ function shuffle(arr){
 
 window.addEventListener('DOMContentLoaded', ()=>{ init(); });
   </script>
-<script src="app.js"></script>
 </body>
 </html>
 
