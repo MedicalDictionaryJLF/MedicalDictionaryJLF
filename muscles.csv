@@ -1,4 +1,4 @@
-muscle_region_en,muscle_region_sk,muscle_region_ge,muscle_category_en,muscle_category_sk,muscle_category_ge,latin_muscle_name,english_muscle_name,muscle_part,innervation,blood_supply,origo,insercio
+muscle_region_en,muscle_region_sk,muscle_region_ge,muscle_category_en,muscle_category_sk,muscle_category_ge,latin_muscle_name,english_muscle_name,muscle_part,type_of_movement,innervation,blood_supply,origo,insercio
 Muscles of the Head,Svaly hlavy,Kopfmuskeln,Extra-ocular muscles,Extraokulárne svaly,,Musculus rectus superior,Superior rectus muscle,,,,,
 Muscles of the Head,Svaly hlavy,Kopfmuskeln,Extra-ocular muscles,Extraokulárne svaly,,Musculus rectus inferior,Inferior rectus muscle,,,,,
 Muscles of the Head,Svaly hlavy,Kopfmuskeln,Extra-ocular muscles,Extraokulárne svaly,,Musculus rectus medialis,Medial rectus muscle,,,,,
@@ -120,7 +120,7 @@ Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Intercostal muscles,,,Muscu
 Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Intercostal muscles,,,Musculi intercostales intimi,Innermost intercostal muscles,,,,,
 Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Thoracic wall muscles,,,Musculi subcostales,Subcostal muscles,,,,,
 Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Thoracic wall muscles,,,Musculus transversus thoracis,Transversus thoracis muscle,,,,,
-Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Diaphragm,,,Diaphragma,Diaphragm,,,,,
+Muscles of the Thorax,Hrudné svaly,Thoraxmuskulatur,Diaphragm,Bránica,Diaphragma,Diaphragma,Diaphragm,,,,,
 Muscles of the Back,Svaly chrbta,Rückenmuskulatur,Superficial back muscles,,,Musculus trapezius,Trapezius muscle,,,,,
 Muscles of the Back,Svaly chrbta,Rückenmuskulatur,Superficial back muscles,,,Musculus latissimus dorsi,Latissimus dorsi muscle,,,,,
 Muscles of the Back,Svaly chrbta,Rückenmuskulatur,Superficial back muscles,,,Musculus levator scapulae,Levator scapulae muscle,,,,,

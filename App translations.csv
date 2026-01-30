@@ -1,6 +1,6 @@
 key;English;Deutch;Slovensky;Spanish;Norwegian;Icelandic
-choose_language;Choose language;Sprache wählen;Vybrať jazyk;Elegir idioma;Velg språk;Veldu tungumál
-language_settings;May later change in settings;Später in den Einstellungen ändern;Neskôr zmeniť v nastaveniach;Puede cambiarse más tarde en la configuración;Kan endres senere i innstillinger;Má breytast síðar í stillingum
+choose_language;Choose language;Sprache wählen;Vyberte jazyk;Elegir idioma;Velg språk;Veldu tungumál
+language_settings;May later change in settings;Später in den Einstellungen ändern;Neskôr môžete zmeniť v nastaveniach;Puede cambiarse más tarde en la configuración;Kan endres senere i innstillinger;Má breytast síðar í stillingum
 please_note; Please note: This web version is still in development and you may encounter bugs or missing features. If you encounter any issues, feel free to report them to this email: marcok6@uniba.sk. Thank you for your understanding and support!;Bitte beachten Sie: Diese Webversion befindet sich noch in der Entwicklung und Sie können auf Fehler oder fehlende Funktionen stoßen. Wenn Sie auf Probleme stoßen, können Sie diese gerne an diese E-Mail melden: marcok6@uniba.sk. Vielen Dank für Ihr Verständnis und Ihre Unterstützung!; Upozornenie: Na tomto webe stále prebieha vývoj a môžete naraziť na chyby alebo chýbajúce funkcie. Ak narazíte na akékoľvek problémy, neváhajte ich nahlásiť na tento e-mail: marcok6@uniba.sk. Ďakujeme za vaše porozumenie a podporu!;Tenga en cuenta: Esta versión web aún está en desarrollo y puede encontrar errores o funciones faltantes. Si encuentra algún problema, no dude en informarlo a este correo electrónico: marcok6@uniba.sk. ¡Gracias por su comprensión y apoyo!;Vennligst merk: Denne nettversjonen er fortsatt under utvikling, og du kan støte på feil eller manglende funksjoner. Hvis du støter på problemer, kan du gjerne rapportere dem til denne e-posten: marcok6@uniba.sk. Takk for din forståelse og støtte!;Vinsamlegast athugið: Þessi vefútgáfa er enn í þróun og þú gætir rekist á villur eða vantar eiginleika. Ef þú rekst á einhver vandamál, ekki hika við að tilkynna þau á þessa netfang: marcok6@uniba.sk. Þakka þér fyrir skilninginn og stuðninginn!
 Login or Register;Login or Register;Anmelden oder Registrieren;Prihlásiť sa alebo zaregistrovať;Iniciar sesión o registrarse;Logg inn eller registrer deg;Skrá inn eða nýskrá
 Login;Login;Anmelden;Prihlásiť sa;Iniciar sesión;Logg inn;Skrá inn
@@ -23,7 +23,7 @@ quiz;Quiz;Quiz;Kvíz;Cuestionario;Quiz;Próf
 back_lng;Back to Language selection;Zurück zur Sprachauswahl;Späť na výber jazyka;Volver a selección de idioma;Tilbake til språkutvalg;Til baka að tungumálaval
 enter_term;Enter term;Begriff eingeben;Zadajte pojem;Introduzca el término;Skriv inn begrep;Sláðu inn hugtak
 search;Search;Suchen;Hľadať;Buscar;Søk;Leita
-back;Back to Menu;Zurück zum Menü;Späť do menu;Volver al menú;Tilbake til meny;Til baka í valmynd
+back;Back;Zurück;Späť;Volver al menú;Tilbake til meny;Til baka í valmynd
 back to search;Back to Search;Zurück zur Suche;Späť na vyhľadávanie;Volver a la búsqueda;Tilbake til søk;Til baka í leit
 Save Term;Save Term;Begriff speichern;Uložiť pojem;Guardar término;Lagre begrep;Vista hugtak
 Please enter a search term.;Please enter a search term.;Bitte geben Sie einen Suchbegriff ein.;Zadajte hľadaný pojem.;Por favor, introduzca un término de búsqueda.;Skriv inn et søkebegrep.;Sláðu inn hugtak til að leita.
@@ -87,7 +87,7 @@ icelandic_definition;Icelandic Definition;Isländische Definition;Islandská def
 2nd_definition;Second Definition;Zweite Definition;Druhá definícia;Segunda definición;Andre definisjon;Önnur skilgreining
 Word combinations;Word combinations;Wortkombinationen;Kombinácie slov;Combinaciones de palabras;Ord kombinasjoner;Orðasambönd
 Words and definitions;Words and definitions;Wörter und Definitionen;Slová a definície;Palabras y definiciones;Ord og definisjoner;Orð og skilgreiningar
-Great job in {app_name}!;;; ;¡Buen trabajo en {app_name}!;Flott jobb i {app_name}!;Frábær vinna í {app_name}!
+Great job in {app_name}!;Great job in {app_name}!;Great job in {app_name}!;Great job in {app_name}!;¡Buen trabajo en {app_name}!;Flott jobb i {app_name}!;Frábær vinna í {app_name}!
 positive_feedback_1;Great job {app_name}!;Großartige Arbeit {app_name}!;Skvelá práca {app_name}!;¡Gran trabajo {app_name}!;Flott jobb {app_name}!;Góð vinna {app_name}!
 positive_feedback_2;Well done! Keep going {app_name}!;Gut gemacht! Weiter so {app_name}!;Výborne! Pokračuj ďalej {app_name}!;¡Sigue así {app_name}!;Bra jobbet! Fortsett sånn {app_name}!;Frábært! Haltu áfram {app_name}!
 positive_feedback_3;Excellent {app_name}! Be proud of youself!;Ausgezeichnet {app_name}! Sei stolz auf dich!;Vynikajúce {app_name}!;¡Excelente, {app_name}!;Utmerket {app_name}!;Framúrskarandi {app_name}!
@@ -100,12 +100,50 @@ correct_answer_definition;Correct Definition;Richtige Definition;Správna defin�
 wrong_answer_definition;Your Definition;Ihre Definition;Vaša definícia;Tu definición;Din definisjon;Þín skilgreining
 remove;Remove;Entfernen;Odstrániť;Eliminar;Fjern;Fjarlægja
 muscle_search_placeholder;Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars)
-muscle_search_any;Any;Any;Any;Any;Any;Any
-muscle_search_region;Region;Region;Region;Region;Region;Region
-muscle_search_category;Category;Category;Category;Category;Category;Category
-muscle_search_english_name;English name;English name;English name;English name;English name;English name
-muscle_search_latin_name;Latin name;Latin name;Latin name;Latin name;Latin name;Latin name
-muscle_search_insercio;Insercio;Insercio;Insercio;Insercio;Insercio;Insercio
-muscle_search_origo;Origo;Origo;Origo;Origo;Origo;Origo
-muscle_search_blood_supply;Blood supply;Blood supply;Blood supply;Blood supply;Blood supply;Blood supply
-muscle_search_innervation;Innervation;Innervation;Innervation;Innervation;Innervation;Innervation
+muscle_search_any;Any;Alle;?ubovo?n?;Any;Any;Any
+muscle_search_region;Region;Region;Oblas?;Region;Region;Region
+muscle_search_category;Category;Kategorie;Kateg?ria;Category;Category;Category
+muscle_search_english_name;English name;Englischer Name;Anglick? n?zov;English name;English name;English name
+muscle_search_latin_name;Latin name;Lateinischer Name;Latinsk? n?zov;Latin name;Latin name;Latin name
+muscle_search_insercio;Insercio;Ansatz;Insercio;Insercio;Insercio;Insercio
+muscle_search_origo;Origo;Ursprung;Origo;Origo;Origo;Origo
+muscle_search_blood_supply;Blood supply;Blutversorgung;Krvn? z?sobenie;Blood supply;Blood supply;Blood supply
+muscle_search_innervation;Innervation;Innervation;Inerv?cia;Innervation;Innervation;Innervation
+email_or_username;Email or username;Email or username;Email or username;;;
+forgot_password_title;Forgot password;Passwort vergessen;Zabudnuté heslo;;;
+forgot_password_desc;Enter your email to receive a reset link.;Geben Sie Ihre E-Mail ein, um einen Link zum Zurücksetzen zu erhalten.;Zadajte svoj e-mail na zaslanie odkazu na obnovenie.;;;
+forgot_password_email_placeholder;Email;E-Mail;E-mail;;;
+forgot_password_send;Send;Senden;Odoslať;;;
+forgot_password_cancel;Cancel;Zrušiť;Zrušiť;;;
+forgot_password_email_required;Email is required.;E-Mail ist erforderlich.;E-mail je povinný.;;;
+forgot_password_sending;Sending reset email...;Sende Reset-E-Mail...;Odosielam e-mail na obnovu...;;;
+forgot_password_failed;Reset failed: ;Zurücksetzen fehlgeschlagen: ;Obnova zlyhala: ;;;
+forgot_password_sent_msg;An automated password reset was delivered to your email. Please check also the spam folder in your email account. If there is any problem, contact me at medicaldictionaryjlf@gmail.com;Eine automatische Passwortzurücksetzung wurde an Ihre E-Mail gesendet. Bitte prüfen Sie auch den Spam-Ordner. Bei Problemen kontaktieren Sie mich unter medicaldictionaryjlf@gmail.com;Automatická obnova hesla bola odoslaná na váš e-mail. Skontrolujte prosím aj spamový priečinok. V prípade problému ma kontaktujte na medicaldictionaryjlf@gmail.com;;;
+continue_without_account;Continue without account;Weiter ohne Konto;Pokračovať bez konta;;;
+guest_title;Continue without account?;Ohne Konto fortfahren?;Pokračovať bez konta;;;
+guest_desc;Your progress won't be saved. To save your progress, login or register your account.;Ihr Fortschritt wird nicht gespeichert. Um ihn zu speichern, melden Sie sich an oder registrieren Sie ein Konto.;Váš postup nebude uložený. Ak chcete ukladať svoj postup, prihláste sa alebo si vytvorte účet.;;;
+continue;Continue;Weiter;Pokračovať;;;;
+settings_language;Language;Sprache;Jazyk;;;;
+settings_text_size;Text Size;Textgröße;Veľkosť textu;;;;
+text_size_small;Small;Klein;Malý;;;;
+text_size_large;Large;Groß;Veľký;;;;
+muscle_training;Muscle Training;Muskeltraining;Precvičovanie svalov;;;;
+anamnesis;Anamnesis;Anamnese;Anamnéza;;;;
+muscle_search_title;Muscle Search;Muskel Suche;Vyhľadávanie svalov;;;;
+muscle_quiz_title;Muscle Quiz;Muskel Quiz;Svalový kvíz;;;;
+search_muscle_text; Search muscle name (min 2 chars); Suchmuskelname suchen (min 2 Zeichen); Vyhľadajte názov svalu (min 2 znaky);;;;
+start;Start Muscle Quiz;Muskelquiz starten;Spustiť svalový kvíz;;;;
+muscle_search_any;Any;Alle;Ľubovoľné;;;
+muscle_search_region;Region;Region;Oblasť;;;
+muscle_search_category;Category;Kategorie;Kategória;;;
+muscle_search_english_name;English name;Englischer Name;Anglický názov;;;
+muscle_search_latin_name;Latin name;Lateinischer Name;Latinský názov;;;
+muscle_search_origo;Origo;Ursprung;Origo;;;
+muscle_search_insercio;Insercio;Ansatz;Insercio;;;
+muscle_search_blood_supply;Blood supply;Blutversorgung;Krvné zásobenie;;;
+muscle_search_innervation;Innervation;Innervation;Inervácia;;;
+muscle_quiz_select_region;Select a region and at least one group with data.;ählen Sie eine Region und mindestens eine Gruppe mit Daten.;Vyberte oblasť a aspoň jednu skupinu s údajmi.;;;
+muscle_search_type_of_movement;Type of movement;Bewegungsart;Typ pohybu;;;
+muscle_type_of_movement;Type of movement;Bewegungsart;Typ pohybu;;;
+reveal;Reveal;Zobraziť;Zobraziť;;;
+next;Next;Weiter;Ďalej;;;

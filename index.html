@@ -17,13 +17,29 @@
     --shadow:0 8px 30px rgba(17,24,39,.10);
     --radius:14px;
 
-    /* Optional hero background: put a file next to index.html, e.g. "hero.jpg", then uncomment */
-    /* --hero-bg: url('hero.jpg'); */
+    /* Background image: put a file next to index.html named "background.jpg" */
+    --hero-bg: url('background.jpg');
   }
 
   *{box-sizing:border-box;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
   html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);line-height:1.35}
+  body{margin:0;background:var(--bg);color:var(--text);line-height:1.35;font-size:var(--base-font-size,16px)}
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.15)),
+      var(--hero-bg);
+    background-size:cover;
+    background-position:center;
+    opacity:.95;
+    pointer-events:none;
+  }
+  :root{
+    --leafy-bg: var(--hero-bg);
+  }
 
   /* Header */
   header{
@@ -49,8 +65,8 @@
 
   /* Bigger cog */
   .settings-btn{
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(255,255,255,.55);
     border-radius:14px;
     color:white;
     cursor:pointer;
@@ -78,7 +94,7 @@
     box-shadow:var(--shadow);
   }
 
-  input,select,textarea,button{font-size:16px;padding:10px 12px}
+  input,select,textarea,button{font-size:inherit;padding:10px 12px}
   input,textarea,select{
     width:100%;
     margin:8px 0;
@@ -106,6 +122,7 @@
   button.primary:hover{background:#137a38}
   button.danger{background:#fff;border-color:rgba(220,38,38,.25);color:#991b1b}
   button.danger:hover{background:#fff5f5}
+  .linklike{background:transparent;border:none;color:var(--brand);cursor:pointer;text-decoration:underline;padding:8px 0}
 
   .row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
   .row > *{flex:1 1 180px}
@@ -164,9 +181,9 @@
     flex:1;
   }
   .anam-section{
-    padding:12px;
+    padding:8px;
     border:1px solid var(--border);
-    border-radius:14px;
+    border-radius:10px;
     background:#fff;
     margin-top:12px;
   }
@@ -227,6 +244,7 @@
     border-left:1px solid var(--border);
   }
   #settings-sidebar.open{right:0}
+  #settings-close:hover{background:#f8fafc}
 
   /* overlay (fix color) */
   #settings-overlay{
@@ -260,6 +278,9 @@
     background:#fff;
     margin-top:12px;
   }
+  .text-size-wrap{display:flex;flex-direction:column;gap:6px}
+  .text-size-labels{display:flex;justify-content:space-between;font-size:0.9em;color:var(--muted)}
+  .text-size-slider{width:100%}
   .settings-block h4{margin:0 0 10px 0;font-size:14px}
   .settings-actions button{width:100%;margin-top:10px}
   .settings-status{
@@ -267,6 +288,15 @@
     font-size:13px;
     color:var(--muted);
   }
+  .lang-flag{
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius:10px;
+    padding:6px 8px;
+    font-size:18px;
+    line-height:1;
+  }
+  .lang-flag:hover{background:#f8fafc}
 
   /* --- HERO (Menu screen) --- */
   #screen-menu{
@@ -278,9 +308,8 @@
     min-height:calc(100vh - 74px);
     display:flex;align-items:center;justify-content:center;
     background:
-      linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.62)),
-      var(--hero-bg, radial-gradient(1200px 600px at 50% 30%, rgba(255,255,255,.18), rgba(0,0,0,.22))),
-      linear-gradient(135deg, #052e16, #14532d); /* deep green */
+      linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.45)),
+      var(--hero-bg, var(--leafy-bg)); /* leafy */
     background-size:cover;
     background-position:center;
     padding:26px;
@@ -305,8 +334,8 @@
   #screen-menu .hero-card{
     margin:18px auto 0;
     width:min(920px, 100%);
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.30);
+    border:1px solid rgba(255,255,255,.25);
     border-radius:18px;
     padding:18px;
     backdrop-filter: blur(8px);
@@ -397,31 +426,30 @@
         </div>
       </div>
 
-      <!-- SETTINGS COG: hidden until logged in -->
-      <button type="button" class="settings-btn hidden" id="settings-toggle" aria-label="Settings">
+      <!-- SETTINGS COG: always visible -->
+      <button type="button" class="settings-btn" id="settings-toggle" aria-label="Settings">
         <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
       </button>
     </header>
 
     <div id="settings-overlay"></div>
     <div id="settings-sidebar">
-      <h3 style="margin:0 0 10px 0">Settings</h3>
-
-      <div class="settings-block">
-        <h4>Language</h4>
-        <label for="language" class="small">App language</label>
-        <select id="language">
-          <option value="English">English</option>
-          <option value="Deutch">Deutch</option>
-          <option value="Slovensky">Slovensky</option>
-          <option value="Spanish">Español</option>
-          <option value="Norwegian">Norsk</option>
-          <option value="Icelandic">Íslenska</option>
-        </select>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 0">
+        <h3 style="margin:0">Settings</h3>
+        <button type="button" id="settings-close" aria-label="Close settings" style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 8px;cursor:pointer">></button>
       </div>
 
-      <!-- MOVED HERE: Sync + Return to menu (only useful when logged in; buttons remain but can be used anytime) -->
       <div class="settings-block">
+        <h4 data-i18n="settings_language">Language</h4>
+        <div class="anam-row" style="justify-content:flex-start">
+          <button type="button" class="lang-btn lang-flag" data-lang="Slovensky" aria-label="Slovak">SK</button>
+          <button type="button" class="lang-btn lang-flag" data-lang="Deutch" aria-label="German">DE</button>
+          <button type="button" class="lang-btn lang-flag" data-lang="English" aria-label="English">EN</button>
+        </div>
+      </div>
+
+      <!-- MOVED HERE: Sync + Return to menu (only useful when logged in) -->
+      <div class="settings-block hidden" id="settings-sync-block">
         <h4>Account & Sync</h4>
 
         <div class="settings-actions">
@@ -431,23 +459,47 @@
         </div>
 
         <div class="settings-status">
-          Sync: <span id="sync-status">not synced</span> · Unsynced changes: <span id="sync-dirty-count">0</span>
+          Sync: <span id="sync-status">not synced</span> ? Unsynced changes: <span id="sync-dirty-count">0</span>
         </div>
 
         <div class="settings-status" style="margin-top:8px">
           Logged in as: <strong id="current-user">(none)</strong>
         </div>
       </div>
+
+      <div class="settings-block">
+        <h4 data-i18n="settings_text_size">Text size</h4>
+        <div class="text-size-wrap">
+          <div class="text-size-labels">
+            <span data-i18n="text_size_small">Small</span>
+            <span data-i18n="text_size_large">Large</span>
+          </div>
+          <input id="text-size-slider" class="text-size-slider" type="range" min="1" max="7" step="1" />
+        </div>
+      </div>
     </div>
 
     <div id="guest-overlay" class="modal-overlay hidden">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="guest-title">
-        <h3 id="guest-title">Continue without account?</h3>
-        <p>Your progress won't be saved. To save your progress, login or register your account.</p>
+        <h3 id="guest-title" data-i18n="guest_title">Continue without account?</h3>
+        <p data-i18n="guest_desc">Your progress won't be saved. To save your progress, login or register your account.</p>
         <div class="row">
-          <button type="button" id="guest-continue" class="primary">Continue</button>
-          <button type="button" id="guest-back">Back</button>
+          <button type="button" id="guest-continue" class="primary" data-i18n="continue">Continue</button>
+          <button type="button" id="guest-back" data-i18n="back">Back</button>
         </div>
+      </div>
+    </div>
+
+    <div id="forgot-overlay" class="modal-overlay hidden">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="forgot-title">
+        <h3 id="forgot-title" data-i18n="forgot_password_title">Forgot password</h3>
+        <p data-i18n="forgot_password_desc">Enter your email to receive a reset link.</p>
+        <input id="forgot-email" type="email" placeholder="Email" data-i18n-placeholder="forgot_password_email_placeholder" />
+        <div class="row">
+          <button type="button" id="forgot-send" class="primary" data-i18n="forgot_password_send">Send</button>
+          <button type="button" id="forgot-cancel" data-i18n="forgot_password_cancel">Cancel</button>
+        </div>
+        <p id="forgot-msg" class="muted"></p>
       </div>
     </div>
 
@@ -455,7 +507,6 @@
       <section id="screen-menu" class="screen">
         <div class="hero">
           <div class="hero-inner">
-            <h2 class="hero-title">Medical Dictionary</h2>
             <p class="hero-sub" data-i18n="welcome">Welcome</p>
 
             <div class="hero-card">
@@ -464,11 +515,7 @@
               <div class="lang-grid">
                 <button type="button" class="lang-btn" data-lang="English">English</button>
                 <button type="button" class="lang-btn" data-lang="Deutch">Deutch</button>
-                <button type="button" class="lang-btn" data-lang="Slovensky">Slovensky</button>
-                <button type="button" class="lang-btn" data-lang="Spanish">Español</button>
-                <button type="button" class="lang-btn" data-lang="Norwegian">Norsk</button>
-                <button type="button" class="lang-btn" data-lang="Icelandic">Íslenska</button>
-              </div>
+                <button type="button" class="lang-btn" data-lang="Slovensky">Slovensky</button>              </div>
 
               <div class="row" style="margin-top:16px">
                 <button type="button" id="to-login" class="primary" data-i18n="Login">Login</button>
@@ -476,7 +523,7 @@
               </div>
 
               <div class="row" style="margin-top:10px">
-                <button type="button" id="continue-guest">Continue without account</button>
+                <button type="button" id="continue-guest" data-i18n="continue_without_account">Continue without account</button>
               </div>
 
               <div class="small" style="margin-top:10px;opacity:.9" data-i18n="please_note">Please note: This web version is still in development…
@@ -492,19 +539,21 @@
 <div class="card">
           <div id="login-status" class="muted" style="display:none;margin-bottom:10px;padding:10px;border-radius:8px;"></div>
           <div id="login-form">
-            <input id="username" placeholder="Username" data-i18n-placeholder="Username" />
+            <input id="username" placeholder="Email or username" data-i18n-placeholder="email_or_username" />
             <input id="password" type="password" placeholder="Password" data-i18n-placeholder="Password" />
             <div class="row">
               <button type="button" id="btn-login" data-i18n="Login">Login</button>
               <button type="button" id="btn-show-register" data-i18n="Register">Register</button>
             </div>
+            <button type="button" id="btn-forgot" class="linklike" data-i18n="forgot_password_button">Forgot password?</button>
             <p id="login-msg" class="muted"></p>
           </div>
 
           <div id="register-form" class="hidden">
-            <input id="reg-username" placeholder="Username" />
-            <input id="reg-password" type="password" placeholder="Password" />
-            <input id="reg-password-confirm" type="password" placeholder="Confirm password" />
+            <input id="reg-username" placeholder="Username" data-i18n-placeholder="Username" />
+            <input id="reg-email" type="email" placeholder="Email" data-i18n-placeholder="Email" />
+            <input id="reg-password" type="password" placeholder="Password" data-i18n-placeholder="Password" />
+            <input id="reg-password-confirm" type="password" placeholder="Confirm password" data-i18n-placeholder="Confirm password" />
             <div class="row">
               <button type="button" id="btn-register" data-i18n="Register">Create account</button>
               <button type="button" id="btn-show-login">Back</button>
@@ -520,8 +569,8 @@
           <button type="button" id="to-search" data-i18n="search">Search Terms</button>
           <button type="button" id="to-entry" data-i18n="add_term">Add Term</button>
           <button type="button" id="to-quiz" data-i18n="quiz">Quiz</button>
-          <button type="button" id="to-muscle-training">Muscle training</button>
-          <button type="button" id="to-anamnesis">Anamnesis</button>
+          <button type="button" id="to-muscle-training" data-i18n="muscle_training">Muscle training</button>
+          <button type="button" id="to-anamnesis" data-i18n="anamnesis">Anamnesis</button>
           <button type="button" id="to-links">Links</button>
 
           <!-- REMOVED FROM HERE:
@@ -590,17 +639,18 @@
       </section>
 
       <section id="screen-muscle-training" class="screen hidden">
-        <h2>Muscle training</h2>
+        <h2 data-i18n="muscle_training">Muscle training</h2>
         <div class="card">
-          <h3 style="margin:0 0 8px 0">Search muscles</h3>
+          <h3 style="margin:0 0 8px 0" data-i18n="muscle_search_title">Search muscles</h3>
           <div class="row" style="align-items:center">
-            <input id="muscle-search-input" placeholder="Search muscle name (min 2 chars)" data-i18n-placeholder="muscle_search_placeholder" />
+            <input id="muscle-search-input" placeholder="Search muscle name (min 2 chars)" data-i18n-placeholder="search_muscle_text" />
             <select id="muscle-search-field">
               <option value="any" data-i18n="muscle_search_any">Any</option>
               <option value="region" data-i18n="muscle_search_region">Region</option>
               <option value="category" data-i18n="muscle_search_category">Category</option>
               <option value="english_muscle_name" data-i18n="muscle_search_english_name">English name</option>
               <option value="latin_muscle_name" data-i18n="muscle_search_latin_name">Latin name</option>
+              <option value="type_of_movement" data-i18n="muscle_search_type_of_movement">Type of movement</option>
               <option value="insercio" data-i18n="muscle_search_insercio">Insercio</option>
               <option value="origo" data-i18n="muscle_search_origo">Origo</option>
               <option value="blood_supply" data-i18n="muscle_search_blood_supply">Blood supply</option>
@@ -611,18 +661,18 @@
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="margin:0 0 8px 0">Muscle quiz</h3>
+          <h3 style="margin:0 0 8px 0" data-i18n="muscle_quiz_title">Muscle quiz</h3>
           <div id="muscle-region-list"></div>
           <div class="row">
-            <button type="button" id="muscle-quiz-start" class="primary">Start</button>
+            <button type="button" id="muscle-quiz-start" class="primary" data-i18n="start">Start</button>
             <button type="button" id="muscle-training-back" data-i18n="back">Back</button>
           </div>
           <p id="muscle-quiz-msg" class="muted"></p>
           <div id="muscle-quiz-area" class="hidden">
             <div id="muscle-quiz-fields"></div>
             <div class="row">
-              <button type="button" id="muscle-quiz-reveal">Reveal</button>
-              <button type="button" id="muscle-quiz-next" class="primary">Next</button>
+              <button type="button" id="muscle-quiz-reveal" data-i18n="reveal">Reveal</button>
+              <button type="button" id="muscle-quiz-next" class="primary" data-i18n="next">Next</button>
             </div>
           </div>
         </div>
@@ -1567,10 +1617,14 @@ async function supaGetSession(){
   return data.session;
 }
 
-async function supaSignUp(email, password){
+async function supaSignUp(email, password, displayName){
   const c = initSupabase();
   if(!c) throw new Error("Supabase not configured");
-  const { error } = await c.auth.signUp({ email, password });
+  const { error } = await c.auth.signUp({
+    email,
+    password,
+    options: { data: { name: displayName || "" } }
+  });
   if(error) throw error;
 }
 
@@ -1578,6 +1632,15 @@ async function supaSignIn(email, password){
   const c = initSupabase();
   if(!c) throw new Error("Supabase not configured");
   const { error } = await c.auth.signInWithPassword({ email, password });
+  if(error) throw error;
+}
+
+async function supaRequestPasswordReset(email){
+  const c = initSupabase();
+  if(!c) throw new Error("Supabase not configured");
+  const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
+  const redirectTo = base + "reset-password.html";
+  const { error } = await c.auth.resetPasswordForEmail(email, { redirectTo });
   if(error) throw error;
 }
 
@@ -1607,6 +1670,26 @@ function setLocalTerms(terms){ writeJsonLS(cacheKeyTerms(), terms || []); update
 
 function getLocalReview(){ return readJsonLS(cacheKeyReview(), []); }
 function setLocalReview(items){ writeJsonLS(cacheKeyReview(), items || []); updateDirtyCount(); }
+
+function cacheKeyUserMap(){ return "cache/user_display_map"; }
+function getLocalUserMap(){ return readJsonLS(cacheKeyUserMap(), []); }
+function setLocalUserMap(items){ writeJsonLS(cacheKeyUserMap(), items || []); }
+function setDisplayNameMapping(name, email){
+  if(!name || !email) return;
+  const map = getLocalUserMap();
+  const key = name.trim().toLowerCase();
+  const existing = map.find(x => (x.name || '').toLowerCase() === key);
+  if(existing) existing.email = email;
+  else map.push({ name, email });
+  setLocalUserMap(map);
+}
+function lookupEmailByDisplayName(name){
+  const key = String(name || '').trim().toLowerCase();
+  if(!key) return '';
+  const map = getLocalUserMap();
+  const hit = map.find(x => (x.name || '').toLowerCase() === key);
+  return hit ? hit.email : '';
+}
 
 function countDirty(){
   const t = getLocalTerms().filter(x=>x && x.dirty).length;
@@ -2055,6 +2138,8 @@ function applyTranslationsToDom(){
 const MUSCLE_HIDDEN = "****";
 const MUSCLE_SEARCH_FIELD_KEY = "muscle_search_field";
 const ANAMNESIS_STORAGE_KEY = "anamnesis_form_v1";
+const TEXT_SIZE_KEY = "text_size";
+const TEXT_SIZES = [13,14,15,16,17,18,19];
 let muscleQuizPool = [];
 let muscleQuizCurrent = null;
 let muscleQuizRevealed = false;
@@ -2158,6 +2243,7 @@ function renderMuscleSearchResults(){
     if(mode === 'category') return includesQuery(r[categoryField], q);
     if(mode === 'english_muscle_name') return includesQuery(r.english_muscle_name, q);
     if(mode === 'latin_muscle_name') return includesQuery(r.latin_muscle_name, q);
+    if(mode === 'type_of_movement') return includesQuery(r.type_of_movement, q);
     if(mode === 'insercio') return includesQuery(r.insercio, q);
     if(mode === 'origo') return includesQuery(r.origo, q);
     if(mode === 'blood_supply') return includesQuery(r.blood_supply, q);
@@ -2168,6 +2254,7 @@ function renderMuscleSearchResults(){
       includesQuery(r[regionField], q) ||
       includesQuery(r[categoryField], q) ||
       includesQuery(r.muscle_part, q) ||
+      includesQuery(r.type_of_movement, q) ||
       includesQuery(r.innervation, q) ||
       includesQuery(r.blood_supply, q) ||
       includesQuery(r.origo, q) ||
@@ -2189,6 +2276,7 @@ function renderMuscleSearchResults(){
     addMuscleField(card, 'Latin name', r.latin_muscle_name, null, false);
     addMuscleField(card, 'English name', r.english_muscle_name, null, false);
     addMuscleField(card, 'Muscle part', r.muscle_part, null, false);
+    addMuscleField(card, t('muscle_type_of_movement') || 'Type of movement', r.type_of_movement, null, false);
     addMuscleField(card, 'Innervation', r.innervation, null, false);
     addMuscleField(card, 'Blood supply', r.blood_supply, null, false);
     addMuscleField(card, 'Origo', r.origo, null, false);
@@ -2334,6 +2422,7 @@ function renderMuscleQuizFields(){
   addMuscleField(fields, 'Latin name', v(muscleQuizCurrent.latin_muscle_name, 'latin'), 'latin', true);
   addMuscleField(fields, 'English name', v(muscleQuizCurrent.english_muscle_name, 'english'), 'english', true);
   addMuscleField(fields, 'Muscle part', v(muscleQuizCurrent.muscle_part, 'part'), 'part', true);
+  addMuscleField(fields, t('muscle_type_of_movement') || 'Type of movement', v(muscleQuizCurrent.type_of_movement, 'movement'), 'movement', true);
   addMuscleField(fields, 'Innervation', v(muscleQuizCurrent.innervation, 'innervation'), 'innervation', true);
   addMuscleField(fields, 'Blood supply', v(muscleQuizCurrent.blood_supply, 'blood_supply'), 'blood_supply', true);
   addMuscleField(fields, 'Origo', v(muscleQuizCurrent.origo, 'origo'), 'origo', true);
@@ -2354,7 +2443,7 @@ function startMuscleQuiz(){
   if(msg) msg.textContent = '';
   muscleQuizPool = buildMuscleQuizPool();
   if(muscleQuizPool.length === 0){
-    if(msg) msg.textContent = 'Select a region and at least one group with data.';
+    if(msg) msg.textContent = t('muscle_quiz_select_region') || 'Select a region and at least one group with data.';
     muscleQuizCurrent = null;
     renderMuscleQuizFields();
     return;
@@ -2419,27 +2508,37 @@ function clearAnamnesisForm(){
   if(status) status.textContent = 'Cleared.';
 }
 
+function applyTextSize(step){
+  const clamped = Math.max(1, Math.min(7, Number(step) || 4));
+  const px = TEXT_SIZES[clamped - 1] || 16;
+  document.body.style.setProperty('--base-font-size', px + 'px');
+  localStorage.setItem(TEXT_SIZE_KEY, String(clamped));
+}
+
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   const el = document.getElementById(id);
   if(el) el.classList.remove('hidden');
 }
 
-/* === NEW: auth UI (cog only after login + header user) === */
+/* === NEW: auth UI (cog always visible + header user) === */
 function updateAuthUI(){
   const cog = document.getElementById('settings-toggle');
   const who = document.getElementById('header-whoami');
   const whoUser = document.getElementById('header-user');
+  const syncBlock = document.getElementById('settings-sync-block');
 
   const loggedIn = !!state.currentUser;
   if(loggedIn){
-    cog.classList.remove('hidden');
+    if(cog) cog.classList.remove('hidden');
     who.classList.remove('hidden');
     whoUser.textContent = state.currentUser;
+    if(syncBlock) syncBlock.classList.remove('hidden');
   } else {
-    cog.classList.add('hidden');
+    if(cog) cog.classList.remove('hidden');
     who.classList.add('hidden');
-    whoUser.textContent = '—';
+    whoUser.textContent = '???';
+    if(syncBlock) syncBlock.classList.add('hidden');
     // ensure settings is closed if user logs out
     document.getElementById('settings-sidebar').classList.remove('open');
     document.getElementById('settings-overlay').classList.remove('open');
@@ -2473,6 +2572,7 @@ async function init(){
   const settingsBtn = document.getElementById('settings-toggle');
   const sidebar = document.getElementById('settings-sidebar');
   const overlay = document.getElementById('settings-overlay');
+  const settingsClose = document.getElementById('settings-close');
 
   function openSettings(){
     sidebar.classList.add('open');
@@ -2489,6 +2589,7 @@ async function init(){
 
   if(settingsBtn) settingsBtn.addEventListener('click', toggleSettings);
   if(overlay) overlay.addEventListener('click', closeSettings);
+  if(settingsClose) settingsClose.addEventListener('click', closeSettings);
 
   // Hero language buttons
   document.querySelectorAll('.lang-btn').forEach(btn=>{
@@ -2498,6 +2599,15 @@ async function init(){
       await setLanguage(lang);
     });
   });
+
+  // Text size selection (7 steps)
+  const sizeSlider = document.getElementById('text-size-slider');
+  const savedSize = localStorage.getItem(TEXT_SIZE_KEY) || '4';
+  applyTextSize(savedSize);
+  if(sizeSlider){
+    sizeSlider.value = savedSize;
+    sizeSlider.addEventListener('input', ()=> applyTextSize(sizeSlider.value));
+  }
 on('to-login','click', ()=> showScreen('screen-login'));
   on('to-register','click', ()=> {
     showScreen('screen-login');
@@ -2514,17 +2624,29 @@ on('to-login','click', ()=> showScreen('screen-login'));
     if(overlay) overlay.classList.add('hidden');
   }
 
+  function openForgotModal(){
+    const overlay = document.getElementById('forgot-overlay');
+    const msg = document.getElementById('forgot-msg');
+    const email = document.getElementById('forgot-email');
+    if(msg) msg.textContent = '';
+    if(email){
+      const fromLogin = document.getElementById('username')?.value?.trim() || '';
+      email.value = fromLogin.includes('@') ? fromLogin : '';
+    }
+    if(overlay) overlay.classList.remove('hidden');
+  }
+  function closeForgotModal(){
+    const overlay = document.getElementById('forgot-overlay');
+    if(overlay) overlay.classList.add('hidden');
+  }
+
   on('continue-guest','click', ()=> openGuestModal());
   on('guest-back','click', ()=> closeGuestModal());
   on('guest-continue','click', ()=>{
     closeGuestModal();
     showScreen('screen-submenu');
   });
-
-  document.getElementById('language').value = state.language;
-  on('language','change', async (e)=>{
-    await setLanguage(e.target.value);
-  });
+  on('forgot-cancel','click', ()=> closeForgotModal());
 on('btn-show-register','click', ()=>{
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.remove('hidden');
@@ -2537,12 +2659,13 @@ on('btn-show-register','click', ()=>{
   on('btn-register','click', async () => {
     clearLoginStatus();
     const username = document.getElementById('reg-username').value.trim();
+    const emailInput = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const confirm = document.getElementById('reg-password-confirm').value;
     const msg = document.getElementById('register-msg');
     msg.textContent='';
 
-    if (!username || !password) {
+    if (!username || !emailInput || !password) {
       setLoginStatus("Please fill all fields", "error");
       return;
     }
@@ -2551,11 +2674,12 @@ on('btn-show-register','click', ()=>{
       return;
     }
 
-    const email = normalizeLoginIdentifier(username);
+    const email = emailInput;
 
     try {
       setLoginStatus("Creating account…");
-      await supaSignUp(email, password);
+      await supaSignUp(email, password, username);
+      setDisplayNameMapping(username, email);
 
       const session = await supaGetSession();
       if (session) {
@@ -2565,6 +2689,7 @@ on('btn-show-register','click', ()=>{
       }
       msg.textContent = t('Registration successful! You can now log in.') || 'Registration successful! You can now log in.';
       document.getElementById('reg-username').value='';
+      document.getElementById('reg-email').value='';
       document.getElementById('reg-password').value='';
       document.getElementById('reg-password-confirm').value='';
     } catch (e) {
@@ -2582,21 +2707,29 @@ on('btn-show-register','click', ()=>{
     msg.textContent='';
 
     if (!username || !password) {
-      setLoginStatus("Enter username and password", "error");
+      setLoginStatus(t("login_missing_fields") || "Enter username and password", "error");
       return;
     }
 
-    const email = normalizeLoginIdentifier(username);
+    let email = "";
+    if(username.includes("@")) email = username;
+    else email = lookupEmailByDisplayName(username);
+    if(!email){
+      setLoginStatus("Unknown display name. Use your email.", "error");
+      return;
+    }
 
     try {
-      setLoginStatus("Signing in…");
+      setLoginStatus("Signing in???");
       await supaSignIn(email, password);
 
-      state.currentUser = username;
-      state.currentUserEmail = email;
+      const session = await supaGetSession();
+      const displayName = session?.user?.user_metadata?.name || username;
+      state.currentUser = displayName;
+      state.currentUserEmail = session?.user?.email || email;
 
       // Update who is logged in (settings + header)
-      document.getElementById('current-user').textContent = username;
+      document.getElementById('current-user').textContent = displayName;
       updateAuthUI();
 
       setLoginStatus("Signed in. Sync active.", "ok");
@@ -2627,6 +2760,28 @@ try{
       console.error(e);
       setLoginStatus("Login failed: " + e.message, "error");
       msg.textContent = t('Invalid credentials.') || 'Invalid credentials.';
+    }
+  });
+
+  on('btn-forgot','click', async () => {
+    openForgotModal();
+  });
+
+  on('forgot-send','click', async () => {
+    clearLoginStatus();
+    const msg = document.getElementById('forgot-msg');
+    const email = document.getElementById('forgot-email').value.trim();
+    if(!email){
+      if(msg) msg.textContent = t('forgot_password_email_required') || 'Email is required.';
+      return;
+    }
+    try{
+      if(msg) msg.textContent = t('forgot_password_sending') || 'Sending reset email...';
+      await supaRequestPasswordReset(email);
+      if(msg) msg.textContent = t('forgot_password_sent_msg') || 'Reset email sent.';
+    }catch(e){
+      console.error(e);
+      if(msg) msg.textContent = (t('forgot_password_failed') || 'Reset failed: ') + (e.message || e);
     }
   });
 
