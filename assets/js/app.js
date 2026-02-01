@@ -1573,6 +1573,7 @@ async function init(){
   showScreen(start);
   if(start === "screen-anamnesis") loadAnamnesisForm();
   applyTranslationsToDom();
+}
 
 
 function startQuiz(){
