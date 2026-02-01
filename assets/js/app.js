@@ -125,12 +125,18 @@ async function downloadFromStorage(filename){
  */
 async function refreshBaseFilesCache(){
   const meta = await storageListMeta();
+  const checkedAt = new Date().toLocaleString();
+  let updatedAny = false;
+  let downloadFailed = false;
+  let usedCache = false;
+  setBaseFilesStatus("Base files: checking Supabase...");
 
   for(const f of STORAGE_FILES){
     const cacheKey = "file:" + f.cacheId;
     let cached = null;
 
     try{ cached = await idbGet(cacheKey); }catch(e){ cached = null; }
+    if(cached?.text) usedCache = true;
 
     const remote = meta ? meta[f.filename] : null;
     const remoteUpdated = remote?.updated_at || remote?.created_at || null;
@@ -147,10 +153,24 @@ async function refreshBaseFilesCache(){
           filename: f.filename,
           saved_at: new Date().toISOString()
         });
+        updatedAny = true;
       }catch(e){
         console.warn("Storage download failed for", f.filename, "(continuing):", e.message || e);
+        downloadFailed = true;
       }
     }
+  }
+
+  if(updatedAny){
+    setBaseFilesStatus("Base files: cached from Supabase at " + checkedAt);
+  }else if(meta){
+    setBaseFilesStatus("Base files: checked Supabase (no updates) at " + checkedAt);
+  }else if(usedCache){
+    setBaseFilesStatus("Base files: using cached copy (offline?)");
+  }else if(downloadFailed){
+    setBaseFilesStatus("Base files: local fallback (download failed)");
+  }else{
+    setBaseFilesStatus("Base files: local fallback (offline)");
   }
 }
 
@@ -293,6 +313,18 @@ function updateDirtyCount(){
 function setSyncStatus(msg){
   const el = document.getElementById("sync-status");
   if(el) el.textContent = msg;
+}
+const BASE_FILES_STATUS_KEY = "base_files_status";
+function setBaseFilesStatus(msg){
+  const el = document.getElementById("base-files-status");
+  if(el) el.textContent = msg;
+  try{ localStorage.setItem(BASE_FILES_STATUS_KEY, msg); }catch(e){}
+}
+function loadBaseFilesStatus(){
+  try{
+    const msg = localStorage.getItem(BASE_FILES_STATUS_KEY);
+    if(msg) setBaseFilesStatus(msg);
+  }catch(e){}
 }
 
 // -------- Supabase data access (normalized tables) --------
@@ -1099,14 +1131,18 @@ function applyTextSize(step){
   localStorage.setItem(TEXT_SIZE_KEY, String(clamped));
 }
 
-function showScreen(id){
+function showScreen(id, opts = {}){
+  const { updateHistory = true, replaceHistory = false } = opts;
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   const el = document.getElementById(id);
   if(el) el.classList.remove('hidden');
 
   // Persist current view in the URL (refresh keeps screen)
   const h = "#" + encodeURIComponent(id);
-  if(location.hash !== h) history.replaceState(null, "", h);
+  if(updateHistory && location.hash !== h){
+    if(replaceHistory) history.replaceState(null, "", h);
+    else location.hash = h;
+  }
 
   // Also persist in localStorage as a backup
   try{ localStorage.setItem("nav/last_screen", id); }catch(e){}
@@ -1164,6 +1200,7 @@ function initialScreenForSection(section){
 }
 
 async function init(){
+  loadBaseFilesStatus();
   // Always try to refresh base CSV cache first (newest possible version)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
 
@@ -1570,7 +1607,7 @@ async function init(){
     (saved && document.getElementById(saved)) ? saved :
     fallback;
 
-  showScreen(start);
+  showScreen(start, { replaceHistory: true });
   if(start === "screen-anamnesis") loadAnamnesisForm();
   applyTranslationsToDom();
 }
@@ -1673,5 +1710,10 @@ function shuffle(arr){
     [arr[i],arr[j]]=[arr[j],arr[i]];
   }
 }
+
+window.addEventListener('hashchange', ()=>{
+  const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+  if(id && document.getElementById(id)) showScreen(id, { updateHistory: false });
+});
 
 window.addEventListener('DOMContentLoaded', ()=>{ init(); });
