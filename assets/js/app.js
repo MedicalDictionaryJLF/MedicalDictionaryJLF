@@ -128,18 +128,12 @@ async function downloadFromStorage(filename){
  */
 async function refreshBaseFilesCache(){
   const meta = await storageListMeta();
-  const checkedAt = new Date().toLocaleString();
-  let updatedAny = false;
-  let downloadFailed = false;
-  let usedCache = false;
-  setBaseFilesStatus("Base files: checking Supabase...");
 
   for(const f of STORAGE_FILES){
     const cacheKey = "file:" + f.cacheId;
     let cached = null;
 
     try{ cached = await idbGet(cacheKey); }catch(e){ cached = null; }
-    if(cached?.text) usedCache = true;
 
     const remote = meta ? meta[f.filename] : null;
     const remoteUpdated = remote?.updated_at || remote?.created_at || null;
@@ -156,24 +150,10 @@ async function refreshBaseFilesCache(){
           filename: f.filename,
           saved_at: new Date().toISOString()
         });
-        updatedAny = true;
       }catch(e){
         console.warn("Storage download failed for", f.filename, "(continuing):", e.message || e);
-        downloadFailed = true;
       }
     }
-  }
-
-  if(updatedAny){
-    setBaseFilesStatus("Base files: cached from Supabase at " + checkedAt);
-  }else if(meta){
-    setBaseFilesStatus("Base files: checked Supabase (no updates) at " + checkedAt);
-  }else if(usedCache){
-    setBaseFilesStatus("Base files: using cached copy (offline?)");
-  }else if(downloadFailed){
-    setBaseFilesStatus("Base files: local fallback (download failed)");
-  }else{
-    setBaseFilesStatus("Base files: local fallback (offline)");
   }
 }
 
@@ -316,18 +296,6 @@ function updateDirtyCount(){
 function setSyncStatus(msg){
   const el = document.getElementById("sync-status");
   if(el) el.textContent = msg;
-}
-const BASE_FILES_STATUS_KEY = "base_files_status";
-function setBaseFilesStatus(msg){
-  const el = document.getElementById("base-files-status");
-  if(el) el.textContent = msg;
-  try{ localStorage.setItem(BASE_FILES_STATUS_KEY, msg); }catch(e){}
-}
-function loadBaseFilesStatus(){
-  try{
-    const msg = localStorage.getItem(BASE_FILES_STATUS_KEY);
-    if(msg) setBaseFilesStatus(msg);
-  }catch(e){}
 }
 
 // -------- Supabase data access (normalized tables) --------
@@ -1156,6 +1124,7 @@ function updateAuthUI(){
   const who = document.getElementById('header-whoami');
   const whoUser = document.getElementById('header-user');
   const syncBlock = document.getElementById('settings-sync-block');
+  const loginBlock = document.getElementById('settings-login-block');
 
   const loggedIn = !!state.currentUser;
   if(loggedIn){
@@ -1163,11 +1132,13 @@ function updateAuthUI(){
     if(who) who.classList.remove('hidden');
     if(whoUser) whoUser.textContent = state.currentUser;
     if(syncBlock) syncBlock.classList.remove('hidden');
+    if(loginBlock) loginBlock.classList.add('hidden');
   } else {
     if(cog) cog.classList.remove('hidden');
     if(who) who.classList.add('hidden');
     if(whoUser) whoUser.textContent = '???';
     if(syncBlock) syncBlock.classList.add('hidden');
+    if(loginBlock) loginBlock.classList.remove('hidden');
     // ensure settings is closed if user logs out
     const sidebar = document.getElementById('settings-sidebar');
     const overlay = document.getElementById('settings-overlay');
@@ -1203,7 +1174,6 @@ function initialScreenForSection(section){
 }
 
 async function init(){
-  loadBaseFilesStatus();
   // Always try to refresh base CSV cache first (newest possible version)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
 
@@ -1445,6 +1415,13 @@ async function init(){
   on('to-anamnesis','click', ()=> { showScreen('screen-anamnesis'); loadAnamnesisForm(); });
 
   on('to-menu','click', ()=> { showScreen('screen-menu'); });
+  on('to-login-from-settings-public','click', ()=>{
+    showScreen('screen-login');
+    const sidebar = document.getElementById('settings-sidebar');
+    const overlay = document.getElementById('settings-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('open');
+  });
   on('to-login-from-settings','click', async ()=> { await logoutToLogin(); });
   on('btn-sync','click', async ()=>{ await syncNow(); });
 
@@ -1599,16 +1576,7 @@ async function init(){
 
   updateAuthUI();
 
-  const section = currentSection();
-  const fallback = initialScreenForSection(section);
-
-  const hashId = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-  const saved = localStorage.getItem("nav/last_screen") || "";
-
-  const start =
-    (hashId && document.getElementById(hashId)) ? hashId :
-    (saved && document.getElementById(saved)) ? saved :
-    fallback;
+  const start = "screen-menu";
 
   showScreen(start, { replaceHistory: true });
   if(start === "screen-anamnesis") loadAnamnesisForm();
