@@ -1103,8 +1103,14 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
   const el = document.getElementById(id);
   if(el) el.classList.remove('hidden');
-}
 
+  // Persist current view in the URL (refresh keeps screen)
+  const h = "#" + encodeURIComponent(id);
+  if(location.hash !== h) history.replaceState(null, "", h);
+
+  // Also persist in localStorage as a backup
+  try{ localStorage.setItem("nav/last_screen", id); }catch(e){}
+}
 /* === NEW: auth UI (cog always visible + header user) === */
 function updateAuthUI(){
   const cog = document.getElementById('settings-toggle');
@@ -1553,13 +1559,21 @@ async function init(){
 
   updateAuthUI();
 
-  // ====== AUTO START SCREEN based on URL section ======
   const section = currentSection();
-  const start = initialScreenForSection(section);
+  const fallback = initialScreenForSection(section);
+
+  const hashId = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+  const saved = localStorage.getItem("nav/last_screen") || "";
+
+  const start =
+    (hashId && document.getElementById(hashId)) ? hashId :
+    (saved && document.getElementById(saved)) ? saved :
+    fallback;
+
   showScreen(start);
   if(start === "screen-anamnesis") loadAnamnesisForm();
   applyTranslationsToDom();
-}
+
 
 function startQuiz(){
   const from = document.getElementById('quiz-from').value;
