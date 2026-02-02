@@ -509,7 +509,6 @@
                   <input name="pmh_other_notes" placeholder="Notes" />
                 </div>
               </div>
-              <textarea name="pmh_notes" placeholder="Notes"></textarea>
               <div style="margin-top:8px">
                 <strong>Specialist Care</strong>
                 <div class="anam-row">
@@ -532,12 +531,26 @@
               </div>
               <div style="margin-top:8px">
                 <strong>Operations & Hospitalizations</strong>
-                <textarea name="pmh_operations" placeholder="Date - Procedure/Diagnosis - Outcome"></textarea>
+                <div class="anam-repeater" data-repeater="pmh_operations">
+                  <div class="anam-repeater-head">
+                    <span>Date</span><span>Procedure/Diagnosis</span><span>Outcome</span><span></span>
+                  </div>
+                  <div class="anam-repeater-body" id="pmh-operations-rows"></div>
+                  <button type="button" id="pmh-operations-add" class="anam-add-row">+</button>
+                </div>
                 <div class="anam-row">
                   <span>Planned operation now</span>
                   <label><input type="radio" name="pmh_planned_op" value="yes" /> Yes</label>
                   <label><input type="radio" name="pmh_planned_op" value="no" /> No</label>
-                  <input name="pmh_planned_op_details" placeholder="If yes, details" />
+                </div>
+                <div id="pmh-planned-op-wrap" class="hidden" style="margin-top:8px">
+                  <div class="anam-repeater" data-repeater="pmh_planned_op">
+                    <div class="anam-repeater-head">
+                      <span>Date</span><span>Procedure/Diagnosis</span><span>Outcome</span><span></span>
+                    </div>
+                    <div class="anam-repeater-body" id="pmh-planned-op-rows"></div>
+                    <button type="button" id="pmh-planned-op-add" class="anam-add-row">+</button>
+                  </div>
                 </div>
               </div>
               <div style="margin-top:8px">
@@ -569,7 +582,13 @@
             </div>
             <div class="anam-section">
               <h3>7. Medication</h3>
-              <textarea name="medication_list" placeholder="Drug - Dose - Frequency - Indication"></textarea>
+              <div class="anam-repeater" data-repeater="medication_list">
+                <div class="anam-repeater-head">
+                  <span>Drug</span><span>Dose</span><span>Frequency</span><span>Indication</span><span></span>
+                </div>
+                <div class="anam-repeater-body" id="medication-rows"></div>
+                <button type="button" id="medication-add" class="anam-add-row">+</button>
+              </div>
               <div class="anam-row">
                 <label><input type="radio" name="med_otc" value="no" /> No OTC drugs</label>
                 <label><input type="radio" name="med_otc" value="yes" /> OTC drugs</label>
@@ -654,7 +673,13 @@
 
             <div class="anam-section">
               <h3>9. Family History</h3>
-              <textarea name="family_history_details" placeholder="Disease - Type - Relation"></textarea>
+              <div class="anam-repeater" data-repeater="family_history_details">
+                <div class="anam-repeater-head">
+                  <span>Choroba</span><span>Detaily</span><span>Relation to p.</span><span></span>
+                </div>
+                <div class="anam-repeater-body" id="family-history-rows"></div>
+                <button type="button" id="family-history-add" class="anam-add-row">+</button>
+              </div>
               <div class="anam-row">
                 <span>Parents alive</span>
                 <label><input type="checkbox" name="family_parents_both" /> Both</label>
@@ -678,7 +703,6 @@
                 <label><input type="checkbox" name="epi_covid_infection" /> COVID-19 infection</label>
                 <input name="epi_covid_infection_number" placeholder="Number" />
               </div>
-              <textarea name="epi_notes" placeholder="Notes"></textarea>
             </div>
 
             <div class="anam-section">
@@ -706,14 +730,24 @@
               </div>
               <div class="anam-row">
                 <span>Housing</span>
-                <label><input type="checkbox" name="social_house" /> House</label>
-                <label><input type="checkbox" name="social_apartment" /> Apartment</label>
-                <input name="social_apartment_floor" placeholder="Which floor" />
-                <label><input type="checkbox" name="social_elevator_yes" /> Elevator yes</label>
-                <label><input type="checkbox" name="social_elevator_no" /> Elevator no</label>
-                <label><input type="checkbox" name="social_homeless" /> Homeless</label>
+                <label><input type="checkbox" id="social-house" name="social_house" /> House</label>
+                <label><input type="checkbox" id="social-flat" name="social_flat" /> Flat</label>
+                <label><input type="checkbox" id="social-homeless" name="social_homeless" /> Homeless</label>
               </div>
-              <textarea name="social_notes" placeholder="Notes"></textarea>
+              <div id="social-house-wrap" class="hidden">
+                <textarea name="social_house_notes" placeholder="House notes"></textarea>
+              </div>
+              <div id="social-flat-wrap" class="hidden">
+                <input name="social_flat_floor" placeholder="Which floor" />
+                <div class="anam-row">
+                  <label><input type="checkbox" name="social_elevator_yes" /> Elevator yes</label>
+                  <label><input type="checkbox" name="social_elevator_no" /> Elevator no</label>
+                </div>
+                <textarea name="social_flat_notes" placeholder="Flat notes"></textarea>
+              </div>
+              <div id="social-homeless-wrap" class="hidden">
+                <textarea name="social_homeless_notes" placeholder="Homeless notes"></textarea>
+              </div>
             </div>
 
             <div class="anam-section">
@@ -760,7 +794,6 @@
                   <input name="abuse_drugs_notes" placeholder="Notes" />
                 </div>
               </div>
-              <textarea name="abuse_notes" placeholder="Notes"></textarea>
             </div>
             <div class="anam-section">
               <h3>13. Status Praesens Generalis (SPG)</h3>
@@ -874,7 +907,6 @@
                 <label><input type="checkbox" name="vital_taken_chart" /> From Pt. charts</label>
                 <input name="vital_taken_when" placeholder="If from charts, when" />
               </div>
-              <textarea name="vital_notes" placeholder="Notes"></textarea>
             </div>
 
             <div class="anam-section">
@@ -938,8 +970,6 @@
                   <input name="spl_vital_monitor_notes" placeholder="Notes" />
                 </div>
               </div>
-              <textarea name="spl_notes" placeholder="Notes"></textarea>
-
               <div style="margin-top:10px">
                 <strong>Head</strong>
                 <textarea name="spl_head_notes" placeholder="Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx"></textarea>
@@ -1005,17 +1035,29 @@
               </table>
             </details>
           </form>
-          <div class="row" style="margin-top:12px">
-            <button type="button" id="anamnesis-clear" class="danger">Clear form</button>
-            <button type="button" id="anamnesis-back" data-i18n="back">Back</button>
-          </div>
-          <p id="anamnesis-status" class="muted"></p>
         </div>
+        <div class="row" style="margin-top:12px">
+          <button type="button" id="anamnesis-clear" class="danger" data-i18n="clear_form">Clear form</button>
+          <button type="button" id="anamnesis-back" data-i18n="back">Back</button>
+        </div>
+        <p id="anamnesis-status" class="muted"></p>
+        <button type="button" id="anamnesis-notes-toggle" class="notes-toggle-btn">Notes</button>
+        <aside id="anamnesis-notes-drawer" class="anam-notes-drawer">
+          <div class="anam-notes-head">
+            <strong>Notes</strong>
+            <button type="button" id="anamnesis-notes-close">×</button>
+          </div>
+          <label class="anam-bullets-toggle">
+            <input type="checkbox" id="anamnesis-notes-bullets" />
+            Bullet mode
+          </label>
+          <textarea id="anamnesis-notes-text" name="anamnesis_global_notes" placeholder="Write your general notes here..."></textarea>
+        </aside>
       </section>
 
     </main>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module" src="assets/js/app.js?v=3"></script>
+<script type="module" src="assets/js/app.js?v=5"></script>
 </body>
 </html>
