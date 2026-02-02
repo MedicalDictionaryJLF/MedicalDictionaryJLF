@@ -17,13 +17,11 @@ function currentSection(){
   return "root";
 }
 
-// If you are in /main/ or /anamnesis/ etc. you need ../data and ../assets
 const IS_SECTION_PAGE = currentSection() !== "root";
 const DATA_BASE = IS_SECTION_PAGE ? "../data/" : "data/";
 
-// ===== Supabase Storage: base CSV files for offline cache =====
-// Bucket name must match your Supabase Storage bucket exactly
 const STORAGE_BUCKET = "Medical terms CSV";
+const ENABLE_STORAGE_BASE_SYNC = false;
 const STORAGE_FILES = [
   { filename: "medical_terms.csv", cacheId: "base/medical_terms.csv" },
   { filename: "App translations.csv", cacheId: "base/App translations.csv" },
@@ -127,6 +125,7 @@ async function downloadFromStorage(filename){
  * - Downloads files from Supabase Storage to IndexedDB if remote updated_at changed.
  */
 async function refreshBaseFilesCache(){
+  if(!ENABLE_STORAGE_BASE_SYNC) return;
   const meta = await storageListMeta();
 
   for(const f of STORAGE_FILES){
@@ -1448,7 +1447,7 @@ function initialScreenForSection(section){
 }
 
 async function init(){
-  // Always try to refresh base CSV cache first (newest possible version)
+  // Optional: refresh base CSV cache from Supabase Storage (disabled by default)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
 
   await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles(), loadAnamnesisDictionary()]);
@@ -1634,7 +1633,7 @@ async function init(){
       setLoginStatus("Signed in. Sync active.", "ok");
       showScreen("screen-submenu");
 
-      // Pull newest base CSVs into offline cache on login, then reload from cache
+      // Optional: pull newest base CSVs into offline cache on login, then reload from cache
       try{
         await refreshBaseFilesCache();
         await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles(), loadAnamnesisDictionary()]);
