@@ -57,14 +57,14 @@ anam_weight_loss_12_months,Weight loss (12 months),Strata hmotnosti (12 mesiacov
 anam_weight_gain_12_months,Weight gain (12 months),Nárast hmotnosti (12 mesiacov)
 anam_fatigue,Fatigue,Únava
 anam_night_sweats,Night sweats,Nočné potenie
-anam_general_other_notes,General - Other/Notes,Všeobecné – Iné/Poznámky
+anam_general_other_notes,General - Other/Notes,Všeobecné - Iné/Poznámky
 anam_head_and_neck,Head & Neck,Hlava a krk
 anam_dizziness,Dizziness,Závraty
 anam_speech_problems,Speech problems,Problémy s rečou
 anam_visual_problems,Visual problems,Problémy so zrakom
 anam_ear_pain,Ear pain,Bolesť ucha
 anam_sore_throat,Sore throat,Bolesť hrdla
-anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk – iné/poznámky
+anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk - iné/poznámky
 anam_cardiovascular,Cardiovascular,Kardiovaskulárny systém
 anam_chest_pain,Chest pain,Bolesť na hrudníku
 anam_dyspnea_on_exertion,Dyspnea on exertion,Dýchavičnosť pri námahe
@@ -87,7 +87,7 @@ anam_frequency,Frequency,Frekvencia
 anam_nocturia,Nocturia,Noktúria
 anam_incontinence,Incontinence,Inkontinencia
 anam_pain_on_urination,Pain on urination,Bolesť pri močení
-anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárny systém – iné/poznámky
+anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárny systém - iné/poznámky
 anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza predošlých ochorení
 anam_hypertension,Hypertension,Hypertenzia
 anam_diabetes_mellitus,Diabetes mellitus,Diabetes mellitus
@@ -191,7 +191,7 @@ anam_which_floor,Which floor,Ktoré poschodie?
 anam_elevator_yes,Elevator yes,Má výťah
 anam_elevator_no,Elevator no,Nemá výťah
 anam_flat_notes,Notes,Poznámky
-anam_homeless_notes,Notes, Poznámky
+anam_homeless_notes,Notes,Poznámky
 anam_n_12_abuses,12. Abuses,12. Abúzy
 anam_smoking,Smoking,Fajčenie
 anam_alcohol,Alcohol,Alkohol
@@ -294,8 +294,14 @@ anam_units,Units,Jednotky
 anam_pt_values,Pt. values,P. hodnoty
 anam_clear_form,Clear form,Vymazať formulár
 anam_back,Back,Späť
-anam_item,×,×
+anam_item,x,x
 anam_bullet_mode,Bullet mode,Režim odrážok
 anam_write_your_general_notes_here,Space for notes...,Miesto pre poznámky...
-
-
+anam_over_the_counter_medicine,Over the counter medicine,Voľnopredajné lieky
+anam_supplements_vitamins_herbal_products,Supplements / vitamins / herbal products,Doplnky / vitamíny / bylinné produkty
+anam_flat_notes_2,Notes,Poznámky
+anam_homeless_notes_2,Notes,Poznámky
+anam_temperature_c_2,Temperature (°C),Teplota (°C)
+anam_taken_2,Taken from,Odobrané z
+anam_if_from_charts_when_2,"If from charts, when they were taken?","Ak z dokumentácie, kedy boli odobrané?"
+anam_write_your_general_notes_here_2,"If needed, write your general notes here...","Ak potrebujete, sem napíšte svoje všeobecné poznámky..."
