@@ -1119,6 +1119,174 @@ function refreshMuscleTrainingUI(){
 
 // --- Anamnesis helpers ---
 let anamnesisSaveTimer = null;
+const ANAMNESIS_NOTES_BULLETS_KEY = "anamnesis_notes_bullets";
+
+const ANAMNESIS_REPEATERS = [
+  {
+    rowsId: "pmh-operations-rows",
+    addId: "pmh-operations-add",
+    prefix: "pmh_operations",
+    columns: [
+      { key: "date", placeholder: "Date" },
+      { key: "procedure", placeholder: "Procedure/Diagnosis" },
+      { key: "outcome", placeholder: "Outcome" }
+    ]
+  },
+  {
+    rowsId: "medication-rows",
+    addId: "medication-add",
+    prefix: "medication_list",
+    columns: [
+      { key: "drug", placeholder: "Drug" },
+      { key: "dose", placeholder: "Dose" },
+      { key: "frequency", placeholder: "Frequency" },
+      { key: "indication", placeholder: "Indication" }
+    ]
+  },
+  {
+    rowsId: "family-history-rows",
+    addId: "family-history-add",
+    prefix: "family_history",
+    columns: [
+      { key: "disease", placeholder: "Choroba" },
+      { key: "details", placeholder: "Detaily" },
+      { key: "relation", placeholder: "Relation to p." }
+    ]
+  },
+  {
+    rowsId: "pmh-planned-op-rows",
+    addId: "pmh-planned-op-add",
+    prefix: "pmh_planned_op",
+    columns: [
+      { key: "date", placeholder: "Date" },
+      { key: "procedure", placeholder: "Procedure/Diagnosis" },
+      { key: "outcome", placeholder: "Outcome" }
+    ]
+  }
+];
+
+function getRepeaterConfigByRowsId(rowsId){
+  return ANAMNESIS_REPEATERS.find(c => c.rowsId === rowsId);
+}
+
+function buildRepeaterRow(rowsId, index){
+  const cfg = getRepeaterConfigByRowsId(rowsId);
+  if(!cfg) return null;
+  const row = document.createElement("div");
+  row.className = "anam-repeater-row";
+  row.dataset.index = String(index);
+  cfg.columns.forEach(col => {
+    const input = document.createElement("input");
+    input.name = `${cfg.prefix}_${col.key}_${index}`;
+    input.placeholder = col.placeholder;
+    row.appendChild(input);
+  });
+  const del = document.createElement("button");
+  del.type = "button";
+  del.className = "anam-remove-row";
+  del.textContent = "-";
+  del.addEventListener("click", ()=>{
+    const wrap = document.getElementById(rowsId);
+    if(!wrap) return;
+    if(wrap.children.length <= 1){
+      const first = wrap.querySelector(".anam-repeater-row");
+      if(!first) return;
+      first.querySelectorAll("input").forEach(i=>{ i.value = ""; });
+      scheduleAnamnesisSave();
+      return;
+    }
+    row.remove();
+    scheduleAnamnesisSave();
+  });
+  row.appendChild(del);
+  return row;
+}
+
+function addRepeaterRow(rowsId){
+  const wrap = document.getElementById(rowsId);
+  if(!wrap) return;
+  const max = [...wrap.querySelectorAll(".anam-repeater-row")]
+    .map(r => Number(r.dataset.index || "0"))
+    .reduce((a,b)=>Math.max(a,b), 0);
+  const row = buildRepeaterRow(rowsId, max + 1);
+  if(row) wrap.appendChild(row);
+}
+
+function initAnamnesisRepeaters(savedData){
+  for(const cfg of ANAMNESIS_REPEATERS){
+    const wrap = document.getElementById(cfg.rowsId);
+    if(!wrap) continue;
+    wrap.innerHTML = "";
+    let maxIndex = 0;
+    if(savedData){
+      const re = new RegExp(`^${cfg.prefix}_[a-z_]+_(\\d+)$`);
+      for(const key of Object.keys(savedData)){
+        const m = key.match(re);
+        if(m) maxIndex = Math.max(maxIndex, Number(m[1]) || 0);
+      }
+    }
+    const count = Math.max(1, maxIndex);
+    for(let i=1;i<=count;i++){
+      const row = buildRepeaterRow(cfg.rowsId, i);
+      if(row) wrap.appendChild(row);
+    }
+  }
+}
+
+function updatePlannedOperationVisibility(){
+  const wrap = document.getElementById("pmh-planned-op-wrap");
+  if(!wrap) return;
+  const yes = document.querySelector('input[name="pmh_planned_op"][value="yes"]');
+  wrap.classList.toggle("hidden", !(yes && yes.checked));
+}
+
+function updateHousingVisibility(){
+  const house = document.getElementById("social-house");
+  const flat = document.getElementById("social-flat");
+  const homeless = document.getElementById("social-homeless");
+  const houseWrap = document.getElementById("social-house-wrap");
+  const flatWrap = document.getElementById("social-flat-wrap");
+  const homelessWrap = document.getElementById("social-homeless-wrap");
+  if(houseWrap) houseWrap.classList.toggle("hidden", !(house && house.checked));
+  if(flatWrap) flatWrap.classList.toggle("hidden", !(flat && flat.checked));
+  if(homelessWrap) homelessWrap.classList.toggle("hidden", !(homeless && homeless.checked));
+}
+
+function initAnamnesisNotesDrawer(){
+  const toggle = document.getElementById("anamnesis-notes-toggle");
+  const drawer = document.getElementById("anamnesis-notes-drawer");
+  const close = document.getElementById("anamnesis-notes-close");
+  const notes = document.getElementById("anamnesis-notes-text");
+  const bullets = document.getElementById("anamnesis-notes-bullets");
+  if(!toggle || !drawer || !close || !notes || !bullets) return;
+
+  try{ bullets.checked = localStorage.getItem(ANAMNESIS_NOTES_BULLETS_KEY) === "1"; }catch(e){}
+  bullets.addEventListener("change", ()=>{
+    try{ localStorage.setItem(ANAMNESIS_NOTES_BULLETS_KEY, bullets.checked ? "1" : "0"); }catch(e){}
+  });
+
+  toggle.addEventListener("click", ()=> drawer.classList.add("open"));
+  close.addEventListener("click", ()=> drawer.classList.remove("open"));
+
+  notes.addEventListener("keydown", (e)=>{
+    if(e.key !== "Enter" || !bullets.checked) return;
+    const s = notes.selectionStart ?? 0;
+    const epos = notes.selectionEnd ?? 0;
+    const value = notes.value;
+    const lineStart = value.lastIndexOf("\n", Math.max(0, s - 1)) + 1;
+    const linePrefix = value.slice(lineStart, s);
+    if(linePrefix.trim() === ""){
+      e.preventDefault();
+      notes.value = value.slice(0, s) + "- " + value.slice(epos);
+      notes.selectionStart = notes.selectionEnd = s + 2;
+      return;
+    }
+    e.preventDefault();
+    notes.value = value.slice(0, s) + "\n- " + value.slice(epos);
+    notes.selectionStart = notes.selectionEnd = s + 3;
+    scheduleAnamnesisSave();
+  });
+}
 
 function saveAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
@@ -1133,6 +1301,8 @@ function saveAnamnesisForm(){
       data[el.name] = el.value;
     }
   });
+  const notes = document.getElementById("anamnesis-notes-text");
+  if(notes) data.anamnesis_global_notes = notes.value;
   localStorage.setItem(ANAMNESIS_STORAGE_KEY, JSON.stringify(data));
   const status = document.getElementById('anamnesis-status');
   if(status) status.textContent = 'Saved locally.';
@@ -1147,22 +1317,42 @@ function loadAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
   if(!form) return;
   const raw = localStorage.getItem(ANAMNESIS_STORAGE_KEY);
-  if(!raw) return;
+  if(!raw){
+    initAnamnesisRepeaters(null);
+    updatePlannedOperationVisibility();
+    updateHousingVisibility();
+    return;
+  }
   let data = null;
   try{ data = JSON.parse(raw); }catch(e){ data = null; }
-  if(!data) return;
+  if(!data){
+    initAnamnesisRepeaters(null);
+    updatePlannedOperationVisibility();
+    updateHousingVisibility();
+    return;
+  }
+  initAnamnesisRepeaters(data);
   form.querySelectorAll('input, textarea, select').forEach(el=>{
     if(!el.name || !(el.name in data)) return;
     if(el.type === 'checkbox') el.checked = !!data[el.name];
     else if(el.type === 'radio') el.checked = (data[el.name] === el.value);
     else el.value = data[el.name];
   });
+  const notes = document.getElementById("anamnesis-notes-text");
+  if(notes) notes.value = data.anamnesis_global_notes || "";
+  updatePlannedOperationVisibility();
+  updateHousingVisibility();
 }
 
 function clearAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
   if(form) form.reset();
   localStorage.removeItem(ANAMNESIS_STORAGE_KEY);
+  initAnamnesisRepeaters(null);
+  const notes = document.getElementById("anamnesis-notes-text");
+  if(notes) notes.value = "";
+  updatePlannedOperationVisibility();
+  updateHousingVisibility();
   const status = document.getElementById('anamnesis-status');
   if(status) status.textContent = 'Cleared.';
 }
@@ -1525,10 +1715,38 @@ async function init(){
 
   const anamForm = document.getElementById('anamnesis-form');
   if(anamForm){
+    initAnamnesisRepeaters(null);
+    initAnamnesisNotesDrawer();
     anamForm.addEventListener('input', scheduleAnamnesisSave);
     anamForm.addEventListener('change', scheduleAnamnesisSave);
   }
-  on('anamnesis-clear','click', ()=> clearAnamnesisForm());
+  for(const cfg of ANAMNESIS_REPEATERS){
+    on(cfg.addId, 'click', ()=>{
+      addRepeaterRow(cfg.rowsId);
+      scheduleAnamnesisSave();
+    });
+  }
+  document.querySelectorAll('input[name="pmh_planned_op"]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      updatePlannedOperationVisibility();
+      scheduleAnamnesisSave();
+    });
+  });
+  ['social-house','social-flat','social-homeless'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('change', ()=>{
+      updateHousingVisibility();
+      scheduleAnamnesisSave();
+    });
+  });
+  const notesText = document.getElementById("anamnesis-notes-text");
+  if(notesText) notesText.addEventListener("input", scheduleAnamnesisSave);
+
+  on('anamnesis-clear','click', ()=>{
+    if(confirm("Clear the whole anamnesis form? This cannot be undone.")){
+      clearAnamnesisForm();
+    }
+  });
   on('anamnesis-back','click', ()=> showScreen('screen-submenu'));
 
   if(searchInput && resultsDiv){
