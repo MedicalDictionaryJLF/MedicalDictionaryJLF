@@ -256,6 +256,10 @@ button.danger:hover{background:#fff5f5}
   background:#fff;
   border-radius:8px;
   cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
 }
 .anam-remove-row{
   width:32px;
@@ -276,11 +280,11 @@ button.danger:hover{background:#fff5f5}
 }
 .anam-notes-drawer{
   position:fixed;
-  top:0;
+  top:74px;
   right:-360px;
   width:340px;
   max-width:85vw;
-  height:100vh;
+  height:calc(100vh - 74px);
   background:#fff;
   border-left:1px solid var(--border);
   padding:12px;
@@ -291,10 +295,35 @@ button.danger:hover{background:#fff5f5}
   gap:10px;
 }
 .anam-notes-drawer.open{ right:0; }
+.anam-notes-edge{
+  position:absolute;
+  left:0;
+  top:0;
+  width:16px;
+  height:100%;
+  border:none;
+  border-left:2px solid var(--border);
+  background:transparent;
+  cursor:pointer;
+  border-radius:0;
+  padding:0;
+}
+.anam-notes-edge::after{
+  content:"\2039";
+  position:absolute;
+  left:3px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:16px;
+  font-weight:700;
+  line-height:1;
+}
 .anam-notes-head{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding-left:14px;
 }
 .anam-notes-head button{
   border:1px solid var(--border);
@@ -303,15 +332,26 @@ button.danger:hover{background:#fff5f5}
   cursor:pointer;
   width:32px;
   height:32px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
 }
 .anam-bullets-toggle{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:4px;
+  padding-left:14px;
+}
+.anam-bullets-toggle input[type="checkbox"]{
+  width:auto;
+  margin:0;
 }
 .anam-notes-drawer textarea{
   flex:1;
   min-height:220px;
+  margin-left:14px;
+  width:calc(100% - 14px);
 }
 .muscle-region-item{
   border:1px solid var(--border);
