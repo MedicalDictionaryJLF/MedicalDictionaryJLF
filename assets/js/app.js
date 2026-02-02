@@ -499,6 +499,76 @@ function rowsToObjects(rows){
 
 // --- Translation loader ---
 const translations = {};
+const anamnesisDictionary = new Map();
+const anamnesisTextNodes = new WeakMap();
+
+function normalizeAnamnesisText(text){
+  return String(text || '').replace(/\s+/g, ' ').trim();
+}
+
+async function loadAnamnesisDictionary(){
+  try{
+    const txt = await loadBaseFile('anamnesis.csv');
+    const rows = parseCSVLines(txt);
+    if(rows.length < 1) throw new Error('No data in anamnesis file');
+    const objects = rowsToObjects(rows);
+    anamnesisDictionary.clear();
+    for(const row of objects){
+      const english = normalizeAnamnesisText(row.english_translation);
+      if(!english) continue;
+      const slovak = normalizeAnamnesisText(row.slovak_translation);
+      anamnesisDictionary.set(english, { english, slovak });
+    }
+  }catch(e){
+    console.warn('Anamnesis translations load failed:', e.message || e);
+    anamnesisDictionary.clear();
+  }
+}
+
+function translateAnamnesisText(baseText){
+  const normalized = normalizeAnamnesisText(baseText);
+  if(!normalized) return baseText;
+  const row = anamnesisDictionary.get(normalized);
+  if(!row) return baseText;
+  const lang = normalizeLanguage(state.language);
+  if(lang === 'Slovensky' && row.slovak) return row.slovak;
+  if(lang === 'English') return row.english || baseText;
+  return row.english || baseText;
+}
+
+function applyAnamnesisTranslationsToDom(){
+  const section = document.getElementById('screen-anamnesis');
+  if(!section || anamnesisDictionary.size === 0) return;
+
+  section.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el=>{
+    if(!el.dataset.anamBasePlaceholder){
+      el.dataset.anamBasePlaceholder = el.getAttribute('placeholder') || '';
+    }
+    const base = el.dataset.anamBasePlaceholder;
+    if(!base) return;
+    el.setAttribute('placeholder', translateAnamnesisText(base));
+  });
+
+  section.querySelectorAll('h2,h3,strong,span,label,summary,th,button').forEach(el=>{
+    let nodes = anamnesisTextNodes.get(el);
+    if(!nodes){
+      nodes = [];
+      el.childNodes.forEach(node=>{
+        if(node.nodeType !== Node.TEXT_NODE) return;
+        const template = node.nodeValue || '';
+        const base = normalizeAnamnesisText(template);
+        if(!base) return;
+        nodes.push({ node, template, base });
+      });
+      anamnesisTextNodes.set(el, nodes);
+    }
+    for(const item of nodes){
+      const translated = translateAnamnesisText(item.base);
+      item.node.nodeValue = item.template.replace(item.base, translated);
+    }
+  });
+}
+
 async function loadTranslations(){
   try{
     const txt = await loadBaseFile('App translations.csv');
@@ -694,6 +764,7 @@ async function setLanguage(lang){
   }
 
   applyTranslationsToDom();
+  applyAnamnesisTranslationsToDom();
 
   const si = document.getElementById('search-input');
   if(si && si.value && si.value.trim().length >= 2){
@@ -1178,7 +1249,7 @@ async function init(){
   // Always try to refresh base CSV cache first (newest possible version)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
 
-  await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles()]);
+  await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles(), loadAnamnesisDictionary()]);
 
   // Apply language instantly (no reload needed)
   await setLanguage(state.language);
@@ -1364,8 +1435,9 @@ async function init(){
       // Pull newest base CSVs into offline cache on login, then reload from cache
       try{
         await refreshBaseFilesCache();
-        await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles()]);
+        await Promise.all([loadTranslations(), loadMedicalTerms(), loadMuscles(), loadAnamnesisDictionary()]);
         applyTranslationsToDom();
+        applyAnamnesisTranslationsToDom();
         refreshMuscleTrainingUI();
       }catch(e){
         console.warn("Base CSV refresh failed (offline/local only):", e);
