@@ -52,8 +52,8 @@ anam_unchanged,Unchanged,Nezmenené
 anam_recurrent,Recurrent,Opakujúce sa
 anam_notes,Notes,Poznámky
 anam_n_4_review_of_systems,4. Review of Systems,4. Prehľad systémov
-anam_general,General,generál
-anam_weight_loss_12_months,Weight loss (12 months),Chudnutie (12 mesiacov)
+anam_general,General,Všeobecné symptómy
+anam_weight_loss_12_months,Weight loss (12 months),Strata hmotnosti (12 mesiacov)
 anam_weight_gain_12_months,Weight gain (12 months),Nárast hmotnosti (12 mesiacov)
 anam_fatigue,Fatigue,Únava
 anam_night_sweats,Night sweats,Nočné potenie
@@ -61,34 +61,34 @@ anam_general_other_notes,General - Other/Notes,Všeobecné – Iné/Poznámky
 anam_head_and_neck,Head & Neck,Hlava a krk
 anam_dizziness,Dizziness,Závraty
 anam_speech_problems,Speech problems,Problémy s rečou
-anam_visual_problems,Visual problems,Vizuálne problémy
+anam_visual_problems,Visual problems,Problémy so zrakom
 anam_ear_pain,Ear pain,Bolesť ucha
 anam_sore_throat,Sore throat,Bolesť hrdla
 anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk – iné/poznámky
-anam_cardiovascular,Cardiovascular,Kardiovaskulárne
+anam_cardiovascular,Cardiovascular,Kardiovaskulárny systém
 anam_chest_pain,Chest pain,Bolesť na hrudníku
 anam_dyspnea_on_exertion,Dyspnea on exertion,Dýchavičnosť pri námahe
 anam_history_of_mi,History of MI,História MI
-anam_cardiovascular_other_notes,Cardiovascular - Other/Notes,Kardiovaskulárne - Iné/Poznámky
-anam_respiratory,Respiratory,Respiračné
+anam_cardiovascular_other_notes,Cardiovascular - Other/Notes,Kardiovaskulárny systém - Iné/Poznámky
+anam_respiratory,Respiratory,Respiračný systém
 anam_productive_cough,Productive cough,Produktívny kašeľ
 anam_hemoptysis,Hemoptysis,Hemoptýza
-anam_respiratory_other_notes,Respiratory - Other/Notes,Respiračné - Iné/Poznámky
-anam_gastrointestinal,Gastrointestinal,Gastrointestinálne
+anam_respiratory_other_notes,Respiratory - Other/Notes,Respiračný systém - Iné/Poznámky
+anam_gastrointestinal,Gastrointestinal,Gastrointestinálný systém
 anam_dysphagia,Dysphagia,Dysfágia
 anam_abdominal_pain,Abdominal pain,Bolesť brucha
 anam_diarrhea,Diarrhea,Hnačka
 anam_constipation,Constipation,Zápcha
 anam_blood_in_stool,Blood in stool,Krv v stolici
-anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,Gastrointestinálne - Iné/Poznámky
-anam_genitourinary,Genitourinary,Genitourinárne
+anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,Gastrointestinálný systém - Iné/Poznámky
+anam_genitourinary,Genitourinary,Genitourinárny systém
 anam_dysuria,Dysuria,Dyzúria
 anam_frequency,Frequency,Frekvencia
 anam_nocturia,Nocturia,Noktúria
 anam_incontinence,Incontinence,Inkontinencia
 anam_pain_on_urination,Pain on urination,Bolesť pri močení
-anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárne – iné/poznámky
-anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza v minulosti
+anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárny systém – iné/poznámky
+anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza predošlých ochorení
 anam_hypertension,Hypertension,Hypertenzia
 anam_diabetes_mellitus,Diabetes mellitus,Diabetes mellitus
 anam_dyslipidemia,Dyslipidemia,Dyslipidémia
@@ -100,7 +100,7 @@ anam_thyroid_disease_hypo_hyper,Thyroid disease (hypo / hyper),Ochorenie štítn
 anam_chronic_liver_disease,Chronic liver disease,Chronické ochorenie pečene
 anam_other_chronic_diseases,Other chronic diseases,Iné chronické ochorenia
 anam_specialist_care,Specialist Care,Špecializovaná starostlivosť
-anam_cardiologist,Cardiologist,kardiológ
+anam_cardiologist,Cardiologist,Kardiológ
 anam_diabetologist,Diabetologist,Diabetológ
 anam_endocrinologist,Endocrinologist,Endokrinológ
 anam_nephrologist,Nephrologist,Nefrológ
@@ -113,12 +113,12 @@ anam_urologist,Urologist,Urológ
 anam_gynaecologist,Gynaecologist,Gynekológ
 anam_psychiatrist,Psychiatrist,Psychiater
 anam_operations_and_hospitalizations,Operations & Hospitalizations,Operácie a hospitalizácie
-anam_date,Date,D?tum
-anam_procedure_diagnosis,Procedure/Diagnosis,Z?krok/Diagn?za
-anam_outcome,Outcome,V?sledok
-anam_planned_operation_now,Planned operation now,Teraz plánovaná operácia
-anam_previous_examinations,Previous Examinations,Predchádzajúce skúšky
-anam_ecg,ECG,ECG
+anam_date,Date,Dátum
+anam_procedure_diagnosis,Procedure/Diagnosis,Zákrok/Diagnóza
+anam_outcome,Outcome,Výsledok
+anam_planned_operation_now,Planned operation now,Teraz plánovaná/é operácia/e
+anam_previous_examinations,Previous Examinations,Predchádzajúce vyšetrenia
+anam_ecg,ECG,EKG
 anam_blood_tests,Blood tests,Krvné testy
 anam_ultrasound,Ultrasound,Ultrazvuk
 anam_ct,CT,CT
@@ -126,28 +126,28 @@ anam_mri,MRI,MRI
 anam_n_6_allergies_and_transfusions,6. Allergies & Transfusions,6. Alergie a transfúzie
 anam_allergy_reaction,Allergy / Reaction,Alergia / Reakcia
 anam_blood_transfusion_in_past,Blood transfusion in past,Krvná transfúzia v minulosti
-anam_number,Number,číslo
+anam_number,Number,Číslo
 anam_reaction,Reaction,Reakcia
 anam_reaction_details,Reaction details,Detaily reakcie
 anam_n_7_medication,7. Medication,7. Lieky
 anam_drug,Drug,Liek
-anam_dose,Dose,D?vka
-anam_indication,Indication,Indik?cia
-anam_no_otc_drugs,No OTC drugs,Bez vo?nopredajn?ch liekov
-anam_otc_drugs,OTC drugs,Vo?nopredajn? lieky
+anam_dose,Dose,Dávka
+anam_indication,Indication,Indikácia
+anam_no_otc_drugs,No OTC drugs,Bez voľnopredajných liekov
+anam_otc_drugs,OTC drugs,Voľnopredajné lieky
 anam_if_yes_which,"If yes, which","Ak áno, ktoré"
 anam_no_supplements,No supplements,Žiadne doplnky
-anam_supplements_vitamins_herbal,Supplements / vitamins / herbal,Doplnky / vitam?ny / bylinky
+anam_supplements_vitamins_herbal,Supplements / vitamins / herbal,Doplnky stravy / vitamíny / bylinné produkty
 anam_history_of_misuse_of_prescribed_drugs,History of misuse of prescribed drugs,Anamnéza zneužívania predpísaných liekov
 anam_n_8_gynecological_history_females,8. Gynecological History (Females),8. Gynekologická anamnéza (ženy)
 anam_regular_menstruation,Regular menstruation,Pravidelná menštruácia
 anam_menopause,Menopause,Menopauza
 anam_contraception,Contraception,Antikoncepcia
 anam_children,Children,Deti
-anam_if_yes_number,"If yes, number","Ak áno, koľko"
+anam_if_yes_number,"If yes, number","Ak áno, koľko?"
 anam_deliveries,Deliveries,Pôrody
 anam_vaginal,Vaginal,Vaginálny
-anam_c_section,C-section,C-rez
+anam_c_section,C-section,Cisársky rez
 anam_miscarriage_abortion,Miscarriage / abortion,Spontánny potrat /Umelé prerušenie tehotenstva
 anam_pelvic_pain,Pelvic pain,Bolesť panvy
 anam_n_9_family_history,9. Family History,9. Rodinná anamnéza
@@ -297,4 +297,5 @@ anam_back,Back,Späť
 anam_item,×,×
 anam_bullet_mode,Bullet mode,Režim odrážok
 anam_write_your_general_notes_here,Space for notes...,Miesto pre poznámky...
+
 
