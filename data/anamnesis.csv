@@ -1,4 +1,4 @@
-id_anamnesis,english_translation,slovak_translation
+id_anamnesis,english_translation,slovak_translation,german_translation
 anam_anamnesis,Anamnesis,Anamnéza
 anam_n_1_identification,1. Identification,1. Identifikácia
 anam_full_name,Full name,Celé meno
@@ -33,7 +33,7 @@ anam_pressing,Pressing,Tlačiaca
 anam_colicky,Colicky,Kŕčovitá
 anam_radiation,Radiation,Vyžarovanie
 anam_no,No,Nie
-anam_yes,Yes,áno
+anam_yes,Yes,Áno
 anam_where,Where?,Kde?
 anam_associated_symptoms,Associated symptoms,Pridružené symptómy
 anam_fever,Fever,Horúčka
@@ -284,3 +284,4 @@ anam_n_16_reference_values,16. Reference values,16. Referenčné hodnoty
 anam_parameter,Parameter,Parameter
 anam_units,Units,Jednotky
 anam_pt_values,Pt. values,Hodnoty pacienta
+
