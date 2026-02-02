@@ -1,4 +1,4 @@
-id_anamnesis,english_translation,slovak_translation,german_translation
+id_anamnesis,english_translation,slovak_translation
 anam_anamnesis,Anamnesis,Anamnéza
 anam_n_1_identification,1. Identification,1. Identifikácia
 anam_full_name,Full name,Celé meno
@@ -46,61 +46,61 @@ anam_palpitations,Palpitations,Palpitácie
 anam_severity_vas,Severity (VAS),Závažnosť (VAS)
 anam_n_1_10,1-10,1-10
 anam_course_since_onset,Course since onset,Priebeh od začiatku
-anam_improving,Improving,Zlepšujúci sa,
-anam_worsening,Worsening,Zhoršujúci sa
-anam_unchanged,Unchanged,Nezmenenný
-anam_recurrent,Recurrent,Opakujúci sa
+anam_improving,Improving,Zlepšovanie
+anam_worsening,Worsening,Zhoršenie
+anam_unchanged,Unchanged,Nezmenené
+anam_recurrent,Recurrent,Opakujúce sa
 anam_notes,Notes,Poznámky
 anam_n_4_review_of_systems,4. Review of Systems,4. Prehľad systémov
-anam_general,General, Všeobecné
-anam_weight_loss_12_months,Weight loss (12 months),Strata hmotnosti (12 mesiacov)
+anam_general,General,generál
+anam_weight_loss_12_months,Weight loss (12 months),Chudnutie (12 mesiacov)
 anam_weight_gain_12_months,Weight gain (12 months),Nárast hmotnosti (12 mesiacov)
 anam_fatigue,Fatigue,Únava
 anam_night_sweats,Night sweats,Nočné potenie
-anam_general_other_notes,General - Other/Notes,Všeobecné - Iné/Poznámky
+anam_general_other_notes,General - Other/Notes,Všeobecné – Iné/Poznámky
 anam_head_and_neck,Head & Neck,Hlava a krk
 anam_dizziness,Dizziness,Závraty
 anam_speech_problems,Speech problems,Problémy s rečou
-anam_visual_problems,Visual problems,Problémy so zrakom
+anam_visual_problems,Visual problems,Vizuálne problémy
 anam_ear_pain,Ear pain,Bolesť ucha
-anam_sore_throat,Sore throat,Bolesť hrdla/Škrabanie v hrdle
-anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk - iné/poznámky
-anam_cardiovascular,Cardiovascular,Kardiovaskulárny systém
+anam_sore_throat,Sore throat,Bolesť hrdla
+anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk – iné/poznámky
+anam_cardiovascular,Cardiovascular,Kardiovaskulárne
 anam_chest_pain,Chest pain,Bolesť na hrudníku
 anam_dyspnea_on_exertion,Dyspnea on exertion,Dýchavičnosť pri námahe
-anam_history_of_mi,History of MI,História IM
-anam_cardiovascular_other_notes,Cardiovascular - Other/Notes,KVS - Iné/Poznámky
-anam_respiratory,Respiratory,Respiračný systém
+anam_history_of_mi,History of MI,História MI
+anam_cardiovascular_other_notes,Cardiovascular - Other/Notes,Kardiovaskulárne - Iné/Poznámky
+anam_respiratory,Respiratory,Respiračné
 anam_productive_cough,Productive cough,Produktívny kašeľ
 anam_hemoptysis,Hemoptysis,Hemoptýza
-anam_respiratory_other_notes,Respiratory - Other/Notes,RS - Iné/Poznámky
-anam_gastrointestinal,Gastrointestinal,Gastrointestinálny systém
+anam_respiratory_other_notes,Respiratory - Other/Notes,Respiračné - Iné/Poznámky
+anam_gastrointestinal,Gastrointestinal,Gastrointestinálne
 anam_dysphagia,Dysphagia,Dysfágia
 anam_abdominal_pain,Abdominal pain,Bolesť brucha
 anam_diarrhea,Diarrhea,Hnačka
 anam_constipation,Constipation,Zápcha
 anam_blood_in_stool,Blood in stool,Krv v stolici
-anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,GIT - Iné/Poznámky
-anam_genitourinary,Genitourinary,Genitourinárny systém
+anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,Gastrointestinálne - Iné/Poznámky
+anam_genitourinary,Genitourinary,Genitourinárne
 anam_dysuria,Dysuria,Dyzúria
-anam_frequency,Frequent urination,Časté močenie
+anam_frequency,Frequency,Frekvencia
 anam_nocturia,Nocturia,Noktúria
 anam_incontinence,Incontinence,Inkontinencia
 anam_pain_on_urination,Pain on urination,Bolesť pri močení
-anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárny systém - iné/poznámky
-anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza predošlých ochorení
+anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárne – iné/poznámky
+anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza v minulosti
 anam_hypertension,Hypertension,Hypertenzia
 anam_diabetes_mellitus,Diabetes mellitus,Diabetes mellitus
 anam_dyslipidemia,Dyslipidemia,Dyslipidémia
 anam_ischemic_heart_disease_cad,Ischemic heart disease / CAD,Ischemická choroba srdca / CAD
 anam_chronic_heart_failure,Chronic heart failure,Chronické srdcové zlyhanie
 anam_chronic_kidney_disease,Chronic kidney disease,Chronické ochorenie obličiek
-anam_chronic_lung_disease_copd_asthma,Chronic lung disease (COPD / asthma),Chronické ochorenie pľúc (CHOCHP / astma)
+anam_chronic_lung_disease_copd_asthma,Chronic lung disease (COPD / asthma),Chronické ochorenie pľúc (CHOCHP/astma)
 anam_thyroid_disease_hypo_hyper,Thyroid disease (hypo / hyper),Ochorenie štítnej žľazy (hypo/hyper)
 anam_chronic_liver_disease,Chronic liver disease,Chronické ochorenie pečene
 anam_other_chronic_diseases,Other chronic diseases,Iné chronické ochorenia
 anam_specialist_care,Specialist Care,Špecializovaná starostlivosť
-anam_cardiologist,Cardiologist,Kardiológ
+anam_cardiologist,Cardiologist,kardiológ
 anam_diabetologist,Diabetologist,Diabetológ
 anam_endocrinologist,Endocrinologist,Endokrinológ
 anam_nephrologist,Nephrologist,Nefrológ
@@ -113,11 +113,12 @@ anam_urologist,Urologist,Urológ
 anam_gynaecologist,Gynaecologist,Gynekológ
 anam_psychiatrist,Psychiatrist,Psychiater
 anam_operations_and_hospitalizations,Operations & Hospitalizations,Operácie a hospitalizácie
-anam_date_procedure_diagnosis_outcome,Date - Procedure/Diagnosis - Outcome,Dátum - Postup/Diagnóza - Výsledok
+anam_date,Date,D?tum
+anam_procedure_diagnosis,Procedure/Diagnosis,Z?krok/Diagn?za
+anam_outcome,Outcome,V?sledok
 anam_planned_operation_now,Planned operation now,Teraz plánovaná operácia
-anam_if_yes_details,"If yes, details","Ak áno, podrobnosti"
-anam_previous_examinations,Previous Examinations,Predchádzajúce vyšetrenia
-anam_ecg,ECG,EKG
+anam_previous_examinations,Previous Examinations,Predchádzajúce skúšky
+anam_ecg,ECG,ECG
 anam_blood_tests,Blood tests,Krvné testy
 anam_ultrasound,Ultrasound,Ultrazvuk
 anam_ct,CT,CT
@@ -125,66 +126,73 @@ anam_mri,MRI,MRI
 anam_n_6_allergies_and_transfusions,6. Allergies & Transfusions,6. Alergie a transfúzie
 anam_allergy_reaction,Allergy / Reaction,Alergia / Reakcia
 anam_blood_transfusion_in_past,Blood transfusion in past,Krvná transfúzia v minulosti
-anam_number,Number,Číslo
+anam_number,Number,číslo
 anam_reaction,Reaction,Reakcia
 anam_reaction_details,Reaction details,Detaily reakcie
 anam_n_7_medication,7. Medication,7. Lieky
-anam_drug_dose_frequency_indication,Drug - Dose - Frequency - Indication,Liek - Dávka - Frekvencia - Indikácia
-anam_no_otc_drugs,No OTC drugs used reguraly,Žiadne voľnopredajné lieky neužívané pravidelne
-anam_otc_drugs,OTC drugs used regurarly,Voľnopredajné lieky užívané pravidelne
+anam_drug,Drug,Liek
+anam_dose,Dose,D?vka
+anam_indication,Indication,Indik?cia
+anam_no_otc_drugs,No OTC drugs,Bez vo?nopredajn?ch liekov
+anam_otc_drugs,OTC drugs,Vo?nopredajn? lieky
 anam_if_yes_which,"If yes, which","Ak áno, ktoré"
-anam_no_supplements,No supplements,Žiadne doplnky stravy
-anam_supplements_vitamins_herbal,Supplements / vitamins / herbal products,Doplnky stravy / vitamíny / bylinné produkty
-anam_history_of_misuse_of_prescribed_drugs,History of misuse of prescribed drugs,História zneužívania predpísaných liekov
+anam_no_supplements,No supplements,Žiadne doplnky
+anam_supplements_vitamins_herbal,Supplements / vitamins / herbal,Doplnky / vitam?ny / bylinky
+anam_history_of_misuse_of_prescribed_drugs,History of misuse of prescribed drugs,Anamnéza zneužívania predpísaných liekov
 anam_n_8_gynecological_history_females,8. Gynecological History (Females),8. Gynekologická anamnéza (ženy)
 anam_regular_menstruation,Regular menstruation,Pravidelná menštruácia
 anam_menopause,Menopause,Menopauza
 anam_contraception,Contraception,Antikoncepcia
-anam_children,Children,Deti
-anam_if_yes_number,"If yes, number","Ak áno, koľko"
-anam_deliveries,Deliveries,Pôrody
+anam_children,Children,deti
+anam_if_yes_number,"If yes, number","Ak áno, číslo"
+anam_deliveries,Deliveries,Dodávky
 anam_vaginal,Vaginal,Vaginálny
-anam_c_section,C-section,Cisársky rez
-anam_miscarriage_abortion,Miscarriage / abortion,Sontánne potraty / Umelé prerušenie tehotenstva
+anam_c_section,C-section,C-rez
+anam_miscarriage_abortion,Miscarriage / abortion,Potrat / potrat
 anam_pelvic_pain,Pelvic pain,Bolesť panvy
 anam_n_9_family_history,9. Family History,9. Rodinná anamnéza
-anam_disease_type_relation,Disease - Type - Relation,Choroba - typ - vzťah
+anam_choroba,Choroba,Choroba
+anam_detaily,Detaily,Detaily
+anam_relation_to_p,Relation to p.,Vz?ah k p.
 anam_parents_alive,Parents alive,Rodičia nažive
 anam_both,Both,Obaja
 anam_one,One,Jeden
-anam_none,None,Žiadny
+anam_none,None,žiadne
 anam_mother_cause_of_death,Mother cause of death,Príčina smrti matky
-anam_father_cause_of_death,Father cause of death,Príčina smrti otca
-anam_n_10_epidemiological_history,10. Epidemiological History,10. Epidemiologická anamnéza
+anam_father_cause_of_death,Father cause of death,Otec príčina smrti
+anam_n_10_epidemiological_history,10. Epidemiological History,10. Epidemiologická história
 anam_recent_travel_abroad_12_months,Recent travel abroad (12 months),Nedávna cesta do zahraničia (12 mesiacov)
-anam_where_2,Where?,Kde?
+anam_where_2,Where,Kde
 anam_pets_farm_animals,Pets / farm animals,Domáce / hospodárske zvieratá
-anam_which,"If yes, which","Ak áno, ktoré",
+anam_which,Which,Ktor?
 anam_covid_19_vaccination,COVID-19 vaccination,Očkovanie proti COVID-19
-anam_covid_19_infection,COVID-19 infection,Infekcie spôsobené ochorením COVID-19
-anam_n_11_social_history,11. Social History,11. Sociálna anamnéza
-anam_employment,Employment,Práca
-anam_working,Working,Pracujúci
-anam_retired,Retired,Na dôchodku
+anam_covid_19_infection,COVID-19 infection,Infekcia spôsobená ochorením covid-19
+anam_n_11_social_history,11. Social History,11. Sociálna história
+anam_employment,Employment,Zamestnanosť
+anam_working,Working,Pracovné
+anam_retired,Retired,na dôchodku
 anam_unemployed,Unemployed,Nezamestnaný
-anam_how_long,How long?,Ako dlho?
+anam_how_long,How long,Ako dlho
 anam_occupation_previous_jobs,Occupation / previous jobs,Povolanie / predchádzajúce zamestnania
 anam_marital_status,Marital status,Rodinný stav
-anam_single,Single,Slobodný/á
-anam_married,Married,Ženatý/Vydatá
-anam_divorced,Divorced,Rozvedený/á
-anam_widowed,Widowed,Vdova/Vdovec
-anam_living_situation,Living situation,Žije
+anam_single,Single,Slobodný
+anam_married,Married,Ženatý
+anam_divorced,Divorced,Rozvedený
+anam_widowed,Widowed,Vdova
+anam_living_situation,Living situation,Životná situácia
 anam_alone,Alone,Sám
 anam_with_family,With family,S rodinou
 anam_housing,Housing,Bývanie
 anam_house,House,Dom
-anam_apartment,Flat,Byt
-anam_which_floor,Which floor?,Ktoré poschodie?
-anam_elevator_yes,Elevator yes,Má výťah
-anam_elevator_no,Elevator no,Nemá výťah
-anam_homeless,Homeless,Bezdomovec
-anam_n_12_abuses,12. Abuses,12. Abúzy
+anam_flat,Flat,Byt
+anam_homeless,Homeless,Bezdomovci
+anam_house_notes,House notes,Pozn?mky k domu
+anam_which_floor,Which floor,Ktoré poschodie
+anam_elevator_yes,Elevator yes,Výťah áno
+anam_elevator_no,Elevator no,Výťah č
+anam_flat_notes,Flat notes,Pozn?mky k bytu
+anam_homeless_notes,Homeless notes,Pozn?mky k bezdomovectvu
+anam_n_12_abuses,12. Abuses,12. Zneužívanie
 anam_smoking,Smoking,Fajčenie
 anam_alcohol,Alcohol,Alkohol
 anam_coffee,Coffee,Káva
@@ -192,22 +200,22 @@ anam_black_tea,Black tea,Čierny čaj
 anam_drugs,Drugs,Drogy
 anam_n_13_status_praesens_generalis_spg,13. Status Praesens Generalis (SPG),13. Status Praesens Generalis (SPG)
 anam_consciousness,Consciousness,Vedomie
-anam_alert,Alert,Bdelý/V strehu
-anam_responsive,Responsive,Reagujúci
+anam_alert,Alert,Upozornenie
+anam_responsive,Responsive,Responzívne
 anam_lethargic,Lethargic,Letargický
-anam_non_responsive,Non-responsive,Nereagujúci
+anam_non_responsive,Non-responsive,Nereaguje
 anam_orientation,Orientation,Orientácia
 anam_person,Person,Osoba
 anam_place,Place,Miesto
 anam_time,Time,Čas
 anam_general_appearance,General appearance,Celkový vzhľad
-anam_calm,Calm,Pokojný
+anam_calm,Calm,Pokojne
 anam_distressed,Distressed,Utrápený
 anam_in_pain,In pain,V bolestiach
 anam_dyspneic,Dyspneic,Dyspnoický
 anam_cachectic,Cachectic,Cachectic
 anam_hydration,Hydration,Hydratácia
-anam_normal,Normal,Normálna
+anam_normal,Normal,Normálne
 anam_mild_dehydration,Mild dehydration,Mierna dehydratácia
 anam_nutrition_status,Nutrition status,Stav výživy
 anam_underweight,Underweight,Podváha
@@ -220,17 +228,17 @@ anam_hypersthenic,Hypersthenic,Hyperstenické
 anam_gait_mobility,Gait / mobility,Chôdza / pohyblivosť
 anam_ataxic,Ataxic,Ataxický
 anam_hemiparetic,Hemiparetic,Hemiparetický
-anam_shuffling,Shuffling,Šuchotavá
+anam_shuffling,Shuffling,Miešanie
 anam_uses_aid,Uses aid,Používa pomoc
-anam_aid_cane_walker_wheelchair,Aid (cane / walker / wheelchair),Pomôcka (palíčka / chodítko / invalidný vozík)
+anam_aid_cane_walker_wheelchair,Aid (cane / walker / wheelchair),Pomôcka (trstina / chodítko / invalidný vozík)
 anam_speech,Speech,Reč
 anam_dysarthria,Dysarthria,Dyzartria
 anam_aphasia,Aphasia,Afázia
-anam_slurred,Slurred,Nezrozumiteľná
-anam_position,Position,Pozícia
-anam_active,Active,Aktívna
-anam_passive,Passive,Pasívna
-anam_forced,Forced,Nútená
+anam_slurred,Slurred,Nezreteľný
+anam_position,Position,pozícia
+anam_active,Active,Aktívne
+anam_passive,Passive,Pasívne
+anam_forced,Forced,Nútené
 anam_skin,Skin,Koža
 anam_rashes,Rashes,Vyrážky
 anam_lesions,Lesions,Lézie
@@ -238,38 +246,38 @@ anam_scars,Scars,Jazvy
 anam_icterus,Icterus,Ikterus
 anam_cyanosis,Cyanosis,Cyanóza
 anam_pallor,Pallor,Bledosť
-anam_skin_notes,Skin notes,Poznámky ku koži
+anam_skin_notes,Skin notes,Kožné poznámky
 anam_peripheral_edema,Peripheral edema,Periférny edém
-anam_pretibial,Pretibial,Pretibiálny
+anam_pretibial,Pretibial,Pretibial
 anam_sacral,Sacral,Sakrálny
 anam_odor,Odor,Zápach
 anam_ketosis,Ketosis,Ketóza
 anam_uremic,Uremic,Uremický
-anam_hepatic,Hepatic,Pečeňový
-anam_n_14_vital_signs_and_values_adult,14. Vital Signs and Values (Adult),14. Vitálne funkcie a hodnoty (dospelí)
-anam_temperature_c,Temperature (°C),Teplota (°C)
+anam_hepatic,Hepatic,Pečeňové
+anam_n_14_vital_signs_and_values_adult,14. Vital Signs and Values (Adult),14. Vitálne znaky a hodnoty (dospelí)
+anam_temperature_c,Temperature (C),Teplota (C)
 anam_spo2,SpO2 (%),SpO2 (%)
 anam_heart_rate_min,Heart rate (/min),Srdcová frekvencia (/min)
 anam_weight_kg,Weight (kg),Hmotnosť (kg)
 anam_respiratory_rate_min,Respiratory rate (/min),Dýchacia frekvencia (/min)
-anam_height_cm,Height (cm),Výška (cm)
+anam_height_cm,Height (cm),výška (cm)
 anam_blood_pressure_mmhg,Blood pressure (mmHg),Krvný tlak (mmHg)
 anam_bmi_kg_m2,BMI (kg/m2),BMI (kg/m2)
-anam_taken,Taken,Odobraté z
+anam_taken,Taken,Prevzaté
 anam_from_monitor,From monitor,Z monitora
-anam_from_pt_charts,From Pt. charts,Z pacientových záznamov
-anam_if_from_charts_when,"If from charts, when they were taken?","Ak zo záznamov, kedy boly zapísane?"
+anam_from_pt_charts,From Pt. charts,Od Pt. grafy
+anam_if_from_charts_when,"If from charts, when","Ak z dokument?cie, kedy"
 anam_n_15_status_praesens_localis_spl,15. Status Praesens Localis (SPL),15. Status Praesens Localis (SPL)
-anam_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Prístroje / Vstupy / Katétre
+anam_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Lekárske pomôcky / Linky / Katétre
 anam_peripheral_iv_line,Peripheral IV line,Periférna IV linka
 anam_central_venous_catheter,Central venous catheter,Centrálny venózny katéter
 anam_foley_catheter,Foley catheter,Foleyho katéter
-anam_drains,Drains,Odtoky/Drenáže
+anam_drains,Drains,Odtoky
 anam_oxygen_therapy,Oxygen therapy,Kyslíková terapia
 anam_ecg_monitoring,ECG monitoring,Monitorovanie EKG
 anam_vital_function_monitor,Vital function monitor,Monitor vitálnych funkcií
 anam_head,Head,Hlava
-anam_face_symmetry_scalp_and_hair_cranial_nerves_eyes_ears_and_nose_mouth_and_pharynx,"Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx","Symetria tváre, pokožka skalpu a vlasy, hlavové nervy, oči, uši a nos, ústa a hltan"
+anam_face_symmetry_scalp_and_hair_cranial_nerves_eyes_ears_and_nose_mouth_and_pharynx,"Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx","Symetria tváre, vlasová pokožka a vlasy, hlavové nervy, oči, uši a nos, ústa a hltan"
 anam_neck,Neck,Krk
 anam_lymph_nodes_thyroid_trachea_jvp_carotids_mobility,"Lymph nodes, thyroid, trachea, JVP, carotids, mobility","Lymfatické uzliny, štítna žľaza, priedušnica, JVP, karotídy, pohyblivosť"
 anam_thorax,Thorax,Hrudník
@@ -283,5 +291,9 @@ anam_posture_curvature_mobility,"Posture, curvature, mobility","Držanie tela, z
 anam_n_16_reference_values,16. Reference values,16. Referenčné hodnoty
 anam_parameter,Parameter,Parameter
 anam_units,Units,Jednotky
-anam_pt_values,Pt. values,Hodnoty pacienta
-
+anam_pt_values,Pt. values,Pt. values
+anam_clear_form,Clear form,Vymaza? formul?r
+anam_back,Back,Späť
+anam_item,×,×
+anam_bullet_mode,Bullet mode,Odr??kov? re?im
+anam_write_your_general_notes_here,Write your general notes here...,Sem nap??te v?eobecn? pozn?mky...
