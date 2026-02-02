@@ -726,6 +726,7 @@ const MUSCLE_HIDDEN = "****";
 const MUSCLE_SEARCH_FIELD_KEY = "muscle_search_field";
 const ANAMNESIS_STORAGE_KEY = "anamnesis_form_v1";
 const TEXT_SIZE_KEY = "text_size";
+const NAV_SESSION_KEY = "nav/last_screen_session";
 const TEXT_SIZES = [13,14,15,16,17,18,19];
 let muscleQuizPool = [];
 let muscleQuizCurrent = null;
@@ -1115,8 +1116,8 @@ function showScreen(id, opts = {}){
     else location.hash = h;
   }
 
-  // Also persist in localStorage as a backup
-  try{ localStorage.setItem("nav/last_screen", id); }catch(e){}
+  // Persist per tab session: survives refresh, resets after tab/browser close.
+  try{ sessionStorage.setItem(NAV_SESSION_KEY, id); }catch(e){}
 }
 /* === NEW: auth UI (cog always visible + header user) === */
 function updateAuthUI(){
@@ -1576,7 +1577,12 @@ async function init(){
 
   updateAuthUI();
 
-  const start = "screen-menu";
+  const hashId = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+  const savedSession = sessionStorage.getItem(NAV_SESSION_KEY) || "";
+  const start =
+    (hashId && document.getElementById(hashId)) ? hashId :
+    (savedSession && document.getElementById(savedSession)) ? savedSession :
+    "screen-menu";
 
   showScreen(start, { replaceHistory: true });
   if(start === "screen-anamnesis") loadAnamnesisForm();
