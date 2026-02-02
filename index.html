@@ -590,19 +590,23 @@
                 <button type="button" id="medication-add" class="anam-add-row">+</button>
               </div>
               <div class="anam-row">
+                <span>Over the counter medicine</span>
                 <label><input type="radio" name="med_otc" value="no" /> No OTC drugs</label>
                 <label><input type="radio" name="med_otc" value="yes" /> OTC drugs</label>
-                <input name="med_otc_details" placeholder="If yes, which" />
               </div>
+              <input name="med_otc_details" placeholder="If yes, which" />
               <div class="anam-row">
+                <span>Supplements / vitamins / herbal products</span>
                 <label><input type="radio" name="med_supplements" value="no" /> No supplements</label>
                 <label><input type="radio" name="med_supplements" value="yes" /> Supplements / vitamins / herbal</label>
-                <input name="med_supplements_details" placeholder="If yes, which" />
               </div>
+              <input name="med_supplements_details" placeholder="If yes, which" />
               <div class="anam-row">
                 <span>History of misuse of prescribed drugs</span>
                 <label><input type="radio" name="med_misuse" value="yes" /> Yes</label>
                 <label><input type="radio" name="med_misuse" value="no" /> No</label>
+              </div>
+              <div id="med-misuse-notes-wrap" class="hidden">
                 <input name="med_misuse_notes" placeholder="Notes" />
               </div>
             </div>
@@ -1043,6 +1047,7 @@
         <p id="anamnesis-status" class="muted"></p>
         <button type="button" id="anamnesis-notes-toggle" class="notes-toggle-btn">Notes</button>
         <aside id="anamnesis-notes-drawer" class="anam-notes-drawer">
+          <button type="button" id="anamnesis-notes-edge" class="anam-notes-edge" aria-label="Close notes panel"></button>
           <div class="anam-notes-head">
             <strong>Notes</strong>
             <button type="button" id="anamnesis-notes-close">×</button>
@@ -1058,6 +1063,6 @@
     </main>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module" src="assets/js/app.js?v=5"></script>
+<script type="module" src="assets/js/app.js?v=9"></script>
 </body>
 </html>
