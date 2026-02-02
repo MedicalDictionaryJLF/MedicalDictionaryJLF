@@ -218,6 +218,101 @@ button.danger:hover{background:#fff5f5}
   padding:6px 8px;
   vertical-align:top;
 }
+.anam-repeater{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px;
+  margin-top:6px;
+}
+.anam-repeater-head,
+.anam-repeater-row{
+  display:grid;
+  gap:8px;
+  align-items:center;
+}
+.anam-repeater-head{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+  font-weight:600;
+}
+.anam-repeater[data-repeater="medication_list"] .anam-repeater-head,
+.anam-repeater[data-repeater="medication_list"] .anam-repeater-row{
+  grid-template-columns:1.1fr .9fr .9fr 1.2fr 34px;
+}
+.anam-repeater[data-repeater="pmh_operations"] .anam-repeater-head,
+.anam-repeater[data-repeater="pmh_operations"] .anam-repeater-row,
+.anam-repeater[data-repeater="pmh_planned_op"] .anam-repeater-head,
+.anam-repeater[data-repeater="pmh_planned_op"] .anam-repeater-row,
+.anam-repeater[data-repeater="family_history_details"] .anam-repeater-head,
+.anam-repeater[data-repeater="family_history_details"] .anam-repeater-row{
+  grid-template-columns:1fr 1.4fr 1.2fr 34px;
+}
+.anam-repeater-row{ margin-bottom:8px; }
+.anam-repeater-row input{ width:100%; }
+.anam-remove-row,
+.anam-add-row{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:8px;
+  cursor:pointer;
+}
+.anam-remove-row{
+  width:32px;
+  height:32px;
+  line-height:1;
+}
+.anam-add-row{
+  min-width:32px;
+  height:32px;
+  font-weight:700;
+}
+.notes-toggle-btn{
+  position:fixed;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:30;
+}
+.anam-notes-drawer{
+  position:fixed;
+  top:0;
+  right:-360px;
+  width:340px;
+  max-width:85vw;
+  height:100vh;
+  background:#fff;
+  border-left:1px solid var(--border);
+  padding:12px;
+  z-index:40;
+  transition:right .2s ease;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.anam-notes-drawer.open{ right:0; }
+.anam-notes-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.anam-notes-head button{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  width:32px;
+  height:32px;
+}
+.anam-bullets-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.anam-notes-drawer textarea{
+  flex:1;
+  min-height:220px;
+}
 .muscle-region-item{
   border:1px solid var(--border);
   border-radius:12px;
