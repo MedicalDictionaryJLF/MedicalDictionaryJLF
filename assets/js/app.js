@@ -1252,13 +1252,20 @@ function updateHousingVisibility(){
   if(homelessWrap) homelessWrap.classList.toggle("hidden", !(homeless && homeless.checked));
 }
 
+function updateMedicationConditionalVisibility(){
+  const misuseYes = document.querySelector('input[name="med_misuse"][value="yes"]');
+  const wrap = document.getElementById("med-misuse-notes-wrap");
+  if(wrap) wrap.classList.toggle("hidden", !(misuseYes && misuseYes.checked));
+}
+
 function initAnamnesisNotesDrawer(){
   const toggle = document.getElementById("anamnesis-notes-toggle");
   const drawer = document.getElementById("anamnesis-notes-drawer");
   const close = document.getElementById("anamnesis-notes-close");
+  const edge = document.getElementById("anamnesis-notes-edge");
   const notes = document.getElementById("anamnesis-notes-text");
   const bullets = document.getElementById("anamnesis-notes-bullets");
-  if(!toggle || !drawer || !close || !notes || !bullets) return;
+  if(!toggle || !drawer || !close || !edge || !notes || !bullets) return;
 
   try{ bullets.checked = localStorage.getItem(ANAMNESIS_NOTES_BULLETS_KEY) === "1"; }catch(e){}
   bullets.addEventListener("change", ()=>{
@@ -1267,6 +1274,7 @@ function initAnamnesisNotesDrawer(){
 
   toggle.addEventListener("click", ()=> drawer.classList.add("open"));
   close.addEventListener("click", ()=> drawer.classList.remove("open"));
+  edge.addEventListener("click", ()=> drawer.classList.remove("open"));
 
   notes.addEventListener("keydown", (e)=>{
     if(e.key !== "Enter" || !bullets.checked) return;
@@ -1321,6 +1329,7 @@ function loadAnamnesisForm(){
     initAnamnesisRepeaters(null);
     updatePlannedOperationVisibility();
     updateHousingVisibility();
+    updateMedicationConditionalVisibility();
     return;
   }
   let data = null;
@@ -1329,6 +1338,7 @@ function loadAnamnesisForm(){
     initAnamnesisRepeaters(null);
     updatePlannedOperationVisibility();
     updateHousingVisibility();
+    updateMedicationConditionalVisibility();
     return;
   }
   initAnamnesisRepeaters(data);
@@ -1342,6 +1352,7 @@ function loadAnamnesisForm(){
   if(notes) notes.value = data.anamnesis_global_notes || "";
   updatePlannedOperationVisibility();
   updateHousingVisibility();
+  updateMedicationConditionalVisibility();
 }
 
 function clearAnamnesisForm(){
@@ -1353,6 +1364,7 @@ function clearAnamnesisForm(){
   if(notes) notes.value = "";
   updatePlannedOperationVisibility();
   updateHousingVisibility();
+  updateMedicationConditionalVisibility();
   const status = document.getElementById('anamnesis-status');
   if(status) status.textContent = 'Cleared.';
 }
@@ -1729,6 +1741,12 @@ async function init(){
   document.querySelectorAll('input[name="pmh_planned_op"]').forEach(el=>{
     el.addEventListener('change', ()=>{
       updatePlannedOperationVisibility();
+      scheduleAnamnesisSave();
+    });
+  });
+  document.querySelectorAll('input[name="med_misuse"]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      updateMedicationConditionalVisibility();
       scheduleAnamnesisSave();
     });
   });
