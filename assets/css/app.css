@@ -396,6 +396,30 @@ button.danger:hover{background:#fff5f5}
   height:32px;
   font-weight:700;
 }
+.anam-actions{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:6px;
+  align-items:center;
+}
+.anam-actions > *{
+  flex:1 1 0;
+  min-width:0;
+}
+.anam-actions button{
+  padding:6px 8px;
+  font-size:inherit;
+  line-height:1.2;
+}
+@media (max-width:760px){
+  .anam-actions{
+    gap:4px;
+  }
+  .anam-actions button{
+    padding:5px 6px;
+    font-size:inherit;
+  }
+}
 .notes-toggle-btn{
   position:fixed;
   right:14px;
