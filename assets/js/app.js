@@ -486,7 +486,7 @@ function parseCSVLines(text){
 
 function rowsToObjects(rows){
   if(!rows || rows.length === 0) return [];
-  const headers = rows[0].map(h=>h.trim());
+  const headers = rows[0].map(h=>String(h || '').replace(/^\uFEFF/, '').trim());
   const objs = [];
   for(let i=1;i<rows.length;i++){
     const row = rows[i];
@@ -499,7 +499,7 @@ function rowsToObjects(rows){
 
 function rowsToObjectsWithHeaders(rows){
   if(!rows || rows.length === 0) return { headers: [], objects: [] };
-  const headers = rows[0].map(h=>h.trim());
+  const headers = rows[0].map(h=>String(h || '').replace(/^\uFEFF/, '').trim());
   const objects = [];
   for(let i=1;i<rows.length;i++){
     const row = rows[i];
@@ -522,14 +522,46 @@ function normalizeAnamnesisText(text){
 
 async function loadAnamnesisDictionary(){
   try{
-    const txt = await loadBaseFile('anamnesis.csv');
-    const rows = parseCSVLines(txt);
-    if(rows.length < 1) throw new Error('No data in anamnesis file');
+    const candidates = [
+      DATA_BASE + 'app_language/anamnesis.csv',
+      'data/app_language/anamnesis.csv',
+      DATA_BASE + 'anamnesis.csv'
+    ];
+    let rows = null;
+    let loadedFrom = '';
+    let lastErr = null;
+    for(const path of candidates){
+      try{
+        const txt = await loadFile(path);
+        if(!String(txt || '').trim()) continue;
+        const parsed = parseCSVLines(txt);
+        if(parsed.length < 1) continue;
+        const headers = (parsed[0] || []).map(h => String(h || '').replace(/^\uFEFF/, '').trim().toLowerCase());
+        const hasId = headers.includes('id_anamnesis') || headers.includes('id');
+        const hasEnglish = headers.includes('english_translation');
+        if(hasId && hasEnglish){
+          rows = parsed;
+          loadedFrom = path;
+          break;
+        }
+      }catch(e){
+        lastErr = e;
+      }
+    }
+    if(!rows){
+      if(lastErr) throw lastErr;
+      throw new Error('Anamnesis file could not be loaded');
+    }
     const objects = rowsToObjects(rows);
     anamnesisDictionary.clear();
     anamnesisDictionaryById.clear();
     for(const row of objects){
-      const key = String(row.id_anamnesis || '').trim();
+      const key = String(
+        row.id_anamnesis ||
+        row.ID_ANAMNESIS ||
+        row.id ||
+        ''
+      ).trim();
       const english = normalizeAnamnesisText(row.english_translation);
       const slovak = normalizeAnamnesisText(row.slovak_translation);
       if(key){
@@ -537,6 +569,9 @@ async function loadAnamnesisDictionary(){
       }
       if(!english) continue;
       anamnesisDictionary.set(english, { english, slovak });
+    }
+    if(anamnesisDictionaryById.size === 0){
+      throw new Error(`Anamnesis dictionary loaded from ${loadedFrom}, but no id_anamnesis keys were parsed`);
     }
   }catch(e){
     console.warn('Anamnesis translations load failed:', e.message || e);
@@ -552,6 +587,7 @@ function translateAnamnesisText(baseText){
   if(!row) return baseText;
   const lang = normalizeLanguage(state.language);
   if(lang === 'Slovensky' && row.slovak) return row.slovak;
+  if(lang === 'Deutsch' && row.slovak) return row.slovak;
   if(lang === 'English') return row.english || baseText;
   return row.english || baseText;
 }
@@ -561,6 +597,7 @@ function translateAnamnesisById(key, fallbackText = ''){
   if(!row) return fallbackText;
   const lang = normalizeLanguage(state.language);
   if(lang === 'Slovensky' && row.slovak) return row.slovak;
+  if(lang === 'Deutsch' && row.slovak) return row.slovak;
   if(lang === 'English') return row.english || fallbackText;
   return row.english || fallbackText;
 }
@@ -2354,9 +2391,12 @@ function scheduleAnamnesisSave(){
   anamnesisSaveTimer = setTimeout(saveAnamnesisForm, 300);
 }
 
-function loadAnamnesisForm(){
+async function loadAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
   if(!form) return;
+  if(anamnesisDictionaryById.size === 0){
+    try{ await loadAnamnesisDictionary(); }catch(e){}
+  }
   const raw = localStorage.getItem(ANAMNESIS_STORAGE_KEY);
   if(!raw){
     initAnamnesisRepeaters(null);
@@ -2762,7 +2802,7 @@ async function init(){
   });
   on('to-quiz','click', ()=> { showScreen('screen-quiz'); });
   on('to-muscle-training','click', ()=> { showScreen('screen-muscle-training'); });
-  on('to-anamnesis','click', ()=> { showScreen('screen-anamnesis'); loadAnamnesisForm(); });
+  on('to-anamnesis','click', async ()=> { showScreen('screen-anamnesis'); await loadAnamnesisForm(); });
   on('login-back','click', ()=> { showScreen('screen-menu'); });
 
   on('to-menu','click', ()=> { showScreen('screen-menu'); });
