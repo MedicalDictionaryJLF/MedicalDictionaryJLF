@@ -1,4 +1,4 @@
-﻿key;english;deutsch;slovensky;
+key;english;deutsch;slovensky;
 choose_language;Choose the language of the website;Wählen Sie die Sprache der Website.;Vyberte si jazyk stánky;Elegir idioma;Velg språk;Veldu tungumál
 language_settings;You may later change it in settings;Sie können dies später in den Einstellungen ändern.;Neskôr si ho môžete zmeniť v nastaveniach;Puede cambiarse más tarde en la configuración;Kan endres senere i innstillinger;Má breytast síðar í stillingum
 please_note; Please note: This web version is still in development and you may encounter bugs or missing features. If you encounter any issues, feel free to report them to this email: marcok6@uniba.sk. Thank you for your understanding and support!;Bitte beachten Sie: Diese Webversion befindet sich noch in der Entwicklung und Sie können auf Fehler oder fehlende Funktionen stoßen. Wenn Sie auf Probleme stoßen, können Sie diese gerne an diese E-Mail melden: marcok6@uniba.sk. Vielen Dank für Ihr Verständnis und Ihre Unterstützung!; Upozornenie: Na tomto webe stále prebieha vývoj a môžete naraziť na chyby alebo chýbajúce funkcie. Ak narazíte na akékoľvek problémy, neváhajte ich nahlásiť na tento e-mail: marcok6@uniba.sk. Ďakujeme za vaše porozumenie a podporu!;Tenga en cuenta: Esta versión web aún está en desarrollo y puede encontrar errores o funciones faltantes. Si encuentra algún problema, no dude en informarlo a este correo electrónico: marcok6@uniba.sk. ¡Gracias por su comprensión y apoyo!;Vennligst merk: Denne nettversjonen er fortsatt under utvikling, og du kan støte på feil eller manglende funksjoner. Hvis du støter på problemer, kan du gjerne rapportere dem til denne e-posten: marcok6@uniba.sk. Takk for din forståelse og støtte!;Vinsamlegast athugið: Þessi vefútgáfa er enn í þróun og þú gætir rekist á villur eða vantar eiginleika. Ef þú rekst á einhver vandamál, ekki hika við að tilkynna þau á þessa netfang: marcok6@uniba.sk. Þakka þér fyrir skilninginn og stuðninginn!
@@ -47,6 +47,84 @@ Select fields to show;Select fields to show;Felder zum Anzeigen auswählen;Vyber
 source_words;Source Words;Ausgangswörter;Východiskové slová;Palabras fuente;Kildeord;Orð úr upprunamáli
 target_words;Target Words;Zielwörter;Cieľové slová;Palabras destino;Målord;Orð úr markmáli
 start_quiz;Start Quiz;Quiz starten;Spustiť kvíz;Iniciar cuestionario;Start quiz;Byrja próf
+quiz_from;From;Von;Z
+quiz_to;To;Nach;Do
+quiz_double_confirm;Double-tap to confirm answer;Zum Bestätigen zweimal tippen;Dvojitým kliknutím potvrď odpoveď
+quiz_double_confirm_pending;Answer selected. Tap the same option again to confirm.;Antwort ausgewählt. Tippen Sie dieselbe Option erneut an, um zu bestätigen.;Odpoveď je vybraná. Klepnite na tú istú možnosť znova pre potvrdenie.
+quiz_shortcuts_standard;Keys 1-6 select an option. Press Enter for next question.;Mit Tasten 1-6 wählen Sie eine Option. Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosť. Pre ďalšiu otázku stlačte Enter.
+quiz_shortcuts_double_confirm;Keys 1-6 select options (press the same key again to confirm). Press Enter for next question.;Mit Tasten 1-6 wählen Sie Optionen (zum Bestätigen dieselbe Taste erneut drücken). Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosti (pre potvrdenie stlačte ten istý kláves znova). Pre ďalšiu otázku stlačte Enter.
+quiz_domain;Domain;Bereich;Oblasť
+quiz_subdivision;Subdivision;Unterbereich;Podoblasť
+quiz_subdivision2;Subdivision 2;Unterbereich 2;Podoblasť 2
+quiz_type;Quiz type;Quiztyp;Typ kvízu
+quiz_type_multiple_choice;Multiple choice;Výber z možností;Výber z možností
+quiz_type_matching;Matching;Priraďovanie;Priraďovanie
+quiz_type_typing;Typing;Písanie;Písanie
+quiz_question_count;Question count;Anzahl der Fragen;Počet otázok
+quiz_options_count;Answer options per question;Antwortoptionen pro Frage;Počet možností odpovede na otázku
+quiz_timer;Timer;Časovač;Časovač
+quiz_timer_off;Off;Aus;Vypnuté
+quiz_only_starred;Include only starred;Nur markierte Begriffe;Zahrnúť len označené hviezdičkou
+quiz_prefer_wrong;Prefer wrong terms;Falsche Begriffe bevorzugen;Uprednostniť nesprávne pojmy
+quiz_end;End quiz;Quiz beenden;Ukončiť kvíz
+quiz_streak;Streak;Séria;Séria
+quiz_accuracy;Accuracy;Presnosť;Presnosť
+quiz_time;Time;Čas;Čas
+quiz_no_wrong_terms;No wrong terms. Great run.;Keine falschen Begriffe. Starker Lauf.;Žiadne nesprávne pojmy. Skvelý výkon.
+quiz_correct_label;Correct;Richtig;Správne
+quiz_chosen_label;Chosen;Vybrané;Zvolené
+quiz_summary_title;Quiz summary;Quizübersicht;Zhrnutie kvízu
+quiz_total_correct;Total correct;Celkom správne;Celkom správne
+quiz_retry_wrong_terms;Retry wrong terms;Falsche Begriffe erneut üben;Skúsiť znovu nesprávne pojmy
+quiz_add_wrong_review;Add wrong terms to review list;Falsche Begriffe zur Wiederholungsliste hinzufügen;Pridať nesprávne pojmy do zoznamu na opakovanie
+quiz_complete;Quiz complete.;Quiz abgeschlossen.;Kvíz je dokončený.
+quiz_match_terms;Match terms;Begriffe zuordnen;Priraď pojmy
+quiz_pairs;pairs;Paare;páry
+quiz_select_answer;Select answer;Antwort auswählen;Vyber odpoveď
+quiz_finish;Finish;Fertig;Dokončiť
+quiz_submit_matching;Submit matching;Zuordnung abschicken;Odoslať priradenie
+quiz_correct_answer;Correct answer;Richtige Antwort;Správna odpoveď
+quiz_star;Star;Označiť hviezdičkou;Označiť hviezdičkou
+quiz_unstar;Unstar;Odstrániť hviezdičku;Odstrániť hviezdičku
+quiz_type_answer_placeholder;Type answer;Antwort eingeben;Napíš odpoveď
+quiz_submit;Submit;Odoslať;Odoslať
+quiz_shortcuts_typing;Press Enter to submit, then Enter for next question.;Drücken Sie Enter zum Senden und dann Enter für die nächste Frage.;Stlač Enter na odoslanie a potom Enter na ďalšiu otázku.
+quiz_next_question;Next question;Nächste Frage;Ďalšia otázka
+quiz_configure_and_start;Configure settings and press Start.;Einstellungen wählen und Start drücken.;Nastavte možnosti a stlačte Štart.
+quiz_wrong_added_to_review;Wrong terms added to review list.;Falsche Begriffe zur Wiederholung hinzugefügt.;Nesprávne pojmy boli pridané do zoznamu na opakovanie.
+quiz_err_no_pairs;No pairs available for this selection.;Keine Paare für diese Auswahl verfügbar.;Pre tento výber nie sú dostupné žiadne dvojice.
+quiz_err_need_two_pairs;Need at least 2 pairs for multiple choice.;Für Multiple Choice sind mindestens 2 Paare erforderlich.;Pre výber z možností sú potrebné aspoň 2 dvojice.
+flashcards;Flashcards;Lernkarten;Kartičky
+flashcards_builder;Builder;Builder;Tvorba
+flashcards_player;Player;Lernen;Prehrávanie
+flashcards_domains;Domains;Bereiche;Oblasti
+flashcards_subdivision;Subdivision;Unterbereich;Podoblasť
+flashcards_subdivision2;Subdivision 2;Unterbereich 2;Podoblasť 2
+flashcards_front_primary;Front field (primary);Vorderseite (Hauptfeld);Predné pole (hlavné)
+flashcards_front_secondary;Front field (secondary);Vorderseite (Nebenfeld);Predné pole (vedľajšie)
+flashcards_back_primary;Back field (primary);Rückseite (Hauptfeld);Zadné pole (hlavné)
+flashcards_back_secondary;Back field (secondary);Rückseite (Nebenfeld);Zadné pole (vedľajšie)
+flashcards_only;Only;Nur;Len
+flashcards_random;Random;Náhodné;Náhodné
+flashcards_new;New;Nové;Nové
+flashcards_wrong;Wrong;Nesprávne;Nesprávne
+flashcards_due;Due;Na opakovanie;Na opakovanie
+flashcards_limit;Limit;Limit;Limit
+flashcards_generate_session;Generate session;Sitzung erstellen;Vytvoriť session
+flashcards_again;Again;Nochmal;Znova
+flashcards_good;Good;Gut;Dobre
+flashcards_easy;Easy;Einfach;Ľahké
+flashcards_none;None;Keine;Žiadne
+flashcards_loaded_terms;Loaded terms;Geladene Begriffe;Načítané pojmy
+flashcards_selected_domain;Selected domain;Ausgewählter Bereich;Vybraná oblasť
+flashcards_no_active_session;No active session. Generate a deck first.;Keine aktive Sitzung. Erstellen Sie zuerst ein Deck.;Nie je aktívna session. Najprv vygenerujte balíček.
+flashcards_select_one_domain;Select at least one domain.;Wählen Sie mindestens einen Bereich.;Vyberte aspoň jednu oblasť.
+flashcards_select_front_back;Select front and back fields.;Wählen Sie Vorder- und Rückseitenfeld.;Vyberte predné a zadné polia.
+flashcards_front_back_same;Front and Back cannot be the same field.;Vorder- und Rückseitenfeld dürfen nicht identisch sein.;Predné a zadné pole nemôžu byť rovnaké.
+flashcards_generated_cards;Generated;Vygeneriert;Vygenerované
+flashcards_cards_suffix;card(s).;Karte(n).;kartičiek.
+flashcards_session_finished;Session finished.;Sitzung abgeschlossen.;Session dokončená.
+flashcards_reviewed;Reviewed;Prejdené;Prejdené
 translate_word;Translate;Übersetzen;Prelož;Traducir;Oversett;Þýða
 select_languages_warning;Please select both source and target languages.;Bitte wählen Sie sowohl Ausgangs- als auch Zielsprache aus.;Vyberte oba jazyky.;Seleccione ambos idiomas, por favor.;Velg begge språkene.;Veldu bæði tungumálin.
 reset_quiz;Reset Quiz;Quiz zurücksetzen;Spustiť kvíz znovu;Reiniciar cuestionario;Tilbakestill quiz;Endursetja próf
