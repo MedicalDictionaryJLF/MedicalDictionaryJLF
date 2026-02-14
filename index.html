@@ -47,18 +47,12 @@
         </div>
       </div>
 
-      <!-- MOVED HERE: Sync + Return to menu (only useful when logged in) -->
-      <div class="settings-block hidden" id="settings-sync-block">
-        <h4 data-i18n="settings_account_sync">Account & Sync</h4>
+      <div class="settings-block hidden" id="settings-account-block">
+        <h4 data-i18n="settings_account">Account</h4>
 
         <div class="settings-actions">
-          <button type="button" id="btn-sync" class="primary" data-i18n="sync">Sync</button>
           <button type="button" id="to-menu" data-i18n="back_lng">Back to Language Menu</button>
           <button type="button" id="to-login-from-settings" data-i18n="settings_return_to_login">Return to Login</button>
-        </div>
-
-        <div class="settings-status">
-          Sync: <span id="sync-status">not synced</span> ? Unsynced changes: <span id="sync-dirty-count">0</span>
         </div>
 
         <div class="settings-status" style="margin-top:8px">
@@ -166,6 +160,8 @@
         <h2 id="welcome-title">Welcome</h2>
         <div class="card">
           <button type="button" id="to-search" data-i18n="search">Search Terms</button>
+          <button type="button" id="to-lab-parameters">Lab parameters</button>
+          <button type="button" id="to-flashcards" data-i18n="flashcards">Flashcards</button>
           <button type="button" id="to-entry" data-i18n="add_term">Add Term</button>
           <button type="button" id="to-latin-terminology" data-i18n="latin_terminology">Latin terminology</button>
           <button type="button" id="to-quiz" data-i18n="quiz">Quiz</button>
@@ -173,11 +169,7 @@
           <button type="button" id="to-anamnesis" data-i18n="anamnesis">Anamnesis</button>
           <button type="button" id="to-links">Links</button>
 
-          <!-- REMOVED FROM HERE:
-               - Sync button (moved to Settings)
-               - Back to Language Menu button (moved to Settings)
-               - Logged in as line (now in header + Settings)
-          -->
+          <!-- Back to language menu and account controls are in Settings -->
         </div>
       </section>
 
@@ -190,21 +182,45 @@
               <input id="search-input" placeholder="Enter term (min 2 chars)" data-i18n-placeholder="enter_term" />
               <select id="search-dataset" aria-label="Search dataset">
                 <option value="all">Any</option>
-                <option value="anatomy">Anatomy</option>
-                <option value="diagnostic_methods">Diagnostic methods</option>
+                <option value="basic_sciences">Basic sciences</option>
+                <option value="diagnostics_procedures">Diagnostics &amp; Procedures</option>
                 <option value="disease_and_symptoms">Diseases and symptoms</option>
                 <option value="lab_parameters">Laboratory parameters</option>
                 <option value="latin" data-i18n="latin">Latin</option>
                 <option value="microorganisms">Microorganisms</option>
                 <option value="pharmacology">Pharmacology</option>
-                <option value="physiology">Physiology</option>
-                <option value="procedures">Procedures</option>
               </select>
             </div>
           </div>
           <div id="search-results"></div>
           <div class="row">
             <button type="button" id="search-back" data-i18n="back">Back</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-lab-parameters" class="screen hidden">
+        <h2 id="lab-parameters-title">Lab parameters</h2>
+        <div class="card">
+          <div class="search-controls">
+            <h3 id="lab-parameters-subtitle" style="margin:0 0 8px 0">Hospital lab taxonomy</h3>
+            <div class="row search-row" style="align-items:center">
+              <input id="lab-parameters-search-input" placeholder="Search term or abbreviation (min 2 chars)" />
+            </div>
+            <div class="lab-filters">
+              <div class="lab-filter-block">
+                <div class="lab-filter-head">
+                  <strong id="lab-tags-filter-label">Tags</strong>
+                  <button type="button" id="lab-parameters-clear-filters" class="lab-clear-btn">Clear filters</button>
+                </div>
+                <div id="lab-parameters-selected-tags" class="lab-chip-list" aria-label="Selected tags"></div>
+                <div id="lab-parameters-tags-available" class="lab-chip-list" aria-label="Available tags"></div>
+              </div>
+            </div>
+          </div>
+          <div id="lab-parameters-results"></div>
+          <div class="row">
+            <button type="button" id="lab-parameters-back">Back</button>
           </div>
         </div>
       </section>
@@ -229,29 +245,203 @@
 
       <section id="screen-quiz" class="screen hidden">
         <h2 data-i18n="quiz">Quiz</h2>
+        <div class="screen-top-actions">
+          <button type="button" id="quiz-back" data-i18n="back">Back</button>
+        </div>
         <div class="card">
           <div class="row">
-            <label>From:</label>
+            <div>
+              <label data-i18n="quiz_domain">Domain</label>
+              <div id="quiz-domains" class="checkbox-grid"></div>
+            </div>
+          </div>
+          <div class="row hidden" id="quiz-subdivision-wrap">
+            <div>
+              <label id="quiz-subdivision1-label" for="quiz-subdivision1" data-i18n="quiz_subdivision">Subdivision</label>
+              <select id="quiz-subdivision1"></select>
+            </div>
+            <div id="quiz-subdivision2-wrap" class="hidden">
+              <label id="quiz-subdivision2-label" for="quiz-subdivision2" data-i18n="quiz_subdivision2">Subdivision 2</label>
+              <select id="quiz-subdivision2"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="quiz-front-field" data-i18n="quiz_from">From</label>
+              <select id="quiz-front-field"></select>
+            </div>
+            <div>
+              <label for="quiz-back-field" data-i18n="quiz_to">To</label>
+              <select id="quiz-back-field"></select>
+            </div>
+          </div>
+          <div class="row hidden">
+            <label data-i18n="quiz_from">From:</label>
             <select id="quiz-from">
-              <option value="english_translation">English</option>
-              <option value="german_translation">German</option>
-              <option value="slovak_translation">Slovak</option>
-              <option value="latin_translation">Latin</option>
+              <option value="english_translation" data-i18n="english">English</option>
+              <option value="german_translation" data-i18n="german">German</option>
+              <option value="slovak_translation" data-i18n="slovak">Slovak</option>
+              <option value="latin_translation" data-i18n="latin">Latin</option>
             </select>
-            <label>To:</label>
+            <label data-i18n="quiz_to">To:</label>
             <select id="quiz-to">
-              <option value="latin_translation">Latin</option>
-              <option value="english_translation">English</option>
-              <option value="german_translation">German</option>
-              <option value="slovak_translation">Slovak</option>
+              <option value="latin_translation" data-i18n="latin">Latin</option>
+              <option value="english_translation" data-i18n="english">English</option>
+              <option value="german_translation" data-i18n="german">German</option>
+              <option value="slovak_translation" data-i18n="slovak">Slovak</option>
             </select>
           </div>
+          <div id="quiz-settings-panel" class="quiz-settings-panel">
+            <div class="quiz-settings-grid">
+              <div>
+                <label for="quiz-type" data-i18n="quiz_type">Quiz type</label>
+                <select id="quiz-type">
+                  <option value="multiple_choice" selected data-i18n="quiz_type_multiple_choice">Multiple choice</option>
+                  <option value="matching" data-i18n="quiz_type_matching">Matching</option>
+                  <option value="typing" data-i18n="quiz_type_typing">Typing</option>
+                </select>
+              </div>
+              <div>
+                <label for="quiz-question-count" data-i18n="quiz_question_count">Question count</label>
+                <select id="quiz-question-count">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+              <div>
+                <label for="quiz-options-count" data-i18n="quiz_options_count">Answer options per question</label>
+                <select id="quiz-options-count">
+                  <option value="4" selected>4</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+              <div>
+                <label for="quiz-timer" data-i18n="quiz_timer">Timer</label>
+                <select id="quiz-timer">
+                  <option value="0" selected data-i18n="quiz_timer_off">Off</option>
+                  <option value="30">30s</option>
+                  <option value="60">60s</option>
+                </select>
+              </div>
+              <label class="quiz-toggle">
+                <input type="checkbox" id="quiz-only-starred" />
+                <span data-i18n="quiz_only_starred">Include only starred</span>
+              </label>
+              <label class="quiz-toggle">
+                <input type="checkbox" id="quiz-prefer-wrong" />
+                <span data-i18n="quiz_prefer_wrong">Prefer wrong terms</span>
+              </label>
+              <label class="quiz-toggle">
+                <input type="checkbox" id="quiz-double-confirm" />
+                <span data-i18n="quiz_double_confirm">Double-tap to confirm answer</span>
+              </label>
+            </div>
+          </div>
+          <div id="quiz-stats" class="quiz-stats muted"></div>
           <div id="quiz-area"></div>
           <div class="row">
             <button type="button" id="start-quiz" data-i18n="start_quiz">Start</button>
-            <button type="button" id="quiz-back" data-i18n="back">Back</button>
+            <button type="button" id="end-quiz" data-i18n="quiz_end">End quiz</button>
           </div>
           <p id="quiz-score" class="muted"></p>
+        </div>
+      </section>
+
+      <section id="screen-flashcards" class="screen hidden">
+        <h2 data-i18n="flashcards">Flashcards</h2>
+        <div class="screen-top-actions">
+          <button type="button" id="flashcards-back" data-i18n="back">Back</button>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 8px 0" data-i18n="flashcards_builder">Builder</h3>
+          <div>
+            <label data-i18n="flashcards_domains">Domains</label>
+            <div id="flashcards-domains" class="checkbox-grid scrollable"></div>
+          </div>
+          <div id="flashcards-subdivision-wrap" class="hidden">
+            <div class="row">
+              <div>
+                <label id="flashcards-subdivision1-label" for="flashcards-subdivision1" data-i18n="flashcards_subdivision">Subdivision</label>
+                <select id="flashcards-subdivision1"></select>
+              </div>
+              <div id="flashcards-subdivision2-wrap" class="hidden">
+                <label id="flashcards-subdivision2-label" for="flashcards-subdivision2" data-i18n="flashcards_subdivision2">Subdivision 2</label>
+                <select id="flashcards-subdivision2"></select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="flashcards-front-field" data-i18n="flashcards_front_primary">Front field (primary)</label>
+              <select id="flashcards-front-field"></select>
+            </div>
+            <div>
+              <label for="flashcards-front-field-2" data-i18n="flashcards_front_secondary">Front field (secondary)</label>
+              <select id="flashcards-front-field-2"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="flashcards-back-field" data-i18n="flashcards_back_primary">Back field (primary)</label>
+              <select id="flashcards-back-field"></select>
+            </div>
+            <div>
+              <label for="flashcards-back-field-2" data-i18n="flashcards_back_secondary">Back field (secondary)</label>
+              <select id="flashcards-back-field-2"></select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="flashcards-only" data-i18n="flashcards_only">Only</label>
+              <select id="flashcards-only">
+                <option value="random" data-i18n="flashcards_random">Random</option>
+                <option value="new" data-i18n="flashcards_new">New</option>
+                <option value="wrong" data-i18n="flashcards_wrong">Wrong</option>
+                <option value="due" data-i18n="flashcards_due">Due</option>
+              </select>
+            </div>
+            <div>
+              <label for="flashcards-limit" data-i18n="flashcards_limit">Limit</label>
+              <select id="flashcards-limit">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" id="flashcards-generate" class="primary" data-i18n="flashcards_generate_session">Generate session</button>
+          </div>
+          <p id="flashcards-builder-msg" class="muted"></p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0" data-i18n="flashcards_player">Player</h3>
+          <div class="flashcard-scene">
+            <button type="button" id="flashcards-card" class="flashcard-card" aria-label="Flip card">
+              <div class="flashcard-card-inner">
+                <div class="flashcard-face flashcard-front">
+                  <div id="flashcards-front" class="flashcards-main-text"></div>
+                  <div id="flashcards-front-secondary" class="flashcards-secondary-text"></div>
+                </div>
+                <div class="flashcard-face flashcard-back">
+                  <div id="flashcards-back-side" class="flashcards-main-text"></div>
+                  <div id="flashcards-back-secondary" class="flashcards-secondary-text"></div>
+                </div>
+              </div>
+            </button>
+          </div>
+          <div class="row">
+            <button type="button" id="flashcards-reveal" data-i18n="reveal">Reveal</button>
+          </div>
+          <div class="row hidden" id="flashcards-ratings">
+            <button type="button" id="flashcards-again" class="danger" data-i18n="flashcards_again">Again</button>
+            <button type="button" id="flashcards-good" class="primary" data-i18n="flashcards_good">Good</button>
+            <button type="button" id="flashcards-easy" data-i18n="flashcards_easy">Easy</button>
+          </div>
+          <p id="flashcards-progress" class="muted">0/0</p>
         </div>
       </section>
 
