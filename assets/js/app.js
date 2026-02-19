@@ -1,7 +1,12 @@
-import { createAppStorage } from "./storage.js";
-
-const SUPABASE_URL = "https://glrxzhmhgzhabqzhmsiu.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdscnh6aG1oZ3poYWJxemhtc2l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4MzM3NzUsImV4cCI6MjA4MjQwOTc3NX0.Nzx3cHnPpn1awhQyNhjwKd2GUFnzieVR6uz7L-2eKrs";
+// ================================
+// Google Drive Authentication
+// ================================
+// Replace with your OAuth Web Client ID from Google Cloud Console.
+// Google Cloud OAuth setup:
+// - Authorized JavaScript origins must include your app host (e.g. http://localhost:8000, https://<user>.github.io).
+// - Required scope: https://www.googleapis.com/auth/drive.appdata
+const GOOGLE_CLIENT_ID = "595058136144-2e6f4u64er110a38sdi6ludegbrkqbao.apps.googleusercontent.com";
+const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
 // --- DOM helpers (prevents crashes if an element is missing) ---
 const $ = (id)=>document.getElementById(id);
@@ -22,30 +27,19 @@ function currentSection(){
 const IS_SECTION_PAGE = currentSection() !== "root";
 const DATA_BASE = IS_SECTION_PAGE ? "../data/" : "data/";
 
-const STORAGE_BUCKET = "Medical terms CSV";
-const ENABLE_STORAGE_BASE_SYNC = false;
-const STORAGE_FILES = [
-  { filename: "app_language/app_translations.csv", cacheId: "base/app_language/app_translations.csv" },
-  { filename: "terminology/muscles.csv", cacheId: "base/terminology/muscles.csv" },
-];
-
-let supabase = null;
-
-function initSupabase() {
-  const createClient = window.supabase?.createClient;
-  if(typeof createClient !== "function"){
-    console.warn("Supabase SDK not loaded - running local-only mode");
-    return null;
-  }
-  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith("PASTE_")) {
-    console.warn("Supabase anon key missing - running local-only mode");
-    return null;
-  }
-  if (!supabase) {
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-  return supabase;
-}
+let gTokenClient = null;
+let gAccessToken = "";
+let gTokenExpiresAt = 0;
+let gAuthInFlight = false;
+let googleBtnWired = false;
+let googleSettingsBtnWired = false;
+let userProfile = null;
+let profileFileId = "";
+let profileFileEtag = "";
+let profileDirty = false;
+let profileAutosaveTimer = null;
+let profileSaveInFlight = false;
+let profileSaveQueued = false;
 
 // ===== Offline cache via IndexedDB (stores downloaded CSVs) =====
 const IDB_NAME = "mdict_cache";
@@ -88,73 +82,8 @@ async function idbSet(key, value){
   });
 }
 
-// ===== Supabase Storage helpers (download base CSVs) =====
-function storageClient(){
-  const c = initSupabase();
-  if(!c) return null;
-  return c.storage.from(STORAGE_BUCKET);
-}
-
-async function storageListMeta(){
-  const sc = storageClient();
-  if(!sc) return null;
-  try{
-    const { data, error } = await sc.list("", { limit: 1000 });
-    if(error) throw error;
-
-    const meta = {};
-    for(const f of (data || [])){
-      meta[f.name] = f;
-    }
-    return meta;
-  }catch(e){
-    console.warn("Storage list failed (will fall back to direct downloads):", e.message || e);
-    return null;
-  }
-}
-
-async function downloadFromStorage(filename){
-  const sc = storageClient();
-  if(!sc) throw new Error("Supabase not configured");
-  const { data, error } = await sc.download(filename);
-  if(error) throw error;
-  return await data.text();
-}
-
-/**
- * Refresh cached base CSV files on login.
- * - Downloads files from Supabase Storage to IndexedDB if remote updated_at changed.
- */
 async function refreshBaseFilesCache(){
-  if(!ENABLE_STORAGE_BASE_SYNC) return;
-  const meta = await storageListMeta();
-
-  for(const f of STORAGE_FILES){
-    const cacheKey = "file:" + f.cacheId;
-    let cached = null;
-
-    try{ cached = await idbGet(cacheKey); }catch(e){ cached = null; }
-
-    const remote = meta ? meta[f.filename] : null;
-    const remoteUpdated = remote?.updated_at || remote?.created_at || null;
-    const cachedUpdated = cached?.updated_at || null;
-
-    const needsUpdate = !meta || !cached || !cachedUpdated || (remoteUpdated && remoteUpdated !== cachedUpdated);
-
-    if(needsUpdate){
-      try{
-        const text = await downloadFromStorage(f.filename);
-        await idbSet(cacheKey, {
-          text,
-          updated_at: remoteUpdated,
-          filename: f.filename,
-          saved_at: new Date().toISOString()
-        });
-      }catch(e){
-        console.warn("Storage download failed for", f.filename, "(continuing):", e.message || e);
-      }
-    }
-  }
+  // Static datasets are bundled and loaded locally from /data.
 }
 
 /**
@@ -165,86 +94,48 @@ async function refreshBaseFilesCache(){
 async function loadBaseFile(filenameOrPath){
   const raw = String(filenameOrPath || "");
   const normalized = raw.replace(/^\/+/, "");
-  const filename = normalized.split("/").pop(); // allow passing "data/medical_terms.csv"
-  const entry = STORAGE_FILES.find(x => x.filename === normalized || x.filename === filename);
-  const cacheKey = "file:" + (entry ? entry.cacheId : ("base/" + filename));
+  const cacheKey = "file:base/" + normalized.replace(/^data\//, "");
 
   const cached = await idbGet(cacheKey);
   if(cached?.text) return cached.text;
 
   // Local fallback from /data/
   const localPath = normalized.startsWith("data/") ? normalized.slice(5) : normalized;
-  return await loadFile(DATA_BASE + localPath);
+  const text = await loadFile(DATA_BASE + localPath);
+  try{
+    await idbSet(cacheKey, {
+      text,
+      updated_at: null,
+      filename: localPath,
+      saved_at: new Date().toISOString()
+    });
+  }catch(e){}
+  return text;
 }
 
 function setLoginStatus(text, type = "info") {
-  const el = document.getElementById("login-status");
-  if (!el) return;
-
-  el.textContent = String(text || "");
-  el.style.display = "block";
-
-  el.style.background =
-    type === "ok" ? "#eafaf0" :
-    type === "error" ? "#fde8e8" :
-    "#ecfdf5";
+  const targets = [
+    document.getElementById("google-auth-status")
+  ].filter(Boolean);
+  for(const el of targets){
+    el.textContent = String(text || "");
+    el.style.display = "block";
+    el.style.background =
+      type === "ok" ? "#eafaf0" :
+      type === "error" ? "#fde8e8" :
+      "#ecfdf5";
+  }
 }
 
 function clearLoginStatus(){
-  const el = document.getElementById("login-status");
-  if(!el) return;
-  el.style.display = "none";
-  el.textContent = "";
-  el.style.background = "";
-}
-
-function normalizeLoginIdentifier(input){
-  const raw = String(input || "").trim().toLowerCase();
-  if(!raw) return "";
-  if(raw.includes("@")) return raw;
-  return raw + "@medicaldict.local";
-}
-
-async function supaGetSession(){
-  const c = initSupabase();
-  if(!c) return null;
-  const { data, error } = await c.auth.getSession();
-  if(error) throw error;
-  return data.session;
-}
-
-async function supaSignUp(email, password, displayName){
-  const c = initSupabase();
-  if(!c) throw new Error("Supabase not configured");
-  const { error } = await c.auth.signUp({
-    email,
-    password,
-    options: { data: { name: displayName || "" } }
-  });
-  if(error) throw error;
-}
-
-async function supaSignIn(email, password){
-  const c = initSupabase();
-  if(!c) throw new Error("Supabase not configured");
-  const { error } = await c.auth.signInWithPassword({ email, password });
-  if(error) throw error;
-}
-
-async function supaRequestPasswordReset(email){
-  const c = initSupabase();
-  if(!c) throw new Error("Supabase not configured");
-  const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
-  const redirectTo = base + "reset-password.html";
-  const { error } = await c.auth.resetPasswordForEmail(email, { redirectTo });
-  if(error) throw error;
-}
-
-async function supaSignOut(){
-  const c = initSupabase();
-  if(!c) return;
-  const { error } = await c.auth.signOut();
-  if(error) throw error;
+  const targets = [
+    document.getElementById("google-auth-status")
+  ].filter(Boolean);
+  for(const el of targets){
+    el.style.display = "none";
+    el.textContent = "";
+    el.style.background = "";
+  }
 }
 
 // -------- Offline cache (localStorage) --------
@@ -254,32 +145,128 @@ function cacheKeyWrongTermsLog(){ return "cache/wrong_terms_log_v1"; }
 function cacheKeyStarredState(){ return "cache/starred_terms_state_v1"; }
 function cacheKeyReviewState(){ return "cache/review_list_state_v1"; }
 
-
 function readJsonLS(key, fallback){
   try{ const s = localStorage.getItem(key); return s ? JSON.parse(s) : fallback; }
   catch(e){ return fallback; }
 }
 function writeJsonLS(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 
-function getLocalTerms(){ return readJsonLS(cacheKeyTerms(), []); }
-function setLocalTerms(terms){ writeJsonLS(cacheKeyTerms(), terms || []); }
-
-function getLocalReview(){ return readJsonLS(cacheKeyReview(), []); }
-function setLocalReview(items){
-  writeJsonLS(cacheKeyReview(), items || []);
-  rebuildReviewListStateFromLocalReview();
+function deepClone(val){
+  return JSON.parse(JSON.stringify(val));
 }
 
-function getWrongTermsLog(){ return readJsonLS(cacheKeyWrongTermsLog(), []); }
-function setWrongTermsLog(items){
-  const list = Array.isArray(items) ? items : [];
-  writeJsonLS(cacheKeyWrongTermsLog(), list.slice(-1000));
+function nowIso(){
+  return new Date().toISOString();
 }
-function appendWrongTermsLog(entry){
-  if(!entry) return;
-  const list = getWrongTermsLog();
-  list.push(entry);
-  setWrongTermsLog(list);
+
+function normalizeWhitespace(value){
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function displayCase(value){
+  const text = normalizeWhitespace(value);
+  if(!text) return "";
+  return text.split(" ").map(part => {
+    const p = String(part || "");
+    if(!p) return "";
+    if(p === p.toUpperCase() && p.length <= 3) return p;
+    return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+  }).join(" ");
+}
+
+function tokenizeText(value){
+  return normalizeWhitespace(value)
+    .toLowerCase()
+    .split(/[^a-z0-9]+/i)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+
+function extractGermanArticle(value){
+  const text = normalizeWhitespace(value);
+  const m = text.match(/^(der|die|das)\s+(.+)$/i);
+  if(!m) return { article: "", base: text };
+  return {
+    article: String(m[1] || "").toLowerCase(),
+    base: normalizeWhitespace(m[2] || "")
+  };
+}
+
+function defaultProfile(){
+  const ts = nowIso();
+  return {
+    meta: {
+      schema_version: 1,
+      created_at: ts,
+      updated_at: ts
+    },
+    terms: {},
+    flashcards: {
+      decks: {},
+      cards: {},
+      schedule: {},
+      stats: {},
+      v2_progress: {}
+    },
+    learning: {
+      term_progress: {},
+      quiz_sessions: [],
+      mistakes: [],
+      review_list: [],
+      starred_state: { items: {} },
+      review_state: { items: {} },
+      custom_quizzes: { items: [] }
+    },
+    settings: {}
+  };
+}
+
+function ensureProfileShape(rawProfile){
+  const base = defaultProfile();
+  const merged = {
+    ...base,
+    ...(rawProfile && typeof rawProfile === "object" ? rawProfile : {})
+  };
+  merged.meta = {
+    ...base.meta,
+    ...(merged.meta && typeof merged.meta === "object" ? merged.meta : {})
+  };
+  merged.meta.schema_version = 1;
+  merged.terms = merged.terms && typeof merged.terms === "object" ? merged.terms : {};
+  merged.flashcards = {
+    ...base.flashcards,
+    ...(merged.flashcards && typeof merged.flashcards === "object" ? merged.flashcards : {})
+  };
+  merged.flashcards.decks = merged.flashcards.decks && typeof merged.flashcards.decks === "object" ? merged.flashcards.decks : {};
+  merged.flashcards.cards = merged.flashcards.cards && typeof merged.flashcards.cards === "object" ? merged.flashcards.cards : {};
+  merged.flashcards.schedule = merged.flashcards.schedule && typeof merged.flashcards.schedule === "object" ? merged.flashcards.schedule : {};
+  merged.flashcards.stats = merged.flashcards.stats && typeof merged.flashcards.stats === "object" ? merged.flashcards.stats : {};
+  merged.flashcards.v2_progress = merged.flashcards.v2_progress && typeof merged.flashcards.v2_progress === "object" ? merged.flashcards.v2_progress : {};
+  merged.learning = {
+    ...base.learning,
+    ...(merged.learning && typeof merged.learning === "object" ? merged.learning : {})
+  };
+  merged.learning.term_progress = merged.learning.term_progress && typeof merged.learning.term_progress === "object" ? merged.learning.term_progress : {};
+  merged.learning.quiz_sessions = Array.isArray(merged.learning.quiz_sessions) ? merged.learning.quiz_sessions : [];
+  merged.learning.mistakes = Array.isArray(merged.learning.mistakes) ? merged.learning.mistakes : [];
+  merged.learning.review_list = Array.isArray(merged.learning.review_list) ? merged.learning.review_list : [];
+  merged.learning.starred_state = merged.learning.starred_state && typeof merged.learning.starred_state === "object" ? merged.learning.starred_state : { items: {} };
+  merged.learning.review_state = merged.learning.review_state && typeof merged.learning.review_state === "object" ? merged.learning.review_state : { items: {} };
+  merged.learning.custom_quizzes = merged.learning.custom_quizzes && typeof merged.learning.custom_quizzes === "object" ? merged.learning.custom_quizzes : { items: [] };
+  if(!Array.isArray(merged.learning.custom_quizzes.items)) merged.learning.custom_quizzes.items = [];
+  merged.settings = merged.settings && typeof merged.settings === "object" ? merged.settings : {};
+  return merged;
+}
+
+function isProfileSessionActive(){
+  return !!(gAccessToken && userProfile && profileFileId);
+}
+
+function markProfileDirty(){
+  if(!isProfileSessionActive()) return;
+  userProfile = ensureProfileShape(userProfile);
+  userProfile.meta.updated_at = nowIso();
+  profileDirty = true;
 }
 
 function normalizeTimedSetState(raw){
@@ -287,34 +274,207 @@ function normalizeTimedSetState(raw){
   if(raw && typeof raw === "object" && raw.items && typeof raw.items === "object"){
     for(const [id, ts] of Object.entries(raw.items)){
       if(!id) continue;
-      out.items[String(id)] = String(ts || new Date().toISOString());
+      out.items[String(id)] = String(ts || nowIso());
     }
   }
   return out;
 }
 
+function buildNormalizedTerm(rawInput){
+  const raw = {
+    latin: normalizeWhitespace(rawInput && (rawInput.latin || rawInput.latin_translation)),
+    english: normalizeWhitespace(rawInput && (rawInput.english || rawInput.english_translation)),
+    german: normalizeWhitespace(rawInput && (rawInput.german || rawInput.german_translation)),
+    slovak: normalizeWhitespace(rawInput && (rawInput.slovak || rawInput.slovak_translation)),
+    notes: normalizeWhitespace(rawInput && (rawInput.notes || rawInput.english_definition || rawInput.german_definition))
+  };
+  const de = extractGermanArticle(raw.german);
+  const norm = {
+    latin: displayCase(raw.latin),
+    english: displayCase(raw.english),
+    german: displayCase(raw.german),
+    german_article: de.article,
+    german_base: displayCase(de.base),
+    slovak: displayCase(raw.slovak),
+    notes: normalizeWhitespace(raw.notes)
+  };
+  const tokenSet = new Set();
+  [
+    raw.latin, raw.english, raw.german, raw.slovak, raw.notes,
+    norm.latin, norm.english, norm.german, norm.german_base, norm.slovak
+  ].forEach(text => {
+    tokenizeText(text).forEach(tok => tokenSet.add(tok));
+  });
+  norm.tokens = [...tokenSet];
+  return { raw, norm };
+}
+
+function profileTermsToArray(){
+  if(!isProfileSessionActive()) return readJsonLS(cacheKeyTerms(), []);
+  const out = [];
+  for(const [termId, row] of Object.entries(userProfile.terms || {})){
+    const item = row && typeof row === "object" ? row : {};
+    const raw = item.raw && typeof item.raw === "object" ? item.raw : {};
+    const norm = item.norm && typeof item.norm === "object" ? item.norm : {};
+    out.push({
+      id: String(termId || ""),
+      english: String(norm.english || raw.english || raw.english_translation || "").trim(),
+      german: String(norm.german || raw.german || raw.german_translation || "").trim(),
+      slovak: String(norm.slovak || raw.slovak || raw.slovak_translation || "").trim(),
+      latin: String(norm.latin || raw.latin || raw.latin_translation || "").trim(),
+      notes: String(norm.notes || raw.notes || raw.english_definition || raw.german_definition || "").trim(),
+      raw,
+      norm,
+      created_at: String(item.created_at || ""),
+      updated_at: String(item.updated_at || "")
+    });
+  }
+  out.sort((a, b)=> String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
+  return out;
+}
+
+function upsertProfileTermFromRow(row){
+  if(!isProfileSessionActive()) return;
+  const normalized = buildNormalizedTerm(row || {});
+  const ts = nowIso();
+  const providedId = normalizeWhitespace(row && row.id);
+  const generatedId = providedId || (
+    (typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function")
+      ? `term:${crypto.randomUUID()}`
+      : `term:${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`
+  );
+  const prev = userProfile.terms[generatedId] || {};
+  userProfile.terms[generatedId] = {
+    raw: normalized.raw,
+    norm: normalized.norm,
+    created_at: String(prev.created_at || ts),
+    updated_at: ts
+  };
+  markProfileDirty();
+}
+
+function setProfileTermsFromArray(terms){
+  if(!isProfileSessionActive()) return;
+  const arr = Array.isArray(terms) ? terms : [];
+  const next = {};
+  for(const row of arr){
+    const normalized = buildNormalizedTerm(row || {});
+    const ts = nowIso();
+    const providedId = normalizeWhitespace(row && row.id);
+    const id = providedId || (
+      (typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function")
+        ? `term:${crypto.randomUUID()}`
+        : `term:${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`
+    );
+    const prev = (userProfile.terms && userProfile.terms[id]) || {};
+    next[id] = {
+      raw: normalized.raw,
+      norm: normalized.norm,
+      created_at: String(prev.created_at || row.created_at || ts),
+      updated_at: String(row.updated_at || ts)
+    };
+  }
+  userProfile.terms = next;
+  markProfileDirty();
+}
+
+function getLocalTerms(){
+  return profileTermsToArray();
+}
+
+function setLocalTerms(terms){
+  if(isProfileSessionActive()){
+    setProfileTermsFromArray(terms);
+    return;
+  }
+  writeJsonLS(cacheKeyTerms(), terms || []);
+}
+
+function getLocalReview(){
+  if(isProfileSessionActive()) return Array.isArray(userProfile.learning.review_list) ? userProfile.learning.review_list : [];
+  return readJsonLS(cacheKeyReview(), []);
+}
+
+function setLocalReview(items){
+  const rows = Array.isArray(items) ? items : [];
+  if(isProfileSessionActive()){
+    userProfile.learning.review_list = rows;
+    markProfileDirty();
+  } else {
+    writeJsonLS(cacheKeyReview(), rows);
+  }
+  rebuildReviewListStateFromLocalReview();
+}
+
+function getWrongTermsLog(){
+  if(isProfileSessionActive()) return Array.isArray(userProfile.learning.mistakes) ? userProfile.learning.mistakes : [];
+  return readJsonLS(cacheKeyWrongTermsLog(), []);
+}
+
+function setWrongTermsLog(items){
+  const list = Array.isArray(items) ? items.slice(-1000) : [];
+  if(isProfileSessionActive()){
+    userProfile.learning.mistakes = list;
+    markProfileDirty();
+    return;
+  }
+  writeJsonLS(cacheKeyWrongTermsLog(), list);
+}
+
+function appendWrongTermsLog(entry){
+  if(!entry) return;
+  const list = getWrongTermsLog();
+  const normalized = {
+    ...entry,
+    term_id: String(entry.term_id || entry.termId || ""),
+    at: String(entry.at || entry.timestamp || nowIso()),
+    from: String(entry.from || entry.fromField || ""),
+    to: String(entry.to || entry.toField || "")
+  };
+  list.push(normalized);
+  setWrongTermsLog(list);
+}
+
 function getStarredTermsState(){
+  if(isProfileSessionActive()){
+    return normalizeTimedSetState(userProfile.learning.starred_state || { items: {} });
+  }
   return normalizeTimedSetState(readJsonLS(cacheKeyStarredState(), { items: {} }));
 }
 
 function setStarredTermsState(stateObj){
-  writeJsonLS(cacheKeyStarredState(), normalizeTimedSetState(stateObj));
+  const normalized = normalizeTimedSetState(stateObj);
+  if(isProfileSessionActive()){
+    userProfile.learning.starred_state = normalized;
+    markProfileDirty();
+    return;
+  }
+  writeJsonLS(cacheKeyStarredState(), normalized);
 }
 
 function markStarredTermState(termId, timestamp){
   const id = String(termId || "").trim();
   if(!id) return;
   const stateObj = getStarredTermsState();
-  stateObj.items[id] = String(timestamp || new Date().toISOString());
+  stateObj.items[id] = String(timestamp || nowIso());
   setStarredTermsState(stateObj);
 }
 
 function getReviewListState(){
+  if(isProfileSessionActive()){
+    return normalizeTimedSetState(userProfile.learning.review_state || { items: {} });
+  }
   return normalizeTimedSetState(readJsonLS(cacheKeyReviewState(), { items: {} }));
 }
 
 function setReviewListState(stateObj){
-  writeJsonLS(cacheKeyReviewState(), normalizeTimedSetState(stateObj));
+  const normalized = normalizeTimedSetState(stateObj);
+  if(isProfileSessionActive()){
+    userProfile.learning.review_state = normalized;
+    markProfileDirty();
+    return;
+  }
+  writeJsonLS(cacheKeyReviewState(), normalized);
 }
 
 function reviewItemIdFromRow(row){
@@ -326,33 +486,13 @@ function reviewItemIdFromRow(row){
 
 function rebuildReviewListStateFromLocalReview(){
   const stateObj = getReviewListState();
-  const now = new Date().toISOString();
+  const now = nowIso();
   for(const row of getLocalReview()){
     const id = reviewItemIdFromRow(row);
     if(!id) continue;
     if(!stateObj.items[id]) stateObj.items[id] = now;
   }
   setReviewListState(stateObj);
-}
-
-function cacheKeyUserMap(){ return "cache/user_display_map"; }
-function getLocalUserMap(){ return readJsonLS(cacheKeyUserMap(), []); }
-function setLocalUserMap(items){ writeJsonLS(cacheKeyUserMap(), items || []); }
-function setDisplayNameMapping(name, email){
-  if(!name || !email) return;
-  const map = getLocalUserMap();
-  const key = name.trim().toLowerCase();
-  const existing = map.find(x => (x.name || '').toLowerCase() === key);
-  if(existing) existing.email = email;
-  else map.push({ name, email });
-  setLocalUserMap(map);
-}
-function lookupEmailByDisplayName(name){
-  const key = String(name || '').trim().toLowerCase();
-  if(!key) return '';
-  const map = getLocalUserMap();
-  const hit = map.find(x => (x.name || '').toLowerCase() === key);
-  return hit ? hit.email : '';
 }
 
 
@@ -381,6 +521,545 @@ async function loadFile(filename) {
       xhr.send();
     });
   }
+}
+
+function stripEtag(value){
+  return String(value || "").replace(/^W\//, "").replace(/^"(.*)"$/, "$1").trim();
+}
+
+function profileTimeMs(value){
+  const ms = new Date(String(value || "")).getTime();
+  return Number.isFinite(ms) ? ms : 0;
+}
+
+function getTermProgressBucket(doc){
+  const profile = ensureProfileShape(doc);
+  const learning = profile.learning;
+  if(!learning.term_progress || typeof learning.term_progress !== "object"){
+    learning.term_progress = {};
+  }
+  if(!learning.term_progress.terms || typeof learning.term_progress.terms !== "object"){
+    learning.term_progress.terms = {};
+  }
+  return learning.term_progress;
+}
+
+function mergeByUpdatedAt(localRow, remoteRow){
+  const l = localRow && typeof localRow === "object" ? localRow : null;
+  const r = remoteRow && typeof remoteRow === "object" ? remoteRow : null;
+  if(!l && !r) return null;
+  if(!l) return deepClone(r);
+  if(!r) return deepClone(l);
+  const lt = profileTimeMs(l.updated_at || l.updatedAt || l.last_seen);
+  const rt = profileTimeMs(r.updated_at || r.updatedAt || r.last_seen);
+  return deepClone(lt >= rt ? l : r);
+}
+
+function mergeProfiles(localProfileDoc, remoteProfileDoc){
+  const local = ensureProfileShape(localProfileDoc);
+  const remote = ensureProfileShape(remoteProfileDoc);
+  const merged = ensureProfileShape(remote);
+
+  const localTerms = local.terms || {};
+  const remoteTerms = remote.terms || {};
+  const termKeys = new Set([...Object.keys(remoteTerms), ...Object.keys(localTerms)]);
+  const nextTerms = {};
+  for(const key of termKeys){
+    const row = mergeByUpdatedAt(localTerms[key], remoteTerms[key]);
+    if(row) nextTerms[key] = row;
+  }
+  merged.terms = nextTerms;
+
+  const localProg = getTermProgressBucket(local).terms || {};
+  const remoteProg = getTermProgressBucket(remote).terms || {};
+  const progKeys = new Set([...Object.keys(remoteProg), ...Object.keys(localProg)]);
+  const nextProg = {};
+  for(const key of progKeys){
+    const l = localProg[key];
+    const r = remoteProg[key];
+    if(!l) nextProg[key] = deepClone(r);
+    else if(!r) nextProg[key] = deepClone(l);
+    else {
+      const ll = profileTimeMs(l.last_seen || l.updatedAt || l.updated_at);
+      const rr = profileTimeMs(r.last_seen || r.updatedAt || r.updated_at);
+      nextProg[key] = deepClone(ll >= rr ? l : r);
+    }
+  }
+  getTermProgressBucket(merged).terms = nextProg;
+
+  const mistakes = [];
+  const seenMistake = new Set();
+  for(const row of [...(remote.learning.mistakes || []), ...(local.learning.mistakes || [])]){
+    if(!row || typeof row !== "object") continue;
+    const key = [
+      String(row.term_id || row.termId || ""),
+      String(row.at || row.timestamp || ""),
+      String(row.from || row.fromField || ""),
+      String(row.to || row.toField || "")
+    ].join("|");
+    if(!key || seenMistake.has(key)) continue;
+    seenMistake.add(key);
+    mistakes.push(row);
+  }
+  merged.learning.mistakes = mistakes.slice(-3000);
+
+  const mergeObjectMap = (remoteMap, localMap)=>{
+    const out = { ...(remoteMap || {}) };
+    for(const [key, value] of Object.entries(localMap || {})){
+      const hit = out[key];
+      if(!hit){
+        out[key] = deepClone(value);
+        continue;
+      }
+      const winner = mergeByUpdatedAt(value, hit);
+      out[key] = winner === null ? deepClone(hit) : winner;
+    }
+    return out;
+  };
+
+  merged.flashcards.decks = mergeObjectMap(remote.flashcards.decks, local.flashcards.decks);
+  merged.flashcards.cards = mergeObjectMap(remote.flashcards.cards, local.flashcards.cards);
+  merged.flashcards.schedule = mergeObjectMap(remote.flashcards.schedule, local.flashcards.schedule);
+  merged.flashcards.v2_progress = { ...(remote.flashcards.v2_progress || {}), ...(local.flashcards.v2_progress || {}) };
+  merged.flashcards.stats = { ...(remote.flashcards.stats || {}), ...(local.flashcards.stats || {}) };
+
+  merged.learning.review_list = [...(remote.learning.review_list || [])];
+  for(const row of (local.learning.review_list || [])){
+    const key = `${row && row.base_term_key || ""}|${row && row.base_dataset || ""}|${row && row.user_term_id || ""}`;
+    const exists = merged.learning.review_list.some(x => `${x && x.base_term_key || ""}|${x && x.base_dataset || ""}|${x && x.user_term_id || ""}` === key);
+    if(!exists) merged.learning.review_list.push(row);
+  }
+  merged.learning.quiz_sessions = [...(remote.learning.quiz_sessions || []), ...(local.learning.quiz_sessions || [])]
+    .sort((a, b)=> profileTimeMs(b && b.finishedAt) - profileTimeMs(a && a.finishedAt))
+    .slice(0, 200);
+  merged.learning.custom_quizzes = {
+    items: [...(remote.learning.custom_quizzes && remote.learning.custom_quizzes.items || [])]
+  };
+  for(const row of (local.learning.custom_quizzes && local.learning.custom_quizzes.items || [])){
+    const id = String(row && row.quizId || "");
+    if(!id) continue;
+    const idx = merged.learning.custom_quizzes.items.findIndex(x => x && String(x.quizId || "") === id);
+    if(idx < 0) merged.learning.custom_quizzes.items.push(row);
+    else merged.learning.custom_quizzes.items[idx] = mergeByUpdatedAt(row, merged.learning.custom_quizzes.items[idx]) || row;
+  }
+  merged.learning.starred_state = normalizeTimedSetState({
+    items: {
+      ...((remote.learning.starred_state && remote.learning.starred_state.items) || {}),
+      ...((local.learning.starred_state && local.learning.starred_state.items) || {})
+    }
+  });
+  merged.learning.review_state = normalizeTimedSetState({
+    items: {
+      ...((remote.learning.review_state && remote.learning.review_state.items) || {}),
+      ...((local.learning.review_state && local.learning.review_state.items) || {})
+    }
+  });
+
+  merged.settings = {
+    ...(remote.settings || {}),
+    ...(local.settings || {})
+  };
+
+  merged.meta.created_at = String(remote.meta.created_at || local.meta.created_at || nowIso());
+  merged.meta.updated_at = nowIso();
+  merged.meta.schema_version = 1;
+  return merged;
+}
+
+function toMultipartRelated({ metadata, content }){
+  const boundary = `mdict_${Math.random().toString(36).slice(2)}`;
+  const body = [
+    `--${boundary}`,
+    "Content-Type: application/json; charset=UTF-8",
+    "",
+    JSON.stringify(metadata),
+    `--${boundary}`,
+    "Content-Type: application/json; charset=UTF-8",
+    "",
+    JSON.stringify(content),
+    `--${boundary}--`
+  ].join("\r\n");
+  return { boundary, body };
+}
+
+async function driveFetch(url, opts = {}){
+  if(!gAccessToken) throw new Error("Google access token missing.");
+  const options = opts || {};
+  const allowStatuses = Array.isArray(options.allowStatuses) ? options.allowStatuses : [];
+  const headers = {
+    Authorization: `Bearer ${gAccessToken}`,
+    ...(options.headers || {})
+  };
+  const res = await fetch(url, {
+    method: options.method || "GET",
+    headers,
+    body: options.body
+  });
+  if(res.ok || allowStatuses.includes(res.status)) return res;
+  let detail = "";
+  try{
+    const err = await res.json();
+    detail = err && err.error && err.error.message ? String(err.error.message) : "";
+  }catch(e){}
+  throw new Error(`Drive request failed (${res.status})${detail ? `: ${detail}` : ""}`);
+}
+
+async function driveFindProfileFile(){
+  const q = encodeURIComponent("name='profile.json' and trashed=false");
+  const urls = [
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime,etag)`,
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime)`
+  ];
+  for(const url of urls){
+    try{
+      const res = await driveFetch(url);
+      const json = await res.json();
+      const files = Array.isArray(json && json.files) ? json.files : [];
+      const hit = files.find(f => String(f && f.name || "") === "profile.json");
+      if(hit) return {
+        id: String(hit.id || ""),
+        etag: String(hit.etag || ""),
+        modifiedTime: String(hit.modifiedTime || "")
+      };
+      return null;
+    }catch(e){
+      if(url === urls[urls.length - 1]) throw e;
+    }
+  }
+  return null;
+}
+
+async function driveCreateProfileFile(profileDoc){
+  const metadata = { name: "profile.json", parents: ["appDataFolder"], mimeType: "application/json" };
+  const multipart = toMultipartRelated({ metadata, content: profileDoc });
+  try{
+    const res = await driveFetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,etag", {
+      method: "POST",
+      headers: {
+        "Content-Type": `multipart/related; boundary=${multipart.boundary}`
+      },
+      body: multipart.body
+    });
+    const data = await res.json();
+    return {
+      id: String(data && data.id || ""),
+      etag: String(data && data.etag || stripEtag(res.headers.get("ETag")) || "")
+    };
+  }catch(e){
+    const res = await driveFetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id", {
+      method: "POST",
+      headers: {
+        "Content-Type": `multipart/related; boundary=${multipart.boundary}`
+      },
+      body: multipart.body
+    });
+    const data = await res.json();
+    return {
+      id: String(data && data.id || ""),
+      etag: String(stripEtag(res.headers.get("ETag")) || "")
+    };
+  }
+}
+
+async function driveGetFileMeta(fileId){
+  const id = encodeURIComponent(String(fileId || "").trim());
+  try{
+    const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=id,name,modifiedTime,etag`);
+    const data = await res.json();
+    return {
+      id: String(data && data.id || ""),
+      etag: String(data && data.etag || stripEtag(res.headers.get("ETag")) || ""),
+      modifiedTime: String(data && data.modifiedTime || "")
+    };
+  }catch(e){
+    const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=id,name,modifiedTime`);
+    const data = await res.json();
+    return {
+      id: String(data && data.id || ""),
+      etag: String(stripEtag(res.headers.get("ETag")) || ""),
+      modifiedTime: String(data && data.modifiedTime || "")
+    };
+  }
+}
+
+async function driveDownloadFile(fileId){
+  const id = encodeURIComponent(String(fileId || "").trim());
+  const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`);
+  const doc = await res.json();
+  const meta = await driveGetFileMeta(fileId);
+  return {
+    doc: ensureProfileShape(doc),
+    etag: String(meta.etag || stripEtag(res.headers.get("ETag")) || "")
+  };
+}
+
+async function driveUpdateProfileFile(fileId, profileDoc, etag){
+  const id = encodeURIComponent(String(fileId || "").trim());
+  const metadata = { name: "profile.json", mimeType: "application/json" };
+  const multipart = toMultipartRelated({ metadata, content: profileDoc });
+  const headers = {
+    "Content-Type": `multipart/related; boundary=${multipart.boundary}`
+  };
+  const cleanEtag = stripEtag(etag);
+  if(cleanEtag) headers["If-Match"] = `"${cleanEtag}"`;
+  try{
+    const res = await driveFetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=multipart&fields=id,etag`, {
+      method: "PATCH",
+      headers,
+      body: multipart.body,
+      allowStatuses: [412]
+    });
+    if(res.status === 412){
+      return { conflict: true, etag: "" };
+    }
+    const data = await res.json();
+    return {
+      conflict: false,
+      etag: String(data && data.etag || stripEtag(res.headers.get("ETag")) || "")
+    };
+  }catch(e){
+    const res = await driveFetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=multipart&fields=id`, {
+      method: "PATCH",
+      headers,
+      body: multipart.body,
+      allowStatuses: [412]
+    });
+    if(res.status === 412){
+      return { conflict: true, etag: "" };
+    }
+    return {
+      conflict: false,
+      etag: String(stripEtag(res.headers.get("ETag")) || "")
+    };
+  }
+}
+
+function startProfileAutosave(){
+  if(profileAutosaveTimer) clearInterval(profileAutosaveTimer);
+  profileAutosaveTimer = setInterval(()=>{
+    if(profileDirty){
+      saveUserProfileNow("autosave");
+    }
+  }, 60000);
+}
+
+function stopProfileAutosave(){
+  if(profileAutosaveTimer){
+    clearInterval(profileAutosaveTimer);
+    profileAutosaveTimer = null;
+  }
+}
+
+async function saveUserProfileNow(reason = "manual"){
+  if(!isProfileSessionActive() || !profileDirty || !profileFileId) return;
+  if(profileSaveInFlight){
+    profileSaveQueued = true;
+    return;
+  }
+  profileSaveInFlight = true;
+  try{
+    userProfile = ensureProfileShape(userProfile);
+    userProfile.meta.updated_at = nowIso();
+    let saveRes = await driveUpdateProfileFile(profileFileId, userProfile, profileFileEtag);
+    if(saveRes.conflict){
+      const remote = await driveDownloadFile(profileFileId);
+      userProfile = mergeProfiles(userProfile, remote.doc);
+      profileFileEtag = remote.etag || profileFileEtag;
+      saveRes = await driveUpdateProfileFile(profileFileId, userProfile, profileFileEtag);
+      if(saveRes.conflict){
+        throw new Error("Cloud profile changed during save. Please retry.");
+      }
+    }
+    if(saveRes.etag) profileFileEtag = saveRes.etag;
+    profileDirty = false;
+    if(reason !== "autosave"){
+      setLoginStatus("Profile saved.", "ok");
+    }
+  }catch(e){
+    console.warn("Profile save failed:", e);
+    setLoginStatus(`Error saving profile: ${e.message || e}`, "error");
+  }finally{
+    profileSaveInFlight = false;
+    if(profileSaveQueued){
+      profileSaveQueued = false;
+      if(profileDirty){
+        saveUserProfileNow("queued");
+      }
+    }
+  }
+}
+
+async function loadOrCreateDriveProfile(){
+  const existing = await driveFindProfileFile();
+  if(!existing){
+    userProfile = ensureProfileShape(defaultProfile());
+    const created = await driveCreateProfileFile(userProfile);
+    if(!created.id){
+      throw new Error("Failed to create profile.json in appDataFolder.");
+    }
+    profileFileId = created.id;
+    profileFileEtag = created.etag || "";
+    profileDirty = false;
+    return userProfile;
+  }
+  if(!existing.id){
+    throw new Error("Google Drive returned an invalid profile file id.");
+  }
+  profileFileId = existing.id;
+  const downloaded = await driveDownloadFile(existing.id);
+  profileFileEtag = downloaded.etag || stripEtag(existing.etag) || "";
+  userProfile = ensureProfileShape(downloaded.doc);
+  profileDirty = false;
+  return userProfile;
+}
+
+async function handleGoogleTokenResponse(resp){
+  console.log("GOOGLE TOKEN CALLBACK:", resp);
+  console.log("[AUTH] token callback resp:", resp);
+  if(resp && resp.error){
+    console.error("Google sign-in error:", resp.error, resp.error_description || "");
+    setLoginStatus(`Error: ${resp.error_description || resp.error || "Google sign-in failed."}`, "error");
+    gAuthInFlight = false;
+    return;
+  }
+  if(!resp || !resp.access_token){
+    console.error("No access token returned");
+    setLoginStatus("Error: No access token returned.", "error");
+    gAuthInFlight = false;
+    return;
+  }
+  gAccessToken = String(resp.access_token || "").trim();
+  const expiresIn = Number(resp && resp.expires_in || 0);
+  gTokenExpiresAt = expiresIn > 0 ? (Date.now() + expiresIn * 1000) : 0;
+  try{
+    console.log("[AUTH] got access token, loading Drive profile...");
+    await loadOrCreateDriveProfile();
+    const about = await driveLoadCurrentUser().catch(()=> ({ displayName: "", emailAddress: "" }));
+    const profileLang = normalizeLanguage((userProfile && userProfile.settings && userProfile.settings.app_language) || state.language);
+    const profileTextSize = String((userProfile && userProfile.settings && userProfile.settings.text_size) || (localStorage.getItem(TEXT_SIZE_KEY) || "4"));
+    await setLanguage(profileLang);
+    applyTextSize(profileTextSize);
+    const sizeSlider = document.getElementById("text-size-slider");
+    if(sizeSlider) sizeSlider.value = profileTextSize;
+    state.currentUser = about.displayName || about.emailAddress || "Google user";
+    state.currentUserEmail = about.emailAddress || "";
+    updateAuthUI();
+    startProfileAutosave();
+    setLoginStatus("Profile loaded.", "ok");
+    showScreen("screen-submenu");
+    renderQuizUI();
+    refreshFlashcardsSession();
+    refreshLabParametersUI();
+  }catch(e){
+    console.warn("Google sign-in failed:", e);
+    setLoginStatus(`Error: ${e.message || e}`, "error");
+  }finally{
+    gAuthInFlight = false;
+  }
+}
+
+function initGoogleTokenClient(){
+  if(gTokenClient) return gTokenClient;
+  if(!(window.google && google.accounts && google.accounts.oauth2)){
+    throw new Error("Google Identity Services script not loaded.");
+  }
+  const clientId = String(GOOGLE_CLIENT_ID || "").trim();
+  if(!clientId){
+    throw new Error("GOOGLE_CLIENT_ID is empty.");
+  }
+  gTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: GOOGLE_SCOPES,
+    callback: (resp) => {
+      void handleGoogleTokenResponse(resp);
+    }
+  });
+  return gTokenClient;
+}
+
+async function driveLoadCurrentUser(){
+  const res = await driveFetch("https://www.googleapis.com/drive/v3/about?fields=user(displayName,emailAddress)");
+  const data = await res.json();
+  const user = data && data.user ? data.user : {};
+  return {
+    displayName: String(user.displayName || "").trim(),
+    emailAddress: String(user.emailAddress || "").trim()
+  };
+}
+
+function requestGoogleAccessTokenFromClick(){
+  console.log("[AUTH] signInWithGoogleDrive start");
+  if(gAuthInFlight) return;
+  gAuthInFlight = true;
+  clearLoginStatus();
+  setLoginStatus("Connecting...", "info");
+  try{
+    initGoogleTokenClient();
+    console.log("[AUTH] requestAccessToken() called. userActivation expected.");
+    gTokenClient.requestAccessToken({ prompt: "consent" });
+  }catch(e){
+    gAuthInFlight = false;
+    setLoginStatus(`Error: ${e.message || e}`, "error");
+  }
+}
+
+function wireGoogleBtnOnce(){
+  if(googleBtnWired) return;
+  googleBtnWired = true;
+  const btn = document.getElementById("btn-google-drive");
+  if(!btn){
+    console.warn("Missing element: btn-google-drive");
+    return;
+  }
+  btn.addEventListener("click", () => {
+    requestGoogleAccessTokenFromClick();
+  });
+}
+
+function wireSettingsGoogleBtnOnce(){
+  if(googleSettingsBtnWired) return;
+  googleSettingsBtnWired = true;
+  const btn = document.getElementById("to-login-from-settings-public");
+  if(!btn) return;
+  btn.addEventListener("click", ()=>{
+    const sidebar = document.getElementById('settings-sidebar');
+    const overlay = document.getElementById('settings-overlay');
+    if(sidebar) sidebar.classList.remove('open');
+    if(overlay) overlay.classList.remove('open');
+    requestGoogleAccessTokenFromClick();
+  });
+}
+
+async function signOutGoogleDrive(){
+  if(profileDirty){
+    await saveUserProfileNow("signout");
+  }
+  const token = gAccessToken;
+  gAccessToken = "";
+  gTokenExpiresAt = 0;
+  gAuthInFlight = false;
+  userProfile = null;
+  profileFileId = "";
+  profileFileEtag = "";
+  profileDirty = false;
+  profileSaveQueued = false;
+  profileSaveInFlight = false;
+  stopProfileAutosave();
+  state.currentUser = null;
+  state.currentUserEmail = null;
+  if(typeof quizLastFinishedState !== "undefined") quizLastFinishedState = null;
+  if(typeof flashcardsV2State !== "undefined" && flashcardsV2State && flashcardsV2State.session){
+    flashcardsV2State.session.deck = [];
+    flashcardsV2State.session.index = 0;
+    flashcardsV2State.session.revealed = false;
+  }
+  if(token && window.google && google.accounts && google.accounts.oauth2 && typeof google.accounts.oauth2.revoke === "function"){
+    try{ google.accounts.oauth2.revoke(token, ()=>{}); }catch(e){}
+  }
+  updateAuthUI();
+  try{ renderQuizUI(); }catch(e){}
+  try{ refreshFlashcardsSession(); }catch(e){}
+  setLoginStatus("Signed out.", "info");
 }
 
 // --- Utilities: robust CSV parser for quoted fields (RFC4180-ish) ---
@@ -445,6 +1124,10 @@ const translations = {};
 const anamnesisDictionary = new Map();
 const anamnesisDictionaryById = new Map();
 const anamnesisTextNodes = new WeakMap();
+const ANAMNESIS_INTERNAL_CSV_CANDIDATES = [
+  DATA_BASE + "app_language/anamnesis_internal.csv",
+  "data/app_language/anamnesis_internal.csv"
+];
 
 function normalizeAnamnesisText(text){
   return String(text || '').replace(/\s+/g, ' ').trim();
@@ -452,11 +1135,7 @@ function normalizeAnamnesisText(text){
 
 async function loadAnamnesisDictionary(){
   try{
-    const candidates = [
-      DATA_BASE + 'app_language/anamnesis.csv',
-      'data/app_language/anamnesis.csv',
-      DATA_BASE + 'anamnesis.csv'
-    ];
+    const candidates = ANAMNESIS_INTERNAL_CSV_CANDIDATES;
     let rows = null;
     let loadedFrom = '';
     let lastErr = null;
@@ -533,7 +1212,7 @@ function translateAnamnesisById(key, fallbackText = ''){
 }
 
 function applyAnamnesisTranslationsToDom(){
-  const section = document.getElementById('screen-anamnesis');
+  const section = document.getElementById('anamnesis-form-internal-wrap');
   if(!section || (anamnesisDictionary.size === 0 && anamnesisDictionaryById.size === 0)) return;
 
   section.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(el=>{
@@ -659,12 +1338,12 @@ const TERMINOLOGY_SOURCES = [
   { key: "diagnostic_methods", label: "Diagnostic methods", path: "terminology/diagnostic_methods.csv" },
   { key: "disease_and_symptoms", label: "Diseases and symptoms", path: "terminology/disease_and_symptoms.csv" },
   { key: "lab_parameters", label: "Laboratory parameters", path: "terminology/lab_parameters.csv" },
-  { key: "latin", label: "Latin", path: "terminology/latin_units.csv", sourceLabel: "Units" },
-  { key: "latin", label: "Latin", path: "terminology/latin_greek.csv", sourceLabel: "Latin-Greek synonyms" },
-  { key: "latin", label: "Latin", path: "terminology/latin_abbreviations.csv", sourceLabel: "Abbreviations in medicine" },
-  { key: "latin", label: "Latin", path: "terminology/latin_remedies.csv", sourceLabel: "Remedies" },
+  { key: "latin", label: "Latin", path: "terminology/latin/latin_units.csv", sourceLabel: "Units" },
+  { key: "latin", label: "Latin", path: "terminology/latin/latin_greek.csv", sourceLabel: "Latin-Greek synonyms" },
+  { key: "latin", label: "Latin", path: "terminology/latin/latin_abbreviations.csv", sourceLabel: "Abbreviations in medicine" },
+  { key: "latin", label: "Latin", path: "terminology/latin/latin_remedies.csv", sourceLabel: "Remedies" },
   { key: "microorganisms", label: "Microorganisms", path: "terminology/microorganisms.csv" },
-  { key: "pharmacology", label: "Pharmacology", path: "terminology/pharmacology.csv" },
+  { key: "pharmacology", label: "Pharmacology", path: "terminology/pharmacology/pharmacology.csv" },
   { key: "physiology", label: "Physiology", path: "terminology/physiology.csv" },
   { key: "procedures", label: "Procedures", path: "terminology/procedures.csv" },
   { key: "muscles", label: "Muscles", path: "terminology/muscles.csv" },
@@ -1607,6 +2286,10 @@ async function setLanguage(lang){
   const canonical = normalizeLanguage(lang);
   state.language = canonical;
   localStorage.setItem('app_language', canonical);
+  if(isProfileSessionActive()){
+    userProfile.settings.app_language = canonical;
+    markProfileDirty();
+  }
 
   const sel = document.getElementById('language');
   if(sel) sel.value = canonical;
@@ -1659,6 +2342,7 @@ const LATIN_DATASET_KEY = "latin";
 const LATIN_SEARCH_POS_KEY = "latin_search_pos";
 const LATIN_SEARCH_FIELD_KEY = "latin_search_field";
 const ANAMNESIS_STORAGE_KEY = "anamnesis_form_v1";
+const ANAMNESIS_PSYCHIATRY_STORAGE_KEY = "anamnesis_psychiatry_form_v1";
 const TEXT_SIZE_KEY = "text_size";
 const NAV_SESSION_KEY = "nav/last_screen_session";
 const TEXT_SIZES = [13,14,15,16,17,18,19];
@@ -1677,6 +2361,7 @@ let latinQuizPersistentFields = new Set();
 let latinQuizTempFields = new Set();
 let latinSearchSelectedUnits = new Set();
 let latinSearchUnitsInitialized = false;
+let activeAnamnesisTab = "internal";
 const MUSCLE_REGION_ORDER = [
   'muscles of the head',
   'muscles of the middle ear',
@@ -2704,6 +3389,13 @@ function refreshLatinTerminologyUI(){
 // --- Anamnesis helpers ---
 let anamnesisSaveTimer = null;
 const ANAMNESIS_NOTES_BULLETS_KEY = "anamnesis_notes_bullets";
+let psychiatryAnamnesisRows = null;
+const psychiatryTermExplanations = new Map();
+let psychiatryTermExplanationsLoaded = false;
+const PSY_HELP_POPOVER_ID = "psy-help-popover";
+let psychiatryHelpPopoverEl = null;
+let psychiatryHelpActiveButton = null;
+let psychiatryHelpActiveAnchor = null;
 
 const ANAMNESIS_REPEATERS = [
   {
@@ -3036,24 +3728,594 @@ function initAnamnesisNotesDrawer(){
   });
 }
 
-function saveAnamnesisForm(){
-  const form = document.getElementById('anamnesis-form');
+function getActiveAnamnesisForm(){
+  if(activeAnamnesisTab === "psychiatry"){
+    return document.getElementById("anamnesis-psychiatry-form");
+  }
+  return document.getElementById("anamnesis-form");
+}
+
+function getAnamnesisStorageKeyByTab(tab){
+  return tab === "psychiatry" ? ANAMNESIS_PSYCHIATRY_STORAGE_KEY : ANAMNESIS_STORAGE_KEY;
+}
+
+function normalizePsychiatryFieldType(rawType){
+  const type = String(rawType || "").trim().toLowerCase();
+  if(type === "text" || type === "textarea" || type === "checkbox" || type === "radio" || type === "select") return type;
+  return "";
+}
+
+function normalizePsychiatryCsvRows(rawRows){
+  if(!rawRows || rawRows.length === 0) return [];
+  const headers = (rawRows[0] || []).map(h=>String(h || "").replace(/^\uFEFF/, "").trim());
+  const expectedCols = headers.length;
+  const out = [];
+  for(let i=1;i<rawRows.length;i++){
+    const row = rawRows[i] || [];
+    if(row.length === 0 || row.every(v=>!String(v || "").trim())) continue;
+    let normalized = row.slice();
+    if(normalized.length > expectedCols){
+      const head = normalized.slice(0, 5);
+      const fieldLabel = normalized.slice(5, normalized.length - 3).join(", ").trim();
+      const tail = normalized.slice(normalized.length - 3);
+      normalized = [...head, fieldLabel, ...tail];
+    }
+    while(normalized.length < expectedCols) normalized.push("");
+    const obj = {};
+    for(let j=0;j<headers.length;j++){
+      obj[headers[j]] = String(normalized[j] || "").trim();
+    }
+    const parsedType = normalizePsychiatryFieldType(obj.field_type);
+    if(parsedType){
+      obj.field_type = parsedType;
+    } else {
+      const fallbackType = normalizePsychiatryFieldType(obj.description);
+      if(fallbackType){
+        const merged = [obj.field_label, obj.field_type, obj.options].map(v=>String(v || "").trim()).filter(Boolean);
+        obj.field_label = merged.join(", ");
+        obj.field_type = fallbackType;
+        obj.options = "";
+        obj.description = "";
+      } else {
+        obj.field_type = "text";
+      }
+    }
+    out.push(obj);
+  }
+  return out;
+}
+
+async function loadPsychiatryAnamnesisRows(){
+  if(Array.isArray(psychiatryAnamnesisRows) && psychiatryAnamnesisRows.length > 0){
+    return psychiatryAnamnesisRows;
+  }
+  const candidates = [
+    DATA_BASE + "app_language/anamnesis_psychiatry.csv",
+    "data/app_language/anamnesis_psychiatry.csv",
+    DATA_BASE + "anamnesis_psychiatry.csv"
+  ];
+  let parsed = null;
+  let lastErr = null;
+  for(const path of candidates){
+    try{
+      const txt = await loadFile(path);
+      if(!String(txt || "").trim()) continue;
+      parsed = parseCSVLines(txt);
+      if(parsed.length > 1) break;
+    }catch(e){
+      lastErr = e;
+    }
+  }
+  if(!parsed || parsed.length <= 1){
+    if(lastErr) throw lastErr;
+    throw new Error("Psychiatry anamnesis CSV could not be loaded");
+  }
+  psychiatryAnamnesisRows = normalizePsychiatryCsvRows(parsed);
+  return psychiatryAnamnesisRows;
+}
+
+function parsePsychiatryOptions(raw){
+  return String(raw || "").split("|").map(v=>v.trim()).filter(Boolean);
+}
+
+function normalizePsychiatryExplanationKey(text){
+  return String(text || "").replace(/\s+/g, " ").trim();
+}
+
+function getPsychiatryExplanation(termText){
+  const key = normalizePsychiatryExplanationKey(termText);
+  if(!key) return null;
+  return psychiatryTermExplanations.get(key) || null;
+}
+
+function normalizePsychiatryInlineExplanation(raw){
+  const text = String(raw || "").trim();
+  if(!text) return null;
+  return { en: text, sk: "" };
+}
+
+async function loadPsychiatryTermExplanations(){
+  if(psychiatryTermExplanationsLoaded) return psychiatryTermExplanations;
+  psychiatryTermExplanations.clear();
+  psychiatryTermExplanationsLoaded = true;
+  try{
+    const candidates = ANAMNESIS_INTERNAL_CSV_CANDIDATES;
+    let parsed = null;
+    let lastErr = null;
+    for(const path of candidates){
+      try{
+        const txt = await loadFile(path);
+        if(!String(txt || "").trim()) continue;
+        const rows = parseCSVLines(txt);
+        if(rows.length < 2) continue;
+        const headers = (rows[0] || []).map(h=>String(h || "").replace(/^\uFEFF/, "").trim().toLowerCase());
+        if(headers.includes("section") && headers.includes("item_type") && headers.includes("label_en") && headers.includes("label_sk")){
+          parsed = rows;
+          break;
+        }
+      }catch(e){
+        lastErr = e;
+      }
+    }
+    if(!parsed){
+      if(lastErr) console.warn("Psychiatry explanations load failed:", lastErr.message || lastErr);
+      return psychiatryTermExplanations;
+    }
+    const headers = (parsed[0] || []).map(h=>String(h || "").replace(/^\uFEFF/, "").trim().toLowerCase());
+    const idxSection = headers.indexOf("section");
+    const idxItemType = headers.indexOf("item_type");
+    const idxEn = headers.indexOf("label_en");
+    const idxSk = headers.indexOf("label_sk");
+    if(idxSection < 0 || idxItemType < 0 || idxEn < 0 || idxSk < 0) return psychiatryTermExplanations;
+
+    for(let i=1;i<parsed.length;i++){
+      const row = parsed[i] || [];
+      const section = String(row[idxSection] || "").trim().toLowerCase();
+      if(section !== "explanations") continue;
+      const term = normalizePsychiatryExplanationKey(row[idxItemType]);
+      if(!term) continue;
+      const en = String(row[idxEn] || "").trim();
+      const sk = String(row[idxSk] || "").trim();
+      if(!en && !sk) continue;
+      psychiatryTermExplanations.set(term, { en, sk });
+    }
+  }catch(e){
+    console.warn("Psychiatry explanations parse failed:", e.message || e);
+  }
+  return psychiatryTermExplanations;
+}
+
+function closePsychiatryHelpPopover(){
+  if(psychiatryHelpActiveButton){
+    psychiatryHelpActiveButton.setAttribute("aria-expanded", "false");
+  }
+  if(psychiatryHelpPopoverEl){
+    psychiatryHelpPopoverEl.classList.add("hidden");
+    psychiatryHelpPopoverEl.setAttribute("aria-hidden", "true");
+  }
+  psychiatryHelpActiveButton = null;
+  psychiatryHelpActiveAnchor = null;
+}
+
+function positionPsychiatryHelpPopover(anchor){
+  if(!psychiatryHelpPopoverEl || !anchor) return;
+  const margin = 8;
+  const gap = 8;
+  psychiatryHelpPopoverEl.style.visibility = "hidden";
+  psychiatryHelpPopoverEl.classList.remove("hidden");
+  psychiatryHelpPopoverEl.setAttribute("aria-hidden", "false");
+
+  const anchorRect = anchor.getBoundingClientRect();
+  const popRect = psychiatryHelpPopoverEl.getBoundingClientRect();
+  let left = anchorRect.left + (anchorRect.width / 2) - (popRect.width / 2);
+  const maxLeft = window.innerWidth - popRect.width - margin;
+  left = Math.max(margin, Math.min(left, Math.max(margin, maxLeft)));
+
+  let top = anchorRect.top - popRect.height - gap;
+  let placement = "top";
+  if(top < margin){
+    top = anchorRect.bottom + gap;
+    placement = "bottom";
+  }
+  psychiatryHelpPopoverEl.style.left = `${Math.round(left)}px`;
+  psychiatryHelpPopoverEl.style.top = `${Math.round(Math.max(margin, top))}px`;
+  psychiatryHelpPopoverEl.dataset.placement = placement;
+  psychiatryHelpPopoverEl.style.visibility = "visible";
+}
+
+function ensurePsychiatryHelpPopover(){
+  if(psychiatryHelpPopoverEl) return psychiatryHelpPopoverEl;
+  const pop = document.createElement("div");
+  pop.id = PSY_HELP_POPOVER_ID;
+  pop.className = "help-popover hidden";
+  pop.setAttribute("role", "tooltip");
+  pop.setAttribute("aria-hidden", "true");
+  document.body.appendChild(pop);
+  psychiatryHelpPopoverEl = pop;
+
+  document.addEventListener("click", (e)=>{
+    if(!psychiatryHelpPopoverEl || psychiatryHelpPopoverEl.classList.contains("hidden")) return;
+    const target = e.target;
+    if(psychiatryHelpPopoverEl.contains(target)) return;
+    if(psychiatryHelpActiveButton && psychiatryHelpActiveButton.contains(target)) return;
+    closePsychiatryHelpPopover();
+  });
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") closePsychiatryHelpPopover();
+  });
+  window.addEventListener("resize", ()=>{
+    if(psychiatryHelpActiveAnchor) positionPsychiatryHelpPopover(psychiatryHelpActiveAnchor);
+  });
+  window.addEventListener("scroll", ()=>{
+    if(psychiatryHelpActiveAnchor) positionPsychiatryHelpPopover(psychiatryHelpActiveAnchor);
+  }, true);
+  return psychiatryHelpPopoverEl;
+}
+
+function openPsychiatryHelpPopover(button, anchor, termText, explanation){
+  const pop = ensurePsychiatryHelpPopover();
+  if(!pop || !button || !anchor || !explanation) return;
+  pop.innerHTML = "";
+
+  const term = document.createElement("div");
+  term.className = "help-popover-term";
+  term.textContent = termText;
+  pop.appendChild(term);
+
+  const enText = String(explanation.en || "").trim();
+  const skText = String(explanation.sk || "").trim();
+  if(enText){
+    const en = document.createElement("div");
+    en.className = "help-popover-line";
+    en.textContent = enText;
+    pop.appendChild(en);
+  }
+  if(skText){
+    const sk = document.createElement("div");
+    sk.className = "help-popover-line";
+    sk.textContent = `SK: ${skText}`;
+    pop.appendChild(sk);
+  }
+
+  if(psychiatryHelpActiveButton && psychiatryHelpActiveButton !== button){
+    psychiatryHelpActiveButton.setAttribute("aria-expanded", "false");
+  }
+  psychiatryHelpActiveButton = button;
+  psychiatryHelpActiveAnchor = anchor;
+  button.setAttribute("aria-expanded", "true");
+  button.setAttribute("aria-controls", PSY_HELP_POPOVER_ID);
+  positionPsychiatryHelpPopover(anchor);
+}
+
+function togglePsychiatryHelpPopover(button, termText, explanationOverride = null){
+  const explanation = explanationOverride || getPsychiatryExplanation(termText);
+  if(!explanation) return;
+  const anchor = button.closest(".anam-help-term") || button;
+  const isOpen = psychiatryHelpActiveButton === button && psychiatryHelpPopoverEl && !psychiatryHelpPopoverEl.classList.contains("hidden");
+  if(isOpen){
+    closePsychiatryHelpPopover();
+    return;
+  }
+  openPsychiatryHelpPopover(button, anchor, normalizePsychiatryExplanationKey(termText), explanation);
+}
+
+function renderTermWithHelp(termText, opts = {}){
+  const normalized = normalizePsychiatryExplanationKey(termText);
+  const wrap = document.createElement("span");
+  wrap.className = "anam-help-term";
+  const term = document.createElement("span");
+  term.className = "anam-help-term-text";
+  term.textContent = normalized;
+  wrap.appendChild(term);
+
+  const inlineExplanation = normalizePsychiatryInlineExplanation(opts.description);
+  const explanation = inlineExplanation || getPsychiatryExplanation(normalized);
+  if(!explanation) return wrap;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "help-icon";
+  btn.textContent = "?";
+  btn.setAttribute("aria-label", `Show explanation for ${normalized}`);
+  btn.setAttribute("aria-haspopup", "dialog");
+  btn.setAttribute("aria-controls", PSY_HELP_POPOVER_ID);
+  btn.setAttribute("aria-expanded", "false");
+  btn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    togglePsychiatryHelpPopover(btn, normalized, explanation);
+  });
+  wrap.appendChild(btn);
+  return wrap;
+}
+
+function formatPsychiatryOptionLabel(value){
+  const cleaned = String(value || "").trim().replace(/_/g, " ");
+  if(!cleaned) return "";
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
+function normalizePsychiatryRole(rawRole){
+  const role = String(rawRole || "").trim().toLowerCase();
+  if(role === "clinician" || role === "patient" || role === "question" || role === "include") return role;
+  return "";
+}
+
+function inferPsychiatryFieldRole(field){
+  const explicit = normalizePsychiatryRole(field.description);
+  if(explicit) return explicit;
+  const groupName = String(field.group_name || "").toLowerCase();
+  const groupId = String(field.group_id || "").toLowerCase();
+  const label = String(field.field_label || "").trim();
+  if(groupName.includes("question") || groupId.includes("question")) return "patient";
+  if(label.endsWith("?")) return "patient";
+  if((normalizePsychiatryFieldType(field.field_type) || "text") === "checkbox") return "clinician";
+  return "patient";
+}
+
+function isClinicianRole(field){
+  return inferPsychiatryFieldRole(field) === "clinician";
+}
+
+function parsePsychiatrySectionNumber(sectionId){
+  const m = String(sectionId || "").match(/(\d+)/);
+  return m ? Number(m[1]) : NaN;
+}
+
+function buildPsychiatryCheckboxLabel(field, opts = {}){
+  const name = String(field.field_id || "").trim();
+  const labelText = String(field.field_label || name || "").trim();
+  const description = String(field.description || "").trim();
+  const label = document.createElement("label");
+  label.className = "anam-psych-checkbox-label";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.name = name;
+  if(opts.clinician) label.classList.add("anam-psych-clinician");
+  label.appendChild(input);
+  const textWrap = renderTermWithHelp(labelText, { description });
+  if(opts.clinician) textWrap.classList.add("anam-psych-clinician");
+  label.appendChild(textWrap);
+  return label;
+}
+
+function buildPsychiatryAnamnesisField(field){
+  const type = normalizePsychiatryFieldType(field.field_type) || "text";
+  const name = String(field.field_id || "").trim();
+  const labelText = String(field.field_label || name || "").trim();
+  const description = String(field.description || "").trim();
+  const options = parsePsychiatryOptions(field.options);
+
+  const wrap = document.createElement("div");
+  wrap.className = "anam-field";
+
+  const clinician = isClinicianRole(field);
+
+  if(type === "checkbox"){
+    const row = document.createElement("div");
+    row.className = "anam-row";
+    row.appendChild(buildPsychiatryCheckboxLabel(field, { clinician }));
+    wrap.appendChild(row);
+  } else if(type === "radio"){
+    const row = document.createElement("div");
+    row.className = "anam-row";
+    const title = document.createElement("span");
+    title.appendChild(renderTermWithHelp(labelText));
+    if(clinician) title.classList.add("anam-psych-clinician");
+    row.appendChild(title);
+    const radioOptions = options.length > 0 ? options : ["yes", "no"];
+    for(const option of radioOptions){
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = name;
+      input.value = option;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(" " + formatPsychiatryOptionLabel(option)));
+      if(clinician) label.classList.add("anam-psych-clinician");
+      row.appendChild(label);
+    }
+    wrap.appendChild(row);
+    wrap.classList.add("anam-psych-full");
+  } else if(type === "select"){
+    const select = document.createElement("select");
+    select.name = name;
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = labelText;
+    select.appendChild(empty);
+    if(clinician) select.classList.add("anam-psych-clinician");
+    for(const option of options){
+      const opt = document.createElement("option");
+      opt.value = option;
+      opt.textContent = formatPsychiatryOptionLabel(option);
+      select.appendChild(opt);
+    }
+    wrap.appendChild(select);
+  } else if(type === "textarea"){
+    const input = document.createElement("textarea");
+    input.name = name;
+    input.placeholder = labelText;
+    if(clinician) input.classList.add("anam-psych-clinician");
+    wrap.appendChild(input);
+    wrap.classList.add("anam-psych-full");
+  } else {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = name;
+    input.placeholder = labelText;
+    if(clinician) input.classList.add("anam-psych-clinician");
+    wrap.appendChild(input);
+  }
+
+  if(description && !normalizePsychiatryRole(description)){
+    const desc = document.createElement("div");
+    desc.className = "anam-field-desc";
+    desc.textContent = description;
+    wrap.appendChild(desc);
+  }
+
+  return wrap;
+}
+
+function renderPsychiatryAnamnesisForm(fields){
+  const form = document.getElementById("anamnesis-psychiatry-form");
   if(!form) return;
+  form.innerHTML = "";
+  if(!Array.isArray(fields) || fields.length === 0){
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "Psychiatry anamnesis data not found.";
+    form.appendChild(empty);
+    return;
+  }
+
+  const sections = [];
+  let currentSection = null;
+  let currentGroup = null;
+  for(const field of fields){
+    if(!String(field.field_id || "").trim()) continue;
+    if(!currentSection || currentSection.id !== field.section_id){
+      const sectionNo = parsePsychiatrySectionNumber(field.section_id);
+      currentSection = {
+        id: field.section_id,
+        no: Number.isFinite(sectionNo) ? sectionNo : (sections.length + 1),
+        name: field.section_name || field.section_id || "Section",
+        groups: []
+      };
+      sections.push(currentSection);
+      currentGroup = null;
+    }
+    if(!currentGroup || currentGroup.id !== field.group_id){
+      currentGroup = {
+        id: field.group_id,
+        name: field.group_name || field.group_id || "",
+        fields: []
+      };
+      currentSection.groups.push(currentGroup);
+    }
+    currentGroup.fields.push(field);
+  }
+
+  for(const section of sections){
+    const sectionEl = document.createElement("div");
+    sectionEl.className = "anam-section";
+    const h3 = document.createElement("h3");
+    h3.appendChild(document.createTextNode(`${section.no}. `));
+    h3.appendChild(renderTermWithHelp(section.name));
+    sectionEl.appendChild(h3);
+
+    for(const group of section.groups){
+      const groupEl = document.createElement("div");
+      groupEl.className = "anam-group";
+      const title = document.createElement("strong");
+      title.className = "anam-group-title";
+      title.appendChild(renderTermWithHelp(group.name));
+      groupEl.appendChild(title);
+
+      const checkboxFields = group.fields.filter(f => (normalizePsychiatryFieldType(f.field_type) || "text") === "checkbox");
+      const otherFields = group.fields.filter(f => (normalizePsychiatryFieldType(f.field_type) || "text") !== "checkbox");
+
+      if(checkboxFields.length > 0){
+        const patientBoxes = checkboxFields.filter(f => !isClinicianRole(f));
+        const clinicianBoxes = checkboxFields.filter(f => isClinicianRole(f));
+
+        if(patientBoxes.length > 0){
+          const row = document.createElement("div");
+          row.className = "anam-row";
+          const lead = document.createElement("strong");
+          lead.textContent = "Patient";
+          row.appendChild(lead);
+          for(const field of patientBoxes){
+            row.appendChild(buildPsychiatryCheckboxLabel(field));
+          }
+          groupEl.appendChild(row);
+        }
+
+        if(clinicianBoxes.length > 0){
+          const row = document.createElement("div");
+          row.className = "anam-row";
+          const lead = document.createElement("strong");
+          lead.className = "anam-psych-clinician";
+          lead.textContent = "Clinician";
+          row.appendChild(lead);
+          for(const field of clinicianBoxes){
+            row.appendChild(buildPsychiatryCheckboxLabel(field, { clinician: true }));
+          }
+          groupEl.appendChild(row);
+        }
+      }
+
+      if(otherFields.length > 0){
+        const grid = document.createElement("div");
+        grid.className = "anam-grid";
+        for(const field of otherFields){
+          grid.appendChild(buildPsychiatryAnamnesisField(field));
+        }
+        groupEl.appendChild(grid);
+      }
+
+      sectionEl.appendChild(groupEl);
+    }
+    form.appendChild(sectionEl);
+  }
+}
+
+async function ensurePsychiatryAnamnesisFormBuilt(){
+  const form = document.getElementById("anamnesis-psychiatry-form");
+  if(!form) return;
+  if(form.dataset.ready === "1") return;
+  try{
+    const [fields] = await Promise.all([
+      loadPsychiatryAnamnesisRows(),
+      loadPsychiatryTermExplanations()
+    ]);
+    renderPsychiatryAnamnesisForm(fields);
+    form.dataset.ready = "1";
+    form.addEventListener("input", scheduleAnamnesisSave);
+    form.addEventListener("change", scheduleAnamnesisSave);
+  }catch(e){
+    form.innerHTML = "";
+    const msg = document.createElement("p");
+    msg.className = "muted";
+    msg.textContent = "Failed to load psychiatry anamnesis form.";
+    form.appendChild(msg);
+    console.warn("Psychiatry anamnesis form load failed:", e.message || e);
+  }
+}
+
+function collectAnamnesisData(form){
   const data = {};
-  form.querySelectorAll('input, textarea, select').forEach(el=>{
+  form.querySelectorAll("input, textarea, select").forEach(el=>{
     if(!el.name) return;
-    if(el.type === 'checkbox') data[el.name] = el.checked;
-    else if(el.type === 'radio'){
+    if(el.type === "checkbox") data[el.name] = el.checked;
+    else if(el.type === "radio"){
       if(el.checked) data[el.name] = el.value;
     } else {
       data[el.name] = el.value;
     }
   });
+  return data;
+}
+
+function applyAnamnesisData(form, data){
+  form.querySelectorAll("input, textarea, select").forEach(el=>{
+    if(!el.name || !(el.name in data)) return;
+    if(el.type === "checkbox") el.checked = !!data[el.name];
+    else if(el.type === "radio") el.checked = (data[el.name] === el.value);
+    else el.value = data[el.name];
+  });
+}
+
+function saveAnamnesisForm(){
+  const form = getActiveAnamnesisForm();
+  if(!form) return;
+  const data = collectAnamnesisData(form);
   const notes = document.getElementById("anamnesis-notes-text");
   if(notes) data.anamnesis_global_notes = notes.value;
-  localStorage.setItem(ANAMNESIS_STORAGE_KEY, JSON.stringify(data));
-  const status = document.getElementById('anamnesis-status');
-  if(status) status.textContent = t('anam_saved_locally') || 'Saved locally.';
+  localStorage.setItem(getAnamnesisStorageKeyByTab(activeAnamnesisTab), JSON.stringify(data));
+  const status = document.getElementById("anamnesis-status");
+  if(status) status.textContent = t("anam_saved_locally") || "Saved locally.";
 }
 
 function scheduleAnamnesisSave(){
@@ -3061,7 +4323,7 @@ function scheduleAnamnesisSave(){
   anamnesisSaveTimer = setTimeout(saveAnamnesisForm, 300);
 }
 
-async function loadAnamnesisForm(){
+async function loadInternalAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
   if(!form) return;
   if(anamnesisDictionaryById.size === 0){
@@ -3125,7 +4387,31 @@ async function loadAnamnesisForm(){
   applyAnamnesisTranslationsToDom();
 }
 
-function clearAnamnesisForm(){
+async function loadPsychiatryAnamnesisForm(){
+  await ensurePsychiatryAnamnesisFormBuilt();
+  const form = document.getElementById("anamnesis-psychiatry-form");
+  if(!form) return;
+  const raw = localStorage.getItem(ANAMNESIS_PSYCHIATRY_STORAGE_KEY);
+  let data = null;
+  try{ data = raw ? JSON.parse(raw) : null; }catch(e){ data = null; }
+  if(data){
+    applyAnamnesisData(form, data);
+  } else {
+    form.reset();
+  }
+  const notes = document.getElementById("anamnesis-notes-text");
+  if(notes) notes.value = (data && data.anamnesis_global_notes) ? data.anamnesis_global_notes : "";
+}
+
+async function loadAnamnesisForm(){
+  if(activeAnamnesisTab === "psychiatry"){
+    await loadPsychiatryAnamnesisForm();
+    return;
+  }
+  await loadInternalAnamnesisForm();
+}
+
+function clearInternalAnamnesisForm(){
   const form = document.getElementById('anamnesis-form');
   if(form) form.reset();
   localStorage.removeItem(ANAMNESIS_STORAGE_KEY);
@@ -3147,6 +4433,44 @@ function clearAnamnesisForm(){
   if(status) status.textContent = t('anam_cleared') || 'Cleared.';
 }
 
+function clearPsychiatryAnamnesisForm(){
+  const form = document.getElementById("anamnesis-psychiatry-form");
+  if(form) form.reset();
+  const notes = document.getElementById("anamnesis-notes-text");
+  if(notes) notes.value = "";
+  localStorage.removeItem(ANAMNESIS_PSYCHIATRY_STORAGE_KEY);
+  const status = document.getElementById("anamnesis-status");
+  if(status) status.textContent = t("anam_cleared") || "Cleared.";
+}
+
+function clearAnamnesisForm(){
+  if(activeAnamnesisTab === "psychiatry"){
+    clearPsychiatryAnamnesisForm();
+    return;
+  }
+  clearInternalAnamnesisForm();
+}
+
+async function setAnamnesisTab(tab, opts = {}){
+  const { load = true } = opts;
+  const nextTab = tab === "psychiatry" ? "psychiatry" : "internal";
+  if(activeAnamnesisTab !== nextTab) saveAnamnesisForm();
+  activeAnamnesisTab = nextTab;
+
+  const internalWrap = document.getElementById("anamnesis-form-internal-wrap");
+  const psychiatryWrap = document.getElementById("anamnesis-form-psychiatry-wrap");
+  if(internalWrap) internalWrap.classList.toggle("hidden", nextTab !== "internal");
+  if(psychiatryWrap) psychiatryWrap.classList.toggle("hidden", nextTab !== "psychiatry");
+
+  document.querySelectorAll("#screen-anamnesis .anamnesis-bookmark[data-anam-tab]").forEach(btn=>{
+    const isActive = btn.dataset.anamTab === nextTab;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  if(load) await loadAnamnesisForm();
+}
+
 function applyTextSize(step){
   const clamped = Math.max(1, Math.min(7, Number(step) || 4));
   const px = TEXT_SIZES[clamped - 1] || 16;
@@ -3154,6 +4478,10 @@ function applyTextSize(step){
   document.body.style.setProperty('--base-font-size', px + 'px');
   document.body.style.setProperty('--text-scale', String(scale));
   localStorage.setItem(TEXT_SIZE_KEY, String(clamped));
+  if(isProfileSessionActive()){
+    userProfile.settings.text_size = String(clamped);
+    markProfileDirty();
+  }
 }
 
 function showScreen(id, opts = {}){
@@ -3389,7 +4717,7 @@ function updateAuthUI(){
   } else {
     if(cog) cog.classList.remove('hidden');
     if(who) who.classList.add('hidden');
-    if(whoUser) whoUser.textContent = '???';
+    if(whoUser) whoUser.textContent = "Guest";
     if(accountBlock) accountBlock.classList.add('hidden');
     if(accountUser) accountUser.textContent = "(none)";
     if(loginBlock) loginBlock.classList.remove('hidden');
@@ -3402,21 +4730,11 @@ function updateAuthUI(){
 }
 
 async function logoutToLogin(){
-  try{
-    await supaSignOut();
-  }catch(e){
-    console.warn("Sign out failed:", e);
-  }
-  state.currentUser = null;
-  state.currentUserEmail = null;
+  await signOutGoogleDrive();
   const cu = document.getElementById('current-user');
   if(cu) cu.textContent = "(none)";
   updateAuthUI();
-  const lf = document.getElementById('login-form');
-  const rf = document.getElementById('register-form');
-  if(lf) lf.classList.remove('hidden');
-  if(rf) rf.classList.add('hidden');
-  showScreen('screen-login');
+  showScreen('screen-menu');
 }
 
 function initialScreenForSection(section){
@@ -3429,7 +4747,7 @@ function initialScreenForSection(section){
 }
 
 async function init(){
-  // Optional: refresh base CSV cache from Supabase Storage (disabled by default)
+  // Optional: refresh base CSV cache (static assets in this build)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
   try{
     await appStorage.init();
@@ -3486,14 +4804,8 @@ async function init(){
     sizeSlider.addEventListener('input', ()=> applyTextSize(sizeSlider.value));
   }
 
-  on('to-login','click', ()=> showScreen('screen-login'));
-  on('to-register','click', ()=> {
-    showScreen('screen-login');
-    const lf = document.getElementById('login-form');
-    const rf = document.getElementById('register-form');
-    if(lf) lf.classList.add('hidden');
-    if(rf) rf.classList.remove('hidden');
-  });
+  wireGoogleBtnOnce();
+  wireSettingsGoogleBtnOnce();
 
   function openGuestModal(){
     const ov = document.getElementById('guest-overlay');
@@ -3504,160 +4816,14 @@ async function init(){
     if(ov) ov.classList.add('hidden');
   }
 
-  function openForgotModal(){
-    const ov = document.getElementById('forgot-overlay');
-    const msg = document.getElementById('forgot-msg');
-    const email = document.getElementById('forgot-email');
-    if(msg) msg.textContent = '';
-    if(email){
-      const fromLogin = document.getElementById('username')?.value?.trim() || '';
-      email.value = fromLogin.includes('@') ? fromLogin : '';
-    }
-    if(ov) ov.classList.remove('hidden');
-  }
-  function closeForgotModal(){
-    const ov = document.getElementById('forgot-overlay');
-    if(ov) ov.classList.add('hidden');
-  }
-
   on('continue-guest','click', ()=> openGuestModal());
   on('guest-back','click', ()=> closeGuestModal());
   on('guest-continue','click', ()=>{
     closeGuestModal();
     showScreen('screen-submenu');
   });
-  on('forgot-cancel','click', ()=> closeForgotModal());
+  on('forgot-cancel','click', ()=>{});
 
-  on('btn-show-register','click', ()=>{
-    const lf = document.getElementById('login-form');
-    const rf = document.getElementById('register-form');
-    if(lf) lf.classList.add('hidden');
-    if(rf) rf.classList.remove('hidden');
-  });
-  on('btn-show-login','click', ()=>{
-    const lf = document.getElementById('login-form');
-    const rf = document.getElementById('register-form');
-    if(lf) lf.classList.remove('hidden');
-    if(rf) rf.classList.add('hidden');
-  });
-
-  on('btn-register','click', async () => {
-    clearLoginStatus();
-    const username = document.getElementById('reg-username')?.value?.trim() || "";
-    const emailInput = document.getElementById('reg-email')?.value?.trim() || "";
-    const password = document.getElementById('reg-password')?.value || "";
-    const confirm = document.getElementById('reg-password-confirm')?.value || "";
-    const msg = document.getElementById('register-msg');
-    if(msg) msg.textContent='';
-
-    if (!username || !emailInput || !password) {
-      setLoginStatus("Please fill all fields", "error");
-      return;
-    }
-    if (password !== confirm) {
-      setLoginStatus("Passwords do not match", "error");
-      return;
-    }
-
-    const email = emailInput;
-
-    try {
-      setLoginStatus("Creating account…");
-      await supaSignUp(email, password, username);
-      setDisplayNameMapping(username, email);
-
-      const session = await supaGetSession();
-      if (session) {
-        setLoginStatus("Account created. You can log in now.", "ok");
-      } else {
-        setLoginStatus("Account created. Please confirm your email, then log in.", "info");
-      }
-      if(msg) msg.textContent = t('Registration successful! You can now log in.') || 'Registration successful! You can now log in.';
-      const ru = document.getElementById('reg-username'); if(ru) ru.value='';
-      const re = document.getElementById('reg-email'); if(re) re.value='';
-      const rp = document.getElementById('reg-password'); if(rp) rp.value='';
-      const rc = document.getElementById('reg-password-confirm'); if(rc) rc.value='';
-    } catch (e) {
-      console.error(e);
-      setLoginStatus("Registration failed: " + e.message, "error");
-      if(msg) msg.textContent = (e.message || String(e));
-    }
-  });
-
-  on('btn-login','click', async () => {
-    clearLoginStatus();
-    const username = document.getElementById('username')?.value?.trim() || "";
-    const password = document.getElementById('password')?.value || "";
-    const msg = document.getElementById('login-msg');
-    if(msg) msg.textContent='';
-
-    if (!username || !password) {
-      setLoginStatus(t("login_missing_fields") || "Enter username and password", "error");
-      return;
-    }
-
-    let email = "";
-    if(username.includes("@")) email = username;
-    else email = lookupEmailByDisplayName(username);
-    if(!email){
-      setLoginStatus("Unknown display name. Use your email.", "error");
-      return;
-    }
-
-    try {
-      setLoginStatus("Signing in...");
-      await supaSignIn(email, password);
-
-      const session = await supaGetSession();
-      const displayName = session?.user?.user_metadata?.name || username;
-      state.currentUser = displayName;
-      state.currentUserEmail = session?.user?.email || email;
-
-      const cu = document.getElementById('current-user');
-      if(cu) cu.textContent = displayName;
-      updateAuthUI();
-
-      setLoginStatus("Signed in.", "ok");
-      showScreen("screen-submenu");
-
-      // Optional: pull newest base CSVs into offline cache on login, then reload from cache
-      try{
-        await refreshBaseFilesCache();
-        await Promise.all([loadTranslations(), loadMedicalTerms({ clearCache: true }), loadMuscles(), loadAnamnesisDictionary()]);
-        applyTranslationsToDom();
-        applyAnamnesisTranslationsToDom();
-        refreshMuscleTrainingUI();
-        refreshLatinTerminologyUI();
-      }catch(e){
-        console.warn("Base CSV refresh failed (offline/local only):", e);
-      }
-
-    } catch (e) {
-      console.error(e);
-      setLoginStatus("Login failed: " + e.message, "error");
-      if(msg) msg.textContent = t('Invalid credentials.') || 'Invalid credentials.';
-    }
-  });
-
-  on('btn-forgot','click', async () => { openForgotModal(); });
-
-  on('forgot-send','click', async () => {
-    clearLoginStatus();
-    const msg = document.getElementById('forgot-msg');
-    const email = document.getElementById('forgot-email')?.value?.trim() || "";
-    if(!email){
-      if(msg) msg.textContent = t('forgot_password_email_required') || 'Email is required.';
-      return;
-    }
-    try{
-      if(msg) msg.textContent = t('forgot_password_sending') || 'Sending reset email...';
-      await supaRequestPasswordReset(email);
-      if(msg) msg.textContent = t('forgot_password_sent_msg') || 'Reset email sent.';
-    }catch(e){
-      console.error(e);
-      if(msg) msg.textContent = (t('forgot_password_failed') || 'Reset failed: ') + (e.message || e);
-    }
-  });
 
   on('to-search','click', ()=> {
     showScreen('screen-search');
@@ -3696,17 +4862,11 @@ async function init(){
     refreshFlashcardsBuilderUI();
   });
   on('to-muscle-training','click', ()=> { showScreen('screen-muscle-training'); });
-  on('to-anamnesis','click', async ()=> { showScreen('screen-anamnesis'); await loadAnamnesisForm(); });
-  on('login-back','click', ()=> { showScreen('screen-menu'); });
-
-  on('to-menu','click', ()=> { showScreen('screen-menu'); });
-  on('to-login-from-settings-public','click', ()=>{
-    showScreen('screen-login');
-    const sidebar = document.getElementById('settings-sidebar');
-    const overlay = document.getElementById('settings-overlay');
-    if(sidebar) sidebar.classList.remove('open');
-    if(overlay) overlay.classList.remove('open');
+  on('to-anamnesis','click', async ()=> {
+    showScreen('screen-anamnesis');
+    await setAnamnesisTab("internal", { load: true });
   });
+  on('to-menu','click', ()=> { showScreen('screen-menu'); });
   on('to-login-from-settings','click', async ()=> { await logoutToLogin(); });
 
   const searchInput = document.getElementById('search-input');
@@ -3814,6 +4974,12 @@ async function init(){
     anamForm.addEventListener('input', scheduleAnamnesisSave);
     anamForm.addEventListener('change', scheduleAnamnesisSave);
   }
+  document.querySelectorAll('#screen-anamnesis .anamnesis-bookmark[data-anam-tab]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const tab = btn.dataset.anamTab || "internal";
+      await setAnamnesisTab(tab, { load: true });
+    });
+  });
   for(const cfg of ANAMNESIS_REPEATERS){
     on(cfg.addId, 'click', ()=>{
       addRepeaterRow(cfg.rowsId);
@@ -3928,33 +5094,39 @@ async function init(){
   on('lab-parameters-back','click', ()=> showScreen('screen-submenu'));
 
   on('save-term','click', async ()=>{
-    if(!state.currentUser){
-      const em = document.getElementById('entry-msg');
-      if(em) em.textContent = t('Please login first.') || 'Please login first.';
-      return;
-    }
     const fields = [...document.querySelectorAll('#entry-fields [data-field]')];
     const raw = {};
     for(const el of fields) raw[el.dataset.field] = el.value.trim();
 
     const term = {
-      id: null,
-      english: raw.english_translation || null,
-      german: raw.german_translation || null,
-      latin: raw.latin_translation || null,
-      slovak: raw.slovak_translation || null,
-      notes: raw.english_definition || raw.german_definition || null,
+      id: (typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function")
+        ? `term:${crypto.randomUUID()}`
+        : `term:${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`,
+      english: raw.english_translation || "",
+      german: raw.german_translation || "",
+      latin: raw.latin_translation || "",
+      slovak: raw.slovak_translation || "",
+      notes: raw.english_definition || raw.german_definition || "",
       source_dataset: "manual_entry",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_at: nowIso(),
+      updated_at: nowIso()
     };
 
-    const terms = getLocalTerms();
-    terms.unshift(term);
-    setLocalTerms(terms);
+    if(isProfileSessionActive()){
+      upsertProfileTermFromRow(term);
+      await saveUserProfileNow("save_term");
+    } else {
+      const terms = getLocalTerms();
+      terms.unshift(term);
+      setLocalTerms(terms);
+    }
 
     const em = document.getElementById('entry-msg');
-    if(em) em.textContent = (t('Term saved successfully!') || 'Term saved successfully!') + ' (saved locally)';
+    if(em){
+      em.textContent = isProfileSessionActive()
+        ? ((t('Term saved successfully!') || 'Term saved successfully!') + ' (Google Drive)')
+        : ((t('Term saved successfully!') || 'Term saved successfully!') + ' (guest)');
+    }
     fields.forEach(f=>f.value='');
   });
 
@@ -3963,6 +5135,7 @@ async function init(){
   on('end-quiz','click', ()=> {
     quizEngine.finishQuiz();
     renderQuizUI();
+    saveUserProfileNow("quiz_end");
   });
   on('quiz-back','click', ()=> showScreen('screen-submenu'));
   if(document.getElementById('flashcard-back')){
@@ -4045,6 +5218,12 @@ function genId(prefix){
 }
 
 function readCustomQuizzes(){
+  if(isProfileSessionActive()){
+    const data = userProfile.learning.custom_quizzes || { items: [] };
+    if(!Array.isArray(data.items)) data.items = [];
+    data.items = data.items.filter(x => x && typeof x === "object");
+    return deepClone(data);
+  }
   const data = readJsonLS(QUIZ_CUSTOM_KEY, { items: [] }) || { items: [] };
   if(!Array.isArray(data.items)) data.items = [];
   data.items = data.items.filter(x => x && typeof x === "object");
@@ -4052,7 +5231,15 @@ function readCustomQuizzes(){
 }
 
 function writeCustomQuizzes(data){
-  writeJsonLS(QUIZ_CUSTOM_KEY, data || { items: [] });
+  const normalized = data || { items: [] };
+  if(isProfileSessionActive()){
+    userProfile.learning.custom_quizzes = {
+      items: Array.isArray(normalized.items) ? normalized.items.filter(x => x && typeof x === "object") : []
+    };
+    markProfileDirty();
+    return;
+  }
+  writeJsonLS(QUIZ_CUSTOM_KEY, normalized);
 }
 
 function toCategoryFilters(raw){
@@ -4721,15 +5908,33 @@ function initQuizBuilderUI(){
 
 const progressStore = {
   _readProgress(){
+    if(isProfileSessionActive()){
+      const bucket = getTermProgressBucket(userProfile);
+      return { terms: deepClone(bucket.terms || {}) };
+    }
     return readJsonLS(QUIZ_PROGRESS_KEY, { terms: {} }) || { terms: {} };
   },
   _writeProgress(data){
+    if(isProfileSessionActive()){
+      const bucket = getTermProgressBucket(userProfile);
+      bucket.terms = deepClone((data && data.terms) || {});
+      markProfileDirty();
+      return;
+    }
     writeJsonLS(QUIZ_PROGRESS_KEY, data || { terms: {} });
   },
   _readSessions(){
+    if(isProfileSessionActive()){
+      return Array.isArray(userProfile.learning.quiz_sessions) ? deepClone(userProfile.learning.quiz_sessions) : [];
+    }
     return readJsonLS(QUIZ_SESSIONS_KEY, []) || [];
   },
   _writeSessions(items){
+    if(isProfileSessionActive()){
+      userProfile.learning.quiz_sessions = Array.isArray(items) ? deepClone(items) : [];
+      markProfileDirty();
+      return;
+    }
     writeJsonLS(QUIZ_SESSIONS_KEY, Array.isArray(items) ? items : []);
   },
   _pairKey(termId, fromField, toField){
@@ -4751,6 +5956,7 @@ const progressStore = {
     if(isCorrect) row.correct = Number(row.correct || 0) + 1;
     else row.wrong = Number(row.wrong || 0) + 1;
     row.updatedAt = new Date().toISOString();
+    row.last_seen = row.updatedAt;
     data.terms[key] = row;
     this._writeProgress(data);
   },
@@ -4894,25 +6100,23 @@ function buildQuizCandidates(fromField, toField){
     });
   }
 
-  if(state.currentUser){
-    for(const row of getLocalTerms()){
-      const fromTerm = String(row && row[fromUser] || "").trim();
-      const toTerm = String(row && row[toUser] || "").trim();
-      if(!fromTerm || !toTerm) continue;
-      const idPart = String((row && row.id) || "").trim() || `${fromTerm}|${toTerm}`;
-      const termId = `user:${idPart}`;
-      candidates.push({
-        termId,
-        fromTerm,
-        toTerm,
-        sourceType: "user",
-        sourceDataset: "manual_entry",
-        category: "manual_entry",
-        hasDefinition: String((row && row.notes) || "").trim().length > 0,
-        baseTermKey: null,
-        userTermId: row && row.id ? row.id : null
-      });
-    }
+  for(const row of getLocalTerms()){
+    const fromTerm = String(row && row[fromUser] || "").trim();
+    const toTerm = String(row && row[toUser] || "").trim();
+    if(!fromTerm || !toTerm) continue;
+    const idPart = String((row && row.id) || "").trim() || `${fromTerm}|${toTerm}`;
+    const termId = `user:${idPart}`;
+    candidates.push({
+      termId,
+      fromTerm,
+      toTerm,
+      sourceType: "user",
+      sourceDataset: "manual_entry",
+      category: "manual_entry",
+      hasDefinition: String((row && row.notes) || "").trim().length > 0,
+      baseTermKey: null,
+      userTermId: row && row.id ? row.id : null
+    });
   }
   return candidates;
 }
@@ -5327,6 +6531,7 @@ function startQuiz({ fromField, toField, questionCount, optionsCount, quizType =
       settings: state.settings
     };
     progressStore.recordSession(summary);
+    saveUserProfileNow("quiz_end");
     return getQuizState();
   }
 
@@ -5919,18 +7124,41 @@ const flashcardState = {
 };
 
 function readFlashcardSchedule(){
+  if(isProfileSessionActive()){
+    const records = userProfile.flashcards.schedule && typeof userProfile.flashcards.schedule === "object"
+      ? userProfile.flashcards.schedule
+      : {};
+    return { records: deepClone(records) };
+  }
   return readJsonLS(FLASHCARD_SCHEDULE_KEY, { records: {} }) || { records: {} };
 }
 
 function writeFlashcardSchedule(data){
+  if(isProfileSessionActive()){
+    const records = data && data.records && typeof data.records === "object" ? data.records : {};
+    userProfile.flashcards.schedule = deepClone(records);
+    markProfileDirty();
+    return;
+  }
   writeJsonLS(FLASHCARD_SCHEDULE_KEY, data || { records: {} });
 }
 
 function readFlashcardStats(){
+  if(isProfileSessionActive()){
+    const stats = userProfile.flashcards.stats && typeof userProfile.flashcards.stats === "object"
+      ? userProfile.flashcards.stats
+      : {};
+    return deepClone(stats);
+  }
   return readJsonLS(FLASHCARD_STATS_KEY, {}) || {};
 }
 
 function writeFlashcardStats(data){
+  if(isProfileSessionActive()){
+    userProfile.flashcards.stats = data && typeof data === "object" ? deepClone(data) : {};
+    markProfileDirty();
+    return;
+  }
   writeJsonLS(FLASHCARD_STATS_KEY, data || {});
 }
 
@@ -6770,7 +7998,333 @@ function initFlashcardsUI(){
 }
 
 const FLASHCARD_MIGRATION_KEY = "flashcards/idb_migrated_v1";
-const appStorage = createAppStorage();
+const FLASHCARD_GUEST_STORE_KEY = "flashcards/guest_store_v1";
+
+function createProfileBackedStorage(){
+  let ready = false;
+  const guest = {
+    decks: [],
+    cards: [],
+    scheduling: {}
+  };
+
+  function generateId(prefix){
+    if(typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function"){
+      return `${prefix}${crypto.randomUUID()}`;
+    }
+    return `${prefix}${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;
+  }
+
+  function nowTs(){
+    return nowIso();
+  }
+
+  function ensureReady(){
+    if(!ready) throw new Error("Storage not initialized");
+  }
+
+  function normalizeGuestSnapshot(raw){
+    const next = raw && typeof raw === "object" ? raw : {};
+    return {
+      decks: Array.isArray(next.decks) ? next.decks.filter(Boolean) : [],
+      cards: Array.isArray(next.cards) ? next.cards.filter(Boolean) : [],
+      scheduling: next.scheduling && typeof next.scheduling === "object" ? next.scheduling : {}
+    };
+  }
+
+  function saveGuest(){
+    writeJsonLS(FLASHCARD_GUEST_STORE_KEY, {
+      decks: guest.decks,
+      cards: guest.cards,
+      scheduling: guest.scheduling
+    });
+  }
+
+  function getProfileDeckMap(){
+    userProfile = ensureProfileShape(userProfile);
+    if(!userProfile.flashcards.decks || typeof userProfile.flashcards.decks !== "object"){
+      userProfile.flashcards.decks = {};
+    }
+    return userProfile.flashcards.decks;
+  }
+
+  function getProfileCardMap(){
+    userProfile = ensureProfileShape(userProfile);
+    if(!userProfile.flashcards.cards || typeof userProfile.flashcards.cards !== "object"){
+      userProfile.flashcards.cards = {};
+    }
+    return userProfile.flashcards.cards;
+  }
+
+  function getProfileScheduleMap(){
+    userProfile = ensureProfileShape(userProfile);
+    if(!userProfile.flashcards.schedule || typeof userProfile.flashcards.schedule !== "object"){
+      userProfile.flashcards.schedule = {};
+    }
+    return userProfile.flashcards.schedule;
+  }
+
+  function getDeckRows(){
+    if(isProfileSessionActive()){
+      return Object.values(getProfileDeckMap()).map(deepClone);
+    }
+    return guest.decks.map(deepClone);
+  }
+
+  function getCardRows(){
+    if(isProfileSessionActive()){
+      return Object.values(getProfileCardMap()).map(deepClone);
+    }
+    return guest.cards.map(deepClone);
+  }
+
+  function getScheduleMap(){
+    if(isProfileSessionActive()){
+      return deepClone(getProfileScheduleMap());
+    }
+    return deepClone(guest.scheduling);
+  }
+
+  function markDeckSave(){
+    if(isProfileSessionActive()){
+      markProfileDirty();
+      saveUserProfileNow("save_deck");
+    } else {
+      saveGuest();
+    }
+  }
+
+  return {
+    async init(){
+      if(ready) return;
+      const loaded = normalizeGuestSnapshot(readJsonLS(FLASHCARD_GUEST_STORE_KEY, null));
+      guest.decks = loaded.decks;
+      guest.cards = loaded.cards;
+      guest.scheduling = loaded.scheduling;
+      ready = true;
+    },
+    getDecksSync(){
+      ensureReady();
+      return getDeckRows();
+    },
+    getCardsSync(){
+      ensureReady();
+      return getCardRows();
+    },
+    getCardsByDeckSync(deckId){
+      ensureReady();
+      const id = String(deckId || "");
+      return getCardRows().filter(c => String(c && c.deckId || "") === id);
+    },
+    getSchedulingRecordSync(key){
+      ensureReady();
+      const k = String(key || "");
+      const map = getScheduleMap();
+      return map[k] ? deepClone(map[k]) : null;
+    },
+    getSchedulingMapSync(){
+      ensureReady();
+      return getScheduleMap();
+    },
+    createDeck({ id, name, termIds = [] }){
+      ensureReady();
+      const ts = nowTs();
+      const row = {
+        id: String(id || generateId("deck:")),
+        name: String(name || "").trim() || "Custom deck",
+        termIds: Array.isArray(termIds) ? [...new Set(termIds.map(x => String(x || "").trim()).filter(Boolean))] : [],
+        createdAt: ts,
+        updatedAt: ts
+      };
+      if(isProfileSessionActive()){
+        const decks = getProfileDeckMap();
+        decks[row.id] = row;
+      } else {
+        guest.decks = guest.decks.filter(d => String(d && d.id || "") !== row.id);
+        guest.decks.unshift(row);
+      }
+      markDeckSave();
+      return deepClone(row);
+    },
+    updateDeck(deckId, patch){
+      ensureReady();
+      const id = String(deckId || "");
+      const ts = nowTs();
+      if(isProfileSessionActive()){
+        const decks = getProfileDeckMap();
+        const cur = decks[id];
+        if(!cur) return null;
+        const next = {
+          ...cur,
+          ...(patch || {}),
+          id,
+          name: String((patch && patch.name) || cur.name || "Custom deck").trim() || "Custom deck",
+          termIds: Array.isArray((patch && patch.termIds) || cur.termIds)
+            ? [...new Set(((patch && patch.termIds) || cur.termIds).map(x => String(x || "").trim()).filter(Boolean))]
+            : [],
+          updatedAt: ts
+        };
+        decks[id] = next;
+        markDeckSave();
+        return deepClone(next);
+      }
+      const idx = guest.decks.findIndex(d => String(d && d.id || "") === id);
+      if(idx < 0) return null;
+      const cur = guest.decks[idx];
+      const next = {
+        ...cur,
+        ...(patch || {}),
+        id,
+        name: String((patch && patch.name) || cur.name || "Custom deck").trim() || "Custom deck",
+        termIds: Array.isArray((patch && patch.termIds) || cur.termIds)
+          ? [...new Set(((patch && patch.termIds) || cur.termIds).map(x => String(x || "").trim()).filter(Boolean))]
+          : [],
+        updatedAt: ts
+      };
+      guest.decks[idx] = next;
+      saveGuest();
+      return deepClone(next);
+    },
+    deleteDeck(deckId){
+      ensureReady();
+      const id = String(deckId || "");
+      if(isProfileSessionActive()){
+        const decks = getProfileDeckMap();
+        if(!decks[id]) return false;
+        delete decks[id];
+        const cards = getProfileCardMap();
+        for(const key of Object.keys(cards)){
+          if(String(cards[key] && cards[key].deckId || "") === id){
+            delete cards[key];
+          }
+        }
+        const sched = getProfileScheduleMap();
+        for(const key of Object.keys(sched)){
+          const row = sched[key];
+          if(String(row && row.deckId || "").includes(id) || String(key || "").startsWith(`custom:${id}::`) || String(key || "").startsWith(`${id}::`)){
+            delete sched[key];
+          }
+        }
+        markDeckSave();
+        return true;
+      }
+      const hit = guest.decks.some(d => String(d && d.id || "") === id);
+      if(!hit) return false;
+      guest.decks = guest.decks.filter(d => String(d && d.id || "") !== id);
+      guest.cards = guest.cards.filter(c => String(c && c.deckId || "") !== id);
+      Object.keys(guest.scheduling).forEach(key => {
+        const row = guest.scheduling[key];
+        if(String(row && row.deckId || "").includes(id) || String(key || "").startsWith(`custom:${id}::`) || String(key || "").startsWith(`${id}::`)){
+          delete guest.scheduling[key];
+        }
+      });
+      saveGuest();
+      return true;
+    },
+    upsertCard(card){
+      ensureReady();
+      const ts = nowTs();
+      const row = {
+        id: String((card && card.id) || generateId("card:")),
+        deckId: String((card && card.deckId) || ""),
+        frontText: String((card && card.frontText) || "").trim(),
+        backText: String((card && card.backText) || "").trim(),
+        notes: String((card && card.notes) || "").trim(),
+        tags: Array.isArray(card && card.tags) ? [...new Set(card.tags.map(x => String(x || "").trim()).filter(Boolean))] : [],
+        createdAt: String((card && card.createdAt) || ts),
+        updatedAt: ts
+      };
+      if(isProfileSessionActive()){
+        const cards = getProfileCardMap();
+        cards[row.id] = row;
+        markProfileDirty();
+      } else {
+        const idx = guest.cards.findIndex(c => String(c && c.id || "") === row.id);
+        if(idx >= 0) guest.cards[idx] = row;
+        else guest.cards.unshift(row);
+        saveGuest();
+      }
+      return deepClone(row);
+    },
+    deleteCard(cardId){
+      ensureReady();
+      const id = String(cardId || "");
+      if(isProfileSessionActive()){
+        const cards = getProfileCardMap();
+        if(!cards[id]) return false;
+        delete cards[id];
+        const sched = getProfileScheduleMap();
+        Object.keys(sched).forEach(key => {
+          if(String(key || "").includes(`::customcard:${id}`)) delete sched[key];
+        });
+        markProfileDirty();
+        return true;
+      }
+      const hit = guest.cards.some(c => String(c && c.id || "") === id);
+      if(!hit) return false;
+      guest.cards = guest.cards.filter(c => String(c && c.id || "") !== id);
+      Object.keys(guest.scheduling).forEach(key => {
+        if(String(key || "").includes(`::customcard:${id}`)) delete guest.scheduling[key];
+      });
+      saveGuest();
+      return true;
+    },
+    upsertScheduling(record){
+      ensureReady();
+      const key = String((record && record.key) || "").trim();
+      if(!key) return null;
+      const row = {
+        ...(record || {}),
+        key,
+        updatedAt: nowTs()
+      };
+      if(isProfileSessionActive()){
+        const sched = getProfileScheduleMap();
+        sched[key] = row;
+        markProfileDirty();
+      } else {
+        guest.scheduling[key] = row;
+        saveGuest();
+      }
+      return deepClone(row);
+    },
+    removeSchedulingByPrefix(prefix){
+      ensureReady();
+      const p = String(prefix || "");
+      if(!p) return 0;
+      let removed = 0;
+      if(isProfileSessionActive()){
+        const sched = getProfileScheduleMap();
+        Object.keys(sched).forEach(key => {
+          if(String(key || "").startsWith(p)){
+            delete sched[key];
+            removed += 1;
+          }
+        });
+        if(removed) markProfileDirty();
+        return removed;
+      }
+      Object.keys(guest.scheduling).forEach(key => {
+        if(String(key || "").startsWith(p)){
+          delete guest.scheduling[key];
+          removed += 1;
+        }
+      });
+      if(removed) saveGuest();
+      return removed;
+    },
+    dumpSnapshot(){
+      ensureReady();
+      return {
+        decks: this.getDecksSync(),
+        cards: this.getCardsSync(),
+        scheduling: this.getSchedulingMapSync()
+      };
+    }
+  };
+}
+
+const appStorage = createProfileBackedStorage();
 flashcardState.editingCustomCardId = null;
 
 async function migrateLegacyFlashcardData(){
@@ -6997,35 +8551,33 @@ function buildFlashcardTerms(){
       userTermId: null
     });
   }
-  if(state.currentUser){
-    for(const row of getLocalTerms()){
-      const english = String((row && row.english) || "").trim();
-      const german = String((row && row.german) || "").trim();
-      const slovak = String((row && row.slovak) || "").trim();
-      const latin = String((row && row.latin) || "").trim();
-      terms.push({
-        ...(row || {}),
-        termId: getUserTermId(row),
-        english_translation: english,
-        german_translation: german,
-        slovak_translation: slovak,
-        latin_translation: latin,
-        english_definition: String((row && row.notes) || "").trim(),
-        german_definition: "",
-        slovak_definition: "",
-        notes: String((row && row.notes) || "").trim(),
-        sourceType: "user",
-        sourceDataset: "manual_entry",
-        __group: "manual_entry",
-        __dataset: "manual_entry",
-        __datasetLabel: "Manual entries",
-        __sourceLabel: "Manual entries",
-        __sourcePath: "",
-        __headers: ["english", "german", "slovak", "latin", "notes"],
-        baseTermKey: null,
-        userTermId: (row && row.id) || null
-      });
-    }
+  for(const row of getLocalTerms()){
+    const english = String((row && row.english) || "").trim();
+    const german = String((row && row.german) || "").trim();
+    const slovak = String((row && row.slovak) || "").trim();
+    const latin = String((row && row.latin) || "").trim();
+    terms.push({
+      ...(row || {}),
+      termId: getUserTermId(row),
+      english_translation: english,
+      german_translation: german,
+      slovak_translation: slovak,
+      latin_translation: latin,
+      english_definition: String((row && row.notes) || "").trim(),
+      german_definition: "",
+      slovak_definition: "",
+      notes: String((row && row.notes) || "").trim(),
+      sourceType: "user",
+      sourceDataset: "manual_entry",
+      __group: "manual_entry",
+      __dataset: "manual_entry",
+      __datasetLabel: "Manual entries",
+      __sourceLabel: "Manual entries",
+      __sourcePath: "",
+      __headers: ["english", "german", "slovak", "latin", "notes"],
+      baseTermKey: null,
+      userTermId: (row && row.id) || null
+    });
   }
   for(const card of getFlashcardCustomCards()){
     const front = String(card.frontText || "").trim();
@@ -7143,19 +8695,19 @@ const DATASET_ADAPTERS = [
     causes_of_increase: ["causes_of_increase"], causes_of_decrease: ["causes_of_decrease"], clinical_use: ["clinical_use"],
     definition: ["physiological_role", "clinical_use"], notes: ["notes"]
   }},
-  { key: "latin_abbreviations", label: "Latin abbreviations", file: "terminology/latin_abbreviations.csv", idColumn: null, columns: {
+  { key: "latin_abbreviations", label: "Latin abbreviations", file: "terminology/latin/latin_abbreviations.csv", idColumn: null, columns: {
     en: ["english_translation"], de: ["german_translation"], sk: ["slovak_translation"],
     abbreviation: ["abbreviation"], full_form: ["full_form"], definition: ["full_form"]
   }},
-  { key: "latin_greek", label: "Latin-Greek", file: "terminology/latin_greek.csv", idColumn: null, columns: {
+  { key: "latin_greek", label: "Latin-Greek", file: "terminology/latin/latin_greek.csv", idColumn: null, columns: {
     en: ["english_translation"], de: ["german_translation"], sk: ["slovak_translation"], la: ["latin_translation"], gr: ["greek_translation"],
     latin_term: ["latin_translation"], definition: ["english_translation"]
   }},
-  { key: "latin_remedies", label: "Latin remedies", file: "terminology/latin_remedies.csv", idColumn: null, columns: {
+  { key: "latin_remedies", label: "Latin remedies", file: "terminology/latin/latin_remedies.csv", idColumn: null, columns: {
     en: ["english_description"], de: ["german_description"], sk: ["slovak_description"], la: ["name"],
     latin_term: ["name"], def_en: ["english_description"], def_de: ["german_description"], def_sk: ["slovak_description"], definition: ["english_description"]
   }},
-  { key: "latin_units", label: "Latin units", file: "terminology/latin_units.csv", idColumn: "unit_number", columns: {
+  { key: "latin_units", label: "Latin units", file: "terminology/latin/latin_units.csv", idColumn: "unit_number", columns: {
     unit_name: ["unit_name"],
     en: ["english_translation"], de: ["german_translation"], sk: ["slovak_translation"], la: ["latin_term"],
     latin_term: ["latin_term"], latin_genitive: ["latin_genitive"], latin_gender: ["gender"], part_of_speech: ["part_of_speech"],
@@ -7172,7 +8724,7 @@ const DATASET_ADAPTERS = [
     origo: ["origo"], insercio: ["insercio"], innervation: ["innervation"], blood_supply: ["blood_supply"], movement_function: ["movement_function"],
     definition: ["movement_function"]
   }},
-  { key: "pharmacology", label: "Pharmacology", file: "terminology/pharmacology.csv", idColumn: "id", columns: {
+  { key: "pharmacology", label: "Pharmacology", file: "terminology/pharmacology/pharmacology.csv", idColumn: "id", columns: {
     en: ["english_name"], sk: ["slovak_name"],
     english_name: ["english_name"], drug_class: ["drug_class"], subclass: ["subclass"], mechanism: ["mechanism_of_action"],
     indications: ["indications"], contraindications: ["contraindications"], adverse_effects_common: ["adverse_effects_common"],
@@ -7413,10 +8965,24 @@ function getUserStorageKey(){
 }
 
 function loadProgress(userKey){
+  if(isProfileSessionActive()){
+    const bucket = userProfile.flashcards.v2_progress && typeof userProfile.flashcards.v2_progress === "object"
+      ? userProfile.flashcards.v2_progress
+      : {};
+    return deepClone(bucket[String(userKey || "")] || {});
+  }
   return readJsonLS(`${FLASHCARDS_V2_PROGRESS_PREFIX}${userKey}`, {});
 }
 
 function saveProgress(userKey, progress){
+  if(isProfileSessionActive()){
+    if(!userProfile.flashcards.v2_progress || typeof userProfile.flashcards.v2_progress !== "object"){
+      userProfile.flashcards.v2_progress = {};
+    }
+    userProfile.flashcards.v2_progress[String(userKey || "")] = deepClone(progress || {});
+    markProfileDirty();
+    return;
+  }
   writeJsonLS(`${FLASHCARDS_V2_PROGRESS_PREFIX}${userKey}`, progress || {});
 }
 
@@ -7838,6 +9404,7 @@ function handleFlashcardsRating(rating){
     if(msg) msg.textContent = `${tOr("flashcards_session_finished", "Session finished.")} ${tOr("flashcards_reviewed", "Reviewed")} ${deck.length} ${tOr("flashcards_cards_suffix", "card(s).")}`;
     flashcardsV2State.session.deck = [];
     flashcardsV2State.session.index = 0;
+    saveUserProfileNow("flashcards_session_end");
   }
   renderFlashcardsPlayer();
 }
@@ -7936,4 +9503,3 @@ window.addEventListener('hashchange', ()=>{
 });
 
 window.addEventListener('DOMContentLoaded', ()=>{ init(); });
-
