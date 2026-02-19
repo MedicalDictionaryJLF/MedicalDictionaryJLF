@@ -17,8 +17,9 @@ Passwords do not match.;Passwords do not match.;Passwörter stimmen nicht übere
 Username already exists.;Username already exists.;Benutzername existiert bereits.;Používateľ už existuje.;El nombre de usuario ya existe.;Brukernavn finnes allerede.;Notandanafn er þegar til.
 Registration successful! You can now log in.;Registration successful! You can now log in.;Registrierung erfolgreich! Sie können sich jetzt anmelden.;Registrácia bola úspešná! Môžete sa prihlásiť.;¡Registro exitoso! Ahora puede iniciar sesión.;Registreringen var vellykket! Du kan nå logge inn.;Skráning tókst! Þú getur nú skráð þig inn.
 welcome;Welcome;Willkommen;Vitajte;Bienvenido;Velkommen;Velkomin
+google_sign_in;Sign in with Google;Mit Google anmelden;Prihlásiť sa cez Google;Iniciar sesión con Google;Logg inn med Google;Skrá inn með Google
 search_term;Search Tool;Suchwerkzeug;Vyhľadávať pojem;Buscar término;Søk etter begrep;Leita eftir hugtaki
-add_term;Add New Term;Neuen Begriff hinzufügen;Pridať nový pojem;Añadir nuevo término;Legg til nytt begrep;Bæta við nýju hugtaki
+add_term;Add New Terms;Neuen Begriff hinzufügen;Pridať nový pojem;Añadir nuevo término;Legg til nytt begrep;Bæta við nýju hugtaki
 quiz;Quiz;Quiz;Kvíz;Cuestionario;Quiz;Próf
 back_lng;Back to Language selection;Zurück zur Sprachauswahl;Späť na výber jazyka;Volver a selección de idioma;Tilbake til språkutvalg;Til baka að tungumálaval
 enter_term;Enter term;Begriff eingeben;Zadajte pojem;Introduzca el término;Skriv inn begrep;Sláðu inn hugtak
