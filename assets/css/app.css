@@ -70,9 +70,21 @@ header h1{margin:0;font-size:21px;letter-spacing:.2px;font-weight:650}
 .settings-btn svg{width:24px;height:24px;fill:currentColor;display:block} /* bigger icon */
 
 /* Layout */
-main{padding:22px;height:calc(100vh - 74px);overflow:auto;box-sizing:border-box}
+main{padding:22px;height:calc(100vh - 74px);overflow:auto;box-sizing:border-box;padding-bottom:40px}
 .screen{max-width:1100px;margin:0 auto;min-height:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible}
 .hidden{display:none!important}
+.app-copyright{
+  position:fixed;
+  left:12px;
+  bottom:8px;
+  z-index:60;
+  font-size:10px;
+  line-height:1;
+  color:rgba(255,255,255,.9);
+  text-shadow:0 1px 2px rgba(0,0,0,.45);
+  pointer-events:none;
+  user-select:none;
+}
 .screen h2{
   width:min(920px, 100%);
   margin:0 0 12px 0;
@@ -112,6 +124,15 @@ input,textarea,select{
   border:1px solid var(--border);
   background:#fff;
   outline:none;
+}
+input[type="checkbox"],
+input[type="radio"]{
+  width:14px;
+  height:14px;
+  margin:0;
+  padding:0;
+  border-radius:4px;
+  flex:0 0 auto;
 }
 input:focus,textarea:focus,select:focus{
   border-color:rgba(21,128,61,.45);
@@ -318,10 +339,11 @@ button.danger:hover{background:#fff5f5}
   flex-wrap:wrap;
 }
 .anam-row label{
-  display:flex;
-  align-items:center;
+  display:inline-flex;
+  align-items:flex-start;
   gap:6px;
-  white-space:nowrap;
+  white-space:normal;
+  line-height:1.25;
 }
 .anam-row > span:first-child,
 .anam-row > strong:first-child{
@@ -408,6 +430,147 @@ button.danger:hover{background:#fff5f5}
   flex-wrap:nowrap;
   gap:6px;
   align-items:center;
+}
+.anamnesis-bookmarks{
+  width:min(920px, 100%);
+  display:flex;
+  gap:8px;
+  margin:0 0 10px 0;
+}
+.anamnesis-bookmark{
+  flex:1 1 0;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-weight:600;
+  padding:6px 10px;
+  font-size:calc(13px * var(--text-scale, 1));
+  line-height:1.15;
+}
+.anamnesis-bookmark.active{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
+#screen-anamnesis{
+  max-width:none;
+  width:100%;
+  justify-content:flex-start;
+}
+#screen-anamnesis h2,
+#screen-anamnesis .anamnesis-bookmarks,
+#screen-anamnesis .card,
+#screen-anamnesis .anam-actions{
+  width:min(1320px, calc(100vw - 28px));
+}
+#screen-anamnesis .card{
+  padding:10px;
+}
+#screen-anamnesis .scrollable{
+  max-height:72vh;
+  padding-right:2px;
+}
+#screen-anamnesis .anam-section{
+  margin-top:8px;
+  padding:6px;
+}
+.anam-group{
+  margin-top:10px;
+}
+.anam-group-title{
+  margin:0 0 6px 0;
+  font-size:calc(15px * var(--text-scale, 1));
+}
+.anam-field{
+  margin-top:8px;
+}
+.anam-psych-full{
+  grid-column:1 / -1;
+}
+.anam-field-desc{
+  margin-top:2px;
+  font-size:calc(12px * var(--text-scale, 1));
+  color:var(--muted);
+}
+.anam-psych-checkbox-label{
+  display:inline-flex;
+  align-items:flex-start;
+  max-width:100%;
+}
+.anam-psych-checkbox-label input{
+  margin-top:2px;
+}
+.anam-help-term{
+  display:inline-flex;
+  align-items:flex-start;
+  gap:4px;
+  min-width:0;
+}
+.anam-help-term-text{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.help-icon{
+  width:16px;
+  height:16px;
+  border:1px solid var(--border);
+  border-radius:50%;
+  background:#fff;
+  color:var(--muted);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:calc(11px * var(--text-scale, 1));
+  line-height:1;
+  padding:0;
+  cursor:pointer;
+}
+.help-icon:hover{
+  color:#111827;
+  border-color:#94a3b8;
+}
+.help-popover{
+  position:fixed;
+  z-index:9999;
+  max-width:min(340px, calc(100vw - 16px));
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px 10px;
+  box-shadow:0 8px 24px rgba(15,23,42,.2);
+  font-size:calc(12px * var(--text-scale, 1));
+  line-height:1.35;
+}
+.help-popover::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  width:8px;
+  height:8px;
+  background:#fff;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  transform:translateX(-50%) rotate(45deg);
+}
+.help-popover[data-placement="top"]::after{
+  bottom:-5px;
+}
+.help-popover[data-placement="bottom"]::after{
+  top:-5px;
+  transform:translateX(-50%) rotate(225deg);
+}
+.help-popover-term{
+  font-weight:700;
+  margin-bottom:4px;
+}
+.help-popover-line + .help-popover-line{
+  margin-top:2px;
+}
+.anam-psych-clinician{
+  font-style:italic;
+}
+.anam-psych-clinician span{
+  font-style:italic;
 }
 .anam-actions > *{
   flex:1 1 0;
