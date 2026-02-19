@@ -43,7 +43,7 @@
       <div class="settings-block" id="settings-login-block">
         <h4 data-i18n="settings_account">Account</h4>
         <div class="settings-actions">
-          <button type="button" id="to-login-from-settings-public" class="primary" data-i18n="Login">Login</button>
+          <button type="button" id="to-login-from-settings-public" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
         </div>
       </div>
 
@@ -110,9 +110,9 @@
                 <button type="button" class="lang-btn" data-lang="Slovensky">Slovensky</button>              </div>
 
               <div class="row" style="margin-top:16px">
-                <button type="button" id="to-login" class="primary" data-i18n="Login">Login</button>
-                <button type="button" id="to-register" data-i18n="Register">Register</button>
+                <button type="button" id="btn-google-drive" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
               </div>
+              <p id="google-auth-status" class="muted" style="margin:8px 0 0 0"></p>
 
               <div class="row" style="margin-top:10px">
                 <button type="button" id="continue-guest" data-i18n="continue_without_account">Continue without account</button>
@@ -126,48 +126,17 @@
         </div>
       </section>
 
-      <section id="screen-login" class="screen hidden">
-        <h2 id="login-title" data-i18n="Login or Register">Login or Register</h2>
-<div class="card">
-          <div id="login-status" class="muted" style="display:none;margin-bottom:10px;padding:10px;border-radius:8px;"></div>
-          <div id="login-form">
-            <input id="username" placeholder="Email or username" data-i18n-placeholder="email_or_username" />
-            <input id="password" type="password" placeholder="Password" data-i18n-placeholder="Password" />
-            <div class="row">
-              <button type="button" id="btn-login" data-i18n="Login">Login</button>
-              <button type="button" id="btn-show-register" data-i18n="Register">Register</button>
-              <button type="button" id="login-back" data-i18n="back">Back</button>
-            </div>
-            <button type="button" id="btn-forgot" class="linklike" data-i18n="forgot_password_button">Forgot password?</button>
-            <p id="login-msg" class="muted"></p>
-          </div>
-
-          <div id="register-form" class="hidden">
-            <input id="reg-username" placeholder="Username" data-i18n-placeholder="Username" />
-            <input id="reg-email" type="email" placeholder="Email" data-i18n-placeholder="Email" />
-            <input id="reg-password" type="password" placeholder="Password" data-i18n-placeholder="Password" />
-            <input id="reg-password-confirm" type="password" placeholder="Confirm password" data-i18n-placeholder="Confirm password" />
-            <div class="row">
-              <button type="button" id="btn-register" data-i18n="Register">Create account</button>
-              <button type="button" id="btn-show-login" data-i18n="back">Back</button>
-            </div>
-            <p id="register-msg" class="muted"></p>
-          </div>
-        </div>
-      </section>
-
       <section id="screen-submenu" class="screen hidden">
-        <h2 id="welcome-title">Welcome</h2>
+        <h2 id="welcome-title" data-i18n="welcome">Welcome</h2>
         <div class="card">
-          <button type="button" id="to-search" data-i18n="search">Search Terms</button>
-          <button type="button" id="to-lab-parameters">Lab parameters</button>
-          <button type="button" id="to-flashcards" data-i18n="flashcards">Flashcards</button>
-          <button type="button" id="to-entry" data-i18n="add_term">Add Term</button>
+          <button type="button" id="to-search" data-i18n="search">Search</button>
+          <button type="button" id="to-entry" data-i18n="add_term">Add New Terms</button>
           <button type="button" id="to-latin-terminology" data-i18n="latin_terminology">Latin terminology</button>
-          <button type="button" id="to-quiz" data-i18n="quiz">Quiz</button>
           <button type="button" id="to-muscle-training" data-i18n="muscle_training">Muscle training</button>
+          <button type="button" id="to-quiz" data-i18n="quiz">Quiz</button>
+          <button type="button" id="to-flashcards" data-i18n="flashcards">Flashcards</button>
           <button type="button" id="to-anamnesis" data-i18n="anamnesis">Anamnesis</button>
-          <button type="button" id="to-links">Links</button>
+          <button type="button" id="to-lab-parameters">Lab parameters</button>
 
           <!-- Back to language menu and account controls are in Settings -->
         </div>
@@ -552,7 +521,12 @@
 
       <section id="screen-anamnesis" class="screen hidden">
         <h2>Anamnesis</h2>
+        <div class="anamnesis-bookmarks" role="tablist" aria-label="Anamnesis type">
+          <button type="button" id="anamnesis-tab-internal" class="anamnesis-bookmark active" data-anam-tab="internal" role="tab" aria-selected="true">Internal anamnesis</button>
+          <button type="button" id="anamnesis-tab-psychiatry" class="anamnesis-bookmark" data-anam-tab="psychiatry" role="tab" aria-selected="false">Psychiatry anamnesis</button>
+        </div>
         <div class="card scrollable">
+          <div id="anamnesis-form-internal-wrap">
           <form id="anamnesis-form">
             <div class="anam-section">
               <h3>1. Identification</h3>
@@ -1324,6 +1298,10 @@
               </table>
             </details>
           </form>
+          </div>
+          <div id="anamnesis-form-psychiatry-wrap" class="hidden">
+            <form id="anamnesis-psychiatry-form"></form>
+          </div>
         </div>
         <div class="row anam-actions" style="margin-top:12px">
           <button type="button" id="anamnesis-clear" class="danger" data-i18n="clear_form">Clear form</button>
@@ -1341,13 +1319,14 @@
             <input type="checkbox" id="anamnesis-notes-bullets" />
             Bullet mode
           </label>
-          <textarea id="anamnesis-notes-text" name="anamnesis_global_notes" placeholder="Write your general notes here..." data-i18n-placeholder="anamnesis_general_notes_placeholder"></textarea>
+          <textarea id="anamnesis-notes-text" name="anamnesis_global_notes" placeholder="Write your general notes here..." data-anam-key="anam_write_your_general_notes_here_2"></textarea>
         </aside>
       </section>
 
     </main>
+    <footer class="app-copyright" aria-label="Copyright">Copyright © Daniel Marčok</footer>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script type="module" src="assets/js/app.js?v=9"></script>
 </body>
 </html>
