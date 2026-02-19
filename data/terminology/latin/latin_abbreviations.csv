@@ -1,0 +1,168 @@
+category,abbreviation,full_form,english_translation,slovak_translation,german_translation
+clinic,a./aa.,arteria/arteriae,artery/arteries,tepna/tepny,Arterie/Arterien
+clinic,acut.,"acutus,a,um",acute,akútny,akut
+clinic,ant.,"anterior,ius",anterior,predný,anterior
+clinic,C,vertebra cervicalis,cervical vertebra,krčný stavec,zervikaler Wirbel
+clinic,c.,cum,with,s,mit
+clinic,ca.,"carcinoma,atis,n.",carcinoma,karcinóm,Karzinom
+clinic,caud.,"caudalis,e",caudal,kaudálny,kaudal
+clinic,chron.,"chronicus,a,um",chronic,chronický,chronisch
+clinic,compl.,"complicatus,a,um",complicated,komplikovaný,kompliziert
+clinic,corp.,"corpus,oris,n.",body,telo,Körper
+clinic,cran.,"cranialis,e",cranial,kraniálny,kranial
+clinic,d.,"diaeta,ae,f.",diet,diéta,Diät
+clinic,dc./dcc.,"ductus,us,m.",canal/canals,kanál/kanály,Gang/Gänge
+clinic,dg.,"diagnosis,is,f.",diagnosis,diagnóza,Diagnose
+clinic,dist.,"distalis,e",distal,distálny,distal
+clinic,dors.,"dorsalis,e",dorsal,dorzálny,dorsal
+clinic,dup.,"duplex,plicis",double/twofold,dvojitý,doppelt
+clinic,dx.,"dexter,tra,trum",right,pravý,rechts
+clinic,Ery,erythrocytus/erythrocyti,erythrocyte(s),erytrocyt(y),Erythrozyt(en)
+clinic,exc.,"excisio,onis,f.",excision,excízia,Exzision
+clinic,ext.,"externus,a,um",external,externý,extern
+clinic,fac.,"facies,ei,f.",face/surface,povrch,Fläche
+clinic,fasc.,fascia / fasciculus,fascia / fascicle,fascie / zväzok,Faszie / Faszikel
+
+clinic,fib.,fibularis,e,fibular,fibulárny,fibulär
+clinic,front.,frontalis,e,frontal,frontálny,frontal
+clinic,ggl./ggll.,ganglion/ganglia,ganglion/ganglia,ganglion/gangliá,Ganglion/Ganglien
+clinic,gl./gll.,glandula/glandulae,gland/glands,žľaza/žľazy,Drüse/Drüsen
+clinic,i.a.,intraarteriosus / intraarticularis,intraarterious / intraarticular,intraarteriálny / intraartikulárny,intraarteriell / intraartikulär
+clinic,i.c.,intracutaneus,intracutaneous,intrakutánny,intrakutan
+clinic,i.m.,intramuscularis,intramuscular,intramuskulárny,intramuskulär
+clinic,inf.,inferior / infans,inferior / child,dolný / dieťa,inferior / Kind
+clinic,inj.,injectio/injectiones,injection/injections,injekcia/Injekcie,Injektion/Injektionen
+clinic,int.,internus,internal,vnútorný,intern
+clinic,i.v.,intravenosus,intravenous,intravenózny,intravenös
+clinic,L,vertebra lumbalis,lumbar vertebra,driekový stavec,lumbaler Wirbel
+clinic,lat.,lateralis,lateral,laterálny,lateral
+clinic,lat.dx.,lateris dextri,right (right side),vpravo,rechts
+clinic,lat.sin.,lateris sinistri,left (left side),vľavo,links
+clinic,lat.utr.,lateris utriusque,both sides,obojstranne,beidseits
+clinic,Leu,leucocytus/leucocyti,leukocyte(s),leukocyt(y),Leukozyt(en)
+clinic,lig./ligg.,ligamentum/ligamenta,ligament(s),väz/väzy,Band/Bänder
+clinic,lin.,linea,line,čiara,Linie
+clinic,m./mm.,musculus/musculi,muscle(s),sval(y),Muskel/Muskeln
+clinic,med.,medialis,medial,mediálny,medial
+clinic,memb.,membrum,limb,končatina,Gliedmaße
+clinic,n./nn.,nervus/nervi,nerve(s),nerv(y),Nerv(en)
+clinic,ncl./ncll.,nucleus/nuclei,nucleus/nuclei,jadro/jadrá,Kern/Kerne
+clinic,neg.,negativus,negative,negatívny,negativ
+clinic,obj.,objectivus,objective,objektívny,objektiv
+
+clinic,p.,"pars,partis,f.",part/portion,časť,Teil
+clinic,palm.,"palmaris,e",palmar,dlaňový,palmar
+clinic,plant.,"plantaris,e",plantar,plantárny,plantar
+clinic,pos.,"positivus,a,um",positive,pozitívny,positiv
+clinic,post.,"posterior,ius",posterior,zadný,posterior
+clinic,p.p.,sanatio per primam,healing without complications,hojenie bez komplikácií,primäre Heilung
+clinic,p.s.,sanatio per secundam,healing with complications,hojenie s komplikáciami,sekundäre Heilung
+clinic,p.r.,per rectum,through the rectum,rektálne,per rectum
+clinic,proc./procc.,"processus,us,m.",process/processes,výbežok/proces,Prozess/Prozesse
+clinic,prox.,"proximalis,e",proximal,proximálny,proximal
+clinic,p.v.,per vaginam,through the vagina,vaginálne,per vaginam
+clinic,px./pxx.,"plexus,us,m.",plexus/plexuses,plexus,Plexus
+clinic,r./rr.,ramus/rami,branch/branches,výbežok/vetva,Ast/Zweige
+clinic,rad.,"radialis,e",radial,radiálny,radial
+clinic,rec./recess.,"recessus,us,m.",recess,priestor/recese,Rezess
+clinic,reg.,"regio,onis,f.",region,oblasť,Region
+clinic,RHB,"rehabilitatio,onis,f.",rehabilitation,rehabilitácia,Rehabilitation
+clinic,S,os sacrum,sacral bone,krížová kosť,Kreuzbein
+clinic,subj.,"subjectivus,a,um",subjective,subjektívny,subjektiv
+clinic,sa,"sarcoma,atis,n.",sarcoma,sarkóm,Sarkom
+clinic,sag.,"sagittalis,e",sagittal,sagitálny,sagittal
+clinic,s.c.,"subcutaneus,a,um",subcutaneous,podkožný,subkutan
+clinic,sc./scc.,sulcus/sulci,furrow/furrows,ryha, Furche/Furchen
+clinic,simpl.,"simplex,plicis",simple,jednoduchý,einfach
+clinic,sin./sinn.,sinus/sinister,sinus / left,dutina / ľavý,Sinus / links
+clinic,st.,"status,us,m.",state/condition,stav,Zustand
+
+clinic,st.obj.,status objectivus,objective state,objektívny stav,objektiver Zustand
+clinic,st.p.(o.),status post operationem,state after operation,stav po operácii,Zustand nach Operation
+clinic,st.subj.,status subjectivus,subjective state,subjektívny stav,subjektiver Zustand
+clinic,stat.,statim,immediately,okamžite,sofort
+clinic,subj.,subjectivus,subjective,subjektívny,subjektiv
+clinic,sup.,superior,superior,horný,superior
+clinic,susp.,suspectus,suspect,podozrivý,verdächtig
+clinic,T,vertebra thoracica,thoracic vertebra,hrudný stavec,thorakaler Wirbel
+clinic,Th.,therapia,therapy,liečba,Therapie
+clinic,Thr,thrombocytus/thrombocyti,thrombocyte(s),trombocyt(y),Thrombozyt(en)
+clinic,tib.,tibialis,tibial,tibiálny,tibial
+clinic,tr.,tractus,tract/apparatus,trakt,Trakt
+clinic,tu,tumor,tumour,nádor,Tumor
+clinic,uln.,ulnaris,ulnar,ulnárny,ulnar
+clinic,v./vv.,vena/venae,vein(s),žila/žily,Vene/Venen
+clinic,vent.,ventralis,ventral,ventrálny,ventral
+clinic,v.s.,verisimiliter,probably,pravdepodobne,wahrscheinlich
+
+prescription,aa.,ana partes (aequales),"in equal parts, the same amount","v rovnakých častiach","zu gleichen Teilen"
+prescription,a.c.,ante cibum,"before meal","pred jedlom","vor dem Essen"
+prescription,ac.,acidum / acutus,"acid; acute","kyselina; akútny","Säure; akut"
+prescription,ad(d).,adde,"add!","pridaj!","hinzufügen!"
+prescription,ad man. med.,ad manus medici,"for doctor's use only","len pre použitie lekárom","nur für ärztliche Anwendung"
+prescription,ad scat.,ad scatulum,"into the box","do škatuľky","in die Schachtel"
+prescription,ad us. ext.,ad usum externum,"for external use","na vonkajšie použitie","zur äußeren Anwendung"
+prescription,ad us. int.,ad usum internum,"for internal use","na vnútorné použitie","zur inneren Anwendung"
+prescription,ad vitr.,ad vitrum,"into the bottle","do fľaše","in die Flasche"
+prescription,aeq.,aequalis,"equal, the same","rovnaký","gleich"
+prescription,aq.,aqua,"water","voda","Wasser"
+prescription,aq. dest.,aqua destillata,"distilled water","destilovaná voda","destilliertes Wasser"
+prescription,c.,circum,"about, approximately","asi, približne","ungefähr"
+prescription,c.f.,cum formula,"with description of composition","s uvedením zloženia","mit Formel"
+prescription,caps.,capsula,"capsule","kapsula","Kapsel"
+prescription,cito disp.,cito dispensa,"dispense quickly","rýchlo vydať","schnell abgeben"
+prescription,comp.,compositus,"compound of","zložený","zusammengesetzt"
+prescription,conct.,concentratus,"concentrated","koncentrovaný","konzentriert"
+prescription,D./d.,dies / dosis / Da!,"day; dose; Give!","deň; dávka; daj!","Tag; Dosis; Gib!"
+prescription,dest.,destillatus,"distilled","destilovaný","destilliert"
+prescription,dil.,dilutus,"dilute","zriedený","verdünnt"
+prescription,disp.,Dispensa!,"Dispense!","Vydaj!","Abgeben!"
+prescription,Div.,Divide!,"Divide!","Rozdeľ!","Teilen!"
+prescription,Div. in p. aeq.,Divide in partes aequales!,"Divide into equal parts!","Rozdeľ na rovnaké časti!","In gleiche Teile teilen!"
+
+prescription,D.S.,"Da, signa!","Give and label!","Daj a označ!","Geben und beschriften!"
+prescription,D.s.s.v.,Da sub signo veneni!,"Dispense under poison label!","Vydať s označením jedu!","Abgabe mit Giftkennzeichnung!"
+prescription,D.t.d.,Da tales doses,"Give such doses","Daj také dávky","Solche Dosen geben"
+prescription,efferv.,effervescens,"effervescent","šumivý","brausend"
+prescription,exp.orig.,expeditio originalis,"original packing","originálne balenie","Originalverpackung"
+prescription,extr.,extractum,"extract","extrakt","Extrakt"
+prescription,f.,fiat/fiant,"let it be made","nech sa pripraví","es werde hergestellt"
+prescription,f.l.a.,fiat lege artis,"prepare according to rules","pripraviť podľa pravidiel","nach den Regeln herstellen"
+prescription,gelat.,gelatum,"jelly","želé","Gelee"
+prescription,gtt.,gutta/guttae,"drop(s)","kvapka/y","Tropfen"
+prescription,inf.,infusum,"infusion","nálev","Infus"
+prescription,l.a.,lege artis,"according to pharmaceutical rules","podľa pravidiel","nach den Regeln"
+prescription,lag.,lagoena,"bottle, flask","fľaša","Flasche"
+prescription,M.,Misce!,"Mix!","Zmiešaj!","Mischen!"
+prescription,massa pil.,massa pilularum,"pill mass","hmota piluliek","Pillenmasse"
+prescription,M.f.pulv./plv.,"Misce, fiat pulvis!","Mix to make powder!","Zmiešaj na prášok!","Pulver herstellen!"
+prescription,M.f.sol.,"Misce, fiat solutio!","Mix to make solution!","Zmiešaj na roztok!","Lösung herstellen!"
+prescription,mixt.,mixtura,"mixture","zmes","Mischung"
+prescription,No./№,numero,"in the number of","v počte","in der Anzahl"
+prescription,p.aeq.,partes aequales,"equal parts","rovnaké časti","gleiche Teile"
+prescription,p.c.,post cibum,"after meal","po jedle","nach dem Essen"
+prescription,p.d.,pro dosi,"per dose","na dávku","pro Dosis"
+prescription,p.die,pro die,"per day","za deň","pro Tag"
+prescription,p.o.,per os,"by mouth, orally","perorálne","oral"
+prescription,pro adult.,pro adultis,"for adults","pre dospelých","für Erwachsene"
+prescription,pro inf.,pro infantibus,"for children","pre deti","für Kinder"
+
+prescription,pro inj.,pro injectione,"for injection","na injekciu","zur Injektion"
+prescription,pro narc.,pro narcosi,"for narcosis","na narkózu","für Narkose"
+prescription,pulv./plv.,pulvis,"powder","prášok","Pulver"
+prescription,q.s.,quantum satis,"as much as needed","koľko stačí","nach Bedarf"
+prescription,rec.,recens,"fresh","čerstvý","frisch"
+prescription,Rep./Repet.,Repete!,"Repeat!","Opakuj!","Wiederholen!"
+prescription,Rp.,Recipe!,"Take!","Vezmi!","Nimm!"
+prescription,S.,Signa!,"Label!","Označ!","Beschriften!"
+prescription,s.s.v.,sub signo veneni,"under the label of poison","označiť ako jed","unter Giftkennzeichnung"
+prescription,sol.,solutio / solubilis,"solution; soluble","roztok; rozpustný","Lösung; löslich"
+prescription,sp./spec.,species,"tea mixture","čajová zmes","Teemischung"
+prescription,spir.,spiritus,"spirit, alcohol","lieh","Spiritus"
+prescription,supp.,suppositorium,"suppository","čapík","Zäpfchen"
+prescription,tbl.,tabuletta,"tablet(s)","tableta/y","Tablette/n"
+prescription,t.d.,tales doses,"such doses","takéto dávky","solche Dosen"
+prescription,tinct.,tinctura,"tincture","tinktúra","Tinktur"
+prescription,ung.,unguentum,"ointment","masť","Salbe"
+prescription,us.,usus,"use, usage","použitie","Gebrauch"
+prescription,vitr.,vitrum,"bottle, flask","fľaša","Flasche"
