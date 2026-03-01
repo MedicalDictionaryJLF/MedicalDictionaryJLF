@@ -1,315 +1,302 @@
 key;english;deutsch;slovensky;
-choose_language;Choose the language of the website;Wählen Sie die Sprache der Website.;Vyberte si jazyk stánky;Elegir idioma;Velg språk;Veldu tungumál
-language_settings;You may later change it in settings;Sie können dies später in den Einstellungen ändern.;Neskôr si ho môžete zmeniť v nastaveniach;Puede cambiarse más tarde en la configuración;Kan endres senere i innstillinger;Má breytast síðar í stillingum
-please_note; Please note: This web version is still in development and you may encounter bugs or missing features. If you encounter any issues, feel free to report them to this email: marcok6@uniba.sk. Thank you for your understanding and support!;Bitte beachten Sie: Diese Webversion befindet sich noch in der Entwicklung und Sie können auf Fehler oder fehlende Funktionen stoßen. Wenn Sie auf Probleme stoßen, können Sie diese gerne an diese E-Mail melden: marcok6@uniba.sk. Vielen Dank für Ihr Verständnis und Ihre Unterstützung!; Upozornenie: Na tomto webe stále prebieha vývoj a môžete naraziť na chyby alebo chýbajúce funkcie. Ak narazíte na akékoľvek problémy, neváhajte ich nahlásiť na tento e-mail: marcok6@uniba.sk. Ďakujeme za vaše porozumenie a podporu!;Tenga en cuenta: Esta versión web aún está en desarrollo y puede encontrar errores o funciones faltantes. Si encuentra algún problema, no dude en informarlo a este correo electrónico: marcok6@uniba.sk. ¡Gracias por su comprensión y apoyo!;Vennligst merk: Denne nettversjonen er fortsatt under utvikling, og du kan støte på feil eller manglende funksjoner. Hvis du støter på problemer, kan du gjerne rapportere dem til denne e-posten: marcok6@uniba.sk. Takk for din forståelse og støtte!;Vinsamlegast athugið: Þessi vefútgáfa er enn í þróun og þú gætir rekist á villur eða vantar eiginleika. Ef þú rekst á einhver vandamál, ekki hika við að tilkynna þau á þessa netfang: marcok6@uniba.sk. Þakka þér fyrir skilninginn og stuðninginn!
-Login or Register;Login or Register;Anmelden oder Registrieren;Prihlásiť sa alebo zaregistrovať;Iniciar sesión o registrarse;Logg inn eller registrer deg;Skrá inn eða nýskrá
-Login;Login;Anmelden;Prihlásiť sa;Iniciar sesión;Logg inn;Skrá inn
-Register;Register;Registrieren;Registrovať;Registrarse;Registrer;Nýskrá
-Username;Username;Benutzername;Používateľské meno;Nombre de usuario;Brukernavn;Notandanafn
-Password;Password;Passwort;Heslo;Contraseña;Passord;Lykilorð
-Confirm Password;Confirm Password;Passwort bestätigen;Potvrďte heslo;Confirmar contraseña;Bekreft passord;Staðfesta lykilorð
-Enter;Enter;Eingeben;Vstúpiť;Entrar;Gå inn;Staðfesta
-Return;Return;Zurück;Späť;Volver;Tilbake;Til baka
-Please enter username and password.;Please enter username and password.;Bitte geben Sie Benutzername und Passwort ein.;Zadajte meno a heslo.;Por favor, introduzca el nombre de usuario y la contraseña.;Vennligst skriv inn brukernavn og passord.;Vinsamlegast sláðu inn notandanafn og lykilorð.
-Invalid credentials.;Invalid credentials.;Ungültige Anmeldedaten.;Neplatné prihlasovacie údaje.;Credenciales inválidas.;Ugyldige opplysninger.;Ógild notandaupplýsingar.
-Please fill all fields.;Please fill all fields.;Bitte füllen Sie alle Felder aus.;Vyplňte všetky polia.;Por favor, rellene todos los campos.;Vennligst fyll ut alle feltene.;Vinsamlegast fylltu út öll svæði.
-Passwords do not match.;Passwords do not match.;Passwörter stimmen nicht überein.;Heslá sa nezhodujú.;Las contraseñas no coinciden.;Passordene stemmer ikke overens.;Lykilorðin stemma ekki.
-Username already exists.;Username already exists.;Benutzername existiert bereits.;Používateľ už existuje.;El nombre de usuario ya existe.;Brukernavn finnes allerede.;Notandanafn er þegar til.
-Registration successful! You can now log in.;Registration successful! You can now log in.;Registrierung erfolgreich! Sie können sich jetzt anmelden.;Registrácia bola úspešná! Môžete sa prihlásiť.;¡Registro exitoso! Ahora puede iniciar sesión.;Registreringen var vellykket! Du kan nå logge inn.;Skráning tókst! Þú getur nú skráð þig inn.
-welcome;Welcome;Willkommen;Vitajte;Bienvenido;Velkommen;Velkomin
-google_sign_in;Sign in with Google;Mit Google anmelden;Prihlásiť sa cez Google;Iniciar sesión con Google;Logg inn med Google;Skrá inn með Google
-search_term;Search Tool;Suchwerkzeug;Vyhľadávať pojem;Buscar término;Søk etter begrep;Leita eftir hugtaki
-add_term;Add New Terms;Neuen Begriff hinzufügen;Pridať nový pojem;Añadir nuevo término;Legg til nytt begrep;Bæta við nýju hugtaki
-quiz;Quiz;Quiz;Kvíz;Cuestionario;Quiz;Próf
-back_lng;Back to Language selection;Zurück zur Sprachauswahl;Späť na výber jazyka;Volver a selección de idioma;Tilbake til språkutvalg;Til baka að tungumálaval
-enter_term;Enter term;Begriff eingeben;Zadajte pojem;Introduzca el término;Skriv inn begrep;Sláðu inn hugtak
-search;Search;Suchen;Hľadať;Buscar;Søk;Leita
-back;Back;Zurück;Späť;Volver al menú;Tilbake til meny;Til baka í valmynd
-back to search;Back to Search;Zurück zur Suche;Späť na vyhľadávanie;Volver a la búsqueda;Tilbake til søk;Til baka í leit
-Save Term;Save Term;Begriff speichern;Uložiť pojem;Guardar término;Lagre begrep;Vista hugtak
-Please enter a search term.;Please enter a search term.;Bitte geben Sie einen Suchbegriff ein.;Zadajte hľadaný pojem.;Por favor, introduzca un término de búsqueda.;Skriv inn et søkebegrep.;Sláðu inn hugtak til að leita.
-Search failed.;Search failed.;Suche fehlgeschlagen.;Hľadanie zlyhalo.;Búsqueda fallida.;Søk mislyktes.;Leit mistókst.
-No matching results found.;No matching results found.;Keine passenden Ergebnisse gefunden.;Nenašli sa žiadne zodpovedajúce výsledky.;No se encontraron resultados coincidentes.;Ingen treff funnet.;Engar niðurstöður fundust.
-Term saved successfully!;Term saved successfully!;Begriff erfolgreich gespeichert!;Pojem bol úspešne uložený!;¡Término guardado con éxito!;Begrepet ble lagret!;Hugtak var vistað!
-Please enter at least one field before saving.;Please enter at least one field before saving.;Bitte geben Sie mindestens ein Feld ein, bevor Sie speichern.;Zadajte aspoň jedno pole pred uložením.;Por favor, introduzca al menos un campo antes de guardar.;Skriv inn minst ett felt før lagring.;Sláðu inn að minnsta kosti eitt svæði áður en vistað er.
-Review data cleared.;Review data cleared.;Überprüfungsdaten gelöscht.;Údaje boli vymazané.;Datos de revisión borrados.;Gjennomgangslekt ble slettet.;Endurskoðun eydd.
-Quiz Settings;Quiz Settings;Quiz-Einstellungen;Nastavenia kvízu;Configuración del cuestionario;Innstillinger for quiz;Stillingar prófs
-Review Mistakes;Review Mistakes;Fehler überprüfen;Skontrolovať chyby;Revisar errores;Gjennomgå feil;Skoða villur
-Start Review Quiz;Start Review Quiz;Überprüfungsquiz starten;Spustiť opravný kvíz;Iniciar revisión;Start gjennomgang;Byrja endurtekningu
-Clear Review;Clear Review;Überprüfung löschen;Vymazať chyby;Borrar revisión;Tøm gjennomgang;Hreinsa endurskoðun
-Confirm Delete;Confirm Delete;Löschen bestätigen;Potvrdiť vymazanie;Confirmar eliminación;Bekreft sletting;Staðfesta eyðingu
-All content of the wrong answers will be lost. Do you want to delete?;All content of the wrong answers will be lost. Do you want to delete?;Alle falschen Antworten gehen verloren. Möchten Sie löschen?;Všetky nesprávne odpovede budú stratené. Chcete vymazať?;Todo el contenido de las respuestas incorrectas se perderá. ¿Desea borrar?;Alt innhold i feil svar vil gå tapt. Vil du slette?;Allt efni úr röngum svörum verður eytt. Viltu halda áfram?
-OK;OK;OK;OK;OK;OK;OK
-Cancel;Cancel;Abbrechen;Zrušiť;Cancelar;Avbryt;Hætta við
-Type of quiz;Type of quiz;Quiztyp;Typ kvízu;Tipo de cuestionario;Quiz-type;Tegund prófs
-Select 1st column;Select 1st column;1. Spalte auswählen;Vyberte 1. stĺpec;Seleccionar primera columna;Velg første kolonne;Veldu 1. dálk
-Select 2nd column;Select 2nd column;2. Spalte auswählen;Vyberte 2. stĺpec;Seleccionar segunda columna;Velg andre kolonne;Veldu 2. dálk
-Select fields to show;Select fields to show;Felder zum Anzeigen auswählen;Vyberte polia na zobrazenie;Seleccionar campos para mostrar;Velg felt å vise;Veldu reiti til að sýna
-source_words;Source Words;Ausgangswörter;Východiskové slová;Palabras fuente;Kildeord;Orð úr upprunamáli
-target_words;Target Words;Zielwörter;Cieľové slová;Palabras destino;Målord;Orð úr markmáli
-start_quiz;Start Quiz;Quiz starten;Spustiť kvíz;Iniciar cuestionario;Start quiz;Byrja próf
-quiz_from;From;Von;Z
-quiz_to;To;Nach;Do
-quiz_double_confirm;Double-tap to confirm answer;Zum Bestätigen zweimal tippen;Dvojitým kliknutím potvrď odpoveď
-quiz_double_confirm_pending;Answer selected. Tap the same option again to confirm.;Antwort ausgewählt. Tippen Sie dieselbe Option erneut an, um zu bestätigen.;Odpoveď je vybraná. Klepnite na tú istú možnosť znova pre potvrdenie.
-quiz_shortcuts_standard;Keys 1-6 select an option. Press Enter for next question.;Mit Tasten 1-6 wählen Sie eine Option. Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosť. Pre ďalšiu otázku stlačte Enter.
-quiz_shortcuts_double_confirm;Keys 1-6 select options (press the same key again to confirm). Press Enter for next question.;Mit Tasten 1-6 wählen Sie Optionen (zum Bestätigen dieselbe Taste erneut drücken). Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosti (pre potvrdenie stlačte ten istý kláves znova). Pre ďalšiu otázku stlačte Enter.
-quiz_domain;Domain;Bereich;Oblasť
-quiz_subdivision;Subdivision;Unterbereich;Podoblasť
-quiz_subdivision2;Subdivision 2;Unterbereich 2;Podoblasť 2
-quiz_type;Quiz type;Quiztyp;Typ kvízu
-quiz_type_multiple_choice;Multiple choice;Výber z možností;Výber z možností
-quiz_type_matching;Matching;Priraďovanie;Priraďovanie
-quiz_type_typing;Typing;Písanie;Písanie
-quiz_question_count;Question count;Anzahl der Fragen;Počet otázok
-quiz_options_count;Answer options per question;Antwortoptionen pro Frage;Počet možností odpovede na otázku
-quiz_timer;Timer;Časovač;Časovač
-quiz_timer_off;Off;Aus;Vypnuté
-quiz_only_starred;Include only starred;Nur markierte Begriffe;Zahrnúť len označené hviezdičkou
-quiz_prefer_wrong;Prefer wrong terms;Falsche Begriffe bevorzugen;Uprednostniť nesprávne pojmy
-quiz_end;End quiz;Quiz beenden;Ukončiť kvíz
-quiz_streak;Streak;Séria;Séria
-quiz_accuracy;Accuracy;Presnosť;Presnosť
-quiz_time;Time;Čas;Čas
-quiz_no_wrong_terms;No wrong terms. Great run.;Keine falschen Begriffe. Starker Lauf.;Žiadne nesprávne pojmy. Skvelý výkon.
-quiz_correct_label;Correct;Richtig;Správne
-quiz_chosen_label;Chosen;Vybrané;Zvolené
-quiz_summary_title;Quiz summary;Quizübersicht;Zhrnutie kvízu
-quiz_total_correct;Total correct;Celkom správne;Celkom správne
-quiz_retry_wrong_terms;Retry wrong terms;Falsche Begriffe erneut üben;Skúsiť znovu nesprávne pojmy
-quiz_add_wrong_review;Add wrong terms to review list;Falsche Begriffe zur Wiederholungsliste hinzufügen;Pridať nesprávne pojmy do zoznamu na opakovanie
-quiz_complete;Quiz complete.;Quiz abgeschlossen.;Kvíz je dokončený.
-quiz_match_terms;Match terms;Begriffe zuordnen;Priraď pojmy
-quiz_pairs;pairs;Paare;páry
-quiz_select_answer;Select answer;Antwort auswählen;Vyber odpoveď
-quiz_finish;Finish;Fertig;Dokončiť
-quiz_submit_matching;Submit matching;Zuordnung abschicken;Odoslať priradenie
-quiz_correct_answer;Correct answer;Richtige Antwort;Správna odpoveď
-quiz_star;Star;Označiť hviezdičkou;Označiť hviezdičkou
-quiz_unstar;Unstar;Odstrániť hviezdičku;Odstrániť hviezdičku
-quiz_type_answer_placeholder;Type answer;Antwort eingeben;Napíš odpoveď
-quiz_submit;Submit;Odoslať;Odoslať
-quiz_shortcuts_typing;Press Enter to submit, then Enter for next question.;Drücken Sie Enter zum Senden und dann Enter für die nächste Frage.;Stlač Enter na odoslanie a potom Enter na ďalšiu otázku.
-quiz_next_question;Next question;Nächste Frage;Ďalšia otázka
-quiz_configure_and_start;Configure settings and press Start.;Einstellungen wählen und Start drücken.;Nastavte možnosti a stlačte Štart.
-quiz_wrong_added_to_review;Wrong terms added to review list.;Falsche Begriffe zur Wiederholung hinzugefügt.;Nesprávne pojmy boli pridané do zoznamu na opakovanie.
-quiz_err_no_pairs;No pairs available for this selection.;Keine Paare für diese Auswahl verfügbar.;Pre tento výber nie sú dostupné žiadne dvojice.
-quiz_err_need_two_pairs;Need at least 2 pairs for multiple choice.;Für Multiple Choice sind mindestens 2 Paare erforderlich.;Pre výber z možností sú potrebné aspoň 2 dvojice.
-flashcards;Flashcards;Lernkarten;Kartičky
-flashcards_builder;Builder;Builder;Tvorba
-flashcards_player;Player;Lernen;Prehrávanie
-flashcards_domains;Domains;Bereiche;Oblasti
-flashcards_subdivision;Subdivision;Unterbereich;Podoblasť
-flashcards_subdivision2;Subdivision 2;Unterbereich 2;Podoblasť 2
-flashcards_front_primary;Front field (primary);Vorderseite (Hauptfeld);Predné pole (hlavné)
-flashcards_front_secondary;Front field (secondary);Vorderseite (Nebenfeld);Predné pole (vedľajšie)
-flashcards_back_primary;Back field (primary);Rückseite (Hauptfeld);Zadné pole (hlavné)
-flashcards_back_secondary;Back field (secondary);Rückseite (Nebenfeld);Zadné pole (vedľajšie)
-flashcards_only;Only;Nur;Len
-flashcards_random;Random;Náhodné;Náhodné
-flashcards_new;New;Nové;Nové
-flashcards_wrong;Wrong;Nesprávne;Nesprávne
-flashcards_due;Due;Na opakovanie;Na opakovanie
-flashcards_limit;Limit;Limit;Limit
-flashcards_generate_session;Generate session;Sitzung erstellen;Vytvoriť session
-flashcards_again;Again;Nochmal;Znova
-flashcards_good;Good;Gut;Dobre
-flashcards_easy;Easy;Einfach;Ľahké
-flashcards_none;None;Keine;Žiadne
-flashcards_loaded_terms;Loaded terms;Geladene Begriffe;Načítané pojmy
-flashcards_selected_domain;Selected domain;Ausgewählter Bereich;Vybraná oblasť
-flashcards_no_active_session;No active session. Generate a deck first.;Keine aktive Sitzung. Erstellen Sie zuerst ein Deck.;Nie je aktívna session. Najprv vygenerujte balíček.
-flashcards_select_one_domain;Select at least one domain.;Wählen Sie mindestens einen Bereich.;Vyberte aspoň jednu oblasť.
-flashcards_select_front_back;Select front and back fields.;Wählen Sie Vorder- und Rückseitenfeld.;Vyberte predné a zadné polia.
-flashcards_front_back_same;Front and Back cannot be the same field.;Vorder- und Rückseitenfeld dürfen nicht identisch sein.;Predné a zadné pole nemôžu byť rovnaké.
-flashcards_generated_cards;Generated;Vygeneriert;Vygenerované
-flashcards_cards_suffix;card(s).;Karte(n).;kartičiek.
-flashcards_session_finished;Session finished.;Sitzung abgeschlossen.;Session dokončená.
-flashcards_reviewed;Reviewed;Prejdené;Prejdené
-translate_word;Translate;Übersetzen;Prelož;Traducir;Oversett;Þýða
-select_languages_warning;Please select both source and target languages.;Bitte wählen Sie sowohl Ausgangs- als auch Zielsprache aus.;Vyberte oba jazyky.;Seleccione ambos idiomas, por favor.;Velg begge språkene.;Veldu bæði tungumálin.
-reset_quiz;Reset Quiz;Quiz zurücksetzen;Spustiť kvíz znovu;Reiniciar cuestionario;Tilbakestill quiz;Endursetja próf
-score;Score;Punktzahl;Skóre;Puntuación;Poengsum;Stig
-incorrect;Incorrect;Falsch;Nesprávne;Incorrecto;Feil;Rangt
-correct;Correct;Richtig;Správne;Correcto;Riktig;Rétt
-wrong;Wrong;Falsch;Zle;Equivocado;Galt;Rangt svar
-source_language;Source Language;Ausgangssprache;Primárny jazyk;Idioma de origen;Kildespråk;Upprunamál
-target_language;Target Language;Zielsprache;Sekundárny jazyk;Idioma de destino;Målspråk;Markmál
-english;English;Englisch;Angličtina;Inglés;Engelsk;Enska
-slovak;Slovak;Slowakisch;Slovenčina;Eslovaco;Slovakisk;Slóvakíska
-latin;Latin;Latein;Latinčina;Latín;Latinsk;Latína
-german;German;Deutsch;Nemčina;Alemán;Tysk;Þýska
-spanish;Spanish;Spanisch;Španielčina;Español;Spansk;Spænska
-norwegian;Norwegian;Norwegisch;Nórčina;Noruego;Norsk;Norska
-icelandic;Icelandic;Isländisch;Islandčina;Islandés;Islandsk;Íslenska
-reset_before_language_change;Reset quiz before changing languages.;Quiz zurücksetzen, bevor Sie die Sprache ändern.;Reštartujte kvíz pred zmenou jazykov.;Reinicie el cuestionario antes de cambiar de idioma.;Tilbakestill før språkbytte.;Endurstilltu prófið áður en þú breytir tungumáli.
-quiz_already_started;Quiz already started. Press Reset to start again.;Quiz bereits gestartet. Drücken Sie Zurücksetzen.;Kvíz už prebieha. Stlačte reset.;El cuestionario ya comenzó. Pulse Reiniciar.;Quiz har allerede startet. Trykk Tilbakestill.;Próf hefur þegar hafist. Ýttu á Endursetja.
-source_set;Source language set to: ;Ausgangssprache gesetzt auf: ;Primárny jazyk nastavený na: ;Idioma de origen establecido en: ;Kildespråk satt til: ;Upprunamál stillt á: 
-target_set;Target language set to: ;Zielsprache gesetzt auf: ;Sekundárny jazyk nastavený na: ;Idioma de destino establecido en: ;Målspråk satt til: ;Markmál stillt á: 
-latin_translation;Latin Translation;Lateinische Übersetzung;Latinský preklad;Traducción al latín;Latinsk oversettelse;Þýðing á latínu
-genitive;Genitive;Genitiv;Genitív;Genitivo;Genitiv;Eignarfall
-accusative;Accusative;Akkusativ;Akuzatív;Acusativo;Akkusativ;Þolfall
-gender;Gender;Geschlecht;Rod;Género;Kjønn;Kyn
-declination;Declination;Deklination;Deklinácia;Declinación;Deklinasjon;Beyging
-english_translation;English Translation;Englische Übersetzung;Anglický preklad;Traducción al inglés;Engelsk oversettelse;Þýðing á ensku
-english_definition;English Definition;Englische Definition;Anglická definícia;Definición en inglés;Engelsk definisjon;Skilgreining á ensku
-german_translation;German Translation;Deutsche Übersetzung;Nemecký preklad;Traducción al alemán;Tysk oversettelse;Þýska þýðing
-german_definition;German Definition;Deutsche Definition;Nemecká definícia;Definición en alemán;Tysk definisjon;Skilgreining á þýsku
-slovak_translation;Slovak Translation;Slowakische Übersetzung;Slovenský preklad;Traducción al eslovaco;Slovakisk oversettelse;Slóvakísk þýðing
-slovak_definition;Slovak Definition;Slowakische Definition;Slovenská definícia;Definición en eslovaco;Slovakisk definisjon;Skilgreining á slóvakísku
-spanish_translation;Spanish Translation;Spanische Übersetzung;Španielsky preklad;Traducción al español;Spansk oversettelse;Spænsk þýðing
-spanish_definition;Spanish Definition;Spanische Definition;Španielska definícia;Definición en español;Spansk definisjon;Skilgreining á spænsku
-norwegian_translation;Norwegian Translation;Norwegische Übersetzung;Nórsky preklad;Traducción al noruego;Norsk oversettelse;Norsk þýðing
-norwegian_definition;Norwegian Definition;Norwegische Definition;Nórska definícia;Definición en noruego;Norsk definisjon;Skilgreining á norsku
-icelandic_translation;Icelandic Translation;Isländische Übersetzung;Islandský preklad;Traducción al islandés;Islandsk oversettelse;Íslensk þýðing
-icelandic_definition;Icelandic Definition;Isländische Definition;Islandská definícia;Definición en islandés;Islandsk definisjon;Skilgreining á íslensku
-2nd_definition;Second Definition;Zweite Definition;Druhá definícia;Segunda definición;Andre definisjon;Önnur skilgreining
-Word combinations;Word combinations;Wortkombinationen;Kombinácie slov;Combinaciones de palabras;Ord kombinasjoner;Orðasambönd
-Words and definitions;Words and definitions;Wörter und Definitionen;Slová a definície;Palabras y definiciones;Ord og definisjoner;Orð og skilgreiningar
-Great job in {app_name}!;Great job in {app_name}!;Great job in {app_name}!;Great job in {app_name}!;¡Buen trabajo en {app_name}!;Flott jobb i {app_name}!;Frábær vinna í {app_name}!
-positive_feedback_1;Great job {app_name}!;Großartige Arbeit {app_name}!;Skvelá práca {app_name}!;¡Gran trabajo {app_name}!;Flott jobb {app_name}!;Góð vinna {app_name}!
-positive_feedback_2;Well done! Keep going {app_name}!;Gut gemacht! Weiter so {app_name}!;Výborne! Pokračuj ďalej {app_name}!;¡Sigue así {app_name}!;Bra jobbet! Fortsett sånn {app_name}!;Frábært! Haltu áfram {app_name}!
-positive_feedback_3;Excellent {app_name}! Be proud of youself!;Ausgezeichnet {app_name}! Sei stolz auf dich!;Vynikajúce {app_name}!;¡Excelente, {app_name}!;Utmerket {app_name}!;Framúrskarandi {app_name}!
-positive_feedback_4;You are mastering this {app_name}!;Du meisterst das {app_name}!;Ovládaš to dokonale {app_name}!;¡Lo estás dominando, {app_name}!;Du mestrer dette {app_name}!;Þú stendur þig vel {app_name}!
-positive_feedback_5;Fantastic job {app_name}! Applauds for your effort!;Fantastische Arbeit {app_name}! Applaus für deinen Einsatz!;Fantastické {app_name}. Zaslúžiš si potlest za snahu!;¡Fantástico esfuerzo, {app_name}!;Fantastisk innsats {app_name}!;Glæsilegt {app_name}! Þú átt hrós skilið!
-1st_column;Source;Quelle;Zdroj;Fuente;Kilde;Uppruni
-correct_answer_word;Correct Word;Richtiges Wort;Správne slovo;Palabra correcta;Riktig ord;Rétt orð
-wrong_answer_word;Your Word;Ihr Wort;Vaše slovo;Tu palabra;Ditt ord;Þitt orð
-correct_answer_definition;Correct Definition;Richtige Definition;Správna definícia;Definición correcta;Riktig definisjon;Rétt skilgreining
-wrong_answer_definition;Your Definition;Ihre Definition;Vaša definícia;Tu definición;Din definisjon;Þín skilgreining
-remove;Remove;Entfernen;Odstrániť;Eliminar;Fjern;Fjarlægja
-muscle_search_placeholder;Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars);Search muscle name (min 2 chars)
-muscle_search_any;Any;Alle;?ubovo?n?;Any;Any;Any
-muscle_search_region;Region;Region;Oblas?;Region;Region;Region
-muscle_search_category;Category;Kategorie;Kateg?ria;Category;Category;Category
-muscle_search_english_name;English name;Englischer Name;Anglick? n?zov;English name;English name;English name
-muscle_search_latin_name;Latin name;Lateinischer Name;Latinsk? n?zov;Latin name;Latin name;Latin name
-muscle_search_insercio;Insercio;Ansatz;Insercio;Insercio;Insercio;Insercio
-muscle_search_origo;Origo;Ursprung;Origo;Origo;Origo;Origo
-muscle_search_blood_supply;Blood supply;Blutversorgung;Krvn? z?sobenie;Blood supply;Blood supply;Blood supply
-muscle_search_innervation;Innervation;Innervation;Inerv?cia;Innervation;Innervation;Innervation
-email_or_username;Email or username;E-Mail oder Benutzername;E-mail alebo používateľské meno;;;
-forgot_password_title;Forgot password;Passwort vergessen;Zabudnuté heslo;;;
-forgot_password_desc;Enter your email to receive a reset link.;Geben Sie Ihre E-Mail ein, um einen Link zum Zurücksetzen zu erhalten.;Zadajte svoj e-mail na zaslanie odkazu na obnovenie.;;;
-forgot_password_email_placeholder;Email;E-Mail;E-mail;;;
-forgot_password_send;Send;Senden;Odoslať;;;
-forgot_password_cancel;Cancel;Zrušiť;Zrušiť;;;
-forgot_password_email_required;Email is required.;E-Mail ist erforderlich.;E-mail je povinný.;;;
-forgot_password_sending;Sending reset email...;Sende Reset-E-Mail...;Odosielam e-mail na obnovu...;;;
-forgot_password_failed;Reset failed: ;Zurücksetzen fehlgeschlagen: ;Obnova zlyhala: ;;;
-forgot_password_sent_msg;An automated password reset was delivered to your email. Please check also the spam folder in your email account. If there is any problem, contact me at medicaldictionaryjlf@gmail.com;Eine automatische Passwortzurücksetzung wurde an Ihre E-Mail gesendet. Bitte prüfen Sie auch den Spam-Ordner. Bei Problemen kontaktieren Sie mich unter medicaldictionaryjlf@gmail.com;Automatická obnova hesla bola odoslaná na váš e-mail. Skontrolujte prosím aj spamový priečinok. V prípade problému ma kontaktujte na medicaldictionaryjlf@gmail.com;;;
-continue_without_account;Continue without account;Weiter ohne Konto;Pokračovať bez konta;;;
-guest_title;Continue without account?;Ohne Konto fortfahren?;Pokračovať bez konta;;;
-guest_desc;Your progress won't be saved. To save your progress, login or register your account.;Ihr Fortschritt wird nicht gespeichert. Um ihn zu speichern, melden Sie sich an oder registrieren Sie ein Konto.;Váš postup nebude uložený. Ak chcete ukladať svoj postup, prihláste sa alebo si vytvorte účet.;;;
-continue;Continue;Weiter;Pokračovať;;;;
-settings_language;Language;Sprache;Jazyk;;;;
-settings_text_size;Text Size;Textgröße;Veľkosť textu;;;;
-text_size_small;Small;Klein;Malý;;;;
-text_size_large;Large;Groß;Veľký;;;;
-muscle_training;Muscle Training;Muskeltraining;Precvičovanie svalov;;;;
-anamnesis;Anamnesis;Anamnese;Anamnéza;;;;
-muscle_search_title;Muscle Search;Muskel Suche;Vyhľadávanie svalov;;;;
-muscle_quiz_title;Muscle Quiz;Muskel Quiz;Svalový kvíz;;;;
-search_muscle_text; Search muscle name (min 2 chars); Suchmuskelname suchen (min 2 Zeichen); Vyhľadajte názov svalu (min 2 znaky);;;;
-start;Start Muscle Quiz;Muskelquiz starten;Spustiť svalový kvíz;;;;
-muscle_search_any;Any;Alle;Ľubovoľné;;;
-muscle_search_region;Region;Region;Oblasť;;;
-muscle_search_category;Category;Kategorie;Kategória;;;
-muscle_search_english_name;English name;Englischer Name;Anglický názov;;;
-muscle_search_latin_name;Latin name;Lateinischer Name;Latinský názov;;;
-muscle_search_muscle_part;Muscle parts;Muskelteil;Časti svalu;;;
-muscle_search_origo;Origo;Ursprung;Origo;;;
-muscle_search_insercio;Insercio;Ansatz;Insercio;;;
-muscle_search_blood_supply;Blood supply;Blutversorgung;Krvné zásobenie;;;
-muscle_search_innervation;Innervation;Innervation;Inervácia;;;
-muscle_quiz_select_region;Select a region and at least one group with data.;Wählen Sie eine Region und mindestens eine Gruppe mit Daten.;Vyberte oblasť a aspoň jednu skupinu s údajmi.;;;
-muscle_clear_all;Clear all;Alles löschen;Vymazať všetko;;;
-muscle_clear_all_confirm;Clear all selected regions and categories?;Alle ausgewählten Regionen und Kategorien löschen?;Vymazať všetky vybrané oblasti a kategórie?;;;
-muscle_region_all;All;Alle;Všetko;;;
-muscle_region_clear;Clear;Löschen;Vymazať;;;
-muscle_search_type_of_movement;Type of movement;Bewegungsart;Pohyb;;;
-muscle_type_of_movement;Type of movement;Bewegungsart;Pohyb;;;
-reveal;Reveal;Aufdecken;Odhaliť;;;
-muscle_quiz_always;Always;Immer;Vždy;;;
-muscle_quiz_appear;appear;anzeigen;zobraziť;;;
-next;Next;Weiter;Ďalej;;;
-clear_form;Clear form;Formular löschen;Vymazať formulár;;;
-anam_saved_locally;Saved locally.;Lokal gespeichert.;Uložené lokálne.;;;
-anam_cleared;Cleared.;Gelöscht.;Vymazané.;;;
-settings_title;Settings;Einstellungen;Nastavenia;;;
-settings_account;Account;Konto;Účet;;;
-settings_account_sync;Account & Sync;Konto & Sync;Sieť a synchronizácia;;;
-settings_return_to_login;Return to Login;Zurück zum Login;Návrat na prihlásenie;;;
-sync;Sync;Synchronisieren;Synchronizovať;;;
-forgot_password_button;Forgot password?;Passwort vergessen?;Zabudli ste heslo?;;;
-anamnesis_general_notes_placeholder;Write your general notes here...;Schreiben Sie hier Ihre allgemeinen Notizen...;Sem nap??te svoje v?eobecn? pozn?mky...;Escriba aqu? sus notas generales...;Skriv dine generelle notater her...;Skrifa?u almennar athugasemdir h?r...
-latin_terminology;Latin terminology;Lateinische Terminologie;Latinská terminológia;Latin terminology;Latin terminology;Latin terminology
-latin_search_title;Search latin terms;Lateinische Begriffe suchen;Vyhľadávanie latinských pojmov;Search latin terms;Search latin terms;Search latin terms
-latin_search_input_placeholder;Search latin term (min 2 chars);Lateinischen Begriff suchen (min. 2 Zeichen);Vyhľadať latinský pojem (min. 2 znaky);Search latin term (min 2 chars);Search latin term (min 2 chars);Search latin term (min 2 chars)
-latin_filter_where_to_search;Where to search;Wo suchen;Kde hľadať;Where to search;Where to search;Where to search
-latin_filter_part_of_speech;Part of speech;Wortart;Slovný druh;Part of speech;Part of speech;Part of speech
-latin_select_all;Select all;Alle auswählen;Vybrať všetko;Select all;Select all;Select all
-latin_clear_all_units;Clear;Löschen;Vymazať;Clear;Clear;Clear
-latin_quiz_title;Latin quiz;Latein-Quiz;Latinský kvíz;Latin quiz;Latin quiz;Latin quiz
-latin_quiz_start;Start Latin Terminology Quiz;Latein-Terminologie-Quiz starten;Spustiť kvíz z latinskej terminológie;Start Latin Terminology Quiz;Start Latin Terminology Quiz;Start Latin Terminology Quiz
-latin_source_units;Units;Lektionen;Lekcie;Units;Units;Units
-latin_source_greek;Latin-Greek synonyms;Lateinisch-griechische Synonyme;Latinsko-grécke synonymá;Latin-Greek synonyms;Latin-Greek synonyms;Latin-Greek synonyms
-latin_source_abbreviations;Abbreviations in medicine;Abkürzungen in der Medizin;Skratky v medicíne;Abbreviations in medicine;Abbreviations in medicine;Abbreviations in medicine
-latin_source_abbreviations_prescriptions;Abbreviations in prescriptions;Abkürzungen auf Rezepten;Skratky v receptoch;Abbreviations in prescriptions;Abbreviations in prescriptions;Abbreviations in prescriptions
-latin_source_remedies;Remedies;Heilmittel;Liečivá;Remedies;Remedies;Remedies
-latin_search_any;Any;Alle;Ľubovoľné;Any;Any;Any
-any;Any;Alle;Ľubovoľné;Any;Any;Any
-latin_search_no_results;No terms found.;Keine Begriffe gefunden.;Nenašli sa žiadne pojmy.;No terms found.;No terms found.;No terms found.
-latin_no_terms_available;No terms available.;Keine Begriffe verfügbar.;Nie sú dostupné žiadne pojmy.;No terms available.;No terms available.;No terms available.
-latin_clear_all_confirm;Clear all selected chapters?;Alle Markierungen aufheben?;Vymazať všetky vybrané kapitoly?;Clear all selected units?;Clear all selected units?;Clear all selected units?
-latin_quiz_select_unit;Select at least one chapter with data.;Wählen Sie mindestens ein Kapitel mit Daten aus.;Vyberte aspoň jednu kapitolu s údajmi.;Select at least one unit with data.;Select at least one unit with data.;Select at least one unit with data.
-latin_quiz_unit_label;Chapter;Kapitel;Kapitola;Unit;Unit;Unit
-latin_unit_name_1;1st declension;1. Deklination;1. deklinácia;1st declension;1st A-declension;1st A-declension
-latin_unit_name_2;2nd declension;2. Deklination;2. deklinácia;2nd declension;2nd O-declension;2nd O-declension
-latin_unit_name_3;3rd consonant declension;3. Konsonantische Deklination;3. konsonantná deklinácia;3rd consonant declension;3rd consonant declension;3rd consonant declension
-latin_unit_name_4;3rd latin vowel-declension;3. Lateinische Vokaldeklination;3. latinská vokalická deklinácia;3rd latin vowel-declension;3rd latin vowel-declension;3rd latin vowel-declension
-latin_unit_name_5;4th and 5th declensions;4. und 5. Deklination;4. a 5. deklinácia;4th and 5th declensions;4th and 5th declensions;4th and 5th declensions
-latin_unit_name_6;3rd declensions - the greek Nouns;3. Deklinationen - die griechischen Substantive;3. deklinácie - grécke podstatné mená;3rd declensions - the greek Nouns;3rd declensions - the greek Nouns;3rd declensions - the greek Nouns
-latin_unit_name_7;3rd declension - Adjectives;3. Deklination - Adjektive;3. deklinácia - prídavné mená;3rd declension - Adjectives;3rd declension - Adjectives;3rd declension - Adjectives
-latin_unit_name_8;Comparison of Adjectives;Steigerung der Adjektive;Stupňovanie prídavných mien;Comparison of Adjectives;Comparison of Adjectives;Comparison of Adjectives
-latin_unit_name_9;Numerals;Numeralia;Číslovky;Numerals;Numerals;Numerals
-latin_unit_name_10;Latin medical prescription;Lateinische medizinische Verschreibung;Latinský lekársky recept;Latin medical prescription;Latin medical prescription;Latin medical prescription
-latin_unit_name_11;Prefixes;Präfixe;Prefixy;Prefixes;Prefixes;Prefixes
-latin_unit_name_12;Suffixes;Suffixe;Sufixy;Suffixes;Suffixes;Suffixes
-latin_unit_name_13;Compound words;Zusammengesetzte Wörter;Zložené slová;Compound words;Compound words;Compound words
-latin_unit_name_14;Repetition in exercises;Wiederholung in Übungen;Opakovanie v cvičeniach;Repetition in exercises;Repetition in exercises;Repetition in exercises
-latin_search_latin_term;Latin term;Lateinischer Begriff;Latinský pojem;Latin term;Latin term;Latin term
-latin_search_latin_genitive;Latin genitive;Lateinischer Genitiv;Latinský genitív;Latin genitive;Latin genitive;Latin genitive
-latin_search_part_of_speech;Part of speech;Wortart;Slovný druh;Part of speech;Part of speech;Part of speech
-latin_search_gender;Gender;Geschlecht;Rod;Gender;Gender;Gender
-latin_search_english_translation;English translation;Englische Übersetzung;Anglický preklad;English translation;English translation;English translation
-latin_search_german_translation;German translation;Deutsche Übersetzung;Nemecký preklad;German translation;German translation;German translation
-latin_search_slovak_translation;Slovak translation;Slowakische Übersetzung;Slovenský preklad;Slovak translation;Slovak translation;Slovak translation
-latin_search_notes;Notes;Notizen;Poznámky;Notes;Notes;Notes
-latin_unit_unassigned;Unassigned unit;Nicht zugewiesene Einheit;Nepriradená jednotka;Unassigned unit;Unassigned unit;Unassigned unit
-latin_filter_search_by;Search by;Wonach suchen;Hľadať podľa;Search by;Search by;Search by
-latin_search_field_english_translation;English translation;Englische Übersetzung;Anglický preklad;English translation;English translation;English translation
-latin_search_field_slovak_translation;Slovak translation;Slowakische Übersetzung;Slovenský preklad;Slovak translation;Slovak translation;Slovak translation
-latin_search_field_german_translation;German translation;Deutsche Übersetzung;Nemecký preklad;German translation;German translation;German translation
-latin_search_field_latin_translation;Latin translation;Lateinische Übersetzung;Latinský preklad;Latin translation;Latin translation;Latin translation
-latin_search_field_abbreviation;Abbreviation;Abkürzung;Skratka;Abbreviation;Abbreviation;Abbreviation
-latin_search_latin_translation;Latin translation;Lateinische Übersetzung;Latinský preklad;Latin translation;Latin translation;Latin translation
-latin_search_greek_translation;Greek translation;Griechische Übersetzung;Grécky preklad;Greek translation;Greek translation;Greek translation
-latin_search_abbreviation;Abbreviation;Abkürzung;Skratka;Abbreviation;Abbreviation;Abbreviation
-latin_search_full_form;Full form;Langform;Plný tvar;Full form;Full form;Full form
-latin_search_name;Name;Názov;Názov;Name;Name;Name
-latin_search_english_description;English description;Englische Beschreibung;Anglický popis;English description;English description;English description
-latin_search_german_description;German description;Deutsche Beschreibung;Nemecký popis;German description;German description;German description
-latin_search_slovak_description;Slovak description;Slowakische Beschreibung;Slovenský popis;Slovak description;Slovak description;Slovak description
-latin_search_category;Category;Kategorie;Kategória;Category;Category;Category
-latin_search_english_definition;English definition;Englische Definition;Anglická definícia;English definition;English definition;English definition
-latin_search_german_definition;German definition;Deutsche Definition;Nemecká definícia;German definition;German definition;German definition
-latin_search_slovak_definition;Slovak definition;Slowakische Definition;Slovenská definícia;Slovak definition;Slovak definition;Slovak definition
-latin_pos_noun;Noun;Substantiv;Podstatné meno;Noun;Noun;Noun
-latin_pos_adjective;Adjective;Adjektiv;Prídavné meno;Adjective;Adjective;Adjective
-latin_pos_adverb;Adverb;Adverb;Príslovka;Adverb;Adverb;Adverb
-latin_pos_conjunction;Conjunction;Konjunktion;Spojka;Conjunction;Conjunction;Conjunction
-latin_pos_preposition;Preposition;Präposition;Predložka;Preposition;Preposition;Preposition
-latin_pos_pronoun;Pronoun;Pronomen;Zámeno;Pronoun;Pronoun;Pronoun
-latin_pos_phrase;Phrase;Wortgruppe;Fráza;Phrase;Phrase;Phrase
-latin_pos_verb;Verb;Verb;Sloveso;Verb;Verb;Verb
+add_term;Add New Terms;Neuen Begriff hinzufügen;Pridať nový pojem;
+anam_cleared;Cleared.;Gelöscht.;Vymazané.;
+anam_saved_locally;Saved locally.;Lokal gespeichert.;Uložené lokálne.;
+anamnesis;Anamnesis;Anamnese;Anamnéza;
+any;Any;Alle;Ľubovoľné;
+attachment_add_as_attachment;Add as attachment;Als Anhang hinzufügen;Pridať ako prílohu;
+attachment_input_mode;Input mode;Eingabemodus;Režim vstupu;
+attachment_paste_write_text;Paste / write text;Text einfügen / schreiben;Prilepiť / napísať text;
+attachment_preview_title;Attachment preview;Anhangsvorschau;Náhľad prílohy;
+attachment_status_failed;Failed;Fehlgeschlagen;Zlyhalo;
+attachment_status_local;Local;Lokálne;Lokálne;
+attachment_status_synced;Synced;Synchronisiert;Synchronizované;
+attachment_status_unsynced;Unsynced;Nicht synchronisiert;Nesynchronizované;
+attachment_status_uploading;Uploading;Wird hochgeladen;Nahráva sa;
+attachment_upload_txt;Upload .txt;.txt hochladen;Nahrať .txt;
+attachment_upload_txt_file;Upload .txt file;.txt-Datei hochladen;Nahrať .txt súbor;
+attachments;Attachments;Anhänge;Prílohy;
+attachments_none_yet;No attachments yet.;Noch keine Anhänge.;Zatiaľ žiadne prílohy.;
+back;Back;Zurück;Späť;
+basic_sciences;Basic sciences;Grundlagenwissenschaften;Základné vedy;
+biophysics_auto_next;Auto next after 2s when correct;Automatisch nach 2 s weiter bei richtiger Antwort;Automaticky ďalšia po 2 s pri správnej odpovedi;
+biophysics_false;False;Falsch;Nepravda;
+biophysics_final_score;Final score;Endpunktzahl;Konečné skóre;
+biophysics_no_statement;(No statement);(Keine Aussage);(Žiadne tvrdenie);
+biophysics_no_statements_loaded;No biophysics statements loaded.;Keine Biophysik-Aussagen geladen.;Neboli načítané žiadne biofyzikálne tvrdenia.;
+biophysics_press_start;Press Start.;Drücken Sie Start.;Stlačte Štart.;
+biophysics_select_true_false_first;Select True or False first.;Wählen Sie zuerst Wahr oder Falsch.;Najprv vyberte Pravda alebo Nepravda.;
+biophysics_session_finished;Session finished.;Sitzung beendet.;Relácia dokončená.;
+biophysics_shortcuts;Shortcuts: T or 1 = True, F or 2 = False, Enter = Next (after answer).;Tastenkürzel: T oder 1 = Wahr, F oder 2 = Falsch, Enter = Weiter (nach Antwort).;Skratky: T alebo 1 = Pravda, F alebo 2 = Nepravda, Enter = Ďalej (po odpovedi).;
+biophysics_true;True;Wahr;Pravda;
+biophysics_true_false;Biophysics True/False;Biophysik Wahr/Falsch;Biofyzika Pravda/Nepravda;
+category;Category;Kategorie;Kategória;
+choose_language;Choose the language of the website;Wählen Sie die Sprache der Website.;Vyberte si jazyk stánky;
+clear_form;Clear form;Formular löschen;Vymazať formulár;
+close;Close;Schließen;Zavrieť;
+connected_as;Connected as;Verbunden als;Pripojené ako;
+continue;Continue;Weiter;Pokračovať;
+continue_without_account;Continue without account;Weiter ohne Konto;Pokračovať bez konta;
+correct;Correct;Richtig;Správne;
+dataset_anatomy;Anatomy;Anatomie;Anatómia;
+dataset_diagnostic_methods;Diagnostic methods;Diagnostische Methoden;Diagnostické metódy;
+dataset_latin_abbreviations;Latin abbreviations;Lateinische Abkürzungen;Latinské skratky;
+dataset_latin_greek;Latin-Greek;Lateinisch-Griechisch;Latinsko-grécke;
+dataset_latin_remedies;Latin remedies;Lateinische Heilmittel;Latinské liečivá;
+dataset_latin_units;Latin units;Lateinische Lektionen;Latinské lekcie;
+dataset_muscles;Muscles;Muskeln;Svaly;
+dataset_physiology;Physiology;Physiologie;Fyziológia;
+dataset_procedures;Procedures;Verfahren;Postupy;
+diagnostics_procedures;Diagnostics & Procedures;Diagnostik a postupy;Diagnostika a postupy;
+disease_and_symptoms;Diseases and symptoms;Krankheiten und Symptome;Choroby a symptómy;
+english;English;Englisch;Angličtina;
+english_translation;English Translation;Englische Übersetzung;Anglický preklad;
+enter_term;Enter term;Begriff eingeben;Zadajte pojem;
+feedback_contact_optional;Your email (optional);Ihre E-Mail (optional);Váš e-mail (voliteľné);
+feedback_desc;Report an error, issue, or idea. Clicking Send opens your mail app with a prefilled message.;Melden Sie einen Fehler, ein Problem oder eine Idee. Beim Klicken auf Senden öffnet sich Ihre Mail-App mit einer vorausgefüllten Nachricht.;Nahláste chybu, problém alebo nápad. Po kliknutí na Odoslať sa otvorí vaša mailová aplikácia s predvyplnenou správou.;
+feedback_form;Feedback form;Feedback-Formular;Formulár spätnej väzby;
+feedback_message;Message;Nachricht;Správa;
+feedback_message_placeholder;Describe the issue or your suggestion...;Beschreiben Sie das Problem oder Ihren Vorschlag...;Popíšte problém alebo váš návrh...;
+feedback_opening_mail_app;Opening your mail app...;Ihre Mail-App wird geöffnet...;Otvára sa vaša mailová aplikácia...;
+feedback_title;Feedback;Feedback;Spätná väzba;
+feedback_type_error;Error report;Fehlerbericht;Nahlásenie chyby;
+feedback_type_idea;Idea or Suggestion;Idee oder Vorschlag;Nápad alebo návrh;
+feedback_type_wrong_translation;Wrong translation report;Meldung falscher Übersetzung;Nahlásenie nesprávneho prekladu;
+feedback_type_other;Other;Iné;Iné;
+feedback_write_message_before_send;Please write a message before sending.;Bitte schreiben Sie eine Nachricht vor dem Senden.;Pred odoslaním napíšte správu.;
+field_adverse_effects_common;Adverse effects (common);Nebenwirkungen (häufig);Nežiaduce účinky (časté);
+field_adverse_effects_serious;Adverse effects (serious);Nebenwirkungen (schwerwiegend);Nežiaduce účinky (závažné);
+field_causes_of_decrease;Causes of decrease;Ursachen des Rückgangs;Príčiny zníženia;
+field_causes_of_increase;Causes of increase;Ursachen des Anstiegs;Príčiny zvýšenia;
+field_clinical_use;Clinical use;Klinische Anwendung;Klinické využitie;
+field_contraindications;Contraindications;Kontraindikationen;Kontraindikácie;
+field_definition;Definition;Definition;Definícia;
+field_definition_de;Definition (DE);Definition (DE);Definícia (DE);
+field_definition_en;Definition (EN);Definition (EN);Definícia (EN);
+field_definition_sk;Definition (SK);Definition (SK);Definícia (SK);
+field_drug_class;Drug class;Arzneimittelklasse;Lieková trieda;
+field_duration;Duration;Wirkdauer;Trvanie;
+field_indications;Indications;Indikationen;Indikácie;
+field_interactions_key;Interactions (key);Interaktionen (wichtig);Interakcie (kľúčové);
+field_latin_grammar;Latin grammar;Lateinische Grammatik;Latinská gramatika;
+field_mechanism_of_action;Mechanism of action;Wirkmechanismus;Mechanizmus účinku;
+field_movement_function;Movement function;Bewegungsfunktion;Funkcia pohybu;
+field_name_de;Name (DE);Name (DE);Názov (DE);
+field_name_en;Name (EN);Name (EN);Názov (EN);
+field_name_gr;Name (GR);Name (GR);Názov (GR);
+field_name_la;Name (LA);Name (LA);Názov (LA);
+field_name_sk;Name (SK);Name (SK);Názov (SK);
+field_normal_range_units;Normal range + units;Normalbereich + Einheiten;Normálny rozsah + jednotky;
+field_oina_summary;OINA summary;OINA-Zusammenfassung;OINA zhrnutie;
+field_onset;Onset;Wirkbeginn;Nástup účinku;
+field_physiological_role;Physiological role;Physiologische Rolle;Fyziologická úloha;
+field_pregnancy;Pregnancy;Schwangerschaft;Tehotenstvo;
+field_routes;Routes;Applikationswege;Spôsoby podania;
+field_sample_type;Sample type;Probentyp;Typ vzorky;
+field_subclass;Subclass;Unterklasse;Podtrieda;
+field_system;System;System;Systém;
+field_unit_name;Unit;Einheit;Lekcia;
+flashcards;Flashcards;Lernkarten;Kartičky;
+flashcards_again;Again;Nochmal;Znova;
+flashcards_back_primary;Back field (primary);Rückseite (Hauptfeld);Zadné pole (hlavné);
+flashcards_back_secondary;Back field (secondary);Rückseite (Nebenfeld);Zadné pole (vedľajšie);
+flashcards_builder;Builder;Builder;Tvorba;
+flashcards_builder_hide;Hide builder settings;Builder-Einstellungen ausblenden;Skryť nastavenia tvorby;
+flashcards_builder_show;Show builder settings;Builder-Einstellungen anzeigen;Zobraziť nastavenia tvorby;
+flashcards_cards_suffix;card(s).;Karte(n).;kartičiek.;
+flashcards_domains;Domains;Bereiche;Oblasti;
+flashcards_due;Due;Na opakovanie;Na opakovanie;
+flashcards_easy;Easy;Einfach;Ľahké;
+flashcards_front_back_same;Front and Back cannot be the same field.;Vorder- und Rückseitenfeld dürfen nicht identisch sein.;Predné a zadné pole nemôžu byť rovnaké.;
+flashcards_front_primary;Front field (primary);Vorderseite (Hauptfeld);Predné pole (hlavné);
+flashcards_front_secondary;Front field (secondary);Vorderseite (Nebenfeld);Predné pole (vedľajšie);
+flashcards_generate_session;Generate session;Sitzung erstellen;Vytvoriť session;
+flashcards_generated_cards;Generated;Vygeneriert;Vygenerované;
+flashcards_good;Good;Gut;Dobre;
+flashcards_limit;Limit;Limit;Limit;
+flashcards_loaded_terms;Loaded terms;Geladene Begriffe;Načítané pojmy;
+flashcards_new;New;Nové;Nové;
+flashcards_no_active_session;No active session. Generate a deck first.;Keine aktive Sitzung. Erstellen Sie zuerst ein Deck.;Nie je aktívna session. Najprv vygenerujte balíček.;
+flashcards_none;None;Keine;Žiadne;
+flashcards_only;Only;Nur;Len;
+flashcards_player;Player;Lernen;Prehrávanie;
+flashcards_random;Random;Náhodné;Náhodné;
+flashcards_reviewed;Reviewed;Prejdené;Prejdené;
+flashcards_select_front_back;Select front and back fields.;Wählen Sie Vorder- und Rückseitenfeld.;Vyberte predné a zadné polia.;
+flashcards_select_one_domain;Select at least one domain.;Wählen Sie mindestens einen Bereich.;Vyberte aspoň jednu oblasť.;
+flashcards_selected_domain;Selected domain;Ausgewählter Bereich;Vybraná oblasť;
+flashcards_session_finished;Session finished.;Sitzung abgeschlossen.;Session dokončená.;
+flashcards_wrong;Wrong;Nesprávne;Nesprávne;
+forgot_password_cancel;Cancel;Zrušiť;Zrušiť;
+forgot_password_desc;Enter your email to receive a reset link.;Geben Sie Ihre E-Mail ein, um einen Link zum Zurücksetzen zu erhalten.;Zadajte svoj e-mail na zaslanie odkazu na obnovenie.;
+forgot_password_email_placeholder;Email;E-Mail;E-mail;
+forgot_password_title;Forgot password;Passwort vergessen;Zabudnuté heslo;
+german;German;Deutsch;Nemčina;
+german_translation;German Translation;Deutsche Übersetzung;Nemecký preklad;
+google_sign_in;Sign in with Google;Mit Google anmelden;Prihlásiť sa cez Google;
+guest_desc;Your progress won't be saved. To save your progress, login or register your account.;Ihr Fortschritt wird nicht gespeichert. Um ihn zu speichern, melden Sie sich an oder registrieren Sie ein Konto.;Váš postup nebude uložený. Ak chcete ukladať svoj postup, prihláste sa alebo si vytvorte účet.;
+guest_title;Continue without account?;Ohne Konto fortfahren?;Pokračovať bez konta;
+hero_subtitle;A multilingual medical terminology platform with integrated study tools for quizzes, muscle training, and structured anamnesis taking.;Eine mehrsprachige Plattform für medizinische Terminologie mit integrierten Lernwerkzeugen für Quiz, Muskeltraining und strukturierte Anamneseerhebung.;Viacjazyčná platforma medicínskej terminológie s integrovanými nástrojmi na kvízy, precvičovanie svalov a štruktúrovaný odber anamnézy.;
+incorrect;Incorrect;Falsch;Nesprávne;
+laboratory_parameters;Laboratory parameters;Laborparameter;Laboratórne parametre;
+language_settings;You may later change it in settings;Sie können dies später in den Einstellungen ändern.;Neskôr si ho môžete zmeniť v nastaveniach;
+last_sync;Last sync;Letzte Synchronisierung;Posledná synchronizácia;
+latin;Latin;Latein;Latinčina;
+latin_clear_all_confirm;Clear all selected chapters?;Alle Markierungen aufheben?;Vymazať všetky vybrané kapitoly?;
+latin_clear_all_units;Clear;Löschen;Vymazať;
+latin_filter_part_of_speech;Part of speech;Wortart;Slovný druh;
+latin_filter_search_by;Search by;Wonach suchen;Hľadať podľa;
+latin_filter_where_to_search;Where to search;Wo suchen;Kde hľadať;
+latin_no_terms_available;No terms available.;Keine Begriffe verfügbar.;Nie sú dostupné žiadne pojmy.;
+latin_quiz_select_unit;Select at least one chapter with data.;Wählen Sie mindestens ein Kapitel mit Daten aus.;Vyberte aspoň jednu kapitolu s údajmi.;
+latin_quiz_start;Start Latin Terminology Quiz;Latein-Terminologie-Quiz starten;Spustiť kvíz z latinskej terminológie;
+latin_quiz_title;Latin quiz;Latein-Quiz;Latinský kvíz;
+latin_quiz_unit_label;Chapter;Kapitel;Kapitola;
+latin_search_abbreviation;Abbreviation;Abkürzung;Skratka;
+latin_search_english_definition;English definition;Englische Definition;Anglická definícia;
+latin_search_english_description;English description;Englische Beschreibung;Anglický popis;
+latin_search_field_abbreviation;Abbreviation;Abkürzung;Skratka;
+latin_search_full_form;Full form;Langform;Plný tvar;
+latin_search_gender;Gender;Geschlecht;Rod;
+latin_search_german_definition;German definition;Deutsche Definition;Nemecká definícia;
+latin_search_german_description;German description;Deutsche Beschreibung;Nemecký popis;
+latin_search_greek_translation;Greek translation;Griechische Übersetzung;Grécky preklad;
+latin_search_input_placeholder;Search latin term (min 2 chars);Lateinischen Begriff suchen (min. 2 Zeichen);Vyhľadať latinský pojem (min. 2 znaky);
+latin_search_latin_genitive;Latin genitive;Lateinischer Genitiv;Latinský genitív;
+latin_search_latin_term;Latin term;Lateinischer Begriff;Latinský pojem;
+latin_search_name;Name;Názov;Názov;
+latin_search_no_results;No terms found.;Keine Begriffe gefunden.;Nenašli sa žiadne pojmy.;
+latin_search_notes;Notes;Notizen;Poznámky;
+latin_search_part_of_speech;Part of speech;Wortart;Slovný druh;
+latin_search_slovak_definition;Slovak definition;Slowakische Definition;Slovenská definícia;
+latin_search_slovak_description;Slovak description;Slowakische Beschreibung;Slovenský popis;
+latin_search_title;Search latin terms;Lateinische Begriffe suchen;Vyhľadávanie latinských pojmov;
+latin_select_all;Select all;Alle auswählen;Vybrať všetko;
+latin_source_abbreviations;Abbreviations in medicine;Abkürzungen in der Medizin;Skratky v medicíne;
+latin_source_abbreviations_prescriptions;Abbreviations in prescriptions;Abkürzungen auf Rezepten;Skratky v receptoch;
+latin_source_greek;Latin-Greek synonyms;Lateinisch-griechische Synonyme;Latinsko-grécke synonymá;
+latin_source_remedies;Remedies;Heilmittel;Liečivá;
+latin_source_units;Units;Lektionen;Lekcie;
+latin_terminology;Latin terminology;Lateinische Terminologie;Latinská terminológia;
+latin_translation;Latin Translation;Lateinische Übersetzung;Latinský preklad;
+latin_unit_unassigned;Unassigned unit;Nicht zugewiesene Einheit;Nepriradená jednotka;
+loading;Loading...;Wird geladen...;Načítava sa...;
+loading_more_sources;Loading more sources...;Weitere Quellen werden geladen...;Načítavam ďalšie zdroje...;
+log_out;Log out;Abmelden;Odhlásiť sa;
+microorganisms;Microorganisms;Mikroorganismen;Mikroorganizmy;
+muscle_clear_all;Clear all;Alles löschen;Vymazať všetko;
+muscle_clear_all_confirm;Clear all selected regions and categories?;Alle ausgewählten Regionen und Kategorien löschen?;Vymazať všetky vybrané oblasti a kategórie?;
+muscle_quiz_always;Always;Immer;Vždy;
+muscle_quiz_select_region;Select a region and at least one group with data.;Wählen Sie eine Region und mindestens eine Gruppe mit Daten.;Vyberte oblasť a aspoň jednu skupinu s údajmi.;
+muscle_quiz_title;Muscle Quiz;Muskel Quiz;Svalový kvíz;
+muscle_region_all;All;Alle;Všetko;
+muscle_region_clear;Clear;Löschen;Vymazať;
+muscle_search_blood_supply;Blood supply;Blutversorgung;Krvné zásobenie;
+muscle_search_category;Category;Kategorie;Kategória;
+muscle_search_english_name;English name;Englischer Name;Anglický názov;
+muscle_search_innervation;Innervation;Innervation;Inervácia;
+muscle_search_insercio;Insercio;Ansatz;Insercio;
+muscle_search_latin_name;Latin name;Lateinischer Name;Latinský názov;
+muscle_search_muscle_part;Muscle parts;Muskelteil;Časti svalu;
+muscle_search_origo;Origo;Ursprung;Origo;
+muscle_search_region;Region;Region;Oblasť;
+muscle_search_title;Muscle Search;Muskel Suche;Vyhľadávanie svalov;
+muscle_search_type_of_movement;Type of movement;Bewegungsart;Pohyb;
+muscle_training;Muscle Training;Muskeltraining;Precvičovanie svalov;
+muscle_type_of_movement;Type of movement;Bewegungsart;Pohyb;
+never;never;nie;nikdy;
+next;Next;Weiter;Ďalej;
+No matching results found.;No matching results found.;Keine passenden Ergebnisse gefunden.;Nenašli sa žiadne zodpovedajúce výsledky.;
+pharmacology;Pharmacology;Pharmakologie;Farmakológia;
+please_note;Please note: This web version is still in development and you may encounter bugs or missing features. If you encounter any issues or you have an idea about improvements, feel free to report them in the form in settings. Thank you for your understanding and support!;Bitte beachten Sie: Diese Webversion befindet sich noch in der Entwicklung. Es können Fehler auftreten oder Funktionen fehlen. Sollten Sie Probleme feststellen oder Verbesserungsvorschläge haben, melden Sie diese bitte über das Formular in den Einstellungen. Vielen Dank für Ihr Verständnis und Ihre Unterstützung!;Upozornenie: Tento web je stále vo vývoji. Môžu sa vyskytnúť chyby alebo niektoré funkcie môžu chýbať. Ak narazíte na nejaké problémy alebo máte návrhy na zlepšenie, nahláste ich pomocou formulára v nastaveniach. Ďakujeme za pochopenie a podporu!;
+preview;Preview;Vorschau;Náhľad;
+quiz;Quiz;Quiz;Kvíz;
+quiz_accuracy;Accuracy;Presnosť;Presnosť;
+quiz_add_wrong_review;Add wrong terms to review list;Falsche Begriffe zur Wiederholungsliste hinzufügen;Pridať nesprávne pojmy do zoznamu na opakovanie;
+quiz_chosen_label;Chosen;Vybrané;Zvolené;
+quiz_complete;Quiz complete.;Quiz abgeschlossen.;Kvíz je dokončený.;
+quiz_configure_and_start;Configure settings and press Start.;Einstellungen wählen und Start drücken.;Nastavte možnosti a stlačte Štart.;
+quiz_correct_answer;Correct answer;Richtige Antwort;Správna odpoveď;
+quiz_domain;Domain;Bereich;Oblasť;
+quiz_double_confirm;Double-tap to confirm answer;Zum Bestätigen zweimal tippen;Dvojitým kliknutím potvrď odpoveď;
+quiz_double_confirm_pending;Answer selected. Tap the same option again to confirm.;Antwort ausgewählt. Tippen Sie dieselbe Option erneut an, um zu bestätigen.;Odpoveď je vybraná. Klepnite na tú istú možnosť znova pre potvrdenie.;
+quiz_end;End quiz;Quiz beenden;Ukončiť kvíz;
+quiz_finish;Finish;Fertig;Dokončiť;
+quiz_from;From;Von;Z;
+quiz_match_terms;Match terms;Begriffe zuordnen;Priraď pojmy;
+quiz_next_question;Next question;Nächste Frage;Ďalšia otázka;
+quiz_no_wrong_terms;No wrong terms. Great run.;Keine falschen Begriffe. Starker Lauf.;Žiadne nesprávne pojmy. Skvelý výkon.;
+quiz_only_starred;Include only starred;Nur markierte Begriffe;Zahrnúť len označené hviezdičkou;
+quiz_options_count;Number of answer options;Antwortoptionen pro Frage;Počet možných odpovedí;
+quiz_pairs;pairs;Paare;páry;
+quiz_prefer_wrong;Prefer wrong terms;Falsche Begriffe bevorzugen;Uprednostniť nesprávne pojmy;
+quiz_question_count;Question count;Anzahl der Fragen;Počet otázok;
+quiz_retry_wrong_terms;Retry wrong terms;Falsche Begriffe erneut üben;Skúsiť znovu nesprávne pojmy;
+quiz_select_answer;Select answer;Antwort auswählen;Vyber odpoveď;
+quiz_settings_hide;Hide quiz settings;Quiz-Einstellungen ausblenden;Skryť nastavenia kvízu;
+quiz_settings_show;Show quiz settings;Quiz-Einstellungen anzeigen;Zobraziť nastavenia kvízu;
+quiz_shortcuts_double_confirm;Keys 1-6 select options (press the same key again to confirm). Press Enter for next question.;Mit Tasten 1-6 wählen Sie Optionen (zum Bestätigen dieselbe Taste erneut drücken). Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosti (pre potvrdenie stlačte ten istý kláves znova). Pre ďalšiu otázku stlačte Enter.;
+quiz_shortcuts_standard;Keys 1-6 select an option. Press Enter for next question.;Mit Tasten 1-6 wählen Sie eine Option. Drücken Sie Enter für die nächste Frage.;Klávesy 1-6 vyberajú možnosť. Pre ďalšiu otázku stlačte Enter.;
+quiz_shortcuts_typing;Press Enter to submit, then Enter for next question.;Drücken Sie Enter zum Senden und dann Enter für die nächste Frage.;Stlač Enter na odoslanie a potom Enter na ďalšiu otázku.;
+quiz_star;Star;Označiť hviezdičkou;Označiť hviezdičkou;
+quiz_streak;Streak;Séria;Séria;
+quiz_subdivision;Subdivision;Unterbereich;Podoblasť;
+quiz_subdivision2;Subdivision 2;Unterbereich 2;Podoblasť 2;
+quiz_submit;Submit;Odoslať;Odoslať;
+quiz_submit_matching;Submit matching;Zuordnung abschicken;Odoslať priradenie;
+quiz_summary_title;Quiz summary;Quizübersicht;Zhrnutie kvízu;
+quiz_time;Time;Čas;Čas;
+quiz_timer;Timer;Časovač;Časovač;
+quiz_timer_off;Off;Aus;Vypnuté;
+quiz_to;To;Nach;Do;
+quiz_total_correct;Total correct;Celkom správne;Celkom správne;
+quiz_type;Quiz type;Quiztyp;Typ kvízu;
+quiz_type_answer_placeholder;Type answer;Antwort eingeben;Napíš odpoveď;
+quiz_type_matching;Matching;Priraďovanie;Priraďovanie;
+quiz_type_multiple_choice;Multiple choice;Výber z možností;Výber z možností;
+quiz_type_typing;Typing;Písanie;Písanie;
+quiz_unstar;Unstar;Odstrániť hviezdičku;Odstrániť hviezdičku;
+quiz_wrong_added_to_review;Wrong terms added to review list.;Falsche Begriffe zur Wiederholung hinzugefügt.;Nesprávne pojmy boli pridané do zoznamu na opakovanie.;
+remove;Remove;Entfernen;Odstrániť;
+restart;Restart;Neustart;Reštart;
+reveal;Reveal;Aufdecken;Odhaliť;
+Save Term;Save Term;Begriff speichern;Uložiť pojem;
+score;Score;Punktzahl;Skóre;
+search;Search;Suchen;Hľadať;
+search_muscle_text;Search muscle name (min 2 chars);Suchmuskelname suchen (min 2 Zeichen);Vyhľadajte názov svalu (min 2 znaky);
+search_terms_title;Search terms;Suchbegriffe;Vyhľadávanie pojmov;
+send;Send;Senden;Odoslať;
+settings_language;Language;Sprache;Jazyk;
+settings_storage_sync;Storage & Sync;Speicher & Synchronisierung;Úložisko a synchronizácia;
+settings_support;Support;Support;Podpora;
+settings_text_size;Text Size;Textgröße;Veľkosť textu;
+settings_theme;Theme;Design;Téma;
+settings_title;Settings;Einstellungen;Nastavenia;
+signed_in_as;Signed in as;Angemeldet als;Prihlásený ako;
+slovak;Slovak;Slowakisch;Slovenčina;
+slovak_translation;Slovak Translation;Slowakische Übersetzung;Slovenský preklad;
+specific_dataset;Specific dataset;Spezifischer Datensatz;Špecifický dataset;
+start;Start Muscle Quiz;Muskelquiz starten;Spustiť svalový kvíz;
+start_quiz;Start Quiz;Quiz starten;Spustiť kvíz;
+storage_connect_google_drive;Connect Google Drive;Google Drive verbinden;Pripojiť Google Drive;
+storage_local_only;Local only;Nur lokal;Iba lokálne;
+storage_not_connected;Not connected;Nicht verbunden;Nepripojené;
+storage_sync_google_drive;Sync with Google Drive (app storage);Mit Google Drive synchronisieren (App-Speicher);Synchronizovať s Google Drive (úložisko aplikácie);
+storage_sync_status_default;Last sync: never | Unsynced: 0;Letzte Synchronisierung: nie | Nicht synchronisiert: 0;Posledná synchronizácia: nikdy | Nesynchronizované: 0;
+sync_now;Sync now;Jetzt synchronisieren;Synchronizovať teraz;
+Term saved successfully!;Term saved successfully!;Begriff erfolgreich gespeichert!;Pojem bol úspešne uložený!;
+text_size_large;Large;Groß;Veľký;
+text_size_small;Small;Klein;Malý;
+theme_dark;Dark;Dunkel;Tmavý;
+theme_light;Light;Hell;Svetlý;
+welcome;Welcome;Willkommen;Vitajte;
+wrong;Wrong;Falsch;Zle;
+submenu_desc_search;Find terms, definitions, and language variants quickly.;Begriffe, Definitionen und Sprachvarianten schnell finden.;Rýchlo nájdite pojmy, definície a jazykové varianty.;
+submenu_desc_add_term;Create and save your own terms with attachments.;Erstellen und speichern Sie eigene Begriffe mit Anhängen.;Vytvorte a uložte vlastné pojmy s prílohami.;
+submenu_desc_latin;Browse units and drill foundational medical terminology.;Lektionen durchsuchen und die Grundlagen der medizinischen Terminologie üben.;Prechádzajte lekcie a precvičujte základy medicínskej terminológie.;
+submenu_desc_muscle;Study regions, OINA fields, and movement functions.;Regionen, OINA-Felder und Bewegungsfunktionen lernen.;Študujte oblasti, polia OINA a funkcie pohybu.;
+submenu_desc_quiz;Generate custom quizzes across domains.;Eigene Quizze über Bereiche erstellen.;Vytvárajte vlastné kvízy naprieč oblastami.;
+submenu_desc_biophysics;Test questions from Department of Biophysics.;Testfragen aus dem Institut für Biophysik.;Testové otázky z ústavu Biofyziky.;
+submenu_desc_flashcards;Build sessions and review topics with flashcards.;Sitzungen erstellen und Themen mit Lernkarten wiederholen.;Vytvárajte relácie a opakujte témy s kartičkami.;
+submenu_desc_anamnesis;Structured intake forms for internal and psychiatry.;Strukturierte Aufnahmeformulare für Innere und Psychiatrie.;Štruktúrované formuláre pre interné a psychiatrické vyšetrenie.;
+submenu_desc_lab;Filter analytes by tag and search for reference ranges.;Analyte nach Tags filtern und Referenzbereiche suchen.;Filtrujte analyty podľa značiek a vyhľadávajte referenčné rozsahy.;
