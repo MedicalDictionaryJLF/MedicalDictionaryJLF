@@ -7,56 +7,36 @@
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
-  <div id="app">
-    <header>
+  <div id="app">    <header>
       <div class="header-left">
+        <button id="header-back" class="header-btn hidden" type="button" aria-label="Back">←</button>
         <h1 id="app-title">Medical Dictionary</h1>
-
-        <!-- shown ONLY after login -->
-        <div id="header-whoami" class="whoami hidden">
-          Logged in as: <strong id="header-user">—</strong>
-        </div>
       </div>
-
-      <!-- SETTINGS COG: always visible -->
-      <button type="button" class="settings-btn" id="settings-toggle" aria-label="Settings">
-        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-      </button>
+      <div class="header-actions">
+        <button id="header-login-google" class="header-btn primary hidden" type="button" data-i18n="google_sign_in">Sign in with Google</button>
+        <div id="header-account" class="whoami hidden">
+          <span data-i18n="signed_in_as">Signed in as</span> <strong id="header-account-name">—</strong>
+          <button id="header-logout" class="header-link" type="button" data-i18n="log_out">Log out</button>
+        </div>
+        <button type="button" class="settings-btn" id="settings-toggle" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
+      </div>
     </header>
 
     <div id="settings-overlay"></div>
     <div id="settings-sidebar">
       <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 0">
         <h3 style="margin:0" data-i18n="settings_title">Settings</h3>
-        <button type="button" id="settings-close" aria-label="Close settings" style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 8px;cursor:pointer">></button>
+        <button type="button" id="settings-close" aria-label="Close settings">&times;</button>
       </div>
 
       <div class="settings-block">
         <h4 data-i18n="settings_language">Language</h4>
         <div class="anam-row" style="justify-content:flex-start">
-          <button type="button" class="lang-btn lang-flag" data-lang="Slovensky" aria-label="Slovak">🇸🇰</button>
-          <button type="button" class="lang-btn lang-flag" data-lang="Deutsch" aria-label="German">🇩🇪</button>
-          <button type="button" class="lang-btn lang-flag" data-lang="English" aria-label="English">🇬🇧</button>
-        </div>
-      </div>
-
-      <div class="settings-block" id="settings-login-block">
-        <h4 data-i18n="settings_account">Account</h4>
-        <div class="settings-actions">
-          <button type="button" id="to-login-from-settings-public" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
-        </div>
-      </div>
-
-      <div class="settings-block hidden" id="settings-account-block">
-        <h4 data-i18n="settings_account">Account</h4>
-
-        <div class="settings-actions">
-          <button type="button" id="to-menu" data-i18n="back_lng">Back to Language Menu</button>
-          <button type="button" id="to-login-from-settings" data-i18n="settings_return_to_login">Return to Login</button>
-        </div>
-
-        <div class="settings-status" style="margin-top:8px">
-          Logged in as: <strong id="current-user">(none)</strong>
+          <button type="button" class="lang-btn lang-flag" data-lang="Slovensky" aria-label="Slovak">&#x1F1F8;&#x1F1F0;</button>
+          <button type="button" class="lang-btn lang-flag" data-lang="Deutsch" aria-label="German">&#x1F1E9;&#x1F1EA;</button>
+          <button type="button" class="lang-btn lang-flag" data-lang="English" aria-label="English">&#x1F1EC;&#x1F1E7;</button>
         </div>
       </div>
 
@@ -69,6 +49,37 @@
           </div>
           <input id="text-size-slider" class="text-size-slider" type="range" min="1" max="7" step="1" />
         </div>
+      </div>
+
+      <div class="settings-block">
+        <h4 data-i18n="settings_theme">Theme</h4>
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button type="button" id="theme-light" class="theme-btn" data-i18n="theme_light">Light</button>
+          <button type="button" id="theme-dark" class="theme-btn" data-i18n="theme_dark">Dark</button>
+        </div>
+      </div>
+      <div class="settings-block">
+        <h4 data-i18n="settings_storage_sync">Storage &amp; Sync</h4>
+        <label class="storage-radio">
+          <input type="radio" name="storage-mode" id="storage-mode-local" value="local" checked />
+          <span data-i18n="storage_local_only">Local only</span>
+        </label>
+        <label class="storage-radio">
+          <input type="radio" name="storage-mode" id="storage-mode-drive" value="drive" />
+          <span data-i18n="storage_sync_google_drive">Sync with Google Drive (app storage)</span>
+        </label>
+        <div id="drive-sync-controls" class="hidden">
+          <div class="row" style="margin-top:8px">
+            <button type="button" id="drive-connect-btn" class="primary" data-i18n="storage_connect_google_drive">Connect Google Drive</button>
+            <button type="button" id="drive-sync-now-btn" class="secondary" data-i18n="sync_now">Sync now</button>
+          </div>
+          <p id="drive-connection-status" class="muted" style="margin-top:8px" data-i18n="storage_not_connected">Not connected</p>
+          <p id="drive-sync-status" class="small" style="margin-top:4px" data-i18n="storage_sync_status_default">Last sync: never | Unsynced: 0</p>
+        </div>
+      </div>
+      <div class="settings-block">
+        <h4 data-i18n="settings_support">Support</h4>
+        <button type="button" id="settings-feedback-open" class="secondary" data-i18n="feedback_form">Feedback form</button>
       </div>
     </div>
 
@@ -89,56 +100,103 @@
         <p data-i18n="forgot_password_desc">Enter your email to receive a reset link.</p>
         <input id="forgot-email" type="email" placeholder="Email" data-i18n-placeholder="forgot_password_email_placeholder" />
         <div class="row">
-          <button type="button" id="forgot-send" class="primary" data-i18n="forgot_password_send">Send</button>
+          <button type="button" id="forgot-send" class="primary" data-i18n="send">Send</button>
           <button type="button" id="forgot-cancel" data-i18n="forgot_password_cancel">Cancel</button>
         </div>
         <p id="forgot-msg" class="muted"></p>
       </div>
     </div>
+    <div id="attachment-preview-overlay" class="modal-overlay hidden">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="attachment-preview-title">
+        <h3 id="attachment-preview-title" data-i18n="attachment_preview_title">Attachment preview</h3>
+        <pre id="attachment-preview-content" class="attachment-preview-text"></pre>
+        <div class="row">
+          <button type="button" id="attachment-preview-close" class="primary" data-i18n="close">Close</button>
+        </div>
+      </div>
+    </div>
 
     <main>
-      <section id="screen-menu" class="screen">
+            <section id="screen-menu" class="screen">
         <div class="hero">
           <div class="hero-inner">
-            <div class="hero-card">
-              <p class="hero-sub" data-i18n="welcome">Welcome</p>
-              <h3 style="margin:0 0 8px 0;font-weight:700" data-i18n="choose_language">Choose language</h3>
-              <p class="hero-language-note" style="margin:0 0 12px 0;font-weight:100" data-i18n="language_settings">May later change in settings</p>
-              <div class="lang-grid">
-                <button type="button" class="lang-btn" data-lang="English">English</button>
-                <button type="button" class="lang-btn" data-lang="Deutsch">Deutsch</button>
-                <button type="button" class="lang-btn" data-lang="Slovensky">Slovensky</button>              </div>
-
-              <div class="row" style="margin-top:16px">
-                <button type="button" id="btn-google-drive" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
+            <div class="hero-card hero-card-split">
+              <div class="hero-brand">
+                <h2 class="hero-title">Medical Dictionary</h2>
+                <p class="hero-sub" data-i18n="hero_subtitle">Multilingual medical terminology with structured study tools for quizzes, muscle training, and anamnesis workflows.</p>
+                <p class="hero-language-line">EN • DE • SK • LAT</p>
               </div>
-              <p id="google-auth-status" class="muted" style="margin:8px 0 0 0"></p>
+              <div class="hero-actions">
+                <h3 style="margin:0 0 8px 0;font-weight:700" data-i18n="choose_language">Choose language</h3>
+                <p class="hero-language-note" style="margin:0 0 12px 0;font-weight:100" data-i18n="language_settings">May later change in settings</p>
+                <div class="lang-grid">
+                  <button type="button" class="lang-btn" data-lang="English">English</button>
+                  <button type="button" class="lang-btn" data-lang="Deutsch">Deutsch</button>
+                  <button type="button" class="lang-btn" data-lang="Slovensky">Slovensky</button>
+                </div>
 
-              <div class="row" style="margin-top:10px">
-                <button type="button" id="continue-guest" data-i18n="continue_without_account">Continue without account</button>
-              </div>
+                <div class="row" style="margin-top:16px">
+                  <button type="button" id="btn-google-drive" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
+                </div>
+                <p id="google-auth-status" class="muted" style="margin:8px 0 0 0"></p>
 
-              <div class="small" style="margin-top:10px;opacity:.9" data-i18n="please_note">Please note: This web version is still in development…
-                <br />
+                <div class="row" style="margin-top:10px">
+                  <button type="button" id="continue-guest" class="secondary" data-i18n="continue_without_account">Continue without account</button>
+                </div>
+
+                <div class="small" style="margin-top:10px;opacity:.9" data-i18n="please_note">Please note: This web version is still in development...
+                  <br />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      <section id="screen-feedback" class="screen hidden">
+        <h2 data-i18n="feedback_title">Feedback</h2>
+        <div class="card feedback-card">
+          <p class="muted" style="margin-top:0" data-i18n="feedback_desc">Report an error, issue, or idea. Clicking Send opens your mail app with a prefilled message.</p>
+          <form id="feedback-form" class="feedback-form">
+            <div class="feedback-grid">
+              <div>
+                <label for="feedback-type" data-i18n="category">Category</label>
+                <select id="feedback-type" required>
+                  <option value="Error report" data-i18n="feedback_type_error">Error report</option>
+                  <option value="Wrong translation report" data-i18n="feedback_type_wrong_translation">Wrong translation report</option>
+                  <option value="Idea or Suggestion" data-i18n="feedback_type_idea">Idea or Suggestion</option>
+                  <option value="Other" data-i18n="feedback_type_other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="feedback-contact" data-i18n="feedback_contact_optional">Your email (optional)</label>
+                <input id="feedback-contact" type="email" placeholder="your@email.com" />
+              </div>
+            </div>
+            <div>
+              <label for="feedback-message" data-i18n="feedback_message">Message</label>
+              <textarea id="feedback-message" rows="7" placeholder="Describe the issue or your suggestion..." data-i18n-placeholder="feedback_message_placeholder" required></textarea>
+            </div>
+            <div class="feedback-row">
+              <button type="submit" id="feedback-send" class="primary" data-i18n="send">Send</button>
+              <p id="feedback-status" class="small" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </section>
+
       <section id="screen-submenu" class="screen hidden">
         <h2 id="welcome-title" data-i18n="welcome">Welcome</h2>
         <div class="card">
-          <button type="button" id="to-search" data-i18n="search">Search</button>
-          <button type="button" id="to-entry" data-i18n="add_term">Add New Terms</button>
-          <button type="button" id="to-latin-terminology" data-i18n="latin_terminology">Latin terminology</button>
-          <button type="button" id="to-muscle-training" data-i18n="muscle_training">Muscle training</button>
-          <button type="button" id="to-quiz" data-i18n="quiz">Quiz</button>
-          <button type="button" id="to-flashcards" data-i18n="flashcards">Flashcards</button>
-          <button type="button" id="to-anamnesis" data-i18n="anamnesis">Anamnesis</button>
-          <button type="button" id="to-lab-parameters">Lab parameters</button>
-
-          <!-- Back to language menu and account controls are in Settings -->
+          <button type="button" id="to-search" class="secondary"><span class="menu-icon" aria-hidden="true"><img src="assets/svg/magnifier.svg" alt="" /></span><span class="menu-copy"><span class="menu-label" data-i18n="search">Search</span><span class="menu-desc" data-i18n="submenu_desc_search">Find terms, definitions, and language variants quickly.</span></span></button>
+          <button type="button" id="to-entry" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="add_term">Add New Terms</span><span class="menu-desc" data-i18n="submenu_desc_add_term">Create and save your own terms with attachments.</span></span></button>
+          <button type="button" id="to-latin-terminology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="latin_terminology">Latin terminology</span><span class="menu-desc" data-i18n="submenu_desc_latin">Browse units and drill foundational medical Latin.</span></span></button>
+          <button type="button" id="to-muscle-training" class="secondary"><span class="menu-icon" aria-hidden="true"><img src="assets/svg/muscle.svg" alt="" /></span><span class="menu-copy"><span class="menu-label" data-i18n="muscle_training">Muscle training</span><span class="menu-desc" data-i18n="submenu_desc_muscle">Study regions, OINA fields, and movement functions.</span></span></button>
+          <button type="button" id="to-quiz" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 15a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-11a4 4 0 0 0-4 4h2a2 2 0 1 1 3.46 1.41c-.88.89-1.46 1.51-1.46 3.09h2c0-.8.17-1.12.88-1.83A4 4 0 0 0 12 6z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="quiz">Quiz</span><span class="menu-desc" data-i18n="submenu_desc_quiz">Generate custom quizzes across domains and fields.</span></span></button>
+          <button type="button" id="to-biophysics-tf" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4zm0 7h10v2H4zm0 7h16v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="biophysics_true_false">Biophysics True/False</span><span class="menu-desc" data-i18n="submenu_desc_biophysics">Test conceptual statements with instant feedback.</span></span></button>
+          <button type="button" id="to-flashcards" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v10h-2V6H5zm-2 4h12a2 2 0 0 1 2 2v10H5a2 2 0 0 1-2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="flashcards">Flashcards</span><span class="menu-desc" data-i18n="submenu_desc_flashcards">Build sessions and review with spaced repetition.</span></span></button>
+          <button type="button" id="to-anamnesis" class="secondary"><span class="menu-icon" aria-hidden="true"><img src="assets/svg/anamnesis.svg" alt="" /></span><span class="menu-copy"><span class="menu-label" data-i18n="anamnesis">Anamnesis</span><span class="menu-desc" data-i18n="submenu_desc_anamnesis">Structured intake forms for internal and psychiatry.</span></span></button>
+          <button type="button" id="to-lab-parameters" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 640 640"><path d="M384 64L224 64C206.3 64 192 78.3 192 96C192 113.7 206.3 128 224 128L224 279.5L103.5 490.3C98.6 499 96 508.7 96 518.7C96 550.4 121.6 576 153.3 576L486.7 576C518.3 576 544 550.4 544 518.7C544 508.7 541.4 498.9 536.5 490.3L416 279.5L416 128C433.7 128 448 113.7 448 96C448 78.3 433.7 64 416 64L384 64zM288 279.5L288 128L352 128L352 279.5C352 290.6 354.9 301.6 360.4 311.3L402 384L238 384L279.6 311.3C285.1 301.6 288 290.7 288 279.5z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="laboratory_parameters">Lab parameters</span><span class="menu-desc" data-i18n="submenu_desc_lab">Filter analytes by tag and compare reference ranges.</span></span></button>
         </div>
       </section>
 
@@ -150,21 +208,19 @@
             <div class="row search-row" style="align-items:center">
               <input id="search-input" placeholder="Enter term (min 2 chars)" data-i18n-placeholder="enter_term" />
               <select id="search-dataset" aria-label="Search dataset">
-                <option value="all">Any</option>
-                <option value="basic_sciences">Basic sciences</option>
-                <option value="diagnostics_procedures">Diagnostics &amp; Procedures</option>
-                <option value="disease_and_symptoms">Diseases and symptoms</option>
-                <option value="lab_parameters">Laboratory parameters</option>
+                <option value="all" data-i18n="any">Any</option>
+                <option value="basic_sciences" data-i18n="basic_sciences">Basic sciences</option>
+                <option value="diagnostics_procedures" data-i18n="diagnostics_procedures">Diagnostics &amp; Procedures</option>
+                <option value="disease_and_symptoms" data-i18n="disease_and_symptoms">Diseases and symptoms</option>
+                <option value="lab_parameters" data-i18n="laboratory_parameters">Laboratory parameters</option>
                 <option value="latin" data-i18n="latin">Latin</option>
-                <option value="microorganisms">Microorganisms</option>
-                <option value="pharmacology">Pharmacology</option>
+                <option value="microorganisms" data-i18n="microorganisms">Microorganisms</option>
+                <option value="pharmacology" data-i18n="pharmacology">Pharmacology</option>
               </select>
             </div>
           </div>
           <div id="search-results"></div>
-          <div class="row">
-            <button type="button" id="search-back" data-i18n="back">Back</button>
-          </div>
+          <div class="row"></div>
         </div>
       </section>
 
@@ -172,7 +228,6 @@
         <h2 id="lab-parameters-title">Lab parameters</h2>
         <div class="card">
           <div class="search-controls">
-            <h3 id="lab-parameters-subtitle" style="margin:0 0 8px 0">Hospital lab taxonomy</h3>
             <div class="row search-row" style="align-items:center">
               <input id="lab-parameters-search-input" placeholder="Search term or abbreviation (min 2 chars)" />
             </div>
@@ -188,9 +243,7 @@
             </div>
           </div>
           <div id="lab-parameters-results"></div>
-          <div class="row">
-            <button type="button" id="lab-parameters-back">Back</button>
-          </div>
+          <div class="row"></div>
         </div>
       </section>
 
@@ -198,26 +251,55 @@
         <h2 data-i18n="add_term">Add Term</h2>
         <div class="card scrollable">
           <div id="entry-fields">
-            <input data-field="latin_translation" placeholder="Latin translation" />
-            <input data-field="english_translation" placeholder="English translation" />
-            <textarea data-field="english_definition" placeholder="English definition"></textarea>
-            <input data-field="german_translation" placeholder="German translation" />
-            <textarea data-field="german_definition" placeholder="German definition"></textarea>
+            <label for="entry-category" class="small" data-i18n="category">Category</label>
+            <select id="entry-category">
+              <option value="basic_sciences" data-i18n="basic_sciences">Basic sciences</option>
+              <option value="diagnostics_procedures" data-i18n="diagnostics_procedures">Diagnostics &amp; Procedures</option>
+              <option value="disease_and_symptoms" data-i18n="disease_and_symptoms">Diseases and symptoms</option>
+              <option value="lab_parameters" data-i18n="laboratory_parameters">Laboratory parameters</option>
+              <option value="latin" data-i18n="latin_terminology">Latin terminology</option>
+              <option value="microorganisms" data-i18n="microorganisms">Microorganisms</option>
+              <option value="pharmacology" data-i18n="pharmacology">Pharmacology</option>
+            </select>
+            <div id="entry-source-wrap" class="hidden">
+              <label for="entry-source" class="small" data-i18n="specific_dataset">Specific dataset</label>
+              <select id="entry-source"></select>
+            </div>
+            <div id="entry-dynamic-fields"></div>
+          </div>
+          <div class="attachments-section">
+            <h3 style="margin:12px 0 8px 0" data-i18n="attachments">Attachments</h3>
+            <label for="attachment-input-mode" class="small" data-i18n="attachment_input_mode">Input mode</label>
+            <select id="attachment-input-mode">
+              <option value="upload" selected data-i18n="attachment_upload_txt_file">Upload .txt file</option>
+              <option value="manual" data-i18n="attachment_paste_write_text">Paste / write text</option>
+            </select>
+            <div class="row">
+              <button type="button" id="attachment-upload-btn" class="secondary" data-i18n="attachment_upload_txt">Upload .txt</button>
+              <button type="button" id="entry-sync-now-btn" class="secondary" data-i18n="sync_now">Sync now</button>
+            </div>
+            <div id="attachment-manual-wrap" class="hidden">
+              <input id="attachment-manual-filename" type="text" placeholder="File name (e.g. notes.txt)" />
+              <textarea id="attachment-manual-content" placeholder="Write or paste text content here"></textarea>
+              <div class="row" style="margin-top:6px">
+                <button type="button" id="attachment-manual-save-btn" class="primary" data-i18n="attachment_add_as_attachment">Add as attachment</button>
+              </div>
+            </div>
+            <input id="attachment-file-input" type="file" accept=".txt,text/plain" class="hidden" />
+            <div id="attachments-list" class="attachments-list"></div>
+            <p id="attachments-msg" class="muted"></p>
           </div>
           <div class="row">
-            <button type="button" id="save-term" data-i18n="Save Term">Save Term</button>
-            <button type="button" id="entry-back" data-i18n="back">Back</button>
-          </div>
+            <button type="button" id="save-term" class="primary" data-i18n="Save Term">Save Term</button></div>
           <p id="entry-msg" class="muted"></p>
         </div>
       </section>
 
       <section id="screen-quiz" class="screen hidden">
         <h2 data-i18n="quiz">Quiz</h2>
-        <div class="screen-top-actions">
-          <button type="button" id="quiz-back" data-i18n="back">Back</button>
-        </div>
+        
         <div class="card">
+          <div id="quiz-setup-panel">
           <div class="row">
             <div>
               <label data-i18n="quiz_domain">Domain</label>
@@ -307,11 +389,13 @@
               </label>
             </div>
           </div>
+          </div>
+          <button type="button" id="quiz-settings-toggle" class="linklike hidden" data-i18n="quiz_settings_show">Show quiz settings</button>
           <div id="quiz-stats" class="quiz-stats muted"></div>
           <div id="quiz-area"></div>
           <div class="row">
-            <button type="button" id="start-quiz" data-i18n="start_quiz">Start</button>
-            <button type="button" id="end-quiz" data-i18n="quiz_end">End quiz</button>
+            <button type="button" id="start-quiz" class="primary" data-i18n="start_quiz">Start</button>
+            <button type="button" id="end-quiz" class="danger" data-i18n="quiz_end">End quiz</button>
           </div>
           <p id="quiz-score" class="muted"></p>
         </div>
@@ -319,10 +403,8 @@
 
       <section id="screen-flashcards" class="screen hidden">
         <h2 data-i18n="flashcards">Flashcards</h2>
-        <div class="screen-top-actions">
-          <button type="button" id="flashcards-back" data-i18n="back">Back</button>
-        </div>
-        <div class="card">
+        
+        <div class="card" id="flashcards-builder-card">
           <h3 style="margin:0 0 8px 0" data-i18n="flashcards_builder">Builder</h3>
           <div>
             <label data-i18n="flashcards_domains">Domains</label>
@@ -331,11 +413,11 @@
           <div id="flashcards-subdivision-wrap" class="hidden">
             <div class="row">
               <div>
-                <label id="flashcards-subdivision1-label" for="flashcards-subdivision1" data-i18n="flashcards_subdivision">Subdivision</label>
+                <label id="flashcards-subdivision1-label" for="flashcards-subdivision1" data-i18n="quiz_subdivision">Subdivision</label>
                 <select id="flashcards-subdivision1"></select>
               </div>
               <div id="flashcards-subdivision2-wrap" class="hidden">
-                <label id="flashcards-subdivision2-label" for="flashcards-subdivision2" data-i18n="flashcards_subdivision2">Subdivision 2</label>
+                <label id="flashcards-subdivision2-label" for="flashcards-subdivision2" data-i18n="quiz_subdivision2">Subdivision 2</label>
                 <select id="flashcards-subdivision2"></select>
               </div>
             </div>
@@ -388,6 +470,7 @@
 
         <div class="card" style="margin-top:12px">
           <h3 style="margin:0 0 8px 0" data-i18n="flashcards_player">Player</h3>
+          <button type="button" id="flashcards-builder-toggle" class="linklike hidden" data-i18n="flashcards_builder_show">Show builder settings</button>
           <div class="flashcard-scene">
             <button type="button" id="flashcards-card" class="flashcard-card" aria-label="Flip card">
               <div class="flashcard-card-inner">
@@ -403,14 +486,37 @@
             </button>
           </div>
           <div class="row">
-            <button type="button" id="flashcards-reveal" data-i18n="reveal">Reveal</button>
+            <button type="button" id="flashcards-reveal" class="secondary" data-i18n="reveal">Reveal</button>
           </div>
           <div class="row hidden" id="flashcards-ratings">
             <button type="button" id="flashcards-again" class="danger" data-i18n="flashcards_again">Again</button>
             <button type="button" id="flashcards-good" class="primary" data-i18n="flashcards_good">Good</button>
-            <button type="button" id="flashcards-easy" data-i18n="flashcards_easy">Easy</button>
+            <button type="button" id="flashcards-easy" class="secondary" data-i18n="flashcards_easy">Easy</button>
           </div>
           <p id="flashcards-progress" class="muted">0/0</p>
+        </div>
+      </section>
+
+      <section id="screen-biophysics-tf" class="screen hidden">
+        <h2 data-i18n="biophysics_true_false">Biophysics True/False</h2>
+        
+        <div class="card">
+          <p id="biophysics-tf-progress" class="muted">0 / 0</p>
+          <div id="biophysics-tf-statement" class="biophysics-tf-statement" data-i18n="biophysics_press_start">Press Start.</div>
+          <div class="row">
+            <button type="button" id="biophysics-answer-true" class="primary" data-i18n="biophysics_true">True</button>
+            <button type="button" id="biophysics-answer-false" data-i18n="biophysics_false">False</button>
+          </div>
+          <label class="biophysics-tf-option">
+            <input type="checkbox" id="biophysics-tf-auto-next" checked />
+            <span data-i18n="biophysics_auto_next">Auto next after 2s when correct</span>
+          </label>
+          <p id="biophysics-tf-shortcuts" class="small" data-i18n="biophysics_shortcuts">Shortcuts: T or 1 = True, F or 2 = False, Enter = Next (after answer).</p>
+          <p id="biophysics-tf-feedback" class="muted"></p>
+          <div class="row">
+            <button type="button" id="biophysics-tf-next" data-i18n="next">Next</button>
+            <button type="button" id="biophysics-tf-restart" data-i18n="restart">Restart</button>
+          </div>
         </div>
       </section>
 
@@ -421,7 +527,7 @@
           <div class="row" style="align-items:center">
             <input id="muscle-search-input" placeholder="Search muscle name (min 2 chars)" data-i18n-placeholder="search_muscle_text" />
             <select id="muscle-search-field">
-              <option value="any" data-i18n="muscle_search_any">Any</option>
+              <option value="any" data-i18n="any">Any</option>
               <option value="region" data-i18n="muscle_search_region">Region</option>
               <option value="category" data-i18n="muscle_search_category">Category</option>
               <option value="latin_muscle_name" data-i18n="muscle_search_latin_name">Latin name</option>
@@ -438,11 +544,12 @@
 
         <div class="card" style="margin-top:16px">
           <h3 style="margin:0 0 8px 0" data-i18n="muscle_quiz_title">Muscle quiz</h3>
+          <div id="muscle-quiz-setup">
           <div id="muscle-region-list"></div>
           <div class="row">
-            <button type="button" id="muscle-quiz-start" class="primary" data-i18n="start">Start</button>
-            <button type="button" id="muscle-training-back" data-i18n="back">Back</button>
+            <button type="button" id="muscle-quiz-start" class="primary" data-i18n="start">Start</button></div>
           </div>
+          <button type="button" id="muscle-quiz-settings-toggle" class="linklike hidden" data-i18n="quiz_settings_show">Show quiz settings</button>
           <p id="muscle-quiz-msg" class="muted"></p>
           <div id="muscle-quiz-area" class="hidden">
             <div id="muscle-quiz-fields"></div>
@@ -458,9 +565,7 @@
         <h2 data-i18n="latin_terminology">Latin terminology</h2>
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 8px 0">
-            <h3 style="margin:0" data-i18n="latin_search_title">Search latin terms</h3>
-            <button type="button" id="latin-terminology-back" data-i18n="back">Back</button>
-          </div>
+            <h3 style="margin:0" data-i18n="latin_search_title">Search latin terms</h3></div>
           <div class="row" style="align-items:center">
             <input id="latin-search-input" placeholder="Search latin term (min 2 chars)" data-i18n-placeholder="latin_search_input_placeholder" />
           </div>
@@ -469,8 +574,8 @@
               <div class="latin-filter-head">
                 <strong data-i18n="latin_filter_where_to_search">Where to search</strong>
                 <div class="latin-filter-actions">
-                  <button type="button" id="latin-search-all-units" class="muscle-region-action-btn" data-i18n="latin_select_all">Select all</button>
-                  <button type="button" id="latin-search-clear-units" class="muscle-region-action-btn" data-i18n="latin_clear_all_units">Clear</button>
+                  <button type="button" id="latin-search-all-units" class="muscle-region-action-btn secondary" data-i18n="latin_select_all">Select all</button>
+                  <button type="button" id="latin-search-clear-units" class="muscle-region-action-btn danger" data-i18n="latin_clear_all_units">Clear</button>
                 </div>
               </div>
               <div id="latin-search-units-filter" class="latin-filter-grid"></div>
@@ -481,11 +586,11 @@
                   <strong data-i18n="latin_filter_search_by">Search by</strong>
                 </div>
                 <select id="latin-search-field">
-                  <option value="any" data-i18n="latin_search_any">Any</option>
-                  <option value="english_translation" data-i18n="latin_search_field_english_translation">English translation</option>
-                  <option value="slovak_translation" data-i18n="latin_search_field_slovak_translation">Slovak translation</option>
-                  <option value="german_translation" data-i18n="latin_search_field_german_translation">German translation</option>
-                  <option value="latin_like" data-i18n="latin_search_field_latin_translation">Latin translation</option>
+                  <option value="any" data-i18n="any">Any</option>
+                  <option value="english_translation" data-i18n="english_translation">English translation</option>
+                  <option value="slovak_translation" data-i18n="slovak_translation">Slovak translation</option>
+                  <option value="german_translation" data-i18n="german_translation">German translation</option>
+                  <option value="latin_like" data-i18n="latin_translation">Latin translation</option>
                   <option value="abbreviation" data-i18n="latin_search_field_abbreviation">Abbreviation</option>
                 </select>
               </div>
@@ -494,7 +599,7 @@
                   <strong data-i18n="latin_filter_part_of_speech">Part of speech</strong>
                 </div>
                 <select id="latin-search-pos">
-                  <option value="any" data-i18n="latin_search_any">Any</option>
+                  <option value="any" data-i18n="any">Any</option>
                 </select>
               </div>
             </div>
@@ -1304,16 +1409,14 @@
           </div>
         </div>
         <div class="row anam-actions" style="margin-top:12px">
-          <button type="button" id="anamnesis-clear" class="danger" data-i18n="clear_form">Clear form</button>
-          <button type="button" id="anamnesis-back" data-i18n="back">Back</button>
-        </div>
+          <button type="button" id="anamnesis-clear" class="danger" data-i18n="clear_form">Clear form</button></div>
         <p id="anamnesis-status" class="muted"></p>
         <button type="button" id="anamnesis-notes-toggle" class="notes-toggle-btn">Notes</button>
         <aside id="anamnesis-notes-drawer" class="anam-notes-drawer">
           <button type="button" id="anamnesis-notes-edge" class="anam-notes-edge" aria-label="Close notes panel"></button>
           <div class="anam-notes-head">
             <strong>Notes</strong>
-            <button type="button" id="anamnesis-notes-close">×</button>
+            <button type="button" id="anamnesis-notes-close">&times;</button>
           </div>
           <label class="anam-bullets-toggle">
             <input type="checkbox" id="anamnesis-notes-bullets" />
@@ -1324,9 +1427,9 @@
       </section>
 
     </main>
-    <footer class="app-copyright" aria-label="Copyright">Copyright © Daniel Marčok</footer>
+    <footer class="app-copyright" aria-label="Copyright">© 2026 Daniel Marčok. All Rights Reserved.</footer>
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="assets/js/app.js?v=9"></script>
+<script type="module" src="assets/js/app.js?v=12"></script>
 </body>
 </html>
