@@ -7,6 +7,7 @@
 // - Required scope: https://www.googleapis.com/auth/drive.appdata
 const GOOGLE_CLIENT_ID = "595058136144-2e6f4u64er110a38sdi6ludegbrkqbao.apps.googleusercontent.com";
 const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.appdata";
+const APP_THEME_KEY = "app_theme";
 
 // --- DOM helpers (prevents crashes if an element is missing) ---
 const $ = (id)=>document.getElementById(id);
@@ -32,7 +33,6 @@ let gAccessToken = "";
 let gTokenExpiresAt = 0;
 let gAuthInFlight = false;
 let googleBtnWired = false;
-let googleSettingsBtnWired = false;
 let userProfile = null;
 let profileFileId = "";
 let profileFileEtag = "";
@@ -40,19 +40,27 @@ let profileDirty = false;
 let profileAutosaveTimer = null;
 let profileSaveInFlight = false;
 let profileSaveQueued = false;
+let attachmentsCache = [];
+let attachmentsSyncInFlight = false;
 
 // ===== Offline cache via IndexedDB (stores downloaded CSVs) =====
 const IDB_NAME = "mdict_cache";
 const IDB_STORE = "files";
 const IDB_VERSION = 1;
+const ATTACHMENTS_DB_NAME = "medical_dictionary_db";
+const ATTACHMENTS_DB_VERSION = 1;
+const ATTACHMENTS_STORE = "attachments";
+const ATTACHMENT_SYNC_PREF_KEY = "attachment_sync_mode";
+const ATTACHMENT_LAST_SYNC_KEY = "attachment_last_sync_at";
+const STORAGE_MODE_LOCAL = "local";
+const STORAGE_MODE_DRIVE = "drive";
 
-function idbOpen(){
+function idbOpen(dbName = IDB_NAME, version = IDB_VERSION, onUpgrade = null){
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    const req = indexedDB.open(dbName, version);
     req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)){
-        db.createObjectStore(IDB_STORE);
+      if(typeof onUpgrade === "function"){
+        onUpgrade(req.result, req.transaction, req.oldVersion, req.newVersion);
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -61,7 +69,11 @@ function idbOpen(){
 }
 
 async function idbGet(key){
-  const db = await idbOpen();
+  const db = await idbOpen(IDB_NAME, IDB_VERSION, (upgradeDb)=>{
+    if(!upgradeDb.objectStoreNames.contains(IDB_STORE)){
+      upgradeDb.createObjectStore(IDB_STORE);
+    }
+  });
   return new Promise((resolve, reject) => {
     const tx = db.transaction(IDB_STORE, "readonly");
     const store = tx.objectStore(IDB_STORE);
@@ -72,11 +84,102 @@ async function idbGet(key){
 }
 
 async function idbSet(key, value){
-  const db = await idbOpen();
+  const db = await idbOpen(IDB_NAME, IDB_VERSION, (upgradeDb)=>{
+    if(!upgradeDb.objectStoreNames.contains(IDB_STORE)){
+      upgradeDb.createObjectStore(IDB_STORE);
+    }
+  });
   return new Promise((resolve, reject) => {
     const tx = db.transaction(IDB_STORE, "readwrite");
     const store = tx.objectStore(IDB_STORE);
     const req = store.put(value, key);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function openAttachmentsDb(){
+  return idbOpen(ATTACHMENTS_DB_NAME, ATTACHMENTS_DB_VERSION, (upgradeDb)=>{
+    if(!upgradeDb.objectStoreNames.contains(ATTACHMENTS_STORE)){
+      upgradeDb.createObjectStore(ATTACHMENTS_STORE, { keyPath: "id" });
+    }
+  });
+}
+
+function normalizeAttachmentStatus(raw){
+  const value = String(raw || "").toLowerCase();
+  if(value === "synced") return "synced";
+  if(value === "unsynced") return "unsynced";
+  if(value === "uploading") return "uploading";
+  if(value === "failed") return "failed";
+  return "local";
+}
+
+function normalizeAttachmentStorageMode(raw){
+  const value = String(raw || "").toLowerCase();
+  return value === STORAGE_MODE_DRIVE ? STORAGE_MODE_DRIVE : STORAGE_MODE_LOCAL;
+}
+
+function normalizeAttachmentRecord(record){
+  const input = record && typeof record === "object" ? record : {};
+  const now = nowIso();
+  return {
+    id: String(input.id || ""),
+    filename: String(input.filename || "attachment.txt"),
+    mimeType: String(input.mimeType || "text/plain"),
+    size: Math.max(0, Number(input.size) || 0),
+    createdAt: String(input.createdAt || now),
+    status: normalizeAttachmentStatus(input.status || "local"),
+    storageMode: normalizeAttachmentStorageMode(input.storageMode || STORAGE_MODE_LOCAL),
+    driveFileId: input.driveFileId ? String(input.driveFileId) : null,
+    blob: input.blob instanceof Blob ? input.blob : new Blob([""], { type: "text/plain" })
+  };
+}
+
+async function idbPutAttachment(record){
+  const db = await openAttachmentsDb();
+  const normalized = normalizeAttachmentRecord(record);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ATTACHMENTS_STORE, "readwrite");
+    const store = tx.objectStore(ATTACHMENTS_STORE);
+    const req = store.put(normalized);
+    req.onsuccess = () => resolve(normalized);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAttachment(id){
+  const db = await openAttachmentsDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ATTACHMENTS_STORE, "readonly");
+    const store = tx.objectStore(ATTACHMENTS_STORE);
+    const req = store.get(String(id || ""));
+    req.onsuccess = () => resolve(req.result ? normalizeAttachmentRecord(req.result) : null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbListAttachments(){
+  const db = await openAttachmentsDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ATTACHMENTS_STORE, "readonly");
+    const store = tx.objectStore(ATTACHMENTS_STORE);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      const rows = Array.isArray(req.result) ? req.result.map(normalizeAttachmentRecord) : [];
+      rows.sort((a, b)=> String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+      resolve(rows);
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbDeleteAttachment(id){
+  const db = await openAttachmentsDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(ATTACHMENTS_STORE, "readwrite");
+    const store = tx.objectStore(ATTACHMENTS_STORE);
+    const req = store.delete(String(id || ""));
     req.onsuccess = () => resolve(true);
     req.onerror = () => reject(req.error);
   });
@@ -136,6 +239,517 @@ function clearLoginStatus(){
     el.textContent = "";
     el.style.background = "";
   }
+}
+
+function getAttachmentSyncMode(){
+  const saved = String(localStorage.getItem(ATTACHMENT_SYNC_PREF_KEY) || STORAGE_MODE_LOCAL).toLowerCase();
+  return saved === STORAGE_MODE_DRIVE ? STORAGE_MODE_DRIVE : STORAGE_MODE_LOCAL;
+}
+
+function setAttachmentSyncMode(mode){
+  const normalized = normalizeAttachmentStorageMode(mode);
+  localStorage.setItem(ATTACHMENT_SYNC_PREF_KEY, normalized);
+  return normalized;
+}
+
+function isDriveSyncEnabled(){
+  return getAttachmentSyncMode() === STORAGE_MODE_DRIVE;
+}
+
+function setAttachmentMessage(text, isError = false){
+  const el = document.getElementById("attachments-msg");
+  if(!el) return;
+  el.textContent = String(text || "");
+  el.style.color = isError ? "#b91c1c" : "";
+}
+
+function formatAttachmentSize(bytes){
+  const b = Math.max(0, Number(bytes) || 0);
+  if(b < 1024) return `${b} B`;
+  if(b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  if(b < 1024 * 1024 * 1024) return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(b / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+function getAttachmentStatusLabel(status){
+  const s = normalizeAttachmentStatus(status);
+  if(s === "unsynced") return tOr("attachment_status_unsynced", "Unsynced");
+  if(s === "uploading") return tOr("attachment_status_uploading", "Uploading");
+  if(s === "synced") return tOr("attachment_status_synced", "Synced");
+  if(s === "failed") return tOr("attachment_status_failed", "Failed");
+  return tOr("attachment_status_local", "Local");
+}
+
+function attachmentNeedsSync(record){
+  if(!record) return false;
+  const status = normalizeAttachmentStatus(record.status);
+  if(status === "unsynced" || status === "failed" || status === "local") return true;
+  return false;
+}
+
+function listSyncCandidates(){
+  return attachmentsCache.filter(row => attachmentNeedsSync(row));
+}
+
+function formatSyncTimestamp(value){
+  const text = String(value || "").trim();
+  if(!text) return tOr("never", "never");
+  const dt = new Date(text);
+  if(Number.isNaN(dt.getTime())) return tOr("never", "never");
+  try{
+    return dt.toLocaleString();
+  }catch(e){
+    return dt.toISOString();
+  }
+}
+
+function refreshStorageSyncUI(){
+  const mode = getAttachmentSyncMode();
+  const localRadio = document.getElementById("storage-mode-local");
+  const driveRadio = document.getElementById("storage-mode-drive");
+  const driveControls = document.getElementById("drive-sync-controls");
+  const connectStatus = document.getElementById("drive-connection-status");
+  const syncStatus = document.getElementById("drive-sync-status");
+  const entrySyncBtn = document.getElementById("entry-sync-now-btn");
+  const settingsSyncBtn = document.getElementById("drive-sync-now-btn");
+  const unsyncedCount = listSyncCandidates().length;
+  const lastSyncAt = localStorage.getItem(ATTACHMENT_LAST_SYNC_KEY) || "";
+  if(localRadio) localRadio.checked = mode === STORAGE_MODE_LOCAL;
+  if(driveRadio) driveRadio.checked = mode === STORAGE_MODE_DRIVE;
+  if(driveControls) driveControls.classList.toggle("hidden", mode !== STORAGE_MODE_DRIVE);
+  if(connectStatus){
+    connectStatus.textContent = state.currentUser
+      ? `${tOr("connected_as", "Connected as")} ${state.currentUserEmail || state.currentUser}`
+      : tOr("storage_not_connected", "Not connected");
+  }
+  if(syncStatus){
+    syncStatus.textContent = `${tOr("last_sync", "Last sync")}: ${formatSyncTimestamp(lastSyncAt)} | ${tOr("attachment_status_unsynced", "Unsynced")}: ${unsyncedCount}`;
+  }
+  if(entrySyncBtn){
+    entrySyncBtn.classList.toggle("hidden", mode !== STORAGE_MODE_DRIVE);
+    entrySyncBtn.disabled = attachmentsSyncInFlight || unsyncedCount <= 0;
+  }
+  if(settingsSyncBtn){
+    settingsSyncBtn.disabled = attachmentsSyncInFlight || mode !== STORAGE_MODE_DRIVE || unsyncedCount <= 0;
+  }
+}
+
+async function loadAttachmentsFromDb(){
+  try{
+    attachmentsCache = await idbListAttachments();
+  }catch(e){
+    attachmentsCache = [];
+    console.warn("Failed to load attachments from IndexedDB:", e);
+    setAttachmentMessage(`Failed to load attachments: ${e.message || e}`, true);
+  }
+}
+
+function renderAttachmentsList(){
+  const container = document.getElementById("attachments-list");
+  if(!container) return;
+  const driveMode = isDriveSyncEnabled();
+  if(!attachmentsCache.length){
+    container.innerHTML = `<p class="muted" style="margin:8px 0 0 0">${escapeHTML(tOr("attachments_none_yet", "No attachments yet."))}</p>`;
+    refreshStorageSyncUI();
+    return;
+  }
+  container.innerHTML = attachmentsCache.map((item)=>{
+    const status = normalizeAttachmentStatus(item.status);
+    const statusLabel = getAttachmentStatusLabel(status);
+    const syncBtn = driveMode
+      ? `<button type="button" data-action="sync" data-id="${escapeHTML(item.id)}" ${attachmentNeedsSync(item) ? "" : "disabled"}>${escapeHTML(tOr("sync_now", "Sync now"))}</button>`
+      : "";
+    return `
+      <div class="attachment-item">
+        <div class="attachment-meta">
+          <strong>${escapeHTML(item.filename)}</strong>
+          <div class="small">${escapeHTML(formatAttachmentSize(item.size))} | ${escapeHTML(item.mimeType || "text/plain")}</div>
+        </div>
+        <span class="badge attachment-status-${status}">${escapeHTML(statusLabel)}</span>
+        <div class="attachment-actions">
+          <button type="button" data-action="preview" data-id="${escapeHTML(item.id)}">${escapeHTML(tOr("preview", "Preview"))}</button>
+          ${syncBtn}
+          <button type="button" data-action="remove" data-id="${escapeHTML(item.id)}">${escapeHTML(tOr("remove", "Remove"))}</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+  refreshStorageSyncUI();
+}
+
+async function upsertAttachmentRecord(record){
+  const saved = await idbPutAttachment(record);
+  const idx = attachmentsCache.findIndex(row => row.id === saved.id);
+  if(idx >= 0) attachmentsCache[idx] = saved;
+  else attachmentsCache.unshift(saved);
+  attachmentsCache.sort((a, b)=> String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+  return saved;
+}
+
+async function removeAttachmentRecord(id){
+  const targetId = String(id || "");
+  if(!targetId) return;
+  await idbDeleteAttachment(targetId);
+  attachmentsCache = attachmentsCache.filter(row => row.id !== targetId);
+}
+
+function createAttachmentId(){
+  if(typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function"){
+    return `att:${crypto.randomUUID()}`;
+  }
+  return `att:${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`;
+}
+
+function isTxtFile(file){
+  if(!(file instanceof File)) return false;
+  const name = String(file.name || "").toLowerCase();
+  const type = String(file.type || "").toLowerCase();
+  return name.endsWith(".txt") || type === "text/plain";
+}
+
+function normalizeAttachmentFilename(name){
+  const raw = String(name || "").trim();
+  const safe = raw.replace(/[\\/:*?"<>|]+/g, "_");
+  if(!safe) return `attachment_${Date.now()}.txt`;
+  if(/\.txt$/i.test(safe)) return safe;
+  return `${safe}.txt`;
+}
+
+function buildAttachmentRecordFromBlob(filename, blob){
+  const mode = getAttachmentSyncMode();
+  const b = blob instanceof Blob ? blob : new Blob([""], { type: "text/plain" });
+  return {
+    id: createAttachmentId(),
+    filename: normalizeAttachmentFilename(filename),
+    mimeType: "text/plain",
+    size: Number(b.size) || 0,
+    createdAt: nowIso(),
+    status: mode === STORAGE_MODE_DRIVE ? "unsynced" : "local",
+    storageMode: mode === STORAGE_MODE_DRIVE ? STORAGE_MODE_DRIVE : STORAGE_MODE_LOCAL,
+    driveFileId: null,
+    blob: b
+  };
+}
+
+async function handleAttachmentFiles(fileList){
+  const files = Array.from(fileList || []);
+  if(!files.length) return;
+  for(const file of files){
+    if(!isTxtFile(file)){
+      setAttachmentMessage(`Unsupported file type: ${file && file.name ? file.name : "unknown file"}. Only .txt is allowed.`, true);
+      continue;
+    }
+    const record = buildAttachmentRecordFromBlob(String(file.name || "attachment.txt"), file);
+    await upsertAttachmentRecord(record);
+  }
+  renderAttachmentsList();
+  setAttachmentMessage("Attachment uploaded locally.");
+}
+
+async function handleManualAttachmentCreate(){
+  const filenameEl = document.getElementById("attachment-manual-filename");
+  const contentEl = document.getElementById("attachment-manual-content");
+  if(!filenameEl || !contentEl) return;
+  const filename = normalizeAttachmentFilename(filenameEl.value || "");
+  const content = String(contentEl.value || "");
+  if(!content.trim()){
+    setAttachmentMessage("Manual attachment text is empty.", true);
+    return;
+  }
+  const blob = new Blob([content], { type: "text/plain" });
+  const record = buildAttachmentRecordFromBlob(filename, blob);
+  await upsertAttachmentRecord(record);
+  contentEl.value = "";
+  filenameEl.value = "";
+  renderAttachmentsList();
+  setAttachmentMessage("Text added as attachment.");
+}
+
+function refreshAttachmentInputModeUI(){
+  const modeSel = document.getElementById("attachment-input-mode");
+  const manualWrap = document.getElementById("attachment-manual-wrap");
+  const uploadBtn = document.getElementById("attachment-upload-btn");
+  if(!modeSel || !manualWrap || !uploadBtn) return;
+  const mode = String(modeSel.value || "upload");
+  const manual = mode === "manual";
+  manualWrap.classList.toggle("hidden", !manual);
+  uploadBtn.classList.toggle("hidden", manual);
+}
+
+async function openAttachmentPreview(id){
+  const overlay = document.getElementById("attachment-preview-overlay");
+  const content = document.getElementById("attachment-preview-content");
+  if(!overlay || !content) return;
+  const record = attachmentsCache.find(row => row.id === String(id || ""));
+  if(!record || !(record.blob instanceof Blob)){
+    setAttachmentMessage("Attachment preview is unavailable.", true);
+    return;
+  }
+  const text = await record.blob.text();
+  content.textContent = String(text || "").slice(0, 2000);
+  overlay.classList.remove("hidden");
+}
+
+function closeAttachmentPreview(){
+  const overlay = document.getElementById("attachment-preview-overlay");
+  if(overlay) overlay.classList.add("hidden");
+}
+
+function ensureGisScriptLoaded(){
+  if(window.google && google.accounts && google.accounts.oauth2){
+    return Promise.resolve(true);
+  }
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if(existing){
+      existing.addEventListener("load", ()=> resolve(true), { once: true });
+      existing.addEventListener("error", ()=> reject(new Error("Failed to load Google Identity Services.")), { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => reject(new Error("Failed to load Google Identity Services."));
+    document.head.appendChild(script);
+  });
+}
+
+function hasGoogleDriveAccess(){
+  if(!gAccessToken) return false;
+  if(gTokenExpiresAt <= 0) return true;
+  return Date.now() < (gTokenExpiresAt - 10000);
+}
+
+async function ensureDriveConnection(){
+  if(hasGoogleDriveAccess()) return true;
+  await ensureGisScriptLoaded();
+  requestGoogleAccessTokenFromClick();
+  return false;
+}
+
+async function uploadAttachmentToDrive(record){
+  const metadata = {
+    name: record.filename,
+    parents: ["appDataFolder"]
+  };
+  const boundary = `mdict_upload_${Math.random().toString(36).slice(2)}`;
+  const body = new Blob([
+    `--${boundary}\r\n`,
+    "Content-Type: application/json; charset=UTF-8\r\n\r\n",
+    JSON.stringify(metadata),
+    `\r\n--${boundary}\r\n`,
+    `Content-Type: ${record.mimeType || "text/plain"}\r\n\r\n`,
+    record.blob,
+    `\r\n--${boundary}--`
+  ]);
+  const res = await driveFetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+    method: "POST",
+    headers: {
+      "Content-Type": `multipart/related; boundary=${boundary}`
+    },
+    body
+  });
+  const data = await res.json();
+  return String(data && data.id || "");
+}
+
+async function syncAttachmentRecord(id){
+  const record = attachmentsCache.find(row => row.id === String(id || ""));
+  if(!record) return false;
+  if(!isDriveSyncEnabled()) return false;
+  if(!(record.blob instanceof Blob)) return false;
+
+  await upsertAttachmentRecord({ ...record, status: "uploading", storageMode: STORAGE_MODE_DRIVE });
+  renderAttachmentsList();
+  try{
+    const driveFileId = await uploadAttachmentToDrive(record);
+    await upsertAttachmentRecord({
+      ...record,
+      status: "synced",
+      storageMode: STORAGE_MODE_DRIVE,
+      driveFileId: driveFileId || record.driveFileId || null
+    });
+    return true;
+  }catch(e){
+    await upsertAttachmentRecord({ ...record, status: "failed", storageMode: STORAGE_MODE_DRIVE });
+    console.warn("Attachment sync failed:", e);
+    return false;
+  }
+}
+
+async function syncAllAttachments(){
+  if(attachmentsSyncInFlight) return;
+  if(!isDriveSyncEnabled()){
+    setAttachmentMessage("Drive sync is disabled. Select 'Sync with Google Drive (app storage)' in Settings.", true);
+    return;
+  }
+  const connected = await ensureDriveConnection();
+  if(!connected){
+    setAttachmentMessage("Connect Google Drive first, then run sync again.", true);
+    refreshStorageSyncUI();
+    return;
+  }
+
+  const candidates = listSyncCandidates();
+  if(!candidates.length){
+    setAttachmentMessage("No unsynced attachments.");
+    refreshStorageSyncUI();
+    return;
+  }
+
+  attachmentsSyncInFlight = true;
+  refreshStorageSyncUI();
+  let success = 0;
+  let failed = 0;
+  for(const row of candidates){
+    // eslint-disable-next-line no-await-in-loop
+    const ok = await syncAttachmentRecord(row.id);
+    if(ok) success += 1;
+    else failed += 1;
+    renderAttachmentsList();
+  }
+  attachmentsSyncInFlight = false;
+  localStorage.setItem(ATTACHMENT_LAST_SYNC_KEY, nowIso());
+  refreshStorageSyncUI();
+  if(failed > 0){
+    setAttachmentMessage(`Sync finished: ${success} synced, ${failed} failed.`, true);
+  } else {
+    setAttachmentMessage(`Sync finished: ${success} synced.`);
+  }
+}
+
+async function applyAttachmentSyncMode(mode){
+  const nextMode = setAttachmentSyncMode(mode);
+  if(nextMode === STORAGE_MODE_DRIVE){
+    for(const row of attachmentsCache){
+      if(normalizeAttachmentStatus(row.status) === "local"){
+        // eslint-disable-next-line no-await-in-loop
+        await upsertAttachmentRecord({ ...row, status: "unsynced", storageMode: STORAGE_MODE_DRIVE });
+      }
+    }
+  } else {
+    for(const row of attachmentsCache){
+      const status = normalizeAttachmentStatus(row.status);
+      if((status === "unsynced" || status === "uploading" || status === "failed") && !row.driveFileId){
+        // eslint-disable-next-line no-await-in-loop
+        await upsertAttachmentRecord({ ...row, status: "local", storageMode: STORAGE_MODE_LOCAL });
+      }
+    }
+  }
+  renderAttachmentsList();
+  if(nextMode === STORAGE_MODE_LOCAL){
+    setAttachmentMessage("Storage mode set to Local only.");
+  } else {
+    setAttachmentMessage("Storage mode set to Google Drive sync.");
+  }
+}
+
+async function initAttachmentsFeature(){
+  await loadAttachmentsFromDb();
+  renderAttachmentsList();
+
+  const fileInput = document.getElementById("attachment-file-input");
+  const inputModeSel = document.getElementById("attachment-input-mode");
+  const manualSaveBtn = document.getElementById("attachment-manual-save-btn");
+  const uploadBtn = document.getElementById("attachment-upload-btn");
+  const listEl = document.getElementById("attachments-list");
+  const previewClose = document.getElementById("attachment-preview-close");
+  const previewOverlay = document.getElementById("attachment-preview-overlay");
+  const localRadio = document.getElementById("storage-mode-local");
+  const driveRadio = document.getElementById("storage-mode-drive");
+  const connectBtn = document.getElementById("drive-connect-btn");
+  const settingsSyncBtn = document.getElementById("drive-sync-now-btn");
+  const entrySyncBtn = document.getElementById("entry-sync-now-btn");
+
+  if(uploadBtn && fileInput){
+    uploadBtn.addEventListener("click", ()=> fileInput.click());
+    fileInput.addEventListener("change", async ()=>{
+      const files = fileInput.files;
+      fileInput.value = "";
+      await handleAttachmentFiles(files);
+    });
+  }
+  if(inputModeSel){
+    inputModeSel.addEventListener("change", ()=> refreshAttachmentInputModeUI());
+  }
+  if(manualSaveBtn){
+    manualSaveBtn.addEventListener("click", async ()=>{
+      await handleManualAttachmentCreate();
+    });
+  }
+  if(listEl){
+    listEl.addEventListener("click", async (event)=>{
+      const target = event.target instanceof Element ? event.target.closest("button[data-action]") : null;
+      if(!target) return;
+      const action = String(target.getAttribute("data-action") || "");
+      const id = String(target.getAttribute("data-id") || "");
+      if(!id) return;
+      if(action === "preview"){
+        await openAttachmentPreview(id);
+        return;
+      }
+      if(action === "remove"){
+        await removeAttachmentRecord(id);
+        renderAttachmentsList();
+        setAttachmentMessage("Attachment removed.");
+        return;
+      }
+      if(action === "sync"){
+        const connected = await ensureDriveConnection();
+        if(!connected){
+          setAttachmentMessage("Connect Google Drive first, then sync again.", true);
+          refreshStorageSyncUI();
+          return;
+        }
+        const ok = await syncAttachmentRecord(id);
+        localStorage.setItem(ATTACHMENT_LAST_SYNC_KEY, nowIso());
+        renderAttachmentsList();
+        setAttachmentMessage(ok ? "Attachment synced." : "Attachment sync failed.", !ok);
+      }
+    });
+  }
+  if(localRadio){
+    localRadio.addEventListener("change", async ()=>{
+      if(localRadio.checked) await applyAttachmentSyncMode(STORAGE_MODE_LOCAL);
+      refreshStorageSyncUI();
+    });
+  }
+  if(driveRadio){
+    driveRadio.addEventListener("change", async ()=>{
+      if(driveRadio.checked) await applyAttachmentSyncMode(STORAGE_MODE_DRIVE);
+      refreshStorageSyncUI();
+    });
+  }
+  if(connectBtn){
+    connectBtn.addEventListener("click", async ()=>{
+      const connected = await ensureDriveConnection();
+      if(!connected){
+        setAttachmentMessage("Google authorization started. Confirm access and then sync.", false);
+      }
+      refreshStorageSyncUI();
+    });
+  }
+  if(settingsSyncBtn){
+    settingsSyncBtn.addEventListener("click", async ()=>{ await syncAllAttachments(); });
+  }
+  if(entrySyncBtn){
+    entrySyncBtn.addEventListener("click", async ()=>{ await syncAllAttachments(); });
+  }
+  if(previewClose){
+    previewClose.addEventListener("click", ()=> closeAttachmentPreview());
+  }
+  if(previewOverlay){
+    previewOverlay.addEventListener("click", (event)=>{
+      if(event.target === previewOverlay) closeAttachmentPreview();
+    });
+  }
+
+  const initialMode = getAttachmentSyncMode();
+  setAttachmentSyncMode(initialMode);
+  refreshAttachmentInputModeUI();
+  refreshStorageSyncUI();
 }
 
 // -------- Offline cache (localStorage) --------
@@ -937,8 +1551,10 @@ async function handleGoogleTokenResponse(resp){
     const about = await driveLoadCurrentUser().catch(()=> ({ displayName: "", emailAddress: "" }));
     const profileLang = normalizeLanguage((userProfile && userProfile.settings && userProfile.settings.app_language) || state.language);
     const profileTextSize = String((userProfile && userProfile.settings && userProfile.settings.text_size) || (localStorage.getItem(TEXT_SIZE_KEY) || "4"));
+    const profileTheme = normalizeTheme((userProfile && userProfile.settings && userProfile.settings.app_theme) || localStorage.getItem(APP_THEME_KEY) || "light");
     await setLanguage(profileLang);
     applyTextSize(profileTextSize);
+    applyTheme(profileTheme, { persist: true });
     const sizeSlider = document.getElementById("text-size-slider");
     if(sizeSlider) sizeSlider.value = profileTextSize;
     state.currentUser = about.displayName || about.emailAddress || "Google user";
@@ -1012,20 +1628,6 @@ function wireGoogleBtnOnce(){
     return;
   }
   btn.addEventListener("click", () => {
-    requestGoogleAccessTokenFromClick();
-  });
-}
-
-function wireSettingsGoogleBtnOnce(){
-  if(googleSettingsBtnWired) return;
-  googleSettingsBtnWired = true;
-  const btn = document.getElementById("to-login-from-settings-public");
-  if(!btn) return;
-  btn.addEventListener("click", ()=>{
-    const sidebar = document.getElementById('settings-sidebar');
-    const overlay = document.getElementById('settings-overlay');
-    if(sidebar) sidebar.classList.remove('open');
-    if(overlay) overlay.classList.remove('open');
     requestGoogleAccessTokenFromClick();
   });
 }
@@ -1172,12 +1774,13 @@ async function loadAnamnesisDictionary(){
         ''
       ).trim();
       const english = normalizeAnamnesisText(row.english_translation);
+      const german = normalizeAnamnesisText(row.german_translation);
       const slovak = normalizeAnamnesisText(row.slovak_translation);
       if(key){
-        anamnesisDictionaryById.set(key, { key, english, slovak });
+        anamnesisDictionaryById.set(key, { key, english, german, slovak });
       }
       if(!english) continue;
-      anamnesisDictionary.set(english, { english, slovak });
+      anamnesisDictionary.set(english, { english, german, slovak });
     }
     if(anamnesisDictionaryById.size === 0){
       throw new Error(`Anamnesis dictionary loaded from ${loadedFrom}, but no id_anamnesis keys were parsed`);
@@ -1196,7 +1799,7 @@ function translateAnamnesisText(baseText){
   if(!row) return baseText;
   const lang = normalizeLanguage(state.language);
   if(lang === 'Slovensky' && row.slovak) return row.slovak;
-  if(lang === 'Deutsch' && row.slovak) return row.slovak;
+  if(lang === 'Deutsch' && row.german) return row.german;
   if(lang === 'English') return row.english || baseText;
   return row.english || baseText;
 }
@@ -1206,7 +1809,7 @@ function translateAnamnesisById(key, fallbackText = ''){
   if(!row) return fallbackText;
   const lang = normalizeLanguage(state.language);
   if(lang === 'Slovensky' && row.slovak) return row.slovak;
-  if(lang === 'Deutsch' && row.slovak) return row.slovak;
+  if(lang === 'Deutsch' && row.german) return row.german;
   if(lang === 'English') return row.english || fallbackText;
   return row.english || fallbackText;
 }
@@ -1627,6 +2230,224 @@ async function loadMuscles() {
   }
 }
 
+// --- Biophysics True/False loader ---
+const BIOPHYSICS_TF_FILE = "terminology/biophysics.csv";
+const BIOPHYSICS_TF_AUTO_NEXT_KEY = "biophysics_tf/auto_next_v1";
+let biophysicsTfItems = [];
+const biophysicsTfState = {
+  pool: [],
+  index: 0,
+  score: 0,
+  answered: false,
+  current: null,
+  autoNextTimer: null
+};
+
+function getBiophysicsTfAutoNextEnabled(){
+  const raw = localStorage.getItem(BIOPHYSICS_TF_AUTO_NEXT_KEY);
+  if(raw === null) return true;
+  return raw === "1";
+}
+
+function setBiophysicsTfAutoNextEnabled(enabled){
+  const val = !!enabled;
+  localStorage.setItem(BIOPHYSICS_TF_AUTO_NEXT_KEY, val ? "1" : "0");
+  const el = document.getElementById("biophysics-tf-auto-next");
+  if(el) el.checked = val;
+}
+
+function parseBooleanCell(value){
+  const v = String(value || "").trim().toLowerCase();
+  if(["true", "t", "1", "yes", "y"].includes(v)) return true;
+  if(["false", "f", "0", "no", "n"].includes(v)) return false;
+  return null;
+}
+
+function getBiophysicsTfText(item, kind){
+  const lang = normalizeLanguage(state.language);
+  if(kind === "statement"){
+    if(lang === "Slovensky" && item.statementSk) return item.statementSk;
+    return item.statementEn || item.statementSk || "";
+  }
+  if(lang === "Slovensky" && item.reasoningSk) return item.reasoningSk;
+  return item.reasoningEn || item.reasoningSk || "";
+}
+
+function setBiophysicsTfAnswerButtonsDisabled(disabled){
+  const trueBtn = document.getElementById("biophysics-answer-true");
+  const falseBtn = document.getElementById("biophysics-answer-false");
+  if(trueBtn) trueBtn.disabled = !!disabled;
+  if(falseBtn) falseBtn.disabled = !!disabled;
+}
+
+function clearBiophysicsTfAutoNextTimer(){
+  if(biophysicsTfState.autoNextTimer){
+    clearTimeout(biophysicsTfState.autoNextTimer);
+    biophysicsTfState.autoNextTimer = null;
+  }
+}
+
+function renderBiophysicsTfQuestion(){
+  const statementEl = document.getElementById("biophysics-tf-statement");
+  const progressEl = document.getElementById("biophysics-tf-progress");
+  const feedbackEl = document.getElementById("biophysics-tf-feedback");
+  if(!statementEl || !progressEl || !feedbackEl) return;
+  clearBiophysicsTfAutoNextTimer();
+
+  if(!biophysicsTfState.pool.length){
+    biophysicsTfState.current = null;
+    biophysicsTfState.answered = false;
+    statementEl.textContent = tOr("biophysics_no_statements_loaded", "No biophysics statements loaded.");
+    feedbackEl.textContent = "";
+    progressEl.textContent = "0 / 0";
+    setBiophysicsTfAnswerButtonsDisabled(true);
+    return;
+  }
+
+  if(biophysicsTfState.index >= biophysicsTfState.pool.length){
+    biophysicsTfState.current = null;
+    biophysicsTfState.answered = true;
+    statementEl.textContent = tOr("biophysics_session_finished", "Session finished.");
+    feedbackEl.textContent = `${tOr("biophysics_final_score", "Final score")}: ${biophysicsTfState.score} / ${biophysicsTfState.pool.length}`;
+    progressEl.textContent = `${biophysicsTfState.pool.length} / ${biophysicsTfState.pool.length} | ${tOr("score", "Score")}: ${biophysicsTfState.score}`;
+    setBiophysicsTfAnswerButtonsDisabled(true);
+    return;
+  }
+
+  biophysicsTfState.current = biophysicsTfState.pool[biophysicsTfState.index] || null;
+  biophysicsTfState.answered = false;
+  statementEl.textContent = getBiophysicsTfText(biophysicsTfState.current, "statement") || tOr("biophysics_no_statement", "(No statement)");
+  feedbackEl.textContent = "";
+  progressEl.textContent = `${biophysicsTfState.index + 1} / ${biophysicsTfState.pool.length} | ${tOr("score", "Score")}: ${biophysicsTfState.score}`;
+  setBiophysicsTfAnswerButtonsDisabled(false);
+}
+
+function answerBiophysicsTf(userAnswer){
+  const feedbackEl = document.getElementById("biophysics-tf-feedback");
+  const progressEl = document.getElementById("biophysics-tf-progress");
+  const autoNextEl = document.getElementById("biophysics-tf-auto-next");
+  const current = biophysicsTfState.current;
+  if(!feedbackEl || !progressEl || !current || biophysicsTfState.answered) return;
+  clearBiophysicsTfAutoNextTimer();
+
+  biophysicsTfState.answered = true;
+  const isCorrect = !!userAnswer === !!current.correct;
+  if(isCorrect){
+    biophysicsTfState.score += 1;
+    feedbackEl.textContent = `${tOr("correct", "Correct")}.`;
+    if(autoNextEl && autoNextEl.checked){
+      const answeredIndex = biophysicsTfState.index;
+      biophysicsTfState.autoNextTimer = setTimeout(()=>{
+        if(
+          biophysicsTfState.answered &&
+          biophysicsTfState.index === answeredIndex &&
+          biophysicsTfState.current
+        ){
+          nextBiophysicsTfQuestion();
+        }
+      }, 2000);
+    }
+  }else{
+    const reasoning = getBiophysicsTfText(current, "reasoning");
+    feedbackEl.textContent = reasoning ? `${tOr("incorrect", "Incorrect")}. ${reasoning}` : `${tOr("incorrect", "Incorrect")}.`;
+  }
+  progressEl.textContent = `${biophysicsTfState.index + 1} / ${biophysicsTfState.pool.length} | ${tOr("score", "Score")}: ${biophysicsTfState.score}`;
+  setBiophysicsTfAnswerButtonsDisabled(true);
+}
+
+function nextBiophysicsTfQuestion(){
+  const feedbackEl = document.getElementById("biophysics-tf-feedback");
+  clearBiophysicsTfAutoNextTimer();
+  if(!biophysicsTfState.pool.length) return;
+  if(!biophysicsTfState.answered){
+    if(feedbackEl) feedbackEl.textContent = tOr("biophysics_select_true_false_first", "Select True or False first.");
+    return;
+  }
+  biophysicsTfState.index += 1;
+  renderBiophysicsTfQuestion();
+}
+
+function handleBiophysicsTfKeyboard(event){
+  const screen = document.getElementById("screen-biophysics-tf");
+  if(!screen || screen.classList.contains("hidden")) return;
+
+  const target = event.target;
+  const tag = target && target.tagName ? String(target.tagName).toLowerCase() : "";
+  const isTypingTarget =
+    tag === "input" ||
+    tag === "textarea" ||
+    tag === "select" ||
+    (target && target.isContentEditable);
+  if(isTypingTarget) return;
+
+  const key = String(event.key || "").toLowerCase();
+  if((key === "t" || key === "1") && !biophysicsTfState.answered){
+    event.preventDefault();
+    answerBiophysicsTf(true);
+    return;
+  }
+  if((key === "f" || key === "2") && !biophysicsTfState.answered){
+    event.preventDefault();
+    answerBiophysicsTf(false);
+    return;
+  }
+  if(key === "enter" && biophysicsTfState.answered){
+    event.preventDefault();
+    nextBiophysicsTfQuestion();
+  }
+}
+
+async function ensureBiophysicsTfLoaded(){
+  if(biophysicsTfItems.length) return biophysicsTfItems;
+  try{
+    const txt = await loadBaseFile(BIOPHYSICS_TF_FILE);
+    const rows = parseCSVLines(txt);
+    const parsed = rowsToObjectsWithHeaders(rows);
+    const items = [];
+    for(const obj of (parsed.objects || [])){
+      const correct = parseBooleanCell(obj.true_or_false);
+      if(correct === null) continue;
+      const statementEn = normalizeWhitespace(obj.statement_en);
+      const statementSk = normalizeWhitespace(obj.statement_sk);
+      const reasoningEn = normalizeWhitespace(obj.reasoning_en);
+      const reasoningSk = normalizeWhitespace(obj.reasoning_sk);
+      if(!statementEn && !statementSk) continue;
+      items.push({
+        statementEn,
+        statementSk,
+        correct,
+        reasoningEn,
+        reasoningSk
+      });
+    }
+    biophysicsTfItems = items;
+  }catch(e){
+    console.warn("Biophysics True/False load failed:", e.message || e);
+    biophysicsTfItems = [];
+  }
+  return biophysicsTfItems;
+}
+
+function startBiophysicsTfSession(){
+  const trueBtn = document.getElementById("biophysics-answer-true");
+  const falseBtn = document.getElementById("biophysics-answer-false");
+  const nextBtn = document.getElementById("biophysics-tf-next");
+  const autoNextEl = document.getElementById("biophysics-tf-auto-next");
+  if(trueBtn) trueBtn.textContent = "True";
+  if(falseBtn) falseBtn.textContent = "False";
+  if(nextBtn) nextBtn.textContent = "Next Enter";
+  if(autoNextEl) autoNextEl.checked = getBiophysicsTfAutoNextEnabled();
+
+  clearBiophysicsTfAutoNextTimer();
+  biophysicsTfState.pool = biophysicsTfItems.slice();
+  shuffle(biophysicsTfState.pool);
+  biophysicsTfState.index = 0;
+  biophysicsTfState.score = 0;
+  biophysicsTfState.answered = false;
+  biophysicsTfState.current = null;
+  renderBiophysicsTfQuestion();
+}
+
 // --- UI wiring and i18n ---
 let state = {
   language: localStorage.getItem('app_language') || 'English',
@@ -1638,6 +2459,161 @@ let state = {
     debounceTimer: null
   }
 };
+
+const ENTRY_CATEGORY_DATASETS = {
+  basic_sciences: ["anatomy", "physiology"],
+  diagnostics_procedures: ["diagnostic_methods", "procedures"],
+  disease_and_symptoms: ["disease_and_symptoms"],
+  lab_parameters: ["lab_parameters"],
+  latin: ["latin_units", "latin_greek", "latin_abbreviations", "latin_remedies"],
+  microorganisms: ["microorganisms"],
+  pharmacology: ["pharmacology"]
+};
+const entryDatasetHeadersCache = new Map();
+const entryDatasetExampleRowCache = new Map();
+let entryFieldsRenderSeq = 0;
+
+function getDatasetAdapterByKey(datasetKey){
+  return (DATASET_ADAPTERS || []).find(spec => String(spec && spec.key || "") === String(datasetKey || "")) || null;
+}
+
+function getEntryCategory(){
+  const select = document.getElementById("entry-category");
+  const value = String((select && select.value) || "basic_sciences");
+  return ENTRY_CATEGORY_DATASETS[value] ? value : "basic_sciences";
+}
+
+function getEntryDatasetOptionsForCategory(categoryKey){
+  const keys = ENTRY_CATEGORY_DATASETS[String(categoryKey || "")] || [];
+  return keys
+    .map(key => getDatasetAdapterByKey(key))
+    .filter(Boolean)
+    .map(spec => ({ key: String(spec.key), label: localizeDatasetLabel(spec.key, String(spec.label || spec.key)) }));
+}
+
+function getEntrySelectedDatasetKey(){
+  const category = getEntryCategory();
+  const options = getEntryDatasetOptionsForCategory(category);
+  const selected = String((document.getElementById("entry-source") || {}).value || "");
+  if(options.some(opt => opt.key === selected)) return selected;
+  return options.length ? options[0].key : "";
+}
+
+function isEntryTextareaField(header){
+  const h = String(header || "").toLowerCase();
+  return /notes|definition|causes|indications|contraindications|complications|features|differentials|treatment|diagnostics|description|regulation|steps|what_it_is|post_procedure|adverse_effects|interactions|physiological_role/i.test(h);
+}
+
+function normalizeHeaderList(rawHeaders){
+  const seen = new Set();
+  const out = [];
+  for(const raw of (rawHeaders || [])){
+    const h = String(raw || "").replace(/^\uFEFF/, "").trim();
+    if(!h) continue;
+    if(String(h).toLowerCase() === "id") continue;
+    if(seen.has(h)) continue;
+    seen.add(h);
+    out.push(h);
+  }
+  return out;
+}
+
+async function loadEntryHeadersForDataset(datasetKey){
+  const key = String(datasetKey || "");
+  if(!key) return [];
+  if(entryDatasetHeadersCache.has(key)) return entryDatasetHeadersCache.get(key) || [];
+  const spec = getDatasetAdapterByKey(key);
+  if(!spec || !spec.file){
+    entryDatasetHeadersCache.set(key, []);
+    return [];
+  }
+  try{
+    const txt = await loadBaseFile(spec.file);
+    const rows = parseCSVLines(txt || "");
+    const headers = normalizeHeaderList((rows && rows[0]) || []);
+    entryDatasetHeadersCache.set(key, headers);
+    return headers;
+  }catch(e){
+    console.warn("Entry headers load failed for dataset:", key, e);
+    entryDatasetHeadersCache.set(key, []);
+    return [];
+  }
+}
+
+async function loadEntryExampleRowForDataset(datasetKey){
+  const key = String(datasetKey || "");
+  if(!key) return {};
+  if(entryDatasetExampleRowCache.has(key)) return entryDatasetExampleRowCache.get(key) || {};
+  const spec = getDatasetAdapterByKey(key);
+  if(!spec || !spec.file){
+    entryDatasetExampleRowCache.set(key, {});
+    return {};
+  }
+  try{
+    const txt = await loadBaseFile(spec.file);
+    const rows = parseCSVLines(txt || "");
+    if(!rows || rows.length < 2){
+      entryDatasetExampleRowCache.set(key, {});
+      return {};
+    }
+    const parsed = rowsToObjectsWithHeaders(rows);
+    const first = (parsed.objects && parsed.objects[0]) ? parsed.objects[0] : {};
+    const example = {};
+    for(const [col, value] of Object.entries(first || {})){
+      example[String(col || "").trim()] = String(value || "").trim();
+    }
+    entryDatasetExampleRowCache.set(key, example);
+    return example;
+  }catch(e){
+    console.warn("Entry example row load failed for dataset:", key, e);
+    entryDatasetExampleRowCache.set(key, {});
+    return {};
+  }
+}
+
+async function renderEntryCategoryFields(){
+  const renderSeq = ++entryFieldsRenderSeq;
+  const sourceWrap = document.getElementById("entry-source-wrap");
+  const sourceSelect = document.getElementById("entry-source");
+  const fieldsWrap = document.getElementById("entry-dynamic-fields");
+  if(!sourceWrap || !sourceSelect || !fieldsWrap) return;
+
+  const category = getEntryCategory();
+  const options = getEntryDatasetOptionsForCategory(category);
+  if(!options.length){
+    sourceWrap.classList.add("hidden");
+    fieldsWrap.innerHTML = `<p class="muted">No dataset is mapped for this category.</p>`;
+    return;
+  }
+
+  const previousSelected = String(sourceSelect.value || "");
+  sourceSelect.innerHTML = options.map(opt => `<option value="${escapeHTML(opt.key)}">${escapeHTML(opt.label)}</option>`).join("");
+  if(options.some(opt => opt.key === previousSelected)) sourceSelect.value = previousSelected;
+  else sourceSelect.value = options[0].key;
+  sourceWrap.classList.toggle("hidden", options.length <= 1);
+
+  const datasetKey = String(sourceSelect.value || "");
+  const headers = await loadEntryHeadersForDataset(datasetKey);
+  const exampleRow = await loadEntryExampleRowForDataset(datasetKey);
+  if(renderSeq !== entryFieldsRenderSeq) return;
+  if(!headers.length){
+    fieldsWrap.innerHTML = `<p class="muted" style="margin-top:8px">No editable fields found in selected dataset.</p>`;
+    return;
+  }
+
+  fieldsWrap.innerHTML = [
+    `<div class="small" style="margin-top:8px">Fields from selected CSV schema (${escapeHTML(datasetKey)})</div>`,
+    ...headers.map(header => {
+      const label = formatHeaderLabel(header);
+      const example = String(exampleRow[header] || "").trim();
+      const placeholder = example ? `${label} (${example})` : `${label}`;
+      if(isEntryTextareaField(header)){
+        return `<textarea data-entry-col="${escapeHTML(header)}" placeholder="${escapeHTML(placeholder)}"></textarea>`;
+      }
+      return `<input data-entry-col="${escapeHTML(header)}" placeholder="${escapeHTML(placeholder)}" />`;
+    })
+  ].join("");
+}
 
 // ===== Language handling =====
 const LANG_CANON = {
@@ -1655,6 +2631,33 @@ function normalizeLanguage(lang){
   if(!raw) return 'English';
   const key = raw.toLowerCase();
   return LANG_CANON[key] || raw;
+}
+
+function normalizeTheme(theme){
+  const raw = String(theme || "").trim().toLowerCase();
+  return raw === "dark" ? "dark" : "light";
+}
+
+function refreshThemeButtons(){
+  const theme = normalizeTheme(document.body.getAttribute("data-theme") || localStorage.getItem(APP_THEME_KEY) || "light");
+  const lightBtn = document.getElementById("theme-light");
+  const darkBtn = document.getElementById("theme-dark");
+  if(lightBtn) lightBtn.classList.toggle("active", theme === "light");
+  if(darkBtn) darkBtn.classList.toggle("active", theme === "dark");
+}
+
+function applyTheme(theme, opts = {}){
+  const { persist = true } = opts;
+  const next = normalizeTheme(theme);
+  document.body.setAttribute("data-theme", next);
+  if(persist){
+    localStorage.setItem(APP_THEME_KEY, next);
+    if(isProfileSessionActive()){
+      userProfile.settings.app_theme = next;
+      markProfileDirty();
+    }
+  }
+  refreshThemeButtons();
 }
 
 function getBaseSearchField(){
@@ -1727,7 +2730,38 @@ const LANGUAGE_FIELD_EQUIVALENTS = {
 };
 
 function includesQuery(value, query){
-  return String(value || "").toLowerCase().includes(query);
+  const hay = String(value || "").toLowerCase();
+  const needle = String(query || "").toLowerCase();
+  if(!needle) return true;
+  if(hay.includes(needle)) return true;
+  return normalizeSearchLoose(hay).includes(normalizeSearchLoose(needle));
+}
+
+const SEARCH_LOOSE_CACHE = new Map();
+const INDEXED_DIGIT_MAP = {
+  "₀": "0", "₁": "1", "₂": "2", "₃": "3", "₄": "4",
+  "₅": "5", "₆": "6", "₇": "7", "₈": "8", "₉": "9",
+  "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4",
+  "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9"
+};
+function normalizeSearchLoose(value){
+  const raw = String(value || "").toLowerCase();
+  const cached = SEARCH_LOOSE_CACHE.get(raw);
+  if(cached !== undefined) return cached;
+  let text = raw;
+  try{
+    // Remove diacritics so users can type without accents.
+    text = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }catch(_){
+    text = raw;
+  }
+  // Treat indexed digits as normal digits: pO₂ -> pO2.
+  text = text.replace(/[₀₁₂₃₄₅₆₇₈₉⁰¹²³⁴⁵⁶⁷⁸⁹]/g, ch => INDEXED_DIGIT_MAP[ch] || ch);
+  // Ignore punctuation and spacing differences: "D.S." vs "D. S." vs "DS".
+  const compact = text.replace(/[^a-z0-9]+/g, "");
+  if(SEARCH_LOOSE_CACHE.size > 50000) SEARCH_LOOSE_CACHE.clear();
+  SEARCH_LOOSE_CACHE.set(raw, compact);
+  return compact;
 }
 
 function matchAnyField(row, fields, query){
@@ -1748,7 +2782,7 @@ function getRowHeaders(row){
 function matchAnyHeader(row, query){
   if(row && Array.isArray(row.__lcHeaders) && row.__lcHeaders.length){
     for(const value of row.__lcHeaders){
-      if(value && value.includes(query)) return true;
+      if(includesQuery(value, query)) return true;
     }
     return false;
   }
@@ -1781,16 +2815,98 @@ function formatHeaderLabel(header){
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
+const DATASET_LABEL_TRANSLATION_KEYS = {
+  anatomy: "dataset_anatomy",
+  diagnostic_methods: "dataset_diagnostic_methods",
+  disease_and_symptoms: "disease_and_symptoms",
+  lab_parameters: "laboratory_parameters",
+  latin_abbreviations: "dataset_latin_abbreviations",
+  latin_greek: "dataset_latin_greek",
+  latin_remedies: "dataset_latin_remedies",
+  latin_units: "dataset_latin_units",
+  microorganisms: "microorganisms",
+  muscles: "dataset_muscles",
+  pharmacology: "pharmacology",
+  physiology: "dataset_physiology",
+  procedures: "dataset_procedures"
+};
+
+const FLASHCARDS_FIELD_TRANSLATION_KEYS = {
+  name_en: "field_name_en",
+  name_de: "field_name_de",
+  name_sk: "field_name_sk",
+  name_la: "field_name_la",
+  name_gr: "field_name_gr",
+  abbreviation: "latin_search_abbreviation",
+  full_form: "latin_search_full_form",
+  definition: "field_definition",
+  notes: "latin_search_notes",
+  region: "muscle_search_region",
+  category: "category",
+  origo: "muscle_search_origo",
+  insercio: "muscle_search_insercio",
+  innervation: "muscle_search_innervation",
+  blood_supply: "muscle_search_blood_supply",
+  movement_function: "field_movement_function",
+  oina_summary: "field_oina_summary",
+  name_en: "field_name_en",
+  sample_type: "field_sample_type",
+  physiological_role: "field_physiological_role",
+  causes_of_increase: "field_causes_of_increase",
+  causes_of_decrease: "field_causes_of_decrease",
+  clinical_use: "field_clinical_use",
+  system: "field_system",
+  name_sk: "field_name_sk",
+  drug_class: "field_drug_class",
+  subclass: "field_subclass",
+  mechanism_of_action: "field_mechanism_of_action",
+  indications: "field_indications",
+  contraindications: "field_contraindications",
+  adverse_effects_common: "field_adverse_effects_common",
+  adverse_effects_serious: "field_adverse_effects_serious",
+  interactions_key: "field_interactions_key",
+  pregnancy: "field_pregnancy",
+  routes: "field_routes",
+  onset: "field_onset",
+  duration: "field_duration",
+  unit_name: "field_unit_name",
+  latin_grammar: "field_latin_grammar",
+  definition_en: "field_definition_en",
+  definition_de: "field_definition_de",
+  definition_sk: "field_definition_sk",
+  normal_range_units: "field_normal_range_units"
+};
+
+function localizeDatasetLabel(datasetKey, fallbackLabel = ""){
+  const key = DATASET_LABEL_TRANSLATION_KEYS[String(datasetKey || "").trim()];
+  const fallback = String(fallbackLabel || formatHeaderLabel(datasetKey));
+  return key ? tOr(key, fallback) : fallback;
+}
+
+function localizeFlashcardsFieldLabel(fieldKey, fallbackLabel = ""){
+  const normalized = String(fieldKey || "").trim();
+  if(["abbreviation", "sample_type", "system", "physiological_role", "causes_of_increase", "causes_of_decrease", "clinical_use"].includes(normalized)){
+    return labFieldLabel(normalized);
+  }
+  if(normalized === "name_en") return tOr("english_translation", String(fallbackLabel || "Name (EN)"));
+  if(normalized === "name_de") return tOr("german_translation", String(fallbackLabel || "Name (DE)"));
+  if(normalized === "name_sk") return tOr("slovak_translation", String(fallbackLabel || "Name (SK)"));
+  if(normalized === "name_la") return tOr("latin_translation", String(fallbackLabel || "Name (LA)"));
+  const tKey = FLASHCARDS_FIELD_TRANSLATION_KEYS[normalized];
+  const fallback = String(fallbackLabel || formatHeaderLabel(normalized));
+  return tKey ? tOr(tKey, fallback) : fallback;
+}
+
 const LATIN_HEADER_TRANSLATION_KEYS = {
   latin_term: 'latin_search_latin_term',
   latin_genitive: 'latin_search_latin_genitive',
   part_of_speech: 'latin_search_part_of_speech',
   gender: 'latin_search_gender',
-  english_translation: 'latin_search_english_translation',
-  german_translation: 'latin_search_german_translation',
-  slovak_translation: 'latin_search_slovak_translation',
+  english_translation: 'english_translation',
+  german_translation: 'german_translation',
+  slovak_translation: 'slovak_translation',
   notes: 'latin_search_notes',
-  latin_translation: 'latin_search_latin_translation',
+  latin_translation: 'latin_translation',
   greek_translation: 'latin_search_greek_translation',
   abbreviation: 'latin_search_abbreviation',
   full_form: 'latin_search_full_form',
@@ -1798,7 +2914,7 @@ const LATIN_HEADER_TRANSLATION_KEYS = {
   english_description: 'latin_search_english_description',
   german_description: 'latin_search_german_description',
   slovak_description: 'latin_search_slovak_description',
-  category: 'latin_search_category',
+  category: 'category',
   english_definition: 'latin_search_english_definition',
   german_definition: 'latin_search_german_definition',
   slovak_definition: 'latin_search_slovak_definition'
@@ -2177,19 +3293,23 @@ function renderLabResults(rows){
     return;
   }
   const titleField = getLabTermTitleField();
+  const languageTermFields = new Set(["english_term", "german_term", "slovak_term"]);
   resultsDiv.innerHTML = rows.map(row => {
     const title = String(row[titleField] || row.english_term || row.german_term || row.slovak_term || "").trim();
     const abbr = String(row.abbreviation || "").trim();
-    const shownTags = (row.__labTags || []).slice(0, LAB_VISIBLE_TAGS_ON_CARD);
-    const hiddenTagCount = Math.max(0, (row.__labTags || []).length - shownTags.length);
+    const systemLabel = getLocalizedSystem(row.__labSystem || LAB_DEFAULT_SYSTEM);
+    const allTags = Array.isArray(row.__labTags) ? row.__labTags : [];
+    const visibleTags = allTags.filter(tag => String(tag || "").trim().toLowerCase() !== String(systemLabel || "").trim().toLowerCase());
+    const shownTags = visibleTags.slice(0, LAB_VISIBLE_TAGS_ON_CARD);
+    const hiddenTagCount = Math.max(0, visibleTags.length - shownTags.length);
     const topChips = [
-      `<span class="lab-chip lab-chip-muted">${escapeHTML(getLocalizedSystem(row.__labSystem || LAB_DEFAULT_SYSTEM))}</span>`,
+      `<span class="lab-chip lab-chip-muted">${escapeHTML(systemLabel)}</span>`,
       ...shownTags.map(tag => `<span class="lab-chip lab-chip-muted">${escapeHTML(tag)}</span>`),
       hiddenTagCount > 0 ? `<span class="lab-chip lab-chip-muted">+${hiddenTagCount} ${escapeHTML(labText("more"))}</span>` : ""
     ].filter(Boolean).join("");
 
     const kv = LAB_RESULT_FIELD_ORDER
-      .filter(field => field !== titleField)
+      .filter(field => field !== titleField && !languageTermFields.has(field))
       .map(field => ({ field, value: String(row[field] || "").trim() }))
       .filter(entry => !!entry.value)
       .map(entry => `<div class="k">${escapeHTML(labFieldLabel(entry.field))}</div><div class="v">${escapeHTML(entry.value)}</div>`)
@@ -2238,14 +3358,20 @@ function renderLabStaticText(){
   const map = {
     "to-lab-parameters": "menuButton",
     "lab-parameters-title": "pageTitle",
-    "lab-parameters-subtitle": "subtitle",
     "lab-tags-filter-label": "tagsLabel",
     "lab-parameters-clear-filters": "clearFilters",
     "lab-parameters-back": "back"
   };
   for(const [id, key] of Object.entries(map)){
     const el = document.getElementById(id);
-    if(el) el.textContent = labText(key);
+    if(!el) continue;
+    if(id === "to-lab-parameters"){
+      const label = el.querySelector(".menu-label");
+      if(label) label.textContent = labText(key);
+      else el.textContent = labText(key);
+      continue;
+    }
+    el.textContent = labText(key);
   }
   const searchInput = document.getElementById("lab-parameters-search-input");
   if(searchInput){
@@ -2309,6 +3435,10 @@ async function setLanguage(lang){
   refreshMuscleTrainingUI();
   refreshLatinTerminologyUI();
   refreshLabParametersUI();
+  await renderEntryCategoryFields();
+  renderQuizGeneratorUi();
+  renderQuizBuilderDomainUi();
+  if(flashcardsV2State.loaded) refreshFlashcardsBuilderUI();
 }
 
 function t(key){
@@ -2332,6 +3462,7 @@ function applyTranslationsToDom(){
     const k = el.getAttribute('data-i18n-placeholder');
     el.placeholder = t(k);
   });
+  refreshFieldOverflowUX(document);
 }
 
 // --- Muscle training helpers ---
@@ -2783,6 +3914,18 @@ function showNextMuscle(){
   renderMuscleQuizFields();
 }
 
+function setMuscleQuizSetupCollapsed(collapsed){
+  const setup = document.getElementById("muscle-quiz-setup");
+  const toggleBtn = document.getElementById("muscle-quiz-settings-toggle");
+  if(setup) setup.classList.toggle("hidden", !!collapsed);
+  if(toggleBtn){
+    toggleBtn.classList.toggle("hidden", !collapsed);
+    toggleBtn.textContent = collapsed
+      ? tOr("quiz_settings_show", "Show quiz settings")
+      : tOr("quiz_settings_hide", "Hide quiz settings");
+  }
+}
+
 function startMuscleQuiz(){
   const msg = document.getElementById('muscle-quiz-msg');
   if(msg) msg.textContent = '';
@@ -2794,6 +3937,7 @@ function startMuscleQuiz(){
     return;
   }
   showNextMuscle();
+  setMuscleQuizSetupCollapsed(true);
 }
 
 function refreshMuscleTrainingUI(){
@@ -3102,7 +4246,7 @@ function renderLatinSearchFilters(){
   posSel.innerHTML = '';
   const anyOpt = document.createElement('option');
   anyOpt.value = 'any';
-  anyOpt.textContent = tOr('latin_search_any', 'Any');
+  anyOpt.textContent = tOr('any', 'Any');
   posSel.appendChild(anyOpt);
   const posValues = getLatinPartOfSpeechValues(getLatinTerms());
   posValues.forEach(pos => {
@@ -4484,11 +5628,111 @@ function applyTextSize(step){
   }
 }
 
-function showScreen(id, opts = {}){
+const SCREEN_TRANSITION_MS = 210;
+let currentScreenId = "";
+let navStack = [];
+
+function prefersReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function focusScreenPrimaryTarget(screenEl){
+  if(!screenEl) return;
+  const firstInput = screenEl.querySelector("input, select, textarea");
+  const firstHeading = screenEl.querySelector("h2");
+  const fallback = screenEl.querySelector("button, [tabindex]");
+  const target = firstInput || firstHeading || fallback;
+  if(!target) return;
+  if(target.tagName && target.tagName.toLowerCase() === "h2" && !target.hasAttribute("tabindex")){
+    target.setAttribute("tabindex", "-1");
+  }
+  try{ target.focus({ preventScroll: true }); }catch(e){}
+}
+
+function finalizeHiddenScreen(el){
+  if(!el) return;
+  el.classList.remove("is-active");
+  el.classList.remove("is-exiting");
+  el.classList.add("hidden");
+  el.setAttribute("aria-hidden", "true");
+  try{ el.inert = true; }catch(e){}
+}
+
+function switchScreen(id, opts = {}){
   const { updateHistory = true, replaceHistory = false } = opts;
-  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
-  const el = document.getElementById(id);
-  if(el) el.classList.remove('hidden');
+  const nextEl = document.getElementById(id);
+  if(!nextEl) return;
+
+  if(!currentScreenId){
+    const visible = document.querySelector(".screen:not(.hidden)");
+    currentScreenId = visible ? String(visible.id || "") : "";
+  }
+
+  const prevId = String(currentScreenId || "");
+  const prevEl = prevId ? document.getElementById(prevId) : null;
+  const sameScreen = prevEl && prevEl === nextEl;
+  const animate = !prefersReducedMotion();
+
+  if(!sameScreen){
+    nextEl.classList.remove("hidden");
+    nextEl.classList.remove("is-exiting");
+    nextEl.setAttribute("aria-hidden", "false");
+    try{ nextEl.inert = false; }catch(e){}
+    if(animate){
+      nextEl.classList.remove("is-active");
+      // Ensure class change is committed before activating transition.
+      void nextEl.offsetHeight;
+      requestAnimationFrame(()=> nextEl.classList.add("is-active"));
+    } else {
+      nextEl.classList.add("is-active");
+    }
+
+    if(prevEl){
+      prevEl.classList.remove("is-active");
+      prevEl.classList.add("is-exiting");
+      prevEl.setAttribute("aria-hidden", "true");
+      try{ prevEl.inert = true; }catch(e){}
+      if(animate){
+        let done = false;
+        const cleanup = ()=>{
+          if(done) return;
+          done = true;
+          prevEl.removeEventListener("transitionend", onEnd);
+          finalizeHiddenScreen(prevEl);
+        };
+        const onEnd = (event)=>{
+          if(event && event.target !== prevEl) return;
+          cleanup();
+        };
+        prevEl.addEventListener("transitionend", onEnd, { once: true });
+        setTimeout(cleanup, SCREEN_TRANSITION_MS + 80);
+      } else {
+        finalizeHiddenScreen(prevEl);
+      }
+    }
+
+    currentScreenId = id;
+    const main = document.querySelector("main");
+    if(main) main.scrollTo({ top: 0, behavior: "auto" });
+    try{
+      nextEl.scrollTop = 0;
+      nextEl.scrollLeft = 0;
+    }catch(e){}
+    requestAnimationFrame(()=>{
+      try{
+        nextEl.scrollTop = 0;
+        nextEl.scrollLeft = 0;
+      }catch(e){}
+    });
+    setTimeout(()=> focusScreenPrimaryTarget(nextEl), animate ? 60 : 0);
+  } else {
+    nextEl.classList.remove("hidden");
+    nextEl.classList.remove("is-exiting");
+    nextEl.classList.add("is-active");
+    nextEl.setAttribute("aria-hidden", "false");
+    try{ nextEl.inert = false; }catch(e){}
+    currentScreenId = id;
+  }
 
   // Persist current view in the URL (refresh keeps screen)
   const h = "#" + encodeURIComponent(id);
@@ -4499,6 +5743,367 @@ function showScreen(id, opts = {}){
 
   // Persist per tab session: survives refresh, resets after tab/browser close.
   try{ sessionStorage.setItem(NAV_SESSION_KEY, id); }catch(e){}
+}
+
+function updateHeaderNavUI(){
+  const backBtn = document.getElementById("header-back");
+  if(!backBtn) return;
+  const isMenu = String(currentScreenId || "") === "screen-menu";
+  backBtn.classList.toggle("hidden", isMenu);
+  backBtn.disabled = isMenu;
+}
+
+function goHeaderBack(){
+  const current = String(currentScreenId || "");
+  if(current === "screen-menu") return;
+  if(current === "screen-submenu"){
+    navStack = [];
+    showScreen("screen-menu", { skipNavStack: true });
+    return;
+  }
+  const prev = navStack.length ? navStack.pop() : "";
+  if(prev){
+    showScreen(prev, { skipNavStack: true });
+  } else {
+    showScreen("screen-menu", { skipNavStack: true });
+  }
+}
+
+function showScreen(id, opts = {}){
+  const { replaceNav = false, skipNavStack = false, ...switchOpts } = opts || {};
+  const visible = currentScreenId || (document.querySelector(".screen:not(.hidden)") && document.querySelector(".screen:not(.hidden)").id) || "";
+  if(!skipNavStack && visible && id !== visible){
+    if(replaceNav){
+      if(navStack.length){
+        navStack[navStack.length - 1] = visible;
+      } else {
+        navStack.push(visible);
+      }
+    } else {
+      navStack.push(visible);
+    }
+    if(navStack.length > 120){
+      navStack = navStack.slice(navStack.length - 120);
+    }
+  }
+  switchScreen(id, switchOpts);
+  if(id === "screen-menu"){
+    const main = document.querySelector("main");
+    const menu = document.getElementById("screen-menu");
+    const resetMenuTop = ()=>{
+      try{
+        if(main) main.scrollTo({ top: 0, behavior: "auto" });
+        if(menu){
+          menu.scrollTop = 0;
+          menu.scrollLeft = 0;
+        }
+      }catch(e){}
+    };
+    resetMenuTop();
+    requestAnimationFrame(resetMenuTop);
+    setTimeout(resetMenuTop, 80);
+    setTimeout(resetMenuTop, 180);
+  }
+  if(id === "screen-entry") renderAttachmentsList();
+  updateHeaderNavUI();
+  syncLayoutMetrics();
+}
+
+function syncLayoutMetrics(){
+  const header = document.querySelector("header");
+  const h = header ? Math.ceil(header.getBoundingClientRect().height || 74) : 74;
+  document.documentElement.style.setProperty("--header-h", `${h}px`);
+}
+
+function initScreenStates(){
+  document.querySelectorAll(".screen").forEach(screen=>{
+    const hidden = screen.classList.contains("hidden");
+    screen.setAttribute("aria-hidden", hidden ? "true" : "false");
+    try{ screen.inert = hidden; }catch(e){}
+    screen.classList.remove("is-exiting");
+    if(hidden) screen.classList.remove("is-active");
+    else screen.classList.add("is-active");
+  });
+  const visible = document.querySelector(".screen:not(.hidden)");
+  currentScreenId = visible ? String(visible.id || "") : "";
+  updateHeaderNavUI();
+  document.body.classList.add("ui-motion-ready");
+}
+
+function initButtonRipples(){
+  document.addEventListener("pointerdown", (event)=>{
+    if(typeof event.button === "number" && event.button !== 0) return;
+    if(prefersReducedMotion()) return;
+    const target = event.target instanceof Element ? event.target.closest("button") : null;
+    if(!target) return;
+    if(target.classList.contains("linklike")) return;
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "button-ripple";
+    ripple.style.left = `${event.clientX - rect.left}px`;
+    ripple.style.top = `${event.clientY - rect.top}px`;
+    target.appendChild(ripple);
+    ripple.addEventListener("animationend", ()=> ripple.remove(), { once: true });
+  }, { passive: true });
+}
+
+const fieldMarqueeStates = new WeakMap();
+
+function isMarqueeInput(el){
+  if(!(el instanceof HTMLInputElement)) return false;
+  const t = String(el.type || "text").toLowerCase();
+  return t === "text" || t === "search" || t === "email" || t === "url" || t === "tel" || t === "";
+}
+
+function measureTextWidthForElement(el, text){
+  const value = String(text || "");
+  if(!value) return 0;
+  const cs = window.getComputedStyle(el);
+  const canvas = measureTextWidthForElement.canvas || (measureTextWidthForElement.canvas = document.createElement("canvas"));
+  const ctx = canvas.getContext("2d");
+  if(!ctx) return 0;
+  const fontStyle = cs.fontStyle || "normal";
+  const fontVariant = cs.fontVariant || "normal";
+  const fontWeight = cs.fontWeight || "400";
+  const fontSize = cs.fontSize || "16px";
+  const fontFamily = cs.fontFamily || "sans-serif";
+  ctx.font = `${fontStyle} ${fontVariant} ${fontWeight} ${fontSize} ${fontFamily}`;
+  return ctx.measureText(value).width;
+}
+
+function getFieldVisibleTextWidth(el){
+  const cs = window.getComputedStyle(el);
+  const pl = parseFloat(cs.paddingLeft || "0") || 0;
+  const pr = parseFloat(cs.paddingRight || "0") || 0;
+  return Math.max(0, el.clientWidth - pl - pr - 2);
+}
+
+function getFieldOverflowText(el){
+  if(el instanceof HTMLInputElement){
+    const value = String(el.value || "");
+    if(value) return value;
+    return String(el.placeholder || "");
+  }
+  if(el instanceof HTMLSelectElement){
+    const option = el.selectedOptions && el.selectedOptions.length ? el.selectedOptions[0] : null;
+    return option ? String(option.textContent || "").trim() : "";
+  }
+  return "";
+}
+
+function fieldTextOverflows(el){
+  if(!(el instanceof HTMLElement)) return false;
+  if(el.clientWidth <= 0) return false;
+  const text = getFieldOverflowText(el);
+  if(!text) return false;
+  const textWidth = measureTextWidthForElement(el, text);
+  const visibleWidth = getFieldVisibleTextWidth(el);
+  return textWidth > visibleWidth + 4;
+}
+
+function stopFieldMarquee(el){
+  const state = fieldMarqueeStates.get(el);
+  if(state && state.rafId){
+    cancelAnimationFrame(state.rafId);
+  }
+  fieldMarqueeStates.delete(el);
+  try{ el.scrollLeft = 0; }catch(e){}
+}
+
+function startFieldMarquee(el){
+  if(!(el instanceof HTMLInputElement) || !isMarqueeInput(el)) return;
+  if(document.activeElement === el) return;
+  if(!String(el.value || "").trim()) return;
+  const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+  if(maxScroll < 6) return;
+  stopFieldMarquee(el);
+  const state = {
+    dir: 1,
+    pauseUntil: performance.now() + 650,
+    speedPxPerSec: 34,
+    rafId: 0
+  };
+  const step = (ts)=>{
+    if(!document.body.contains(el)){
+      stopFieldMarquee(el);
+      return;
+    }
+    if(document.activeElement === el){
+      stopFieldMarquee(el);
+      return;
+    }
+    const currentMax = Math.max(0, el.scrollWidth - el.clientWidth);
+    if(currentMax < 6){
+      stopFieldMarquee(el);
+      return;
+    }
+    if(ts < state.pauseUntil){
+      state.rafId = requestAnimationFrame(step);
+      return;
+    }
+    const stepPx = state.speedPxPerSec / 60;
+    let next = el.scrollLeft + state.dir * stepPx;
+    if(next >= currentMax){
+      next = currentMax;
+      state.dir = -1;
+      state.pauseUntil = ts + 900;
+    }else if(next <= 0){
+      next = 0;
+      state.dir = 1;
+      state.pauseUntil = ts + 700;
+    }
+    el.scrollLeft = next;
+    state.rafId = requestAnimationFrame(step);
+  };
+  fieldMarqueeStates.set(el, state);
+  state.rafId = requestAnimationFrame(step);
+}
+
+function updateFieldOverflowUX(el){
+  if(!(el instanceof HTMLElement)) return;
+  const overflow = fieldTextOverflows(el);
+  if(overflow){
+    const full = getFieldOverflowText(el);
+    if(full) el.setAttribute("title", full);
+  }else{
+    el.removeAttribute("title");
+  }
+  if(el instanceof HTMLInputElement && isMarqueeInput(el)){
+    if(overflow && String(el.value || "").trim() && document.activeElement !== el){
+      startFieldMarquee(el);
+    }else{
+      stopFieldMarquee(el);
+    }
+  }
+}
+
+function refreshFieldOverflowUX(root = document){
+  if(!root || !root.querySelectorAll) return;
+  root.querySelectorAll("input, select").forEach(el=> updateFieldOverflowUX(el));
+}
+
+function initFieldOverflowUX(){
+  const isTarget = (el)=> el instanceof HTMLInputElement || el instanceof HTMLSelectElement;
+  document.addEventListener("focusin", (event)=>{
+    const el = event.target;
+    if(isTarget(el)) stopFieldMarquee(el);
+  });
+  document.addEventListener("focusout", (event)=>{
+    const el = event.target;
+    if(isTarget(el)) updateFieldOverflowUX(el);
+  });
+  document.addEventListener("input", (event)=>{
+    const el = event.target;
+    if(isTarget(el)) updateFieldOverflowUX(el);
+  });
+  document.addEventListener("change", (event)=>{
+    const el = event.target;
+    if(isTarget(el)) updateFieldOverflowUX(el);
+  });
+  window.addEventListener("resize", ()=>{
+    refreshFieldOverflowUX(document);
+  });
+  refreshFieldOverflowUX(document);
+}
+
+function animateOpenCloseHeight(element, expand){
+  if(!element) return;
+  if(prefersReducedMotion()){
+    if(element.tagName && element.tagName.toLowerCase() === "details"){
+      element.open = !!expand;
+    }
+    return;
+  }
+  const startHeight = element.offsetHeight;
+  element.style.height = startHeight + "px";
+  element.style.overflow = "hidden";
+  element.classList.add("is-collapsing");
+  if(element.tagName && element.tagName.toLowerCase() === "details"){
+    element.open = !!expand;
+  }
+  const endHeight = element.scrollHeight;
+  requestAnimationFrame(()=>{
+    element.style.height = endHeight + "px";
+  });
+  const cleanup = ()=>{
+    element.classList.remove("is-collapsing");
+    element.style.height = "";
+    element.style.overflow = "";
+  };
+  const onEnd = (event)=>{
+    if(event && event.target !== element) return;
+    element.removeEventListener("transitionend", onEnd);
+    cleanup();
+  };
+  element.addEventListener("transitionend", onEnd);
+  setTimeout(()=>{
+    element.removeEventListener("transitionend", onEnd);
+    cleanup();
+  }, 320);
+}
+
+function initDetailsAnimation(){
+  document.querySelectorAll("details").forEach(details=>{
+    if(details.dataset.animReady === "1") return;
+    details.dataset.animReady = "1";
+    const summary = details.querySelector("summary");
+    if(!summary) return;
+    details.setAttribute("aria-expanded", details.open ? "true" : "false");
+    summary.addEventListener("click", (event)=>{
+      if(prefersReducedMotion()) return;
+      event.preventDefault();
+      const willOpen = !details.open;
+      animateOpenCloseHeight(details, willOpen);
+      details.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+    details.addEventListener("toggle", ()=>{
+      details.setAttribute("aria-expanded", details.open ? "true" : "false");
+    });
+  });
+}
+
+function initCustomCollapsibleAnimation(){
+  document.querySelectorAll("[data-collapsible]").forEach(root=>{
+    if(root.dataset.animReady === "1") return;
+    const toggle = root.querySelector("[data-collapsible-toggle]");
+    const body = root.querySelector("[data-collapsible-body]");
+    if(!toggle || !body) return;
+    root.dataset.animReady = "1";
+    const expandedByDefault = root.getAttribute("data-collapsible") !== "closed";
+    body.hidden = !expandedByDefault;
+    toggle.setAttribute("aria-expanded", expandedByDefault ? "true" : "false");
+    toggle.addEventListener("click", ()=>{
+      const willExpand = body.hidden;
+      if(prefersReducedMotion()){
+        body.hidden = !willExpand;
+        toggle.setAttribute("aria-expanded", willExpand ? "true" : "false");
+        return;
+      }
+      const startHeight = root.offsetHeight;
+      root.style.height = startHeight + "px";
+      root.style.overflow = "hidden";
+      root.classList.add("is-collapsing");
+      body.hidden = !willExpand;
+      toggle.setAttribute("aria-expanded", willExpand ? "true" : "false");
+      const endHeight = root.scrollHeight;
+      requestAnimationFrame(()=>{ root.style.height = endHeight + "px"; });
+      const cleanup = ()=>{
+        root.classList.remove("is-collapsing");
+        root.style.height = "";
+        root.style.overflow = "";
+      };
+      const onEnd = (event)=>{
+        if(event && event.target !== root) return;
+        root.removeEventListener("transitionend", onEnd);
+        cleanup();
+      };
+      root.addEventListener("transitionend", onEnd);
+      setTimeout(()=>{
+        root.removeEventListener("transitionend", onEnd);
+        cleanup();
+      }, 320);
+    });
+  });
 }
 
 const mainSearchState = {
@@ -4538,7 +6143,7 @@ function collectMainSearchResults(query, selectedGroup, langField, userField){
   for(const row of getLoadedSearchRows()){
     if(!isRowInSearchSelection(row, selectedGroup)) continue;
     const cachedField = row.__lc && row.__lc[langField] ? row.__lc[langField] : "";
-    const baseMatch = cachedField.includes(query);
+    const baseMatch = includesQuery(cachedField, query);
     const latinHeaderMatch = searchAllHeaders && matchAnyHeader(row, query);
     if(baseMatch || latinHeaderMatch){
       results.push({ kind: "base", row });
@@ -4553,7 +6158,7 @@ function collectMainSearchResults(query, selectedGroup, langField, userField){
     for(const trow of getLocalTerms()){
       const lc = ensureUserSearchLowercaseCache(trow) || {};
       const userValue = lc[userField] || "";
-      if(userValue.includes(query)){
+      if(includesQuery(userValue, query)){
         results.push({ kind: "user", row: trow });
         seenUser.add(trow);
         if(results.length >= SEARCH_MAX_RESULTS){
@@ -4577,7 +6182,7 @@ function collectMainSearchResults(query, selectedGroup, langField, userField){
     if(selectedGroup === "all"){
       for(const trow of getLocalTerms()){
         const lc = ensureUserSearchLowercaseCache(trow) || {};
-        const anyFieldMatch = USER_LC_SEARCH_FIELDS.some(field => (lc[field] || "").includes(query));
+        const anyFieldMatch = USER_LC_SEARCH_FIELDS.some(field => includesQuery(lc[field] || "", query));
         if(!seenUser.has(trow) && anyFieldMatch){
           results.push({ kind: "user", row: trow });
           seenUser.add(trow);
@@ -4700,41 +6305,37 @@ function populateSearchDatasetSelect(){
 /* === NEW: auth UI (cog always visible + header user) === */
 function updateAuthUI(){
   const cog = document.getElementById('settings-toggle');
-  const who = document.getElementById('header-whoami');
-  const whoUser = document.getElementById('header-user');
-  const accountBlock = document.getElementById('settings-account-block');
-  const loginBlock = document.getElementById('settings-login-block');
-  const accountUser = document.getElementById('current-user');
+  const headerLoginBtn = document.getElementById('header-login-google');
+  const headerAccount = document.getElementById('header-account');
+  const headerAccountName = document.getElementById('header-account-name');
 
   const loggedIn = !!state.currentUser;
+  const userLabel = String(state.currentUser || state.currentUserEmail || "Google user");
   if(loggedIn){
     if(cog) cog.classList.remove('hidden');
-    if(who) who.classList.remove('hidden');
-    if(whoUser) whoUser.textContent = state.currentUser;
-    if(accountBlock) accountBlock.classList.remove('hidden');
-    if(accountUser) accountUser.textContent = state.currentUser;
-    if(loginBlock) loginBlock.classList.add('hidden');
+    if(headerLoginBtn) headerLoginBtn.classList.add('hidden');
+    if(headerAccount) headerAccount.classList.remove('hidden');
+    if(headerAccountName) headerAccountName.textContent = userLabel;
   } else {
     if(cog) cog.classList.remove('hidden');
-    if(who) who.classList.add('hidden');
-    if(whoUser) whoUser.textContent = "Guest";
-    if(accountBlock) accountBlock.classList.add('hidden');
-    if(accountUser) accountUser.textContent = "(none)";
-    if(loginBlock) loginBlock.classList.remove('hidden');
+    if(headerAccount) headerAccount.classList.add('hidden');
+    if(headerAccountName) headerAccountName.textContent = "—";
+    if(headerLoginBtn) headerLoginBtn.classList.remove('hidden');
     // ensure settings is closed if user logs out
     const sidebar = document.getElementById('settings-sidebar');
     const overlay = document.getElementById('settings-overlay');
     if(sidebar) sidebar.classList.remove('open');
     if(overlay) overlay.classList.remove('open');
   }
+  refreshStorageSyncUI();
+  updateHeaderNavUI();
 }
 
 async function logoutToLogin(){
   await signOutGoogleDrive();
-  const cu = document.getElementById('current-user');
-  if(cu) cu.textContent = "(none)";
   updateAuthUI();
-  showScreen('screen-menu');
+  navStack = [];
+  showScreen('screen-menu', { skipNavStack: true });
 }
 
 function initialScreenForSection(section){
@@ -4749,6 +6350,10 @@ function initialScreenForSection(section){
 async function init(){
   // Optional: refresh base CSV cache (static assets in this build)
   try{ await refreshBaseFilesCache(); }catch(e){ console.warn('Base CSV refresh skipped:', e); }
+  applyTheme(localStorage.getItem(APP_THEME_KEY) || "light", { persist: false });
+  syncLayoutMetrics();
+  window.addEventListener("resize", syncLayoutMetrics);
+  window.addEventListener("orientationchange", syncLayoutMetrics);
   try{
     await appStorage.init();
     await migrateLegacyFlashcardData();
@@ -4759,6 +6364,21 @@ async function init(){
 
   // Apply language instantly (no reload needed)
   await setLanguage(state.language);
+  initScreenStates();
+  initButtonRipples();
+  initFieldOverflowUX();
+  initDetailsAnimation();
+  initCustomCollapsibleAnimation();
+  await initAttachmentsFeature();
+  const entryCategorySelect = document.getElementById("entry-category");
+  const entrySourceSelect = document.getElementById("entry-source");
+  if(entryCategorySelect){
+    entryCategorySelect.addEventListener("change", async ()=>{ await renderEntryCategoryFields(); });
+  }
+  if(entrySourceSelect){
+    entrySourceSelect.addEventListener("change", async ()=>{ await renderEntryCategoryFields(); });
+  }
+  await renderEntryCategoryFields();
 
   // Settings sidebar handling
   const settingsBtn = document.getElementById('settings-toggle');
@@ -4785,15 +6405,91 @@ async function init(){
   if(settingsBtn) settingsBtn.addEventListener('click', toggleSettings);
   if(overlay) overlay.addEventListener('click', closeSettings);
   if(settingsClose) settingsClose.addEventListener('click', closeSettings);
+  const headerBackBtn = document.getElementById('header-back');
+  if(headerBackBtn){
+    headerBackBtn.addEventListener('click', ()=> goHeaderBack());
+  }
+  const headerGoogleBtn = document.getElementById('header-login-google');
+  if(headerGoogleBtn){
+    headerGoogleBtn.addEventListener('click', ()=>{
+      requestGoogleAccessTokenFromClick();
+    });
+  }
+  const headerLogoutBtn = document.getElementById('header-logout');
+  if(headerLogoutBtn){
+    headerLogoutBtn.addEventListener('click', async ()=>{ await logoutToLogin(); });
+  }
+
+  function syncMenuLanguageSelection(lang){
+    const canonical = normalizeLanguage(lang || state.language);
+    document.querySelectorAll('#screen-menu .lang-btn[data-lang]').forEach(btn=>{
+      const btnLang = normalizeLanguage(btn.getAttribute('data-lang'));
+      btn.classList.toggle('is-selected', btnLang === canonical);
+    });
+  }
+
+  function setFeedbackStatus(message, isError){
+    const status = document.getElementById("feedback-status");
+    if(!status) return;
+    status.textContent = String(message || "");
+    status.style.color = isError ? "#ffd6d6" : "rgba(255,255,255,.9)";
+  }
+
+  function prefillFeedbackContact(){
+    const contactEl = document.getElementById("feedback-contact");
+    if(contactEl && state.currentUserEmail && !String(contactEl.value || "").trim()){
+      contactEl.value = String(state.currentUserEmail);
+    }
+  }
+
+  function initFeedbackForm(){
+    const form = document.getElementById("feedback-form");
+    if(!form) return;
+    const categoryEl = document.getElementById("feedback-type");
+    const messageEl = document.getElementById("feedback-message");
+    prefillFeedbackContact();
+    form.addEventListener("submit", (event)=>{
+      event.preventDefault();
+      const contactEl = document.getElementById("feedback-contact");
+      const category = String(categoryEl && categoryEl.value || "General feedback").trim();
+      const contact = String(contactEl && contactEl.value || "").trim();
+      const message = String(messageEl && messageEl.value || "").trim();
+      if(!message){
+        setFeedbackStatus(tOr("feedback_write_message_before_send", "Please write a message before sending."), true);
+        if(messageEl) messageEl.focus();
+        return;
+      }
+      const subject = `Medical Dictionary - ${category}`;
+      const bodyLines = [
+        `Category: ${category}`,
+        `Contact email: ${contact || state.currentUserEmail || "not provided"}`,
+        `Language: ${normalizeLanguage(state.language)}`,
+        `Date: ${new Date().toISOString()}`,
+        "",
+        "Message:",
+        message
+      ];
+      const mailto = `mailto:medicaldictionaryjlf@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+      window.location.href = mailto;
+      setFeedbackStatus(tOr("feedback_opening_mail_app", "Opening your mail app..."), false);
+    });
+  }
 
   // Hero language buttons
   document.querySelectorAll('.lang-btn').forEach(btn=>{
     btn.addEventListener('click', async (e)=>{
       e.preventDefault();
       const lang = btn.getAttribute('data-lang');
+      if(btn.closest('#screen-menu')){
+        document.querySelectorAll('#screen-menu .lang-btn').forEach(x=>x.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+      }
       await setLanguage(lang);
+      syncMenuLanguageSelection(lang);
     });
   });
+  syncMenuLanguageSelection(state.language);
+  initFeedbackForm();
 
   // Text size selection (7 steps)
   const sizeSlider = document.getElementById('text-size-slider');
@@ -4803,9 +6499,17 @@ async function init(){
     sizeSlider.value = savedSize;
     sizeSlider.addEventListener('input', ()=> applyTextSize(sizeSlider.value));
   }
+  const themeLightBtn = document.getElementById("theme-light");
+  const themeDarkBtn = document.getElementById("theme-dark");
+  refreshThemeButtons();
+  if(themeLightBtn){
+    themeLightBtn.addEventListener("click", ()=> applyTheme("light", { persist: true }));
+  }
+  if(themeDarkBtn){
+    themeDarkBtn.addEventListener("click", ()=> applyTheme("dark", { persist: true }));
+  }
 
   wireGoogleBtnOnce();
-  wireSettingsGoogleBtnOnce();
 
   function openGuestModal(){
     const ov = document.getElementById('guest-overlay');
@@ -4817,6 +6521,11 @@ async function init(){
   }
 
   on('continue-guest','click', ()=> openGuestModal());
+  on('settings-feedback-open','click', ()=>{
+    closeSettings();
+    prefillFeedbackContact();
+    showScreen('screen-feedback');
+  });
   on('guest-back','click', ()=> closeGuestModal());
   on('guest-continue','click', ()=>{
     closeGuestModal();
@@ -4849,25 +6558,33 @@ async function init(){
   });
   on('to-quiz','click', async ()=> {
     showScreen('screen-quiz');
+    setQuizSetupCollapsed(false);
     await ensureMedicalDatasetsLoaded(ALL_SEARCH_DATASET_KEYS);
     await ensureFlashcardsV2DataLoaded();
     renderQuizGeneratorUi();
     refreshQuizBuilderUI();
   });
+  on('to-biophysics-tf','click', async ()=> {
+    showScreen('screen-biophysics-tf');
+    await ensureBiophysicsTfLoaded();
+    startBiophysicsTfSession();
+  });
   on('to-flashcards','click', async ()=> {
     showScreen('screen-flashcards');
+    setFlashcardsBuilderCollapsed(false);
     await ensureMedicalDatasetsLoaded(ALL_SEARCH_DATASET_KEYS);
     refreshFlashcardsSession();
     await ensureFlashcardsV2DataLoaded();
     refreshFlashcardsBuilderUI();
   });
-  on('to-muscle-training','click', ()=> { showScreen('screen-muscle-training'); });
+  on('to-muscle-training','click', ()=> {
+    showScreen('screen-muscle-training');
+    setMuscleQuizSetupCollapsed(false);
+  });
   on('to-anamnesis','click', async ()=> {
     showScreen('screen-anamnesis');
     await setAnamnesisTab("internal", { load: true });
   });
-  on('to-menu','click', ()=> { showScreen('screen-menu'); });
-  on('to-login-from-settings','click', async ()=> { await logoutToLogin(); });
 
   const searchInput = document.getElementById('search-input');
   const resultsDiv = document.getElementById('search-results');
@@ -4942,7 +6659,6 @@ async function init(){
   on('muscle-quiz-start','click', ()=> startMuscleQuiz());
   on('muscle-quiz-reveal','click', ()=>{ muscleQuizRevealed = true; renderMuscleQuizFields(); });
   on('muscle-quiz-next','click', ()=> showNextMuscle());
-  on('muscle-training-back','click', ()=> showScreen('screen-submenu'));
 
   const latinSearchInput = document.getElementById('latin-search-input');
   if(latinSearchInput){
@@ -4965,7 +6681,6 @@ async function init(){
   on('latin-quiz-start','click', ()=> startLatinQuiz());
   on('latin-quiz-reveal','click', ()=>{ latinQuizRevealed = true; renderLatinQuizFields(); });
   on('latin-quiz-next','click', ()=> showNextLatinTerm());
-  on('latin-terminology-back','click', ()=> showScreen('screen-submenu'));
 
   const anamForm = document.getElementById('anamnesis-form');
   if(anamForm){
@@ -5072,7 +6787,6 @@ async function init(){
       clearAnamnesisForm();
     }
   });
-  on('anamnesis-back','click', ()=> showScreen('screen-submenu'));
 
   if(datasetSelect && searchInput){
     datasetSelect.addEventListener('change', ()=>{
@@ -5090,24 +6804,54 @@ async function init(){
     searchInput.addEventListener('input', debounceMainSearch);
   }
 
-  on('search-back','click', ()=> showScreen('screen-submenu'));
-  on('lab-parameters-back','click', ()=> showScreen('screen-submenu'));
 
   on('save-term','click', async ()=>{
-    const fields = [...document.querySelectorAll('#entry-fields [data-field]')];
-    const raw = {};
-    for(const el of fields) raw[el.dataset.field] = el.value.trim();
+    const fields = [...document.querySelectorAll('#entry-dynamic-fields [data-entry-col]')];
+    const rowValues = {};
+    for(const el of fields){
+      const key = String(el.getAttribute("data-entry-col") || "").trim();
+      if(!key) continue;
+      rowValues[key] = String(el.value || "").trim();
+    }
+    const category = getEntryCategory();
+    const sourceDataset = getEntrySelectedDatasetKey();
+    const adapter = getDatasetAdapterByKey(sourceDataset);
+    const pickFromAliases = (aliases)=>{
+      const list = Array.isArray(aliases) ? aliases : [aliases];
+      for(const col of list){
+        const key = String(col || "").trim();
+        if(!key) continue;
+        const value = String(rowValues[key] || "").trim();
+        if(value) return value;
+      }
+      return "";
+    };
+    const english = pickFromAliases(adapter && adapter.columns ? adapter.columns.en : []);
+    const german = pickFromAliases(adapter && adapter.columns ? adapter.columns.de : []);
+    const slovak = pickFromAliases(adapter && adapter.columns ? adapter.columns.sk : []);
+    const latin = pickFromAliases(adapter && adapter.columns ? adapter.columns.la : []);
+    const defText = pickFromAliases(adapter && adapter.columns ? adapter.columns.definition : []);
+    const notesText = pickFromAliases(adapter && adapter.columns ? adapter.columns.notes : []);
+    const notesWithCategory = [defText, notesText].filter(Boolean).join("\n\n");
+    const hasAnyValue = Object.values(rowValues).some(v => !!String(v || "").trim());
+    if(!hasAnyValue){
+      const em = document.getElementById('entry-msg');
+      if(em) em.textContent = "Fill at least one field before saving.";
+      return;
+    }
 
     const term = {
       id: (typeof crypto !== "undefined" && crypto && typeof crypto.randomUUID === "function")
         ? `term:${crypto.randomUUID()}`
         : `term:${Date.now().toString(16)}${Math.random().toString(16).slice(2)}`,
-      english: raw.english_translation || "",
-      german: raw.german_translation || "",
-      latin: raw.latin_translation || "",
-      slovak: raw.slovak_translation || "",
-      notes: raw.english_definition || raw.german_definition || "",
-      source_dataset: "manual_entry",
+      english,
+      german,
+      latin,
+      slovak,
+      notes: notesWithCategory,
+      source_dataset: sourceDataset || category,
+      category,
+      category_fields: rowValues,
       created_at: nowIso(),
       updated_at: nowIso()
     };
@@ -5127,22 +6871,40 @@ async function init(){
         ? ((t('Term saved successfully!') || 'Term saved successfully!') + ' (Google Drive)')
         : ((t('Term saved successfully!') || 'Term saved successfully!') + ' (guest)');
     }
-    fields.forEach(f=>f.value='');
+    fields.forEach(f=>{ f.value=''; });
+    await renderEntryCategoryFields();
   });
 
-  on('entry-back','click', ()=> showScreen('screen-submenu'));
   on('start-quiz','click', ()=> startQuiz());
   on('end-quiz','click', ()=> {
     quizEngine.finishQuiz();
+    setQuizSetupCollapsed(false);
     renderQuizUI();
     saveUserProfileNow("quiz_end");
   });
-  on('quiz-back','click', ()=> showScreen('screen-submenu'));
+  on('quiz-settings-toggle','click', ()=> setQuizSetupCollapsed(false));
+  on('flashcards-builder-toggle','click', ()=> setFlashcardsBuilderCollapsed(false));
+  on('muscle-quiz-settings-toggle','click', ()=> setMuscleQuizSetupCollapsed(false));
+  on('biophysics-answer-true','click', ()=> answerBiophysicsTf(true));
+  on('biophysics-answer-false','click', ()=> answerBiophysicsTf(false));
+  on('biophysics-tf-next','click', ()=> nextBiophysicsTfQuestion());
+  on('biophysics-tf-restart','click', async ()=> {
+    if(!confirm("Do you really want to restart this session?")) return;
+    await ensureBiophysicsTfLoaded();
+    startBiophysicsTfSession();
+  });
+  const biophysicsAutoNext = document.getElementById('biophysics-tf-auto-next');
+  if(biophysicsAutoNext){
+    biophysicsAutoNext.checked = getBiophysicsTfAutoNextEnabled();
+    biophysicsAutoNext.addEventListener('change', ()=>{
+      setBiophysicsTfAutoNextEnabled(!!biophysicsAutoNext.checked);
+    });
+  }
   if(document.getElementById('flashcard-back')){
     on('flashcard-back','click', ()=> showScreen('screen-submenu'));
   }
-  on('flashcards-back','click', ()=> showScreen('screen-submenu'));
   document.addEventListener('keydown', handleQuizKeyboardShortcuts);
+  document.addEventListener('keydown', handleBiophysicsTfKeyboard);
 
   updateAuthUI();
   refreshLabParametersUI();
@@ -5160,7 +6922,7 @@ async function init(){
     (savedSession && document.getElementById(savedSession)) ? savedSession :
     "screen-menu";
 
-  showScreen(start, { replaceHistory: true });
+  showScreen(start, { replaceHistory: true, skipNavStack: true });
   if(start === "screen-anamnesis") loadAnamnesisForm();
   if(start === "screen-search"){
     const ds = document.getElementById('search-dataset');
@@ -5181,6 +6943,10 @@ async function init(){
     await ensureFlashcardsV2DataLoaded();
     renderQuizGeneratorUi();
     refreshQuizBuilderUI();
+  }
+  if(start === "screen-biophysics-tf"){
+    await ensureBiophysicsTfLoaded();
+    startBiophysicsTfSession();
   }
   if(start === "screen-flashcards"){
     await ensureMedicalDatasetsLoaded(ALL_SEARCH_DATASET_KEYS);
@@ -5343,7 +7109,7 @@ function renderQuizBuilderDomainUi(){
 
   domainsEl.innerHTML = flashcardsV2State.adapters.map(adapter => {
     const checked = adapter.key === quizBuilderDomainKey ? " checked" : "";
-    return `<label class="checkbox-item"><input type="radio" name="qb-domain" data-qb-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(adapter.label)}</label>`;
+    return `<label class="checkbox-item"><input type="radio" name="qb-domain" data-qb-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
 
   const adapter = flashcardsV2State.adapterByKey.get(quizBuilderDomainKey);
@@ -5372,7 +7138,7 @@ function renderQuizBuilderDomainUi(){
           })
         : domainRows;
       const opts2 = getSubdivisionOptions(adapter, cfg.level2.key, rows2);
-      sub2Sel.innerHTML = ['<option value="">All</option>', ...opts2.map(v => `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`)].join("");
+      sub2Sel.innerHTML = [`<option value="">${escapeHTML(tOr("any", "Any"))}</option>`, ...opts2.map(v => `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`)].join("");
       if(opts2.includes(quizBuilderSubdivision2)) sub2Sel.value = quizBuilderSubdivision2;
       else { quizBuilderSubdivision2 = ""; sub2Sel.value = ""; }
     } else {
@@ -6591,7 +8357,7 @@ function renderQuizSummary(quizState){
     : wrong.map(item => `
       <div class="quiz-wrong-item">
         <div><strong>${escapeHTML(item.fromTerm || '')}</strong></div>
-        <div class="small">${escapeHTML(tOr('quiz_correct_label', 'Correct'))}: ${escapeHTML(item.correctToTerm || '')}</div>
+        <div class="small">${escapeHTML(tOr('correct', 'Correct'))}: ${escapeHTML(item.correctToTerm || '')}</div>
         <div class="small">${escapeHTML(tOr('quiz_chosen_label', 'Chosen'))}: ${escapeHTML(item.userChosen || '')}</div>
         <div class="small">${escapeHTML(item.timestamp || '')}</div>
       </div>
@@ -6665,7 +8431,7 @@ function renderQuizQuestion(quizState){
   }
   if(q.type === "matching"){
     const rowsHtml = q.pairs.map((pair, idx)=>{
-      const wrongWithCorrect = `${tOr('wrong', 'Wrong')} (${tOr('quiz_correct_label', 'Correct')}: ${pair.correctToTerm})`;
+      const wrongWithCorrect = `${tOr('wrong', 'Wrong')} (${tOr('correct', 'Correct')}: ${pair.correctToTerm})`;
       const status = !q.answered ? '' : (pair.isCorrect
         ? `<span class="quiz-feedback ok">${escapeHTML(tOr('correct', 'Correct'))}</span>`
         : `<span class="quiz-feedback bad">${escapeHTML(wrongWithCorrect)}</span>`);
@@ -6913,7 +8679,7 @@ function renderQuizGeneratorUi(){
 
   domainsEl.innerHTML = flashcardsV2State.adapters.map(adapter => {
     const checked = adapter.key === quizGeneratorDomainKey ? " checked" : "";
-    return `<label class="checkbox-item"><input type="radio" name="quiz-domain" data-quiz-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(adapter.label)}</label>`;
+    return `<label class="checkbox-item"><input type="radio" name="quiz-domain" data-quiz-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
 
   const adapter = flashcardsV2State.adapterByKey.get(quizGeneratorDomainKey);
@@ -7029,6 +8795,18 @@ function initQuizGeneratorUI(){
   });
 }
 
+function setQuizSetupCollapsed(collapsed){
+  const setup = document.getElementById("quiz-setup-panel");
+  const toggleBtn = document.getElementById("quiz-settings-toggle");
+  if(setup) setup.classList.toggle("hidden", !!collapsed);
+  if(toggleBtn){
+    toggleBtn.classList.toggle("hidden", !collapsed);
+    toggleBtn.textContent = collapsed
+      ? tOr("quiz_settings_show", "Show quiz settings")
+      : tOr("quiz_settings_hide", "Hide quiz settings");
+  }
+}
+
 function startQuiz({ retryItems = null, configOverrides = null } = {}){
   const area = document.getElementById('quiz-area');
   if(area) area.innerHTML = '';
@@ -7052,6 +8830,7 @@ function startQuiz({ retryItems = null, configOverrides = null } = {}){
     return;
   }
   renderQuizUI();
+  setQuizSetupCollapsed(true);
 }
 
 function handleQuizKeyboardShortcuts(event){
@@ -9106,7 +10885,7 @@ function renderFlashcardsDomains(){
   const current = flashcardsV2State.query.domains[0] || (flashcardsV2State.adapters[0] && flashcardsV2State.adapters[0].key) || "";
   root.innerHTML = flashcardsV2State.adapters.map(adapter => {
     const checked = adapter.key === current ? " checked" : "";
-    return `<label class="checkbox-item"><input type="radio" name="flashcards-domain" data-domain-key="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(adapter.label)}</label>`;
+    return `<label class="checkbox-item"><input type="radio" name="flashcards-domain" data-domain-key="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
   flashcardsV2State.query.domains = current ? [current] : [];
 }
@@ -9120,7 +10899,7 @@ function getFieldOptionsForDomains(domainKeys){
     for(const field of (adapter.fieldCatalog || [])){
       const hit = byKey.get(field.key);
       if(hit) hit.domains.add(domainKey);
-      else byKey.set(field.key, { key: field.key, label: field.label, domains: new Set([domainKey]) });
+      else byKey.set(field.key, { key: field.key, label: localizeFlashcardsFieldLabel(field.key, field.label), domains: new Set([domainKey]) });
     }
   }
   return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));
@@ -9130,20 +10909,20 @@ function getFlashcardsSubdivisionConfig(adapter){
   if(!adapter) return null;
   if(adapter.key === "latin_units"){
     return {
-      level1: { key: "unit_name", label: "Unit" },
+      level1: { key: "unit_name", label: tOr("field_unit_name", "Unit") },
       level2: null
     };
   }
   if(adapter.key === "pharmacology"){
     return {
-      level1: { key: "drug_class", label: "Drug class" },
-      level2: { key: "subclass", label: "Subclass" }
+      level1: { key: "drug_class", label: tOr("field_drug_class", "Drug class") },
+      level2: { key: "subclass", label: tOr("field_subclass", "Subclass") }
     };
   }
   if(adapter.key === "muscles"){
     return {
-      level1: { key: "region", label: "Region" },
-      level2: { key: "category", label: "Category" }
+      level1: { key: "region", label: tOr("muscle_search_region", "Region") },
+      level2: { key: "category", label: tOr("muscle_search_category", "Category") }
     };
   }
   return null;
@@ -9211,7 +10990,7 @@ function refreshFlashcardsBuilderUI(msgText = ""){
     flashcardsV2State.query.subdivision2 = "";
   } else {
     subdivisionWrap.classList.remove("hidden");
-    subdivision1Label.textContent = cfg.level1 ? cfg.level1.label : tOr("flashcards_subdivision", "Subdivision");
+    subdivision1Label.textContent = cfg.level1 ? cfg.level1.label : tOr("quiz_subdivision", "Subdivision");
     const level1Options = cfg.level1 ? getSubdivisionOptions(adapter, cfg.level1.key, domainRows) : [];
     subdivision1Sel.innerHTML = [`<option value="">${escapeHTML(tOr("any", "Any"))}</option>`, ...level1Options.map(v => `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`)].join("");
     if(level1Options.includes(flashcardsV2State.query.subdivision1)) subdivision1Sel.value = flashcardsV2State.query.subdivision1;
@@ -9263,7 +11042,7 @@ function refreshFlashcardsBuilderUI(msgText = ""){
   onlySel.value = flashcardsV2State.query.only;
   limitSel.value = String(flashcardsV2State.query.limit || 20);
   const selectedAdapter = flashcardsV2State.adapterByKey.get(flashcardsV2State.query.domains[0] || "");
-  const selectedDomainLabel = selectedAdapter ? selectedAdapter.label : "-";
+  const selectedDomainLabel = selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : "-";
   const base = `${tOr("flashcards_loaded_terms", "Loaded terms")}: ${flashcardsV2State.allTerms.length} | ${tOr("flashcards_selected_domain", "Selected domain")}: ${selectedDomainLabel}`;
   msg.textContent = msgText ? `${msgText} | ${base}` : base;
 }
@@ -9341,6 +11120,18 @@ function startFlashcardsSession(deck){
   renderFlashcardsPlayer();
 }
 
+function setFlashcardsBuilderCollapsed(collapsed){
+  const builderCard = document.getElementById("flashcards-builder-card");
+  const toggleBtn = document.getElementById("flashcards-builder-toggle");
+  if(builderCard) builderCard.classList.toggle("hidden", !!collapsed);
+  if(toggleBtn){
+    toggleBtn.classList.toggle("hidden", !collapsed);
+    toggleBtn.textContent = collapsed
+      ? tOr("flashcards_builder_show", "Show builder settings")
+      : tOr("flashcards_builder_hide", "Hide builder settings");
+  }
+}
+
 function generateFlashcardsSession(){
   const msg = document.getElementById("flashcards-builder-msg");
   const subdivision1Sel = document.getElementById("flashcards-subdivision1");
@@ -9389,6 +11180,7 @@ function generateFlashcardsSession(){
   });
   msg.textContent = `${tOr("flashcards_generated_cards", "Generated")} ${deck.length} ${tOr("flashcards_cards_suffix", "card(s).")}`;
   startFlashcardsSession(deck);
+  if(deck.length > 0) setFlashcardsBuilderCollapsed(true);
 }
 
 function handleFlashcardsRating(rating){
@@ -9488,18 +11280,9 @@ function initFlashcardsV2(){
   easyBtn.addEventListener("click", ()=> handleFlashcardsRating("easy"));
 }
 
-/*
-How to use (Lab parameters taxonomy):
-- Expected CSV header includes existing fields and optional "tags" column:
-  id,english_term,german_term,slovak_term,abbreviation,system,...,notes,tags
-- tags format: semicolon-separated text, e.g. ICU;Sepsis;Shock;Emergency
-- tags are optional; missing/empty tags are treated as no tags
-- system is optional; missing/empty system defaults to "Uncategorized"
-*/
-
 window.addEventListener('hashchange', ()=>{
   const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-  if(id && document.getElementById(id)) showScreen(id, { updateHistory: false });
+  if(id && document.getElementById(id)) showScreen(id, { updateHistory: false, skipNavStack: true });
 });
 
 window.addEventListener('DOMContentLoaded', ()=>{ init(); });
