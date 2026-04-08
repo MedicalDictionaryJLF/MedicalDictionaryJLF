@@ -1,0 +1,342 @@
+id_anamnesis,english_translation,slovak_translation
+ped_anamnesis,Anamnesis - Pediatrics,Anamnéza - Pediatria
+ped_n_1_identification,1. Identification,1. Identifikácia
+ped_full_name,Full name,Celé meno
+ped_date_of_birth,Date of birth,Dátum narodenia
+ped_age,Age,Vek
+ped_sex,Sex,Pohlavie
+ped_male,Male,Muž
+ped_female,Female,Žena
+ped_address_city,Address (City),Adresa (Mesto)
+ped_n_2_chief_complaint,2. Chief Complaint,2. Hlavná ťažkosť
+ped_admitted_on,Admitted on (date/time),Prijatý dňa (dátum/čas)
+ped_main_reason_for_admission,Main reason for admission (caregiver's / patient's words),Hlavný dôvod prijatia (slovami rodiča alebo dieťaťa)
+ped_n_3_hpi,3. History of Present Illness (SOCRATES),3. Anamnéza súčasného ochorenia (SOCRATES)
+ped_site_system_involved,Site / System involved,Miesto / postihnutý systém
+ped_onset_when_doing_what,Onset (When? Doing what?),Začiatok (Kedy? Pri akej činnosti?)
+ped_timing_how_often,Timing (How often?),Trvanie / Ako často
+ped_exacerbating_factors,Exacerbating factors,Zhoršujúce faktory
+ped_relieving_factors,Relieving factors,Zmierňujúce faktory
+ped_radiation_spread,Radiation / Spread,Vyžarovanie / šírenie
+ped_character_nature,Character / Nature of symptom,Charakter / povaha symptómu
+ped_mild,Mild,Mierny
+ped_moderate,Moderate,Stredný
+ped_severe,Severe,Ťažký
+ped_progressive,Progressive,Progresívny
+ped_episodic,Episodic,Epizodický
+ped_fluctuating,Fluctuating,Kolísavý
+ped_other,Other,Iné
+ped_associated_symptoms,Associated symptoms,Pridružené príznaky
+ped_fever,Fever,Horúčka
+ped_fatigue,Fatigue,Únava
+ped_irritability,Irritability,Podráždenosť
+ped_poor_feeding,Poor feeding,Zlé prijímanie potravy
+ped_cough,Cough,Kašeľ
+ped_gi_symptoms,GI symptoms,Gastrointestinálne príznaky
+ped_rash,Rash,Vyrážka
+ped_sleep_changes,Sleep changes,Zmeny spánku
+ped_behavioral_changes,Behavioral changes,Zmeny správania
+ped_school_issues,School issues,Problémy v škole
+ped_severity_impact,Severity / impact on functioning,Závažnosť / vplyv na fungovanie
+ped_minimal,Minimal,Minimálny
+ped_significant,Significant,Výrazný
+ped_interferes_sleep,Interferes with sleep,Narúša spánok
+ped_interferes_feeding,Interferes with feeding,Narúša príjem potravy
+ped_interferes_school_play,Interferes with school / play,Narúša školu / hru
+ped_severity,Severity,Závažnosť
+ped_progression_since_onset,Progression since onset,Vývoj od začiatku
+ped_improving,Improving,Zlepšuje sa
+ped_worsening,Worsening,Zhoršuje sa
+ped_unchanged,Unchanged,Bez zmeny
+ped_recurrent,Recurrent,Opakovane
+ped_notes,Notes,Poznámky
+ped_n_4_ros,4. Review of Systems,4. Prehľad systémov
+ped_general,General,Všeobecné
+ped_weight_loss,Weight loss,Úbytok hmotnosti
+ped_poor_appetite,Poor appetite,Zlý apetít
+ped_night_sweats,Night sweats,Nočné potenie
+ped_head_and_neck,Head and Neck,Hlava a krk
+ped_head_and_neck_notes,Head and Neck notes,Poznámky k hlave a krku
+ped_heent,"Head, Eyes, Ears, Nose, and Throat","Hlava, oči, uši, nos a hrdlo"
+ped_headache,Headache,Bolesť hlavy
+ped_vision_issues,Vision issues,Problémy so zrakom
+ped_ear_pain,Ear pain,Bolesť ucha
+ped_nosebleeds,Nosebleeds,Krvácanie z nosa
+ped_sore_throat,Sore throat,Bolesť hrdla
+ped_cardiac,Cardiac,Kardiálne
+ped_murmur,Murmur,Šelest
+ped_cyanosis,Cyanosis,Cyanóza
+ped_poor_exercise_tolerance,Poor exercise tolerance,Zlá tolerancia záťaže
+ped_respiratory,Respiratory,Respiračné
+ped_wheezing,Wheezing,Pískoty
+ped_dyspnea,Dyspnea,Dýchavica
+ped_gastrointestinal,Gastrointestinal,Gastrointestinálne
+ped_vomiting,Vomiting,Zvracanie
+ped_diarrhea,Diarrhea,Hnačka
+ped_constipation,Constipation,Zápcha
+ped_blood_in_stool,Blood in stool,Krv v stolici
+ped_gu,GU,Urogenitálne
+ped_dysuria,Dysuria,Dyzúria
+ped_frequency,Frequency,Časté močenie
+ped_bedwetting,Bedwetting,Pomočovanie
+ped_skin,Skin,Koža
+ped_rashes,Rashes,Vyrážky
+ped_eczema,Eczema,Ekzém
+ped_allergies,Allergies,Alergie
+ped_neuro,Neuro,Neurologické
+ped_seizures,Seizures,Kŕčové stavy
+ped_dizziness,Dizziness,Závraty
+ped_fainting,Fainting,Odpadnutie
+ped_n_5_prenatal,5. Prenatal History,5. Prenatálna anamnéza
+ped_planned_pregnancy,Planned pregnancy,Plánované tehotenstvo
+ped_regular_prenatal_care,Regular prenatal care,Pravidelná prenatálna starostlivosť
+ped_bleeding_spotting,Bleeding / spotting,Krvácanie / špinenie
+ped_rubella_during_pregnancy,Rubella during pregnancy,Rubeola počas tehotenstva
+ped_gestational_diabetes,Gestational diabetes,Gestačný diabetes
+ped_hypertension_preeclampsia,Hypertension / preeclampsia,Hypertenzia / preeklampsia
+ped_kidney_disease,Kidney disease,Ochorenie obličiek
+ped_premature_contractions,Premature contractions,Predčasné kontrakcie
+ped_threatened_miscarriage,Threatened miscarriage,Hroziaci potrat
+ped_drugs_alcohol_smoking,Drugs / alcohol / smoking,Lieky / alkohol / fajčenie
+ped_medications_herbs_used,Medications / herbs used,Užívané lieky / byliny
+ped_fertility_treatment,Fertility treatment,Liečba neplodnosti
+ped_question,Question,Otázka
+ped_yes,Yes,Áno
+ped_no,No,Nie
+ped_longer_hospital_stay_if_yes_how_long,Longer hospital stay if yes, how long,Dlhšia hospitalizácia ak áno, ako dlho
+ped_n_6_birth_neonatal,6. Birth & Neonatal History,6. Pôrodná a novorodenecká anamnéza
+ped_place_of_birth,Place of birth,Miesto narodenia
+ped_gestational_week_at_birth,Gestational week at birth,Gestačný týždeň pri pôrode
+ped_duration_of_labor,Duration of labor,Trvanie pôrodu
+ped_birth_weight,Birth weight,Pôrodná hmotnosť
+ped_apgar_1,Apgar 1 min,Apgar 1 min
+ped_apgar_5,Apgar 5 min,Apgar 5 min
+ped_apgar_10,Apgar 10 min,Apgar 10 min
+ped_longer_hospital_stay,"Longer hospital stay? If yes, how long?","Dlhšia hospitalizácia? Ak áno ako dlho?""
+ped_gestational_age,Gestational age,Gestačný vek
+ped_preterm,Preterm,Predčasné
+ped_term,Term,Termínové
+ped_post_term,Post-term,Prenášané
+ped_labor_induced,Labor induced,Indukovaný pôrod
+ped_reason,Reason,Dôvod
+ped_assisted_delivery,Assisted delivery,Asistovaný pôrod
+ped_forceps,Forceps,Forceps
+ped_vacuum,Vacuum,Vákuum
+ped_caesarean,Caesarean,Cisársky rez
+ped_resuscitation,Resuscitation,Resuscitácia
+ped_nicu_admission,NICU admission,Príjem na JIS novorodencov
+ped_neonatal_problems,Neonatal problems,Novorodenecké komplikácie
+ped_jaundice,Jaundice,Žltačka
+ped_infection,Infection,Infekcia
+ped_respiratory_distress,Respiratory distress,Dychová tieseň
+ped_feeding,Feeding,Výživa
+ped_breast,Breast,Dojčenie
+ped_formula,Formula,Umelá výživa
+ped_mixed,Mixed,Kombinovaná
+ped_formula_name,Formula name,Názov formuly
+ped_n_7_developmental,7. Developmental History,7. Vývinová anamnéza
+ped_head_control_age,Head control age achieved,Vek dosiahnutia držania hlavy
+ped_first_words_age,First words age achieved,Vek prvých slov
+ped_rolling_age,Rolling age achieved,Vek otáčania
+ped_sentences_age,Sentences age achieved,Vek tvorby viet
+ped_sitting_age,Sitting age achieved,Vek sedenia
+ped_walking_age,Walking age achieved,Vek chôdze
+ped_standing_age,Standing age achieved,Vek státia
+ped_additional_development,Additional Development,Ďalší vývin
+ped_learning_difficulties,Learning difficulties,Problémy s učením
+ped_attention_problems,Attention problems,Problémy s pozornosťou
+ped_hyperactivity,Hyperactivity,Hyperaktivita
+ped_behavioral_problems,Behavioral problems,Problémy v správaní
+ped_n_8_immunization,8. Immunization History,8. Očkovacia anamnéza
+ped_vaccine_immunization,Vaccine / Immunization,Vakcína / Očkovanie
+ped_recommended_age,Recommended age,Odporúčaný vek
+ped_date_given,Date given,Dátum podania
+ped_given,Given,Podané
+ped_notes_reaction,Notes / Reaction,Poznámky / Reakcia
+ped_hexa_1,Hexavalent vaccine - 1st dose,Hexavalentná vakcína - 1. dávka
+ped_hexa_2,Hexavalent vaccine - 2nd dose,Hexavalentná vakcína - 2. dávka
+ped_hexa_3,Hexavalent vaccine - 3rd dose,Hexavalentná vakcína - 3. dávka
+ped_pcv_1,PCV - 1st dose,PCV - 1. dávka
+ped_pcv_2,PCV - 2nd dose,PCV - 2. dávka
+ped_pcv_3,PCV - 3rd dose,PCV - 3. dávka
+ped_mmr_1,MMR - 1st dose,MMR - 1. dávka
+ped_mmr_2,MMR - 2nd dose,MMR - 2. dávka
+ped_dtap_ipv_1,Booster DTaP-IPV,Preočkovanie DTaP-IPV
+ped_dtap_ipv_2,DTaP-IPV booster 2,DTaP-IPV preočkovanie 2
+ped_age_3rd_month_10th_week,3rd month (from 10th week of life),3. mesiac (od 10. týždňa života)
+ped_age_3rd_month_life,3rd month of life,3. mesiac života
+ped_age_5th_month_life,5th month of life,5. mesiac života
+ped_age_11th_month_life,11th month of life,11. mesiac života
+ped_age_15_18_months,15-18 months of life,15.-18. mesiac života
+ped_age_5th_year_life,5th year of life,5. rok života
+ped_age_6th_year_life,6th year of life,6. rok života
+ped_age_13th_year_life,13th year of life,13. rok života
+ped_vaccination_status,Vaccination status,Stav očkovania
+ped_up_to_date,Up to date,Úplné
+ped_incomplete_delayed,Incomplete / Delayed,Neúplné / Odložené
+ped_unknown,Unknown,Neznáme
+ped_immunization_notes,Immunization notes,Poznámky k očkovaniu
+ped_history_adverse_vaccine_reactions,History of adverse vaccine reactions,Anamnéza nežiaducich reakcií po očkovaní
+ped_if_yes_details,"If yes, details","Ak áno podrobnosti"
+ped_n_9_pmh,9. Past Medical History,9. Osobná anamnéza
+ped_varicella,Varicella,Ovčie kiahne
+ped_measles,Measles,Osýpky
+ped_mumps,Mumps,Mumps
+ped_rubella,Rubella,Ružeňka
+ped_bronchitis_pneumonia,Bronchitis / pneumonia,Bronchitída / Pneumónia
+ped_otitis_media_recurrent,Otitis media (recurrent),Opakovaná otitída
+ped_asthma_wheezing,Asthma / wheezing,Astma / Pískoty
+ped_anemia,Anemia,Anémia
+ped_uti,UTI,Infekcia močových ciest
+ped_abdominal_pain,Abdominal pain,Bolesť brucha
+ped_skin_problems,Skin problems,Kožné problémy
+ped_hospitalizations_surgeries,Hospitalizations & Surgeries,Hospitalizácie a operácie
+ped_operations_hospitalizations,Operations & Hospitalizations,Operácie a hospitalizácie
+ped_date,Date,Dátum
+ped_diagnosis_procedure,Diagnosis / Procedure,Diagnóza / Výkon
+ped_outcome,Outcome,Výsledok
+ped_medicine,Medicine,Liečba
+ped_medication,Medication,Liek
+ped_dose,Dose,Dávka
+ped_frequency_short,Frequency,Frekvencia
+ped_purpose,Purpose,Účel
+ped_over_the_counter_medicine,Over the counter medicine,Voľnopredajné lieky
+ped_herbal_products_vitamins_supplements,Herbal products / Vitamins / Supplements,Bylinné prípravky / Vitamíny / Doplnky
+ped_history_misuse_prescribed_drugs,History of misuse of prescribed drugs,Anamnéza nesprávneho užívania predpísaných liekov
+ped_drug_food_allergies,Drug / Food Allergies,Liekové / Potravinové alergie
+ped_allergy,Allergy,Alergia
+ped_reaction,Reaction,Reakcia
+ped_n_10_family,10. Family History,10. Rodinná anamnéza
+ped_condition,Condition,Ochorenie
+ped_present_in_family,Present in Family ?,Výskyt v rodine?
+ped_relation,Relation,Vzťah
+ped_diabetes,Diabetes,Diabetes
+ped_hypertension,Hypertension,Hypertenzia
+ped_heart_disease,Heart disease,Ochorenie srdca
+ped_thyroid_disease,Thyroid disease,Ochorenie štítnej žľazy
+ped_epilepsy,Epilepsy,Epilepsia
+ped_cancer,Cancer,Nádorové ochorenie
+ped_genetic_disorders,Genetic disorders,Genetické ochorenia
+ped_n_11_social,11. Social & Environmental History,11. Sociálna a environmentálna anamnéza
+ped_smoking_in_home,Smoking in home,Fajčenie v domácnosti
+ped_pets_or_farm_animals,Pets or farm animals,Domáce alebo hospodárske zvieratá
+ped_school_daycare_attendance,School/daycare attendance,Dochádzka do školy / škôlky
+ped_behavioural_issues_at_school,Behavioural issues at school,Problémy v správaní v škole
+ped_abroad_recently,Abroad recently (approx. last 1 year),Pobyt v zahraničí nedávno (asi posledný rok)
+ped_screen_time_2h,Screen time >2 hours/day,Čas pri obrazovke >2 hodiny denne
+ped_physical_activity_1h,Physical activity <1 hour/day,Pohybová aktivita <1 hodina denne
+ped_sick_contacts,Sick contacts (family/school outbreaks),Kontakt s chorými (rodina / škola)
+ped_problems_at_home,Problems at home (e.g. domestic abuse),Problémy doma (napr. domáce násilie)
+ped_n_12_substance,12. Abuses / Substance Use,12. Abúzus / Užívanie návykových látok
+ped_relevant_older_children,Relevant especially in older children / adolescents,Zvlášť relevantné u starších detí a adolescentov
+ped_coffee_dark_tea,Coffee / dark tea,Káva / čierny čaj
+ped_smoking_vaping,"Smoking (vaping, cigarettes, etc.)","Fajčenie (vapovanie, cigarety a pod.)"
+ped_drinking,"Drinking (beer, spirits, etc.)","Pitie alkoholu (pivo destiláty a pod.)"
+ped_drugs_substance_abuse,Drugs (substance abuse),Drogy / zneužívanie látok
+ped_n_13_spg,13. Status Praesens Generalis (SPG),13. Status praesens generalis (SPG)
+ped_consciousness,Consciousness,Vedomie
+ped_alert,Alert,Bdelý
+ped_responsive,Responsive,Reagujúci
+ped_lethargic,Lethargic,Letargický
+ped_non_responsive,Non-responsive,Nereagujúci
+ped_orientation,Orientation,Orientácia
+ped_person,Person,Osoba
+ped_place,Place,Miesto
+ped_time,Time,Čas
+ped_general_appearance,General appearance,Všeobecný vzhľad
+ped_hydration,Hydration,Hydratácia
+ped_normal,Normal,Normálny
+ped_mild_dehydration,Mild dehydration,Mierna dehydratácia
+ped_moderate_dehydration,Moderate dehydration,Stredná dehydratácia
+ped_severe_dehydration,Severe dehydration,Ťažká dehydratácia
+ped_nutrition_status,Nutrition status,Nutričný stav
+ped_underweight,Underweight,Podvýživa
+ped_overweight,Overweight,Nadváha
+ped_obese,Obezny,Obézny
+ped_habitus,Habitus,Habitus
+ped_asthenic,Asthenic,Astenický
+ped_normosthenic,Normosthenic,Normostenický
+ped_hypersthenic,Hypersthenic,Hyperstenický
+ped_gait_mobility,Gait / Mobility,Chôdza / Mobilita
+ped_ataxic,Ataxic,Ataktický
+ped_hemiparetic,Hemiparetic,Hemiparetický
+ped_shuffling,Shuffling,Šúchavá chôdza
+ped_uses_aid,Uses aid,Používa pomôcku
+ped_speech,Speech,Reč
+ped_dysarthria,Dysarthria,Dyzartria
+ped_aphasia,Aphasia,Afázia
+ped_slurred,Slurred,Nezreteľná reč
+ped_position,Position,Poloha
+ped_active,Active,Aktívna
+ped_passive,Passive,Pasívna
+ped_forced,Forced,Vynútená
+ped_skin_color_rashes_lesions,Skin color / rashes / lesions,Farba kože / vyrážky / lézie
+ped_odor,Odor,Zápach
+ped_alcohol,Alcohol,Alkohol
+ped_ketosis,Ketosis,Ketóza
+ped_uremic,Uremic,Uremický
+ped_hepatic,Hepatic,Hepatický
+ped_n_14_vitals,14. Vital Signs,14. Vitálne funkcie
+ped_temp,Temp (C),Teplota (C)
+ped_spo2,SpO2 (%),SpO2 (%)
+ped_hr,HR (/min),TF (/min)
+ped_weight,Weight (kg),Hmotnosť (kg)
+ped_rr,RR (/min),DF (/min)
+ped_weight_percentile,Weight percentile,Percentil hmotnosti
+ped_bp,BP (mmHg),TK (mmHg)
+ped_height,Height (cm),Výška (cm)
+ped_height_percentile,Height percentile,Percentil výšky
+ped_head_circumference,Head circumference (cm),Obvod hlavy (cm)
+ped_taken,Taken,Zaznamenané
+ped_directly_from_monitor,Directly from monitor,Priamo z monitora
+ped_from_patient_charts,From patient charts,Z pacientovej dokumentácie
+ped_if_from_charts_when,"If from charts, when","Ak z dokumentácie kedy"
+ped_vital_signs_notes,Vital signs notes,Poznámky k vitálnym funkciám
+ped_n_15_spl,15. Status Praesens Localis (SPL),15. Status praesens localis (SPL)
+ped_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Zdravotnícke pomôcky / vstupy / katétre
+ped_peripheral_iv_line,Peripheral IV line,Periférna i.v. kanyla
+ped_central_venous_catheter,Central venous catheter,Centrálny venózny katéter
+ped_foley_catheter,Foley catheter,Foleyho katéter
+ped_drains,Drains,Drény
+ped_oxygen_therapy,Oxygen therapy,Kyslíková liečba
+ped_ecg_monitoring,ECG monitoring,EKG monitoring
+ped_vital_function_monitor,Vital function monitor,Monitor vitálnych funkcií
+ped_head_face_scalp_hair_notes,Head / face / scalp / hair notes,Poznámky k hlave / tvári / vlasatej časti
+ped_cranial_nerves_notes,Cranial nerves notes,Poznámky ku hlavovým nervom
+ped_eyes_notes,Eyes notes,Poznámky k očiam
+ped_ears_nose_notes,Ears & nose notes,Poznámky k ušiam a nosu
+ped_mouth_pharynx_notes,Mouth & pharynx notes,Poznámky k ústam a hltanu
+ped_neck_notes,Neck notes,Poznámky ku krku
+ped_thorax_lungs_heart_notes,Thorax / lungs / heart notes,Poznámky k hrudníku / pľúcam / srdcu
+ped_abdomen_notes,Abdomen notes,Poznámky k bruchu
+ped_special_abdominal_signs,Special abdominal signs,Špeciálne abdominálne príznaky
+ped_blumberg_positive,Blumberg +,Blumberg +
+ped_murphy_positive,Murphy +,Murphy +
+ped_mcburney_rovsing_positive,McBurney / Rovsing +,McBurney / Rovsing +
+ped_tapotement_positive,Tapotement +,Tapotement +
+ped_limbs_joints_pulses_notes,Limbs / joints / pulses notes,Poznámky ku končatinám / kĺbom / pulzom
+ped_upper_limb_pulses_notes,Upper limb pulses notes,Poznámky k pulzom horných končatín
+ped_lower_limb_pulses_notes,Lower limb pulses notes,Poznámky k pulzom dolných končatín
+ped_capillary_refill_time,Capillary refill time (seconds),Kapilárny návrat (sekundy)
+ped_spine_posture_curvature,Spine posture & curvature,Držanie tela a zakrivenie chrbtice
+ped_scoliosis,Scoliosis,Skolióza
+ped_kyphosis,Kyphosis,Kyfóza
+ped_lordosis,Lordosis,Lordóza
+ped_spine_notes,Spine notes,Poznámky k chrbtici
+ped_spine_mobility_notes,Spine mobility notes,Poznámky k mobilite chrbtice
+ped_n_16_values,16. Values of vital signs,16. Referenčné hodnoty vitálnych funkcií
+ped_measure,Measure,Meranie
+ped_age_group,Age group,Veková skupina
+ped_reference,Reference,Referencia
+ped_heart_rate,Heart rate,Srdcová frekvencia
+ped_respiratory_rate,Respiratory rate,Dychová frekvencia
+ped_blood_pressure,Blood pressure,Krvný tlak
+ped_oxygen_saturation,Oxygen saturation,Saturácia kyslíka
+ped_temperature,Temperature,Teplota
+ped_head_circumference_reference,Head circumference,Obvod hlavy
+ped_boys,Boys,Chlapci
+ped_girls,Girls,Dievčatá
+ped_who_growth_references,WHO growth references 0-5 years,WHO referenčné hodnoty rastu 0-5 rokov
+ped_p3,P3,P3
+ped_p50,P50,P50
+ped_p97,P97,P97

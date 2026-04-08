@@ -1,0 +1,469 @@
+﻿section_id,section_name,group_id,group_name,field_id,field_label,field_type,options,description
+psych_01,Personal Information,identification,Basic Data,psych_name,What is your name?,text,,
+psych_01,Personal Information,identification,Basic Data,psych_age,How old are you?,text,,
+psych_01,Personal Information,identification,Basic Data,psych_dob,When were you born?,text,,
+psych_01,Personal Information,identification,Basic Data,psych_address,Where do you live?,text,,
+psych_01,Personal Information,identification,Basic Data,psych_living_with,Who do you live with?,text,,
+psych_01,Personal Information,identification,Basic Data,psych_occupation,What is your occupation? Are you currently working?,text,,
+
+psych_02,Chief Complaint & HPI,hpi_admin,Admission,psych_admitted_when,When were you admitted?,text,,
+psych_02,Chief Complaint & HPI,hpi_admin,Admission,psych_admission_reason,Why did you come to the hospital?,textarea,,
+psych_02,Chief Complaint & HPI,hpi_admin,Admission,psych_symptoms_most_bothersome,What symptoms are bothering you the most now?,textarea,,
+
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_onset_when,When did the problem start?,text,,
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_onset_type,Sudden or gradual onset?,radio,"sudden|gradual|unclear",
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_context_at_onset,"What was happening in your life at that time?",textarea,,
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_development,"How has the problem developed since then?",textarea,,
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_course,"Are symptoms continuous or episodic?",radio,"continuous|episodic|fluctuating|unclear",
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_modifiers,"What makes your symptoms better or worse?",textarea,,
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_function_impact,"How do these symptoms influence your daily functioning?",textarea,,
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_past_similar,"Did anything similar happen in the past?",radio,"no|yes|unclear",
+psych_02,Chief Complaint & HPI,hpi_socrates,History of Present Illness,psych_past_similar_details,If yes - details,textarea,,
+
+psych_03,Mood Spectrum,mood_expansive,Expansive Mood States,psych_mood_manic,Manic mood,checkbox,yes,"Pathologically elevated or irritable mood with increased activity, reduced need for sleep, and impaired judgment."
+psych_03,Mood Spectrum,mood_expansive,Expansive Mood States,psych_mood_hypomanic,Hypomanic mood,checkbox,yes,"Mildly elevated or irritable mood with increased energy but without marked functional impairment."
+psych_03,Mood Spectrum,mood_expansive,Expansive Mood States,psych_mood_euphoria,Euphoria,checkbox,yes,"Excessive sense of well-being that is not appropriate to the situation."
+psych_03,Mood Spectrum,mood_expansive,Expansive Mood States,psych_mood_moria,Moria,checkbox,yes,"Silly, inappropriate cheerfulness with disinhibition and poor social judgment."
+psych_03,Mood Spectrum,mood_expansive,Expansive Mood States,psych_mood_irritable,Resonant (irritable) mood,checkbox,yes,"Predominantly irritable mood with easy anger and frequent agitation."
+
+psych_03,Mood Spectrum,mood_depressive,Depressive Mood States,psych_mood_subdepressive,Subdepressive mood,checkbox,yes,"Mild and persistent sadness without meeting criteria for a full depressive syndrome."
+psych_03,Mood Spectrum,mood_depressive,Depressive Mood States,psych_mood_depressive,Depressive mood,checkbox,yes,"Persistently low mood with reduced interest, motivation, and activity."
+psych_03,Mood Spectrum,mood_depressive,Depressive Mood States,psych_mood_melancholic,Melancholic mood,checkbox,yes,"Deep depressive mood often with anhedonia, psychomotor changes, and possible psychotic features."
+psych_03,Mood Spectrum,mood_depressive,Depressive Mood States,psych_mood_anhedonia,Anhedonia,checkbox,yes,"Marked reduction or loss of ability to experience pleasure."
+psych_03,Mood Spectrum,mood_depressive,Depressive Mood States,psych_mood_apathy,Apathy,checkbox,yes,"Emotional indifference with reduced initiative and reduced responsiveness."
+
+psych_03,Mood Spectrum,mood_other,Other Mood States,psych_mood_anxiety,Anxiety,checkbox,yes,"Persistent fear or apprehension often accompanied by physical tension and autonomic symptoms."
+psych_03,Mood Spectrum,mood_other,Other Mood States,psych_mood_dysphoric,Dysphoric mood,checkbox,yes,"Unpleasant, irritable emotional tone often with inner tension."
+psych_03,Mood Spectrum,mood_other,Other Mood States,psych_mood_delusional_mood,Delusional mood,checkbox,yes,"Vague, unsettling sense that something strange or threatening is happening, often preceding delusions."
+
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_sad_low,"Do you feel sad, empty, or low in mood?",checkbox,yes,"Subjective report of low mood, sadness, emptiness, or emotional numbness."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_anhedonia,Loss of interest or pleasure (anhedonia)?,checkbox,yes,"Reduced enjoyment and decreased interest in previously pleasurable activities."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_bradypsychism_fatigue,Slowed down (bradypsychism) or fatigued?,checkbox,yes,"Subjective slowing of thinking/acting or persistent tiredness."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_appetite_weight,Appetite and weight changes?,checkbox,yes,"Changes in eating patterns and/or significant weight gain or loss."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_sleep,How is your sleep?,checkbox,yes,"Difficulties falling asleep, staying asleep, early waking, or sleeping excessively."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_guilt_hopeless,Guilt / worthlessness / hopelessness?,checkbox,yes,"Excessive guilt, negative self-evaluation, or hopeless outlook about the future."
+psych_03,Mood Symptoms,core_questions,Depressive Spectrum Questions,psych_q_suicide,Thoughts of death or suicide?,checkbox,yes,"Presence of passive death wishes, suicidal ideation, or suicidal planning."
+
+psych_03,Mood Symptoms,manic_questions,Manic Spectrum Questions,psych_q_elevated_irritable,Periods of elevated or irritable mood?,checkbox,yes,"Episodes of unusually high, expansive, or irritable mood."
+psych_03,Mood Symptoms,manic_questions,Manic Spectrum Questions,psych_q_increased_energy,Increased energy or activity?,checkbox,yes,"Increased goal-directed activity, restlessness, or hyperactivity."
+psych_03,Mood Symptoms,manic_questions,Manic Spectrum Questions,psych_q_decreased_sleep,Decreased need for sleep?,checkbox,yes,"Reduced sleep duration without feeling tired or impaired."
+psych_03,Mood Symptoms,manic_questions,Manic Spectrum Questions,psych_q_tachypsychism_logorrhea,Rapid thoughts or speech (tachypsychism/logorrhoea)?,checkbox,yes,"Racing thoughts or pressured/rapid speech that is hard to interrupt."
+psych_03,Mood Symptoms,manic_questions,Manic Spectrum Questions,psych_q_risky_behaviour,Risky behaviour (spending/sexual/impulsive)?,checkbox,yes,"Engagement in risky actions such as overspending, unsafe sex, reckless driving, or impulsive decisions."
+
+psych_03,Mood Symptoms,anxiety_questions,Anxiety Symptoms Questions,psych_q_worried_on_edge,"Worried, tense, or on edge?",checkbox,yes,"Persistent worry, tension, or hypervigilance with difficulty relaxing."
+psych_03,Mood Symptoms,anxiety_questions,Anxiety Symptoms Questions,psych_q_panic,Panic attacks? Physical symptoms?,checkbox,yes,"Sudden episodes of intense fear with palpitations, sweating, shortness of breath, or trembling."
+psych_03,Mood Symptoms,anxiety_questions,Anxiety Symptoms Questions,psych_q_phobias,Specific fears (phobias)?,checkbox,yes,"Marked fear of specific objects/situations leading to avoidance."
+
+psych_03,Affective Abnormalities,affect,Abnormalities of Affect,psych_aff_lability,Emotional lability,checkbox,yes,"Rapid shifts in emotional tone triggered by minimal stimuli."
+psych_03,Affective Abnormalities,affect,Abnormalities of Affect,psych_aff_incontinence,Emotional incontinence,checkbox,yes,"Inability to control emotional expression (crying/laughing) disproportionate to context."
+psych_03,Affective Abnormalities,affect,Abnormalities of Affect,psych_aff_blunted_flat,Blunted/flat affect,checkbox,yes,"Marked reduction or near absence of visible emotional expression."
+psych_03,Affective Abnormalities,affect,Abnormalities of Affect,psych_aff_inappropriate,Inappropriate affect,checkbox,yes,"Emotional expression incongruent with the situation or content."
+psych_03,Affective Abnormalities,affect,Abnormalities of Affect,psych_aff_ambivalence,Ambivalence,checkbox,yes,"Simultaneous contradictory emotions toward the same person/object/situation."
+
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_tachypsychism,Tachypsychism,checkbox,yes,"Accelerated thinking with rapid flow of ideas."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_logorrhea,Logorrhea,checkbox,yes,"Excessive, pressured verbal output that is difficult to interrupt."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_pseudoincoherence,Pseudoincoherence,checkbox,yes,"Apparent confusion caused by overly rapid thinking rather than true disorganization."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_bradypsychism,Bradypsychism,checkbox,yes,"Pathologically slowed thought processes with delayed responses."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_pseudoblocking,Pseudoblocking,checkbox,yes,"Subjective sense that thoughts get “stuck” without complete cessation."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_blocking,Blocking,checkbox,yes,"Sudden interruption of thought flow, often seen in psychotic disorders."
+psych_04,Thought Disorders,thought_dynamics,Dynamics (Speed),psych_selective_mutism,Aphrasia voluntaria / selective mutism,checkbox,yes,"Intentional or situational refusal to speak despite ability."
+
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_loose_associations,Loose associations,checkbox,yes,"Ideas shift with minimal or illogical connections."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_derailment,Derailment,checkbox,yes,"Abrupt transition from one topic to unrelated topics."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_tangential,Tangential thinking,checkbox,yes,"Answers deviate from the topic and never reach the point."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_incoherence_word_salad,Incoherence (word salad),checkbox,yes,"Speech lacks logical structure and is largely incomprehensible."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_perseveration,Perseveration,checkbox,yes,"Pathological repetition of the same response or idea."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_verbigeration,Verbigeration,checkbox,yes,"Stereotyped meaningless repetition of words or phrases."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_neologisms,Neologisms (agglutination/condensation),checkbox,yes,"Creation of new words or fusion of concepts, often idiosyncratic."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_symbolic_thinking,Symbolic thinking,checkbox,yes,"Pathological symbolic meaning attributed to neutral stimuli beyond cultural norms."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_magical_thinking,Magical thinking,checkbox,yes,"Belief that thoughts, words, or rituals can directly influence reality."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_autistic_dereistic,Autistic/dereistic thinking,checkbox,yes,"Withdrawal into fantasy with reduced reality testing and correction."
+psych_04,Thought Disorders,thought_structure,Structure & Flow,psych_paralogic,Paralogic thinking,checkbox,yes,"Seemingly logical reasoning that ends in nonsensical conclusions."
+
+psych_04,Thought Disorders,formal_questions,Formal Thought Questions,psych_q_racing_slow,Do you feel your thoughts are racing or going too slowly?,checkbox,yes,"Subjective experience of accelerated or slowed thinking."
+psych_04,Thought Disorders,formal_questions,Formal Thought Questions,psych_q_train_blocking,Do you lose your train of thought (blocking)?,checkbox,yes,"Sudden inability to continue a thought mid-sentence."
+psych_04,Thought Disorders,formal_questions,Formal Thought Questions,psych_q_organize,Do you find it difficult to organize your thoughts?,checkbox,yes,"Subjective disorganization or difficulty structuring ideas."
+psych_04,Thought Disorders,formal_questions,Formal Thought Questions,psych_q_loose_tangential,Do thoughts jump ideas (loose associations/tangentiality)?,checkbox,yes,"Report of frequent topic shifts and difficulty staying on track."
+psych_04,Thought Disorders,formal_questions,Formal Thought Questions,psych_q_perseveration,Repeat words/ideas unintentionally (perseveration/verbigeration)?,checkbox,yes,"Unintentional repetition of the same words, phrases, or ideas."
+
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_guilt,Guilt delusion,checkbox,yes,"Fixed false belief of severe wrongdoing or responsibility for harm."
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_hypochondriacal,Hypochondriacal delusion,checkbox,yes,"Conviction of serious disease despite lack of evidence."
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_micromanic,Micromanic delusion,checkbox,yes,"Fixed belief of worthlessness, inadequacy, or being “small/insignificant.”"
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_poverty_ruin,Poverty/ruin delusion,checkbox,yes,"Belief of financial catastrophe despite objective stability."
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_nihilistic,Nihilistic delusion,checkbox,yes,"Belief that self, body, others, or the world no longer exist."
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_enormity,Enormity delusion,checkbox,yes,"Belief that bodily functions or minor actions cause major catastrophes."
+psych_04,Thought Content,delusions_depressive,Depressive Delusions,psych_del_eternal_punishment,Eternal punishment delusion,checkbox,yes,"Belief of endless punishment or damnation."
+
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_erotomanic,Erotomanic delusion,checkbox,yes,"Fixed belief that someone (often higher status) is in love with the patient."
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_grandiose,Megalomaniac (grandeur) delusion,checkbox,yes,"Belief of exceptional identity, power, or mission."
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_extrapotency,Extrapotency delusion,checkbox,yes,"Belief of supernatural abilities or extraordinary powers."
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_origin,Delusion of origin,checkbox,yes,"Belief of noble, special, or non-biological ancestry."
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_religious,Religious delusion,checkbox,yes,"Delusional religious beliefs beyond cultural context (divine election/mission)."
+psych_04,Thought Content,delusions_expansive,Expansive Delusions,psych_del_invention,Inventory/invention delusion,checkbox,yes,"Belief of creating world-changing inventions without basis."
+
+psych_04,Thought Content,delusions_paranoid,Paranoid Delusions,psych_del_persecutory,Persecutory delusion,checkbox,yes,"Belief of being targeted, harmed, spied on, or conspired against."
+psych_04,Thought Content,delusions_paranoid,Paranoid Delusions,psych_del_querulant,Querulant delusion,checkbox,yes,"Delusional-driven litigiousness and fixation on perceived injustice."
+psych_04,Thought Content,delusions_paranoid,Paranoid Delusions,psych_del_jealousy,Jealousy delusion,checkbox,yes,"Fixed belief of partner infidelity without evidence."
+
+psych_04,Thought Content,schneider,Schneider First-Rank Symptoms,psych_fr_thought_insertion,Thought insertion,checkbox,yes,"Belief that external forces place thoughts into one’s mind."
+psych_04,Thought Content,schneider,Schneider First-Rank Symptoms,psych_fr_thought_withdrawal,Thought withdrawal,checkbox,yes,"Belief that thoughts are removed or stolen."
+psych_04,Thought Content,schneider,Schneider First-Rank Symptoms,psych_fr_thought_broadcast,Thought broadcasting,checkbox,yes,"Belief that others can access or hear one’s thoughts."
+psych_04,Thought Content,schneider,Schneider First-Rank Symptoms,psych_fr_audible_thoughts,Audible thoughts,checkbox,yes,"Hearing one’s thoughts spoken aloud."
+psych_04,Thought Content,schneider,Schneider First-Rank Symptoms,psych_fr_control,Delusions of control,checkbox,yes,"Belief that actions or body are controlled by external forces."
+
+psych_04,Thought Content,other_content,Other Content Abnormalities,psych_obsessions,Obsessions,checkbox,yes,"Intrusive, unwanted repetitive thoughts causing distress."
+psych_04,Thought Content,other_content,Other Content Abnormalities,psych_compulsions,Compulsions,checkbox,yes,"Repetitive acts performed to reduce anxiety from obsessions."
+psych_04,Thought Content,other_content,Other Content Abnormalities,psych_overvalued_ideas,Overvalued ideas,checkbox,yes,"Strong, dominating beliefs short of delusional intensity."
+
+psych_04,Thought Content,content_questions,Questions,psych_q_persecutory,Someone trying to harm/watch/control you?,checkbox,yes,"Screening for persecutory ideas and external control beliefs."
+psych_04,Thought Content,content_questions,Questions,psych_q_grandeur,Unusually strong beliefs about yourself (grandeur)?,checkbox,yes,"Screening for grandiose ideas and inflated self-importance."
+psych_04,Thought Content,content_questions,Questions,psych_q_guilt_nihilistic,Responsible for terrible things (guilt/nihilistic)?,checkbox,yes,"Screening for depressive delusions such as guilt/nihilism."
+psych_04,Thought Content,content_questions,Questions,psych_q_jealousy,Partner unfaithful without evidence?,checkbox,yes,"Screening for pathological jealousy beliefs."
+psych_04,Thought Content,content_questions,Questions,psych_q_schneider,Thought inserted/taken/broadcast/read by others?,checkbox,yes,"Screening for first-rank psychotic experiences."
+psych_04,Thought Content,ocd_questions,OCD Questions,psych_q_intrusive,Intrusive thoughts repeat?,checkbox,yes,"Screening for obsessions."
+psych_04,Thought Content,ocd_questions,OCD Questions,psych_q_rituals,Rituals to reduce anxiety?,checkbox,yes,"Screening for compulsions."
+
+psych_05,Perception Disturbances,illusions,Illusions,psych_illusion,Illusions present,checkbox,yes,"Misinterpretation of a real external stimulus (real input, wrong meaning)."
+psych_05,Perception Disturbances,illusions,Illusions,psych_q_illusion,Do you misinterpret real objects (shadows/sounds)?,checkbox,yes,"Screening question for illusions under stress, anxiety, or intoxication."
+
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_auditory,Auditory hallucinations,checkbox,yes,"Hearing voices or sounds without an external stimulus."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_visual,Visual hallucinations,checkbox,yes,"Seeing images, figures, or scenes not actually present."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_zooptic,Zooptic/microzooptic hallucinations,checkbox,yes,"Seeing animals or small creatures, often in delirium/withdrawal."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_olfactory,Olfactory hallucinations,checkbox,yes,"Smelling odors without any source."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_gustatory,Gustatory hallucinations,checkbox,yes,"Tasting flavors that are not present."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_tactile,Tactile hallucinations,checkbox,yes,"Feeling touch or movement on/in the skin without cause."
+psych_05,Perception Disturbances,hallucinations_modality,Hallucinations by Modality,psych_hall_cenesthetic,Cenesthetic hallucinations,checkbox,yes,"Strange internal bodily sensations experienced as abnormal or alien."
+
+psych_05,Perception Disturbances,hallucinations_special,Special Forms,psych_hall_combined,Combined hallucinations,checkbox,yes,"Hallucinations occurring in multiple sensory modalities simultaneously."
+psych_05,Perception Disturbances,hallucinations_special,Special Forms,psych_hall_intrapsychic,Intrapsychic hallucinations,checkbox,yes,"Thoughts experienced as voices or externally generated experiences."
+psych_05,Perception Disturbances,hallucinations_special,Special Forms,psych_hall_inadequate,Inadequate hallucinations,checkbox,yes,"Hallucinations perceived through an “incorrect” sensory channel (e.g., hearing colors)."
+
+psych_05,Perception Disturbances,questions,Hallucination Questions,psych_q_voices,Do you hear voices when nobody is around?,checkbox,yes,"Screening for auditory hallucinations."
+psych_05,Perception Disturbances,questions,Hallucination Questions,psych_q_voices_content,What do they say?,textarea,,
+psych_05,Perception Disturbances,questions,Hallucination Questions,psych_q_visual,Do you see things others cannot see?,checkbox,yes,"Screening for visual hallucinations."
+psych_05,Perception Disturbances,questions,Hallucination Questions,psych_q_olf_taste_touch,Unusual smell/taste/touch sensations?,checkbox,yes,"Screening for non-auditory hallucinations."
+psych_05,Perception Disturbances,questions,Hallucination Questions,psych_q_voice_type,Voices speak about/to/command you?,select,"about|to|command|mixed|unclear",
+
+psych_05,Perception Disturbances,psychosensory,Psychosensory Distortions,psych_micropsia,Micropsia,checkbox,yes,"Objects appear smaller than they are."
+psych_05,Perception Disturbances,psychosensory,Psychosensory Distortions,psych_macropsia,Macropsia,checkbox,yes,"Objects appear larger than they are."
+psych_05,Perception Disturbances,psychosensory,Psychosensory Distortions,psych_polyopsia,Polyopsia,checkbox,yes,"Objects appear multiplied."
+psych_05,Perception Disturbances,psychosensory,Psychosensory Distortions,psych_depersonalization,Depersonalization,checkbox,yes,"Feeling unreal or detached from oneself."
+psych_05,Perception Disturbances,psychosensory,Psychosensory Distortions,psych_derealization,Derealization,checkbox,yes,"Surroundings feel strange, unreal, or dreamlike."
+psych_05,Perception Disturbances,questions,Psychosensory Questions,psych_q_micro_macro,Objects look larger/smaller (macropsia/micropsia)?,checkbox,yes,"Screening for visual distortions (macropsia/micropsia)."
+psych_05,Perception Disturbances,questions,Psychosensory Questions,psych_q_polyopsia,Objects multiply (polyopsia)?,checkbox,yes,"Screening for polyopsia."
+psych_05,Perception Disturbances,questions,Psychosensory Questions,psych_q_derealization,Detached from surroundings (derealization)?,checkbox,yes,"Screening for derealization experiences."
+
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_hypomnesia,Hypomnesia,checkbox,yes,"Reduced ability to recall information, especially new memories."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_amnesia,Amnesia,checkbox,yes,"Partial or complete loss of memory for events or periods."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_hypermnesia,Hypermnesia,checkbox,yes,"Abnormally vivid or excessive memory recall."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_paramnesia,Paramnesia,checkbox,yes,"Memory distortions with false recognition or altered recall."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_dejavu_jamaisvu,DÃ©jÃ  vu / jamais vu,checkbox,yes,"False familiarity or false unfamiliarity in recognition."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_confabulation,Confabulation,checkbox,yes,"Filling memory gaps with invented but believed details."
+psych_06,Cognitive Disturbances,memory,Memory Disturbances,psych_pseudologia,Pseudologia phantastica,checkbox,yes,"Persistent elaborate lying often mixed with partial belief."
+psych_06,Cognitive Disturbances,questions,Memory Questions,psych_q_forget,Problems with forgetting recent/past events?,checkbox,yes,"Screening for memory impairment affecting daily life."
+psych_06,Cognitive Disturbances,questions,Memory Questions,psych_q_memory_gaps,Memory gaps (amnesia/confabulation)?,checkbox,yes,"Screening for amnesia/confabulation phenomena."
+
+psych_06,Cognitive Disturbances,attention,Attention Disturbances,psych_hypoprosexia,Hypoprosexia,checkbox,yes,"Reduced attention span and concentration."
+psych_06,Cognitive Disturbances,attention,Attention Disturbances,psych_aprosexia,Aprosexia,checkbox,yes,"Near inability to focus attention."
+psych_06,Cognitive Disturbances,attention,Attention Disturbances,psych_hyperprosexia,Hyperprosexia,checkbox,yes,"Excessive fixation of attention on a single stimulus."
+psych_06,Cognitive Disturbances,questions,Attention Questions,psych_q_focus,Difficulty focusing or maintaining attention?,checkbox,yes,"Screening for reduced concentration and sustained attention."
+psych_06,Cognitive Disturbances,questions,Attention Questions,psych_q_distracted,Easily distracted?,checkbox,yes,"Screening for distractibility."
+
+psych_06,Cognitive Disturbances,orientation,Orientation,psych_orient_time,Orientation to time impaired,checkbox,yes,"Difficulty identifying date/time/day or temporal context."
+psych_06,Cognitive Disturbances,orientation,Orientation,psych_orient_place,Orientation to place impaired,checkbox,yes,"Difficulty identifying current location."
+psych_06,Cognitive Disturbances,orientation,Orientation,psych_orient_situation,Orientation to situation impaired,checkbox,yes,"Difficulty understanding what is happening and why."
+psych_06,Cognitive Disturbances,questions,Orientation Questions,psych_q_day,Do you know what day it is?,checkbox,yes,"Quick screen for temporal orientation."
+psych_06,Cognitive Disturbances,questions,Orientation Questions,psych_q_where,Where are you now?,checkbox,yes,"Quick screen for spatial orientation."
+psych_06,Cognitive Disturbances,questions,Orientation Questions,psych_q_what_happening,What is happening around you?,checkbox,yes,"Screen for situational orientation and comprehension."
+
+psych_06,Cognitive Disturbances,intelligence,Intelligence/Cognition,psych_intellectual_disability,Mental retardation (intellectual disability),checkbox,yes,"Developmental global intellectual deficit with adaptive impairment."
+psych_06,Cognitive Disturbances,intelligence,Intelligence/Cognition,psych_borderline_intelligence,Borderline intelligence,checkbox,yes,"Cognitive functioning just below average with limited reserve."
+psych_06,Cognitive Disturbances,intelligence,Intelligence/Cognition,psych_dementia,Dementia,checkbox,yes,"Progressive decline in memory and cognition with functional impairment."
+psych_06,Cognitive Disturbances,intelligence,Intelligence/Cognition,psych_organic_psychosyndrome,Organic psychosyndrome,checkbox,yes,"Mild cognitive decline due to organic brain causes."
+
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_somnolence,Somnolence,checkbox,yes,"Drowsy state with reduced alertness but arousable."
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_sopor,Sopor,checkbox,yes,"Deep sleep-like state with minimal response to strong stimuli."
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_coma,Coma,checkbox,yes,"Unarousable unconsciousness with no meaningful response to stimuli."
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_amentia,Amentia,checkbox,yes,"Acute confusion with disorganized thinking and impaired comprehension."
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_delirium,Delirium,checkbox,yes,"Acute fluctuating confusion with impaired attention, often with hallucinations and autonomic features."
+psych_06,Cognitive Disturbances,consciousness,Consciousness States,psych_obnubilation,Obnubilation,checkbox,yes,"Twilight state with altered awareness and subsequent amnesia."
+psych_06,Cognitive Disturbances,questions,Consciousness Questions,psych_q_confusion_lost_time,Confusion/lost time/sudden unawareness?,checkbox,yes,"Screening for transient altered awareness or dissociative/organic episodes."
+
+psych_07,Emotions,affect_regulation,Disturbances of Emotions,psych_emotion_lability,Emotions change rapidly (lability)?,checkbox,yes,"Subjective report of rapid emotional shifts with poor stability."
+psych_07,Emotions,affect_regulation,Disturbances of Emotions,psych_emotion_flat,Emotionally flat or blunted?,checkbox,yes,"Subjective reduced emotional experience or expression."
+psych_07,Emotions,affect_regulation,Disturbances of Emotions,psych_emotion_ambivalent,Ambivalent emotions?,checkbox,yes,"Conflicting emotions toward the same situation/person."
+psych_07,Emotions,affect_regulation,Disturbances of Emotions,psych_emotion_incontinence,Emotions out of control (emotional incontinence)?,checkbox,yes,"Episodes of uncontrolled crying/laughing disproportionate to context."
+
+psych_08,Will & Action,will,Will Disturbances,psych_hypobulia,Hypobulia,checkbox,yes,"Reduced motivation and initiative to act."
+psych_08,Will & Action,will,Will Disturbances,psych_abulia,Abulia,checkbox,yes,"Near complete lack of initiative and inability to start actions."
+psych_08,Will & Action,will,Will Disturbances,psych_hyperbulia,Hyperbulia,checkbox,yes,"Excessive drive toward activity and goal-directed behavior."
+
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_impulsive_reactions,Impulsive reactions,checkbox,yes,"Actions performed suddenly without reflection or planning."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_dromomania,Dromomania,checkbox,yes,"Compulsive wandering or traveling without clear purpose."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_dipsomania,Dipsomania,checkbox,yes,"Episodic uncontrollable alcohol consumption with binge pattern."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_kleptomania,Kleptomania,checkbox,yes,"Recurrent impulse to steal objects not needed for personal use."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_pyromania,Pyromania,checkbox,yes,"Recurrent impulse to set fires with tension relief/pleasure."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_hypersexual,Ergotomania/nymphomania (hypersexuality),checkbox,yes,"Pathological increase in sexual drive and behavior."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_short_circuit,Short-circuit reaction,checkbox,yes,"Sudden action with minimal deliberation, sometimes linked to acute self-harm or violence."
+psych_08,Will & Action,rudimentary,Rudimentary Acting Disturbances,psych_compulsions_action,Compulsions (ritualized behaviors),checkbox,yes,"Ritualized behaviors performed to reduce anxiety."
+
+psych_08,Will & Action,global,Global Acting Disturbances,psych_hypoactivity,Hypoactivity,checkbox,yes,"General reduction in motor and mental activity."
+psych_08,Will & Action,global,Global Acting Disturbances,psych_hyperactivity,Hyperactivity,checkbox,yes,"Excessive motor activity and restlessness."
+psych_08,Will & Action,global,Global Acting Disturbances,psych_stupor,Stupor,checkbox,yes,"Extreme immobility with minimal responsiveness to environment."
+psych_08,Will & Action,global,Global Acting Disturbances,psych_raptus,Raptus,checkbox,yes,"Sudden intense motor agitation with risk of impulsive acts."
+psych_08,Will & Action,global,Global Acting Disturbances,psych_behavior_blocking,Blocking of behavior,checkbox,yes,"Sudden interruption of ongoing activity without clear reason."
+
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_echolalia,Echolalia,checkbox,yes,"Automatic repetition of another person’s words."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_echopraxia,Echopraxia,checkbox,yes,"Automatic imitation of another person’s movements."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_echomimia,Echomimia,checkbox,yes,"Automatic imitation of facial expressions."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_posturing,Posturing,checkbox,yes,"Maintaining unusual or bizarre body positions."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_negativism,Negativism,checkbox,yes,"Motiveless resistance or doing the opposite of what is asked."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_catalepsy_waxy,Catalepsy / waxy flexibility,checkbox,yes,"Maintaining imposed posture, limbs stay where placed."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_automatisms,Automatisms,checkbox,yes,"Automatic purposeless acts performed without clear voluntary control."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_command_automatism,Command automatism,checkbox,yes,"Automatic obedience to instructions without critical judgment."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_mannerisms,Mannerisms,checkbox,yes,"Odd, exaggerated, stylized movements."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_stereotypies,Stereotypies,checkbox,yes,"Repetitive non-goal-directed movements."
+psych_08,Will & Action,catatonia,Catatonic Symptoms,psych_paramimia,Paramimia,checkbox,yes,"Bizarre or incongruent facial expressions."
+
+psych_08,Will & Action,questions,Questions,psych_q_motivation,Lack motivation for everyday tasks (hypobulia)?,checkbox,yes,"Screening for hypobulia/abulia affecting everyday tasks."
+psych_08,Will & Action,questions,Questions,psych_q_overdriven,Overly driven to act (hyperbulia)?,checkbox,yes,"Screening for hyperbulia and overactivity."
+psych_08,Will & Action,questions,Questions,psych_q_impulsive,Impulsive behaviors (stealing/travel/spending)?,checkbox,yes,"Screening for impulse-control problems (stealing, sudden travel, risky acts)."
+psych_08,Will & Action,questions,Questions,psych_q_tics_stereotypy,Repetitive movements/tics/stereotypies?,checkbox,yes,"Screening for stereotypies/tics or repetitive motor behaviors."
+psych_08,Will & Action,questions,Questions,psych_q_catatonia,Immobility/abnormal postures/catatonia?,checkbox,yes,"Screening for immobility, posturing, negativism, and other catatonic signs."
+
+psych_09,Personality & Premorbid,premorbid,Premorbid Functioning,psych_premorbid_personality,Describe personality before illness,textarea,,
+psych_09,Personality & Premorbid,premorbid,Premorbid Functioning,psych_interests_change,Interests changed (reduction/new pathological interests)?,checkbox,yes,"Reduction or shift in interests suggesting depression, negative symptoms, or personality change."
+psych_09,Personality & Premorbid,premorbid,Premorbid Functioning,psych_depersonalization_like_different,Depersonalization/apersonalization (feel detached/different person)?,checkbox,yes,"Feeling detached, unreal, or “like a different person.”"
+psych_09,Personality & Premorbid,premorbid,Premorbid Functioning,psych_interpersonal_difficulties,Long-standing interpersonal difficulties?,checkbox,yes,"Chronic problems in relationships suggesting premorbid traits or personality pathology."
+psych_09,Personality & Premorbid,premorbid,Premorbid Functioning,psych_antisocial_selfdamaging,History of impulsive/antisocial/self-damaging behaviour?,checkbox,yes,"History of risky, aggressive, or self-harming patterns."
+
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_dist_interests,Disturbance of interests,checkbox,yes,"Loss of previous interests or development of pathological interests."
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_dist_abilities,Disturbance of abilities,checkbox,yes,"Decline in cognitive, social, or occupational functioning."
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_characteropathy,Characteropathy,checkbox,yes,"Acquired pathological change in character traits after illness/brain damage."
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_emotional_degradation,Emotional degradation,checkbox,yes,"Loss of higher emotional functions such as empathy or moral emotions."
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_personality_disintegration,Disintegration of personality,checkbox,yes,"Breakdown of coherence between thinking, emotions, and behavior."
+psych_09,Personality Disturbances,personality_list,Disturbance Types,psych_self_image_disturbed,Disturbed self-image,checkbox,yes,"Identity distortion or unstable sense of self."
+
+psych_10,Risk Assessment,suicidality,Suicidality,psych_risk_suicidal_thoughts,Thoughts of harming yourself?,checkbox,yes,"Presence of suicidal ideation (passive or active)."
+psych_10,Risk Assessment,suicidality,Suicidality,psych_risk_suicidal_plan,Plan?,checkbox,yes,"Existence of a specific method or plan for suicide."
+psych_10,Risk Assessment,suicidality,Suicidality,psych_risk_suicidal_means,Means?,checkbox,yes,"Access to tools or methods needed to carry out the plan."
+psych_10,Risk Assessment,suicidality,Suicidality,psych_risk_suicidal_intent,Intent?,checkbox,yes,"Degree of likelihood the person will act on the plan."
+psych_10,Risk Assessment,self_neglect,Self-neglect,psych_risk_selfcare,Eating/hygiene/ability to care for self?,textarea,,
+psych_10,Risk Assessment,aggression,Homicidality / Aggression,psych_risk_harm_others,Thoughts of harming others?,checkbox,yes,"Homicidal ideation or violent impulses."
+psych_10,Risk Assessment,aggression,Homicidality / Aggression,psych_risk_recent_violence,Recent violent behaviour?,checkbox,yes,"Recent acts of aggression raising immediate safety concerns."
+psych_10,Risk Assessment,risk_from_others,Risk from Others,psych_risk_abuse,Being abused/controlled/exploited?,checkbox,yes,"Risk of harm from others including domestic violence or exploitation."
+psych_10,Risk Assessment,summary,Risk Summary,psych_risk_notes,Risk notes/summary,textarea,,
+
+psych_11,Past Psychiatric History,pph_core,Core Items,psych_pph_prev_dx,Previous diagnoses,textarea,,
+psych_11,Past Psychiatric History,pph_core,Core Items,psych_pph_hospitalizations,Past hospitalizations (number/dates/reasons/outcomes),textarea,,
+psych_11,Past Psychiatric History,pph_core,Core Items,psych_pph_past_episodes,Past episodes (depression/mania/psychosis/anxiety),textarea,,
+psych_11,Past Psychiatric History,pph_core,Core Items,psych_pph_selfharm,Past suicide attempts/self-harm (methods/severity/triggers),textarea,,
+psych_11,Past Psychiatric History,pph_core,Core Items,psych_pph_aggression,Past aggression/harm to others (context/legal),textarea,,
+psych_11,Past Psychiatric History,pph_treatment,Previous Treatment,psych_pph_med_history,Medication history (classes/dose/duration/efficacy/tolerability),textarea,,
+psych_11,Past Psychiatric History,pph_treatment,Previous Treatment,psych_pph_adverse_reactions,Adverse drug reactions (EPS/metabolic/allergic),textarea,,
+psych_11,Past Psychiatric History,pph_treatment,Previous Treatment,psych_pph_adherence,Treatment adherence (patterns/reasons),textarea,,
+psych_11,Past Psychiatric History,pph_treatment,Previous Treatment,psych_pph_psychotherapy,Psychotherapy history (type/duration/response),textarea,,
+psych_11,Past Psychiatric History,pph_substances,Substances Impact,psych_pph_substance_impact,Substance use impact on psychiatric state,textarea,,
+psych_11,Past Psychiatric History,pph_forensic,Forensic/Legal,psych_pph_forensic,Past forensic/legal issues relevant to risk,textarea,,
+
+psych_12,Past Medical History,pmh_core,Somatic/Organic Contributors,psych_pmh_chronic,Chronic medical conditions,textarea,,
+psych_12,Past Medical History,pmh_neuro,Neurological,psych_pmh_neuro,Neurological disorders (epilepsy/stroke/head trauma/dementia/Parkinsonism),textarea,,
+psych_12,Past Medical History,pmh_endo,Endocrine/Metabolic,psych_pmh_endo,Endocrine disorders (thyroid/DM/adrenal/Cushing/Addison),textarea,,
+psych_12,Past Medical History,pmh_infectious,Infectious,psych_pmh_infectious,Infectious diseases relevant (neurosyphilis/HIV etc.),textarea,,
+psych_12,Past Medical History,pmh_operations,Operations,psych_pmh_operations,History of operations,textarea,,
+psych_12,Past Medical History,pmh_meds,Current Medications,psych_pmh_current_meds,Current medications (incl. steroids/anticholinergics/BZDs/stimulants etc.),textarea,,
+psych_12,Past Medical History,pmh_interactions,Interactions/Effects,psych_pmh_interactions,Medication interactions/psychiatric effects,textarea,,
+psych_12,Past Medical History,pmh_allergies,Allergies,psych_pmh_allergies,Allergies (including psychotropic allergies),textarea,,
+psych_12,Past Medical History,pmh_head_injury,Head Injury,psych_pmh_concussions,Head injuries/concussions (post-concussive syndromes),textarea,,
+psych_12,Past Medical History,pmh_sleep,Sleep Disorders,psych_pmh_sleep,Sleep disorders (sleep apnea/insomnia origins),textarea,,
+
+psych_13,Substance Use,sub_alcohol,Alcohol,psych_sub_alcohol_types,Alcohol types used (beer/wine/spirits/home-made),textarea,,
+psych_13,Substance Use,sub_nicotine,Tobacco/Nicotine,psych_sub_nicotine_forms,Nicotine forms (cigarettes/vapes/heated/chewing),textarea,,
+psych_13,Substance Use,sub_cannabis,Cannabis,psych_sub_cannabis,Cannabis (marijuana/hash/oils/THC vapes/synthetic cannabinoids),textarea,,
+psych_13,Substance Use,sub_stimulants,Stimulants,psych_sub_stimulants,Stimulants (amphetamine/meth/MDMA/cocaine/cathinones/prescription),textarea,,
+psych_13,Substance Use,sub_opioids,Opioids,psych_sub_opioids,Opioids (heroin/fentanyl/morphine/oxycodone/codeine/tramadol/methadone/buprenorphine),textarea,,
+psych_13,Substance Use,sub_sedatives,Sedatives/Hypnotics,psych_sub_sedatives,Sedatives (BZDs/Z-drugs/pregabalin/gabapentin/barbiturates/GHB),textarea,,
+psych_13,Substance Use,sub_hallucinogens,Hallucinogens/Psychedelics,psych_sub_hallucinogens,Hallucinogens (LSD/psilocybin/mescaline/DMT/NBOMe/2C-B),textarea,,
+psych_13,Substance Use,sub_dissociatives,Dissociatives,psych_sub_dissociatives,Dissociatives (ketamine/PCP/DXM),textarea,,
+psych_13,Substance Use,sub_inhalants,Inhalants,psych_sub_inhalants,Inhalants (glue/thinner/gasoline/N2O/butane),textarea,,
+psych_13,Substance Use,sub_nps,Designer Drugs (NPS),psych_sub_nps,NPS (synthetic cannabinoids/novel opioids/cathinones/novel benzos),textarea,,
+psych_13,Substance Use,sub_summary,Summary,psych_sub_summary,Overall substance use pattern and timing,textarea,,
+
+psych_14,Family History,fam_psych,Psychiatric Disorders,psych_fam_psych,Family history of depression/bipolar/schizophrenia/anxiety/OCD/ADHD,textarea,,
+psych_14,Family History,fam_suicide,Suicide/Self-harm,psych_fam_suicide,Family suicide/self-harm history,textarea,,
+psych_14,Family History,fam_substance,Substance Use Disorders,psych_fam_substance,Family substance use disorders,textarea,,
+psych_14,Family History,fam_personality,Personality/Behavior,psych_fam_personality,Personality disorders/antisocial traits/impulsivity in family,textarea,,
+psych_14,Family History,fam_neurodev,Neurodevelopmental,psych_fam_neurodev,Autism/intellectual disability in family,textarea,,
+psych_14,Family History,fam_dynamics,Dynamics/Trauma,psych_fam_dynamics,Family dynamics (conflict/violence/emotional neglect/intergenerational trauma),textarea,,
+
+psych_15,Social History,social_housing,Housing/Living,psych_social_housing,Housing situation (stable/unstable; alone/with others),textarea,,
+psych_15,Social History,social_work,Employment/Education,psych_social_work,Employment/education status and issues,textarea,,
+psych_15,Social History,social_finance,Financial,psych_social_finance,Financial stressors (debt/job insecurity),textarea,,
+psych_15,Social History,social_relationships,Relationships/Support,psych_social_relationships,Relationships and support system,textarea,,
+psych_15,Social History,social_lifestyle,Lifestyle,psych_social_lifestyle,Lifestyle (activity/sleep hygiene/diet/substances),textarea,,
+psych_15,Social History,social_trauma,Trauma,psych_social_trauma,Trauma history (emotional/physical/sexual/bullying/childhood adversity),textarea,,
+psych_15,Social History,social_legal,Legal,psych_social_legal,Legal issues (arrests/custody/ongoing cases),textarea,,
+psych_15,Social History,social_cultural,Cultural/Religious/Migration,psych_social_cultural,Cultural or religious factors; migration/language barriers,textarea,,
+
+psych_16,Status Praesens Psychicus (MSE),mse_appearance,Appearance,psych_mse_appearance,Appearance (grooming/hygiene/posture/eye contact),textarea,,"Objective snapshot of current mental state"
+psych_16,Status Praesens Psychicus (MSE),mse_behavior,Behavior,psych_mse_behavior,Behavior (cooperative/hostile/withdrawn; agitation/retardation),textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_speech,Speech,psych_mse_speech,"Speech (rate/volume/coherence; logorrhoea/mutism/echolalia)",textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_mood_affect,Mood & Affect,psych_mse_mood,Mood (subjective),text,,
+psych_16,Status Praesens Psychicus (MSE),mse_mood_affect,Mood & Affect,psych_mse_affect,"Affect (range: blunted/flat/labile/incongruent)",textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_thought_form,Thought Form,psych_mse_thought_form,"Thought form (coherent/tangential/derailment/flight/neologisms/blocking)",textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_thought_content,Thought Content,psych_mse_thought_content,"Thought content (delusions/suicidal ideation/obsessions/preoccupations)",textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_perception,Perception,psych_mse_perception,Perception (hallucinations type/content/insight),textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_cognition,Cognition,psych_mse_cognition,"Cognition (orientation/attention/memory/abstract thinking)",textarea,,
+psych_16,Status Praesens Psychicus (MSE),mse_insight,Insight,psych_mse_insight,Insight (full/partial/none),select,"full|partial|none","Understanding illness and need for treatment"
+psych_16,Status Praesens Psychicus (MSE),mse_judgment,Judgment,psych_mse_judgment,Judgment (ability to make safe decisions),select,"intact|impaired|unclear",
+
+psych_17,Status Praesens Generalis (SPG),spg_core,Physical Screening,psych_spg_consciousness,Consciousness level (alert/confused/somnolence/stupor),textarea,,"Rule out organic contributors/emergencies"
+psych_17,Status Praesens Generalis (SPG),spg_orientation,Orientation,psych_spg_orientation,Orientation (time/place/person),textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_vitals,Vitals,psych_spg_vitals,BP/pulse/RR/temperature,textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_general,General appearance,psych_spg_general,"Pallor/jaundice/dehydration/malnutrition",textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_neuro,Neurological screening,psych_spg_neuro,"Reflexes/tremor/rigidity/EPS/focal deficits",textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_intox,Intoxication/Withdrawal,psych_spg_intox,"Diaphoresis/agitation/tremor/confusion",textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_selfharm,Signs of self-harm,psych_spg_selfharm,"Wounds/ligature marks/overdose indicators",textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_side_effects,Medication side effects,psych_spg_side_effects,"Dystonia/akathisia/parkinsonism/tardive dyskinesia",textarea,,
+psych_17,Status Praesens Generalis (SPG),spg_hydration_nutrition,Hydration/Nutrition,psych_spg_hydration_nutrition,Hydration and nutritional status,textarea,,
+
+psych_18,Working Diagnosis,dx_working,Working Diagnosis,psych_dx_working,Working diagnosis (use syndromes as guidance),textarea,,"Syndromic formulation: emotional/psychotic/interpretation/organic etc."
+
+psych_19,Syndromological Classification,syndromes,Emotional Syndromes,psych_syn_depressive,Depressive syndrome,checkbox,yes,"Cluster of low mood, anhedonia, biological symptoms, and functional impairment."
+psych_19,Syndromological Classification,syndromes,Emotional Syndromes,psych_syn_manic,Manic syndrome,checkbox,yes,"Cluster of elevated/irritable mood with increased energy, reduced sleep, and impaired judgment."
+psych_19,Syndromological Classification,syndromes,Emotional Syndromes,psych_syn_anxiety,Anxiety syndrome,checkbox,yes,"Cluster of excessive worry, tension, autonomic symptoms, and avoidance."
+psych_19,Syndromological Classification,syndromes,Emotional Syndromes,psych_syn_dysphoric,Dysphoric syndrome,checkbox,yes,"Predominantly irritable unpleasant mood with inner tension."
+psych_19,Syndromological Classification,syndromes,Emotional Syndromes,psych_syn_apathetic,Apathetic syndrome,checkbox,yes,"Reduced emotional responsiveness and initiative."
+
+psych_19,Syndromological Classification,syndromes,Interpretation Syndromes,psych_syn_paranoid,Paranoid syndrome,checkbox,yes,"Suspiciousness and misinterpretation with possible delusions."
+psych_19,Syndromological Classification,syndromes,Interpretation Syndromes,psych_syn_hypochondriac,Hypochondriac syndrome,checkbox,yes,"Preoccupation with illness and bodily concerns disproportionate to findings."
+psych_19,Syndromological Classification,syndromes,Interpretation Syndromes,psych_syn_autistic,Autistic syndrome,checkbox,yes,"Withdrawal into inner world with reduced reality engagement."
+psych_19,Syndromological Classification,syndromes,Interpretation Syndromes,psych_syn_hallucinatory,Hallucinatory syndrome,checkbox,yes,"Prominent hallucinations as main psychopathology."
+psych_19,Syndromological Classification,syndromes,Interpretation Syndromes,psych_syn_dep_dereal,Depersonalization/derealization syndrome,checkbox,yes,"Prominent feelings of unreality regarding self or surroundings."
+
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_delusional,Delusional syndrome,checkbox,yes,"Dominant fixed false beliefs shaping behavior."
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_hallucinatory_psych,Hallucinatory syndrome,checkbox,yes,"Psychotic state where hallucinations drive symptoms."
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_paranoid_hallucinatory,Paranoid-hallucinatory syndrome,checkbox,yes,"Combined delusions and hallucinations in a psychotic presentation."
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_catatonic,Catatonic syndrome,checkbox,yes,"Prominent catatonic motor/behavioral abnormalities."
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_manic_psychosis,Manic psychosis,checkbox,yes,"Manic syndrome with psychotic features (delusions/hallucinations)."
+psych_19,Syndromological Classification,syndromes,Psychotic Syndromes,psych_syn_depressive_psychosis,Depressive psychosis,checkbox,yes,"Severe depression with psychotic features (mood-congruent/incongruent)."
+
+psych_19,Syndromological Classification,syndromes,Organic Syndromes,psych_syn_delirium,Delirium,checkbox,yes,"Acute fluctuating cognitive impairment due to medical cause."
+psych_19,Syndromological Classification,syndromes,Organic Syndromes,psych_syn_amentia,Amentia,checkbox,yes,"Acute confusion with disorganized thinking and comprehension."
+psych_19,Syndromological Classification,syndromes,Organic Syndromes,psych_syn_dementia,Dementia,checkbox,yes,"Progressive cognitive decline with functional deterioration."
+psych_19,Syndromological Classification,syndromes,Organic Syndromes,psych_syn_organic_psychosyndrome,Organic psychosyndrome,checkbox,yes,"Mild cognitive and emotional changes due to organic brain dysfunction."
+
+psych_19,Syndromological Classification,syndromes,Asthenic/Neurotic Syndromes,psych_syn_neurasthenic,Neurasthenic syndrome,checkbox,yes,"Fatigue, irritability, and reduced resilience to stress."
+psych_19,Syndromological Classification,syndromes,Asthenic/Neurotic Syndromes,psych_syn_neurotic,Neurotic syndrome,checkbox,yes,"Anxiety-related symptoms with preserved reality testing."
+psych_19,Syndromological Classification,syndromes,Asthenic/Neurotic Syndromes,psych_syn_somatoform,Somatoform syndrome,checkbox,yes,"Physical symptoms driven by psychological factors without adequate medical explanation."
+psych_19,Syndromological Classification,syndromes,Asthenic/Neurotic Syndromes,psych_syn_ocd,Obsessive-compulsive syndrome,checkbox,yes,"Obsessions and/or compulsions causing distress and impairment."
+psych_19,Syndromological Classification,summary,Syndrome Notes,psych_syn_notes,Syndromological formulation notes,textarea,,
+
+psych_20,Differential Diagnosis,ddx_psych,Psychiatric,psych_ddx_psych,"Schizophrenia spectrum, bipolar, depressive, personality disorders, anxiety disorders",textarea,,
+psych_20,Differential Diagnosis,ddx_organic,Organic/Medical,psych_ddx_organic,"Delirium, dementia, epilepsy, intoxication; neurological/endocrine/metabolic causes",textarea,,
+psych_20,Differential Diagnosis,ddx_substance,Substance-induced,psych_ddx_substance,Substance-induced disorders (intoxication/withdrawal),textarea,,
+psych_20,Differential Diagnosis,ddx_neuro,Neurological,psych_ddx_neuro,"Epilepsy, brain tumors, meningitis, encephalitis, post-stroke syndromes",textarea,,
+psych_20,Differential Diagnosis,ddx_endo,Endocrine/Metabolic,psych_ddx_endo,"Hyperthyroidism (anxiety/psychosis), hypothyroidism (depression), adrenal disorders, hepatic encephalopathy",textarea,,
+psych_20,Differential Diagnosis,ddx_infectious,Infectious,psych_ddx_infectious,"HIV, neurosyphilis, Lyme disease",textarea,,
+psych_20,Differential Diagnosis,ddx_autoimmune,Autoimmune/Inflammatory,psych_ddx_autoimmune,"Lupus psychosis, autoimmune encephalitis (anti-NMDA-R)",textarea,,
+psych_20,Differential Diagnosis,ddx_medication,Medication-induced,psych_ddx_medication,"Corticosteroids, anticholinergics, dopaminergic drugs",textarea,,
+psych_20,Differential Diagnosis,ddx_delirium_vs_psychosis,Delirium vs Psychosis,psych_ddx_delirium_vs_psychosis,"Acute onset, fluctuating consciousness, autonomic features vs primary psychosis",textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_notice,When did you first notice that something was not quite right?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_difference,What was different compared to your usual self?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_change_time,How has this changed over time?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_context,What was happening in your life around that time?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_help_now,What made you decide to seek help now?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_hpi,Chief Complaint & HPI - Additional Questions,psych_open_hpi_impact,How much is this affecting your daily life?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_day,What has your typical day felt like emotionally?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_variation,Are there moments when your mood feels different during the day?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_enjoyment,Do you still enjoy things the way you used to?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_self_view,How do you feel about yourself lately?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_hope,How hopeful do you feel about the future?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mood,Mood Exploration - Additional Questions,psych_open_mood_stability,How stable or unstable has your mood felt?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_biological,Biological or Somatic Changes - Additional Questions,psych_open_bio_sleep_restful,How restful does your sleep feel?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_biological,Biological or Somatic Changes - Additional Questions,psych_open_bio_refreshed,Do you wake feeling refreshed or exhausted?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_biological,Biological or Somatic Changes - Additional Questions,psych_open_bio_appetite_weight_others,Have others noticed changes in your appetite or weight?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_biological,Biological or Somatic Changes - Additional Questions,psych_open_bio_energy_day,How has your physical energy been throughout the day?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_biological,Biological or Somatic Changes - Additional Questions,psych_open_bio_slow_restless,Do you feel slowed down or unusually restless?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_anxiety,Anxiety and Tension - Additional Questions,psych_open_anx_worry_topics,What kinds of things do you find yourself worrying about?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_anxiety,Anxiety and Tension - Additional Questions,psych_open_anx_worry_control,How easy or hard is it to control those worries?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_anxiety,Anxiety and Tension - Additional Questions,psych_open_anx_body_reaction,What happens in your body when anxiety builds up?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_anxiety,Anxiety and Tension - Additional Questions,psych_open_anx_avoidance,Are there situations you now avoid?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_anxiety,Anxiety and Tension - Additional Questions,psych_open_anx_repetitive_relief,Do you find yourself doing things repeatedly to reduce tension?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_mania,Mania or Elevated States - Additional Questions,psych_open_mania_productive,Have there been periods when you felt unusually productive or driven?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mania,Mania or Elevated States - Additional Questions,psych_open_mania_others_notice,Has anyone commented that you seemed different during those times?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mania,Mania or Elevated States - Additional Questions,psych_open_mania_sleep_change,How did your sleep change during those periods?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mania,Mania or Elevated States - Additional Questions,psych_open_mania_confident,Did you feel more confident than usual?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_mania,Mania or Elevated States - Additional Questions,psych_open_mania_consequences,"Looking back, did those periods cause any problems?",textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_psychosis,Psychotic Symptoms - Additional Questions,psych_open_psychosis_special_meaning,Have you ever felt that things around you had special meaning just for you?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_psychosis,Psychotic Symptoms - Additional Questions,psych_open_psychosis_suspicious,Have you felt unusually suspicious of others?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_psychosis,Psychotic Symptoms - Additional Questions,psych_open_psychosis_external_influence,Have your thoughts ever felt influenced by something external?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_psychosis,Psychotic Symptoms - Additional Questions,psych_open_psychosis_thoughts_aloud,Have you heard your thoughts spoken aloud?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_psychosis,Psychotic Symptoms - Additional Questions,psych_open_psychosis_controlled,Have you ever felt controlled or monitored?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_crowded,Do your thoughts ever feel crowded or overwhelming?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_mid_sentence,Do you ever lose your train of thought mid-sentence?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_hard_follow,Do others tell you your speech is hard to follow?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_organize,Do you find it hard to organise your ideas?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_cope,When things feel overwhelming, how do you cope?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_worth_living,Have you ever felt that life was not worth living?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_ending_life,Have you ever thought about ending your life?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_plans,Have you ever made any plans?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_protective,What has stopped you from acting on these thoughts?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_safe_now,Do you feel safe right now?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk_aggression,Risk Assessment - Aggression Questions,psych_open_risk_aggr_losing_control,Have you ever felt close to losing control?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk_aggression,Risk Assessment - Aggression Questions,psych_open_risk_aggr_harm_others,Have you thought about harming someone?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_cognition,Cognition - Additional Questions,psych_open_cog_memory_change,Have you noticed changes in your memory compared to before?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_cognition,Cognition - Additional Questions,psych_open_cog_confused_time_place,Do you ever feel confused about time or place?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_cognition,Cognition - Additional Questions,psych_open_cog_focus_reading,Do you struggle to focus on reading or conversations?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_cognition,Cognition - Additional Questions,psych_open_cog_others_comment,Have others commented on changes in your thinking?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_motivation,Motivation and Behaviour - Additional Questions,psych_open_motivation_start_tasks,How motivated do you feel to start tasks?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_motivation,Motivation and Behaviour - Additional Questions,psych_open_motivation_finish_tasks,Do you finish what you start?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_motivation,Motivation and Behaviour - Additional Questions,psych_open_motivation_withdrawing,Have you been withdrawing from people?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_motivation,Motivation and Behaviour - Additional Questions,psych_open_motivation_routines,Have your habits or routines changed?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_motivation,Motivation and Behaviour - Additional Questions,psych_open_motivation_impulses,Do you feel in control of your impulses?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_insight,Insight and Judgment - Additional Questions,psych_open_insight_why_now,Why do you think this is happening now?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_insight,Insight and Judgment - Additional Questions,psych_open_insight_need_treatment,Do you believe you need treatment?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_insight,Insight and Judgment - Additional Questions,psych_open_insight_others_view,How do you think others see your situation?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_insight,Insight and Judgment - Additional Questions,psych_open_insight_advice,If you were advising someone else in your position what would you suggest?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_pph,Past Psychiatric History - Additional Questions,psych_open_pph_diff_episode,How was that episode different from this one?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_pph,Past Psychiatric History - Additional Questions,psych_open_pph_what_helped,What treatments helped you in the past?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_pph,Past Psychiatric History - Additional Questions,psych_open_pph_stop_meds,Have you ever stopped medication on your own?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_pph,Past Psychiatric History - Additional Questions,psych_open_pph_involuntary,Have you ever required hospitalisation against your will?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_substance,Substance Use - Additional Questions,psych_open_substance_frequency,How often do you use these substances?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_substance,Substance Use - Additional Questions,psych_open_substance_cut_down,Have you tried to cut down?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_substance,Substance Use - Additional Questions,psych_open_substance_cope,Do you ever use substances to cope with emotions?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_substance,Substance Use - Additional Questions,psych_open_substance_withdrawal,Have you experienced withdrawal symptoms?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_substance,Substance Use - Additional Questions,psych_open_substance_problems,Have substances caused problems in your life?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_medical,Medical or Organic Screening - Additional Questions,psych_open_medical_infection,Have you had recent infections or fevers?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_medical,Medical or Organic Screening - Additional Questions,psych_open_medical_head_injury,Any recent head injuries?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_medical,Medical or Organic Screening - Additional Questions,psych_open_medical_meds_change,Have your medications changed recently?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_medical,Medical or Organic Screening - Additional Questions,psych_open_medical_seizures,Any history of seizures?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_medical,Medical or Organic Screening - Additional Questions,psych_open_medical_thyroid_test,Has your thyroid ever been tested?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_family,Family History - Additional Questions,psych_open_family_handling,How did your family handle emotional problems?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_family,Family History - Additional Questions,psych_open_family_hospitalized,Has anyone in your family been hospitalised for psychiatric reasons?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_family,Family History - Additional Questions,psych_open_family_suicide_attempts,Any history of suicide attempts in the family?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_social,Social History - Additional Questions,psych_open_social_live_with,Who do you live with?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_social,Social History - Additional Questions,psych_open_social_support,Who do you turn to for support?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_social,Social History - Additional Questions,psych_open_social_work_school,How is work or school going?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_social,Social History - Additional Questions,psych_open_social_life_changes,Have there been recent major life changes?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_social,Social History - Additional Questions,psych_open_social_safe_home,How safe do you feel at home?,textarea,,
+
+psych_21,Open-ended Clinical Interview Prompts,open_probe,Status Praesens Psychicus - Optional Probing Prompts,psych_open_probe_more,Would you mind telling me more about that?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_probe,Status Praesens Psychicus - Optional Probing Prompts,psych_open_probe_clarify,Can you clarify what you mean?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_probe,Status Praesens Psychicus - Optional Probing Prompts,psych_open_probe_understand,Help me understand how that feels.,textarea,,
