@@ -1,0 +1,1313 @@
+atc_code,atc_name,parent_code,level
+A,ALIMENTARY TRACT AND METABOLISM,,1
+A01,STOMATOLOGICAL PREPARATIONS,A,2
+A02,DRUGS FOR ACID RELATED DISORDERS,A,2
+A03,DRUGS FOR FUNCTIONAL GASTROINTESTINAL DISORDERS,A,2
+A04,ANTIEMETICS AND ANTINAUSEANTS,A,2
+A05,BILE AND LIVER THERAPY,A,2
+A06,DRUGS FOR CONSTIPATION,A,2
+A07,"ANTIDIARRHEALS, INTESTINAL ANTIINFLAMMATORY/ANTIINFECTIVE AGENTS",A,2
+A08,"ANTIOBESITY PREPARATIONS, EXCL. DIET PRODUCTS",A,2
+A09,"DIGESTIVES, INCL. ENZYMES",A,2
+A10,DRUGS USED IN DIABETES,A,2
+A11,VITAMINS,A,2
+A12,MINERAL SUPPLEMENTS,A,2
+A13,TONICS,A,2
+A14,ANABOLIC AGENTS FOR SYSTEMIC USE,A,2
+A15,APPETITE STIMULANTS,A,2
+A16,OTHER ALIMENTARY TRACT AND METABOLISM PRODUCTS,A,2
+A01A,STOMATOLOGICAL PREPARATIONS,A01,3
+A02A,ANTACIDS,A02,3
+A02B,DRUGS FOR PEPTIC ULCER AND GASTRO-OESOPHAGEAL REFLUX DISEASE (GORD),A02,3
+A02X,OTHER DRUGS FOR ACID RELATED DISORDERS,A02,3
+A03A,DRUGS FOR FUNCTIONAL GASTROINTESTINAL DISORDERS,A03,3
+A03B,"BELLADONNA AND DERIVATIVES, PLAIN",A03,3
+A03C,ANTISPASMODICS IN COMBINATION WITH PSYCHOLEPTICS,A03,3
+A03D,ANTISPASMODICS IN COMBINATION WITH ANALGESICS,A03,3
+A03E,ANTISPASMODICS AND ANTICHOLINERGICS IN COMBINATION WITH OTHER DRUGS,A03,3
+A03F,PROPULSIVES,A03,3
+A04A,ANTIEMETICS AND ANTINAUSEANTS,A04,3
+A05A,BILE THERAPY,A05,3
+A05B,"LIVER THERAPY, LIPOTROPICS",A05,3
+A05C,DRUGS FOR BILE THERAPY AND LIPOTROPICS IN COMBINATION,A05,3
+A06A,DRUGS FOR CONSTIPATION,A06,3
+A07A,INTESTINAL ANTIINFECTIVES,A07,3
+A07B,INTESTINAL ADSORBENTS,A07,3
+A07C,ELECTROLYTES WITH CARBOHYDRATES,A07,3
+A07D,ANTIPROPULSIVES,A07,3
+A07E,INTESTINAL ANTIINFLAMMATORY AGENTS,A07,3
+A07F,ANTIDIARRHEAL MICROORGANISMS,A07,3
+A07X,OTHER ANTIDIARRHEALS,A07,3
+A08A,"ANTIOBESITY PREPARATIONS, EXCL. DIET PRODUCTS",A08,3
+A09A,"DIGESTIVES, INCL. ENZYMES",A09,3
+A10A,INSULINS AND ANALOGUES,A10,3
+A10B,"BLOOD GLUCOSE LOWERING DRUGS, EXCL. INSULINS",A10,3
+A10X,OTHER DRUGS USED IN DIABETES,A10,3
+A11A,"MULTIVITAMINS, COMBINATIONS",A11,3
+A11B,"MULTIVITAMINS, PLAIN",A11,3
+A11C,"VITAMIN A AND D, INCL. COMBINATIONS OF THE TWO",A11,3
+A11D,"VITAMIN B1, PLAIN AND IN COMBINATION WITH VITAMIN B6 AND B12",A11,3
+A11E,"VITAMIN B-COMPLEX, INCL. COMBINATIONS",A11,3
+A11G,"ASCORBIC ACID (VITAMIN C), INCL. COMBINATIONS",A11,3
+A11H,OTHER PLAIN VITAMIN PREPARATIONS,A11,3
+A11J,"OTHER VITAMIN PRODUCTS, COMBINATIONS",A11,3
+A12A,CALCIUM,A12,3
+A12B,POTASSIUM,A12,3
+A12C,OTHER MINERAL SUPPLEMENTS,A12,3
+A13A,TONICS,A13,3
+A14A,ANABOLIC STEROIDS,A14,3
+A14B,OTHER ANABOLIC AGENTS,A14,3
+A16A,OTHER ALIMENTARY TRACT AND METABOLISM PRODUCTS,A16,3
+A01AA,Caries prophylactic agents,A01A,4
+A01AB,Antiinfectives and antiseptics for local oral treatment,A01A,4
+A01AC,Corticosteroids for local oral treatment,A01A,4
+A01AD,Other agents for local oral treatment,A01A,4
+A02AA,Magnesium compounds,A02A,4
+A02AB,Aluminium compounds,A02A,4
+A02AC,Calcium compounds,A02A,4
+A02AD,"Combinations and complexes of aluminium, calcium and magnesium compounds",A02A,4
+A02AF,Antacids with antiflatulents,A02A,4
+A02AG,Antacids with antispasmodics,A02A,4
+A02AH,Antacids with sodium bicarbonate,A02A,4
+A02AX,"Antacids, other combinations",A02A,4
+A02BA,H2-receptor antagonists,A02B,4
+A02BB,Prostaglandins,A02B,4
+A02BC,Proton pump inhibitors,A02B,4
+A02BD,Combinations for eradication of Helicobacter pylori,A02B,4
+A02BX,Other drugs for peptic ulcer and gastro-oesophageal reflux disease (GORD),A02B,4
+A03AA,"Synthetic anticholinergics, esters with tertiary amino group",A03A,4
+A03AB,"Synthetic anticholinergics, quaternary ammonium compounds",A03A,4
+A03AC,"Synthetic antispasmodics, amides with tertiary amines",A03A,4
+A03AD,Papaverine and derivatives,A03A,4
+A03AE,Serotonin receptor antagonists,A03A,4
+A03AX,Other drugs for functional gastrointestinal disorders,A03A,4
+A03BA,"Belladonna alkaloids, tertiary amines",A03B,4
+A03BB,"Belladonna alkaloids, semisynthetic, quaternary ammonium compounds",A03B,4
+A03CA,Synthetic anticholinergic agents in combination with psycholeptics,A03C,4
+A03CB,Belladonna and derivatives in combination with psycholeptics,A03C,4
+A03CC,Other antispasmodics in combination with psycholeptics,A03C,4
+A03DA,Synthetic anticholinergic agents in combination with analgesics,A03D,4
+A03DB,Belladonna and derivatives in combination with analgesics,A03D,4
+A03DC,Other antispasmodics in combination with analgesics,A03D,4
+A03EA,"Antispasmodics, psycholeptics and analgesics in combination",A03E,4
+A03ED,Antispasmodics in combination with other drugs,A03E,4
+A03FA,Propulsives,A03F,4
+A04AA,Serotonin (5HT3) antagonists,A04A,4
+A04AD,Other antiemetics,A04A,4
+A05AA,Bile acids and derivatives,A05A,4
+A05AB,Preparations for biliary tract therapy,A05A,4
+A05AX,Other drugs for bile therapy,A05A,4
+A05BA,Liver therapy,A05B,4
+A06AA,"Softeners, emollients",A06A,4
+A06AB,Contact laxatives,A06A,4
+A06AC,Bulk-forming laxatives,A06A,4
+A06AD,Osmotically acting laxatives,A06A,4
+A06AG,Enemas,A06A,4
+A06AH,Peripheral opioid receptor antagonists,A06A,4
+A06AX,Other drugs for constipation,A06A,4
+A07AA,Antibiotics,A07A,4
+A07AB,Sulfonamides,A07A,4
+A07AC,Imidazole derivatives,A07A,4
+A07AX,Other intestinal antiinfectives,A07A,4
+A07BA,Charcoal preparations,A07B,4
+A07BB,Bismuth preparations,A07B,4
+A07BC,Other intestinal adsorbents,A07B,4
+A07CA,Oral rehydration salt formulations,A07C,4
+A07DA,Antipropulsives,A07D,4
+A07EA,Corticosteroids acting locally,A07E,4
+A07EB,"Antiallergic agents, excl. corticosteroids",A07E,4
+A07EC,Aminosalicylic acid and similar agents,A07E,4
+A07FA,Antidiarrheal microorganisms,A07F,4
+A07XA,Other antidiarrheals,A07X,4
+A08AA,Centrally acting antiobesity products,A08A,4
+A08AB,Peripherally acting antiobesity products,A08A,4
+A08AX,Other antiobesity drugs,A08A,4
+A09AA,Enzyme preparations,A09A,4
+A09AB,Acid preparations,A09A,4
+A09AC,"Enzyme and acid preparations, combinations",A09A,4
+A10AB,"Insulins and analogues for injection, fast-acting",A10A,4
+A10AC,"Insulins and analogues for injection, intermediate-acting",A10A,4
+A10AD,"Insulins and analogues for injection, intermediate- or long-acting combined with fast-acting",A10A,4
+A10AE,"Insulins and analogues for injection, long-acting",A10A,4
+A10AF,Insulins and analogues for inhalation,A10A,4
+A10BA,Biguanides,A10B,4
+A10BB,Sulfonylureas,A10B,4
+A10BC,Sulfonamides (heterocyclic),A10B,4
+A10BD,Combinations of oral blood glucose lowering drugs,A10B,4
+A10BF,Alpha glucosidase inhibitors,A10B,4
+A10BG,Thiazolidinediones,A10B,4
+A10BH,Dipeptidyl peptidase 4 (DPP-4) inhibitors,A10B,4
+A10BJ,Glucagon-like peptide-1 (GLP-1) analogues,A10B,4
+A10BK,Sodium-glucose co-transporter 2 (SGLT2) inhibitors,A10B,4
+A10BX,"Other blood glucose lowering drugs, excl. insulins",A10B,4
+A10XA,Aldose reductase inhibitors,A10X,4
+A10XX,Other drugs used in diabetes,A10X,4
+A11AA,Multivitamins with minerals,A11A,4
+A11AB,"Multivitamins, other combinations",A11A,4
+A11BA,"Multivitamins, plain",A11B,4
+A11CA,"Vitamin A, plain",A11C,4
+A11CB,Vitamin A and D in combination,A11C,4
+A11CC,Vitamin D and analogues,A11C,4
+A11DA,"Vitamin B1, plain",A11D,4
+A11DB,Vitamin B1 in combination with vitamin B6 and/or vitamin B12,A11D,4
+A11EA,"Vitamin B-complex, plain",A11E,4
+A11EB,Vitamin B-complex with vitamin C,A11E,4
+A11EC,Vitamin B-complex with minerals,A11E,4
+A11ED,Vitamin B-complex with anabolic steroids,A11E,4
+A11EX,"Vitamin B-complex, other combinations",A11E,4
+A11GA,"Ascorbic acid (vitamin C), plain",A11G,4
+A11GB,"Ascorbic acid (vitamin C), combinations",A11G,4
+A11HA,Other plain vitamin preparations,A11H,4
+A11JA,Combinations of vitamins,A11J,4
+A11JB,Vitamins with minerals,A11J,4
+A11JC,"Vitamins, other combinations",A11J,4
+A12AA,Calcium,A12A,4
+A12AX,"Calcium, combinations with vitamin D and/or other drugs",A12A,4
+A12BA,Potassium,A12B,4
+A12CA,Sodium,A12C,4
+A12CB,Zinc,A12C,4
+A12CC,Magnesium,A12C,4
+A12CD,Fluoride,A12C,4
+A12CE,Selenium,A12C,4
+A12CX,Other mineral products,A12C,4
+A14AA,Androstan derivatives,A14A,4
+A14AB,Estren derivatives,A14A,4
+A16AA,Amino acids and derivatives,A16A,4
+A16AB,Enzymes,A16A,4
+A16AX,Various alimentary tract and metabolism products,A16A,4
+B,BLOOD AND BLOOD FORMING ORGANS,,1
+B01,ANTITHROMBOTIC AGENTS,B,2
+B02,ANTIHEMORRHAGICS,B,2
+B03,ANTIANEMIC PREPARATIONS,B,2
+B05,BLOOD SUBSTITUTES AND PERFUSION SOLUTIONS,B,2
+B06,OTHER HEMATOLOGICAL AGENTS,B,2
+B01A,ANTITHROMBOTIC AGENTS,B01,3
+B02A,ANTIFIBRINOLYTICS,B02,3
+B02B,VITAMIN K AND OTHER HEMOSTATICS,B02,3
+B03A,IRON PREPARATIONS,B03,3
+B03B,VITAMIN B12 AND FOLIC ACID,B03,3
+B03X,OTHER ANTIANEMIC PREPARATIONS,B03,3
+B05A,BLOOD AND RELATED PRODUCTS,B05,3
+B05B,I.V. SOLUTIONS,B05,3
+B05C,IRRIGATING SOLUTIONS,B05,3
+B05D,PERITONEAL DIALYTICS,B05,3
+B05X,I.V. SOLUTION ADDITIVES,B05,3
+B05Z,HEMODIALYTICS AND HEMOFILTRATES,B05,3
+B06A,OTHER HEMATOLOGICAL AGENTS,B06,3
+B01AA,Vitamin K antagonists,B01A,4
+B01AB,Heparin group,B01A,4
+B01AC,Platelet aggregation inhibitors excl. heparin,B01A,4
+B01AD,Enzymes,B01A,4
+B01AE,Direct thrombin inhibitors,B01A,4
+B01AF,Direct factor Xa inhibitors,B01A,4
+B01AX,Other antithrombotic agents,B01A,4
+B02AA,Amino acids,B02A,4
+B02AB,Proteinase inhibitors,B02A,4
+B02BA,Vitamin K,B02B,4
+B02BB,Fibrinogen,B02B,4
+B02BC,Local hemostatics,B02B,4
+B02BD,Blood coagulation factors,B02B,4
+B02BX,Other systemic hemostatics,B02B,4
+B03AA,"Iron bivalent, oral preparations",B03A,4
+B03AB,"Iron trivalent, oral preparations",B03A,4
+B03AC,"Iron, parenteral preparations",B03A,4
+B03AD,Iron in combination with folic acid,B03A,4
+B03AE,Iron in other combinations,B03A,4
+B03BA,Vitamin B12 (cyanocobalamin and analogues),B03B,4
+B03BB,Folic acid and derivatives,B03B,4
+B03XA,Other antianemic preparations,B03X,4
+B05AA,Blood substitutes and plasma protein fractions,B05A,4
+B05AX,Other blood products,B05A,4
+B05BA,Solutions for parenteral nutrition,B05B,4
+B05BB,Solutions affecting the electrolyte balance,B05B,4
+B05BC,Solutions producing osmotic diuresis,B05B,4
+B05CA,Antiinfectives,B05C,4
+B05CB,Salt solutions,B05C,4
+B05CX,Other irrigating solutions,B05C,4
+B05DA,Isotonic solutions,B05D,4
+B05DB,Hypertonic solutions,B05D,4
+B05XA,Electrolyte solutions,B05X,4
+B05XB,Amino acids,B05X,4
+B05XC,Vitamins,B05X,4
+B05XX,Other i.v. solution additives,B05X,4
+B05ZA,"Hemodialytics, concentrates",B05Z,4
+B05ZB,Hemofiltrates,B05Z,4
+B06AA,Enzymes,B06A,4
+B06AB,Heme products,B06A,4
+B06AC,Drugs used in hereditary angioedema,B06A,4
+B06AX,Other hematological agents,B06A,4
+C,CARDIOVASCULAR SYSTEM,,1
+C01,CARDIAC THERAPY,C,2
+C02,ANTIHYPERTENSIVES,C,2
+C03,DIURETICS,C,2
+C04,PERIPHERAL VASODILATORS,C,2
+C05,VASOPROTECTIVES,C,2
+C07,BETA BLOCKING AGENTS,C,2
+C08,CALCIUM CHANNEL BLOCKERS,C,2
+C09,AGENTS ACTING ON THE RENIN-ANGIOTENSIN SYSTEM,C,2
+C10,LIPID MODIFYING AGENTS,C,2
+C01A,CARDIAC GLYCOSIDES,C01,3
+C01B,"ANTIARRHYTHMICS, CLASS I AND III",C01,3
+C01C,CARDIAC STIMULANTS EXCL. CARDIAC GLYCOSIDES,C01,3
+C01D,VASODILATORS USED IN CARDIAC DISEASES,C01,3
+C01E,OTHER CARDIAC PREPARATIONS,C01,3
+C02A,"ANTIADRENERGIC AGENTS, CENTRALLY ACTING",C02,3
+C02B,"ANTIADRENERGIC AGENTS, GANGLION-BLOCKING",C02,3
+C02C,"ANTIADRENERGIC AGENTS, PERIPHERALLY ACTING",C02,3
+C02D,"ARTERIOLAR SMOOTH MUSCLE, AGENTS ACTING ON",C02,3
+C02K,OTHER ANTIHYPERTENSIVES,C02,3
+C02L,ANTIHYPERTENSIVES AND DIURETICS IN COMBINATION,C02,3
+C02N,COMBINATIONS OF ANTIHYPERTENSIVES IN ATC-GR. C02,C02,3
+C03A,"LOW-CEILING DIURETICS, THIAZIDES",C03,3
+C03B,"LOW-CEILING DIURETICS, EXCL. THIAZIDES",C03,3
+C03C,HIGH-CEILING DIURETICS,C03,3
+C03D,ALDOSTERONE ANTAGONISTS AND OTHER POTASSIUM-SPARING AGENTS,C03,3
+C03E,DIURETICS AND POTASSIUM-SPARING AGENTS IN COMBINATION,C03,3
+C03X,OTHER DIURETICS,C03,3
+C04A,PERIPHERAL VASODILATORS,C04,3
+C05A,AGENTS FOR TREATMENT OF HEMORRHOIDS AND ANAL FISSURES FOR TOPICAL USE,C05,3
+C05B,ANTIVARICOSE THERAPY,C05,3
+C05C,CAPILLARY STABILIZING AGENTS,C05,3
+C05X,OTHER VASOPROTECTIVES,C05,3
+C07A,BETA BLOCKING AGENTS,C07,3
+C07B,BETA BLOCKING AGENTS AND THIAZIDES,C07,3
+C07C,BETA BLOCKING AGENTS AND OTHER DIURETICS,C07,3
+C07D,"BETA BLOCKING AGENTS, THIAZIDES AND OTHER DIURETICS",C07,3
+C07E,BETA BLOCKING AGENTS AND VASODILATORS,C07,3
+C07F,"BETA BLOCKING AGENTS, OTHER COMBINATIONS",C07,3
+C08C,SELECTIVE CALCIUM CHANNEL BLOCKERS WITH MAINLY VASCULAR EFFECTS,C08,3
+C08D,SELECTIVE CALCIUM CHANNEL BLOCKERS WITH DIRECT CARDIAC EFFECTS,C08,3
+C08E,NON-SELECTIVE CALCIUM CHANNEL BLOCKERS,C08,3
+C08G,CALCIUM CHANNEL BLOCKERS AND DIURETICS,C08,3
+C09A,"ACE INHIBITORS, PLAIN",C09,3
+C09B,"ACE INHIBITORS, COMBINATIONS",C09,3
+C09C,"ANGIOTENSIN II RECEPTOR BLOCKERS (ARBs), PLAIN",C09,3
+C09D,"ANGIOTENSIN II RECEPTOR BLOCKERS (ARBs), COMBINATIONS",C09,3
+C09X,OTHER AGENTS ACTING ON THE RENIN-ANGIOTENSIN SYSTEM,C09,3
+C10A,"LIPID MODIFYING AGENTS, PLAIN",C10,3
+C10B,"LIPID MODIFYING AGENTS, COMBINATIONS",C10,3
+C01AA,Digitalis glycosides,C01A,4
+C01AB,Scilla glycosides,C01A,4
+C01AC,Strophanthus glycosides,C01A,4
+C01AX,Other cardiac glycosides,C01A,4
+C01BA,"Antiarrhythmics, class Ia",C01B,4
+C01BB,"Antiarrhythmics, class Ib",C01B,4
+C01BC,"Antiarrhythmics, class Ic",C01B,4
+C01BD,"Antiarrhythmics, class III",C01B,4
+C01BG,"Other antiarrhythmics, class I and III",C01B,4
+C01CA,Adrenergic and dopaminergic agents,C01C,4
+C01CE,Phosphodiesterase inhibitors,C01C,4
+C01CX,Other cardiac stimulants,C01C,4
+C01DA,Organic nitrates,C01D,4
+C01DB,Quinolone vasodilators,C01D,4
+C01DX,Other vasodilators used in cardiac diseases,C01D,4
+C01EA,Prostaglandins,C01E,4
+C01EB,Other cardiac preparations,C01E,4
+C01EX,Other cardiac combination products,C01E,4
+C02AA,Rauwolfia alkaloids,C02A,4
+C02AB,Methyldopa,C02A,4
+C02AC,Imidazoline receptor agonists,C02A,4
+C02BA,Sulfonium derivatives,C02B,4
+C02BB,Secondary and tertiary amines,C02B,4
+C02BC,Bisquaternary ammonium compounds,C02B,4
+C02CA,Alpha-adrenoreceptor antagonists,C02C,4
+C02CC,Guanidine derivatives,C02C,4
+C02DA,Thiazide derivatives,C02D,4
+C02DB,Hydrazinophthalazine derivatives,C02D,4
+C02DC,Pyrimidine derivatives,C02D,4
+C02DD,Nitroferricyanide derivatives,C02D,4
+C02DG,Guanidine derivatives,C02D,4
+C02KA,"Alkaloids, excl. rauwolfia",C02K,4
+C02KB,Tyrosine hydroxylase inhibitors,C02K,4
+C02KC,MAO inhibitors,C02K,4
+C02KD,Serotonin antagonists,C02K,4
+C02KN,Other antihypertensives,C02K,4
+C02KX,Antihypertensives for pulmonary arterial hypertension,C02K,4
+C02LA,Rauwolfia alkaloids and diuretics in combination,C02L,4
+C02LB,Methyldopa and diuretics in combination,C02L,4
+C02LC,Imidazoline receptor agonists in combination with diuretics,C02L,4
+C02LE,Alpha-adrenoreceptor antagonists and diuretics,C02L,4
+C02LF,Guanidine derivatives and diuretics,C02L,4
+C02LG,Hydrazinophthalazine derivatives and diuretics,C02L,4
+C02LK,"Alkaloids, excl. rauwolfia, in combination with diuretics",C02L,4
+C02LL,MAO inhibitors and diuretics,C02L,4
+C02LN,Serotonin antagonists and diuretics,C02L,4
+C02LX,Other antihypertensives and diuretics,C02L,4
+C03AA,"Thiazides, plain",C03A,4
+C03AB,Thiazides and potassium in combination,C03A,4
+C03AH,"Thiazides, combinations with psycholeptics and/or analgesics",C03A,4
+C03AX,"Thiazides, combinations with other drugs",C03A,4
+C03BA,"Sulfonamides, plain",C03B,4
+C03BB,Sulfonamides and potassium in combination,C03B,4
+C03BC,Mercurial diuretics,C03B,4
+C03BD,Xanthine derivatives,C03B,4
+C03BK,"Sulfonamides, combinations with other drugs",C03B,4
+C03BX,Other low-ceiling diuretics,C03B,4
+C03CA,"Sulfonamides, plain",C03C,4
+C03CB,Sulfonamides and potassium in combination,C03C,4
+C03CC,Aryloxyacetic acid derivatives,C03C,4
+C03CD,Pyrazolone derivatives,C03C,4
+C03CX,Other high-ceiling diuretics,C03C,4
+C03DA,Aldosterone antagonists,C03D,4
+C03DB,Other potassium-sparing agents,C03D,4
+C03EA,Low-ceiling diuretics and potassium-sparing agents,C03E,4
+C03EB,High-ceiling diuretics and potassium-sparing agents,C03E,4
+C03XA,Vasopressin antagonists,C03X,4
+C04AA,2-amino-1-phenylethanol derivatives,C04A,4
+C04AB,Imidazoline derivatives,C04A,4
+C04AC,Nicotinic acid and derivatives,C04A,4
+C04AD,Purine derivatives,C04A,4
+C04AE,Ergot alkaloids,C04A,4
+C04AF,Enzymes,C04A,4
+C04AX,Other peripheral vasodilators,C04A,4
+C05AA,Corticosteroids,C05A,4
+C05AB,Antibiotics,C05A,4
+C05AD,Local anesthetics,C05A,4
+C05AE,Muscle relaxants,C05A,4
+C05AX,Other agents for treatment of hemorrhoids and anal fissures for topical use,C05A,4
+C05BA,Heparins or heparinoids for topical use,C05B,4
+C05BB,Sclerosing agents for local injection,C05B,4
+C05BX,Other sclerosing agents,C05B,4
+C05CA,Bioflavonoids,C05C,4
+C05CX,Other capillary stabilizing agents,C05C,4
+C05XX,Other vasoprotectives,C05X,4
+C07AA,"Beta blocking agents, non-selective",C07A,4
+C07AB,"Beta blocking agents, selective",C07A,4
+C07AG,Alpha and beta blocking agents,C07A,4
+C07BA,"Beta blocking agents, non-selective, and thiazides",C07B,4
+C07BB,"Beta blocking agents, selective, and thiazides",C07B,4
+C07BG,Alpha and beta blocking agents and thiazides,C07B,4
+C07CA,"Beta blocking agents, non-selective, and other diuretics",C07C,4
+C07CB,"Beta blocking agents, selective, and other diuretics",C07C,4
+C07CG,Alpha and beta blocking agents and other diuretics,C07C,4
+C07DA,"Beta blocking agents, non-selective, thiazides and other diuretics",C07D,4
+C07DB,"Beta blocking agents, selective, thiazides and other diuretics",C07D,4
+C07EA,"Beta blocking agents, non-selective, and vasodilators",C07E,4
+C07EB,"Beta blocking agents, selective, and vasodilators",C07E,4
+C07FB,Beta blocking agents and calcium channel blockers,C07F,4
+C07FX,"Beta blocking agents, other combinations",C07F,4
+C08CA,Dihydropyridine derivatives,C08C,4
+C08CX,Other selective calcium channel blockers with mainly vascular effects,C08C,4
+C08DA,Phenylalkylamine derivatives,C08D,4
+C08DB,Benzothiazepine derivatives,C08D,4
+C08EA,Phenylalkylamine derivatives,C08E,4
+C08EX,Other non-selective calcium channel blockers,C08E,4
+C08GA,Calcium channel blockers and diuretics,C08G,4
+C09AA,"ACE inhibitors, plain",C09A,4
+C09BA,ACE inhibitors and diuretics,C09B,4
+C09BB,ACE inhibitors and calcium channel blockers,C09B,4
+C09BX,"ACE inhibitors, other combinations",C09B,4
+C09CA,"Angiotensin II receptor blockers (ARBs), plain",C09C,4
+C09DA,Angiotensin II receptor blockers (ARBs) and diuretics,C09D,4
+C09DB,Angiotensin II receptor blockers (ARBs) and calcium channel blockers,C09D,4
+C09DX,"Angiotensin II receptor blockers (ARBs), other combinations",C09D,4
+C09XA,Renin-inhibitors,C09X,4
+C10AA,HMG CoA reductase inhibitors,C10A,4
+C10AB,Fibrates,C10A,4
+C10AC,Bile acid sequestrants,C10A,4
+C10AD,Nicotinic acid and derivatives,C10A,4
+C10AX,Other lipid modifying agents,C10A,4
+C10BA,Combinations of various lipid modifying agents,C10B,4
+C10BX,Lipid modifying agents in combination with other drugs,C10B,4
+D,DERMATOLOGICALS,,1
+D01,ANTIFUNGALS FOR DERMATOLOGICAL USE,D,2
+D02,EMOLLIENTS AND PROTECTIVES,D,2
+D03,PREPARATIONS FOR TREATMENT OF WOUNDS AND ULCERS,D,2
+D04,"ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC.",D,2
+D05,ANTIPSORIATICS,D,2
+D06,ANTIBIOTICS AND CHEMOTHERAPEUTICS FOR DERMATOLOGICAL USE,D,2
+D07,"CORTICOSTEROIDS, DERMATOLOGICAL PREPARATIONS",D,2
+D08,ANTISEPTICS AND DISINFECTANTS,D,2
+D09,MEDICATED DRESSINGS,D,2
+D10,ANTI-ACNE PREPARATIONS,D,2
+D11,OTHER DERMATOLOGICAL PREPARATIONS,D,2
+D01A,ANTIFUNGALS FOR TOPICAL USE,D01,3
+D01B,ANTIFUNGALS FOR SYSTEMIC USE,D01,3
+D02A,EMOLLIENTS AND PROTECTIVES,D02,3
+D02B,PROTECTIVES AGAINST UV-RADIATION,D02,3
+D03A,CICATRIZANTS,D03,3
+D03B,ENZYMES,D03,3
+D04A,"ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC.",D04,3
+D05A,ANTIPSORIATICS FOR TOPICAL USE,D05,3
+D05B,ANTIPSORIATICS FOR SYSTEMIC USE,D05,3
+D06A,ANTIBIOTICS FOR TOPICAL USE,D06,3
+D06B,CHEMOTHERAPEUTICS FOR TOPICAL USE,D06,3
+D06C,"ANTIBIOTICS AND CHEMOTHERAPEUTICS, COMBINATIONS",D06,3
+D07A,"CORTICOSTEROIDS, PLAIN",D07,3
+D07B,"CORTICOSTEROIDS, COMBINATIONS WITH ANTISEPTICS",D07,3
+D07C,"CORTICOSTEROIDS, COMBINATIONS WITH ANTIBIOTICS",D07,3
+D07X,"CORTICOSTEROIDS, OTHER COMBINATIONS",D07,3
+D08A,ANTISEPTICS AND DISINFECTANTS,D08,3
+D09A,MEDICATED DRESSINGS,D09,3
+D10A,ANTI-ACNE PREPARATIONS FOR TOPICAL USE,D10,3
+D10B,ANTI-ACNE PREPARATIONS FOR SYSTEMIC USE,D10,3
+D11A,OTHER DERMATOLOGICAL PREPARATIONS,D11,3
+D01AA,Antibiotics,D01A,4
+D01AC,Imidazole and triazole derivatives,D01A,4
+D01AE,Other antifungals for topical use,D01A,4
+D01BA,Antifungals for systemic use,D01B,4
+D02AA,Silicone products,D02A,4
+D02AB,Zinc products,D02A,4
+D02AC,Soft paraffin and fat products,D02A,4
+D02AD,Liquid plasters,D02A,4
+D02AE,Carbamide products,D02A,4
+D02AF,Salicylic acid preparations,D02A,4
+D02AX,Other emollients and protectives,D02A,4
+D02BA,Protectives against UV-radiation for topical use,D02B,4
+D02BB,Protectives against UV-radiation for systemic use,D02B,4
+D03AA,Cod-liver oil ointments,D03A,4
+D03AX,Other cicatrizants,D03A,4
+D03BA,Proteolytic enzymes,D03B,4
+D04AA,Antihistamines for topical use,D04A,4
+D04AB,Anesthetics for topical use,D04A,4
+D04AX,Other antipruritics,D04A,4
+D05AA,Tars,D05A,4
+D05AC,Antracen derivatives,D05A,4
+D05AD,Psoralens for topical use,D05A,4
+D05AX,Other antipsoriatics for topical use,D05A,4
+D05BA,Psoralens for systemic use,D05B,4
+D05BB,Retinoids for treatment of psoriasis,D05B,4
+D05BX,Other antipsoriatics for systemic use,D05B,4
+D06AA,Tetracycline and derivatives,D06A,4
+D06AX,Other antibiotics for topical use,D06A,4
+D06BA,Sulfonamides,D06B,4
+D06BB,Antivirals,D06B,4
+D06BX,Other chemotherapeutics,D06B,4
+D07AA,"Corticosteroids, weak (group I)",D07A,4
+D07AB,"Corticosteroids, moderately potent (group II)",D07A,4
+D07AC,"Corticosteroids, potent (group III)",D07A,4
+D07AD,"Corticosteroids, very potent (group IV)",D07A,4
+D07BA,"Corticosteroids, weak, combinations with antiseptics",D07B,4
+D07BB,"Corticosteroids, moderately potent, combinations with antiseptics",D07B,4
+D07BC,"Corticosteroids, potent, combinations with antiseptics",D07B,4
+D07BD,"Corticosteroids, very potent, combinations with antiseptics",D07B,4
+D07CA,"Corticosteroids, weak, combinations with antibiotics",D07C,4
+D07CB,"Corticosteroids, moderately potent, combinations with antibiotics",D07C,4
+D07CC,"Corticosteroids, potent, combinations with antibiotics",D07C,4
+D07CD,"Corticosteroids, very potent, combinations with antibiotics",D07C,4
+D07XA,"Corticosteroids, weak, other combinations",D07X,4
+D07XB,"Corticosteroids, moderately potent, other combinations",D07X,4
+D07XC,"Corticosteroids, potent, other combinations",D07X,4
+D07XD,"Corticosteroids, very potent, other combinations",D07X,4
+D08AA,Acridine derivatives,D08A,4
+D08AB,Aluminium agents,D08A,4
+D08AC,Biguanides and amidines,D08A,4
+D08AD,Boric acid products,D08A,4
+D08AE,Phenol and derivatives,D08A,4
+D08AF,Nitrofuran derivatives,D08A,4
+D08AG,Iodine products,D08A,4
+D08AH,Quinoline derivatives,D08A,4
+D08AJ,Quaternary ammonium compounds,D08A,4
+D08AK,Mercurial products,D08A,4
+D08AL,Silver compounds,D08A,4
+D08AX,Other antiseptics and disinfectants,D08A,4
+D09AA,Medicated dressings with antiinfectives,D09A,4
+D09AB,Zinc bandages,D09A,4
+D09AX,Soft paraffin dressings,D09A,4
+D10AA,"Corticosteroids, combinations for treatment of acne",D10A,4
+D10AB,Preparations containing sulfur,D10A,4
+D10AD,Retinoids for topical use in acne,D10A,4
+D10AE,Peroxides,D10A,4
+D10AF,Antiinfectives for treatment of acne,D10A,4
+D10AX,Other anti-acne preparations for topical use,D10A,4
+D10BA,Retinoids for treatment of acne,D10B,4
+D10BX,Other anti-acne preparations for systemic use,D10B,4
+D11AA,Antihidrotics,D11A,4
+D11AC,Medicated shampoos,D11A,4
+D11AE,Androgens for topical use,D11A,4
+D11AF,Wart and anti-corn preparations,D11A,4
+D11AH,"Agents for dermatitis, excluding corticosteroids",D11A,4
+D11AX,Other dermatologicals,D11A,4
+G,GENITO URINARY SYSTEM AND SEX HORMONES,,1
+G01,GYNECOLOGICAL ANTIINFECTIVES AND ANTISEPTICS,G,2
+G02,OTHER GYNECOLOGICALS,G,2
+G03,SEX HORMONES AND MODULATORS OF THE GENITAL SYSTEM,G,2
+G04,UROLOGICALS,G,2
+G01A,"ANTIINFECTIVES AND ANTISEPTICS, EXCL. COMBINATIONS WITH CORTICOSTEROIDS",G01,3
+G01B,ANTIINFECTIVES/ANTISEPTICS IN COMBINATION WITH CORTICOSTEROIDS,G01,3
+G02A,UTEROTONICS,G02,3
+G02B,CONTRACEPTIVES FOR TOPICAL USE,G02,3
+G02C,OTHER GYNECOLOGICALS,G02,3
+G03A,HORMONAL CONTRACEPTIVES FOR SYSTEMIC USE,G03,3
+G03B,ANDROGENS,G03,3
+G03C,ESTROGENS,G03,3
+G03D,PROGESTOGENS,G03,3
+G03E,ANDROGENS AND FEMALE SEX HORMONES IN COMBINATION,G03,3
+G03F,PROGESTOGENS AND ESTROGENS IN COMBINATION,G03,3
+G03G,GONADOTROPINS AND OTHER OVULATION STIMULANTS,G03,3
+G03H,ANTIANDROGENS,G03,3
+G03X,OTHER SEX HORMONES AND MODULATORS OF THE GENITAL SYSTEM,G03,3
+G04B,UROLOGICALS,G04,3
+G04C,DRUGS USED IN BENIGN PROSTATIC HYPERTROPHY,G04,3
+G01AA,Antibiotics,G01A,4
+G01AB,Arsenic compounds,G01A,4
+G01AC,Quinoline derivatives,G01A,4
+G01AD,Organic acids,G01A,4
+G01AE,Sulfonamides,G01A,4
+G01AF,Imidazole derivatives,G01A,4
+G01AG,Triazole derivatives,G01A,4
+G01AX,Other antiinfectives and antiseptics,G01A,4
+G01BA,Antibiotics and corticosteroids,G01B,4
+G01BC,Quinoline derivatives and corticosteroids,G01B,4
+G01BD,Antiseptics and corticosteroids,G01B,4
+G01BE,Sulfonamides and corticosteroids,G01B,4
+G01BF,Imidazole derivatives and corticosteroids,G01B,4
+G02AB,Ergot alkaloids,G02A,4
+G02AC,"Ergot alkaloids and oxytocin incl. analogues, in combination",G02A,4
+G02AD,Prostaglandins,G02A,4
+G02AX,Other uterotonics,G02A,4
+G02BA,Intrauterine contraceptives,G02B,4
+G02BB,Intravaginal contraceptives,G02B,4
+G02CA,"Sympathomimetics, labour repressants",G02C,4
+G02CB,Prolactine inhibitors,G02C,4
+G02CC,Antiinflammatory products for vaginal administration,G02C,4
+G02CX,Other gynecologicals,G02C,4
+G03AA,"Progestogens and estrogens, fixed combinations",G03A,4
+G03AB,"Progestogens and estrogens, sequential preparations",G03A,4
+G03AC,Progestogens,G03A,4
+G03AD,Emergency contraceptives,G03A,4
+G03BA,3-oxoandrosten (4) derivatives,G03B,4
+G03BB,5-androstanon (3) derivatives,G03B,4
+G03CA,"Natural and semisynthetic estrogens, plain",G03C,4
+G03CB,"Synthetic estrogens, plain",G03C,4
+G03CC,"Estrogens, combinations with other drugs",G03C,4
+G03CX,Other estrogens,G03C,4
+G03DA,Pregnen (4) derivatives,G03D,4
+G03DB,Pregnadien derivatives,G03D,4
+G03DC,Estren derivatives,G03D,4
+G03EA,Androgens and estrogens,G03E,4
+G03EB,"Androgen, progestogen and estrogen in combination",G03E,4
+G03EK,Androgens and female sex hormones in combination with other drugs,G03E,4
+G03FA,"Progestogens and estrogens, fixed combinations",G03F,4
+G03FB,"Progestogens and estrogens, sequential preparations",G03F,4
+G03GA,Gonadotropins,G03G,4
+G03GB,"Ovulation stimulants, synthetic",G03G,4
+G03HA,"Antiandrogens, plain",G03H,4
+G03HB,Antiandrogens and estrogens,G03H,4
+G03XA,Antigonadotropins and similar agents,G03X,4
+G03XB,Progesterone receptor modulators,G03X,4
+G03XC,Selective estrogen receptor modulators,G03X,4
+G03XX,Other sex hormones and modulators of the genital system,G03X,4
+G04BA,Acidifiers,G04B,4
+G04BC,Urinary concrement solvents,G04B,4
+G04BD,Drugs for urinary frequency and incontinence,G04B,4
+G04BE,Drugs used in erectile dysfunction,G04B,4
+G04BX,Other urologicals,G04B,4
+G04CA,Alpha-adrenoreceptor antagonists,G04C,4
+G04CB,Testosterone-5-alpha reductase inhibitors,G04C,4
+G04CX,Other drugs used in benign prostatic hypertrophy,G04C,4
+H,"SYSTEMIC HORMONAL PREPARATIONS, EXCL. SEX HORMONES AND INSULINS",,1
+H01,PITUITARY AND HYPOTHALAMIC HORMONES AND ANALOGUES,H,2
+H02,CORTICOSTEROIDS FOR SYSTEMIC USE,H,2
+H03,THYROID THERAPY,H,2
+H04,PANCREATIC HORMONES,H,2
+H05,CALCIUM HOMEOSTASIS,H,2
+H01A,ANTERIOR PITUITARY LOBE HORMONES AND ANALOGUES,H01,3
+H01B,POSTERIOR PITUITARY LOBE HORMONES,H01,3
+H01C,HYPOTHALAMIC HORMONES,H01,3
+H02A,"CORTICOSTEROIDS FOR SYSTEMIC USE, PLAIN",H02,3
+H02B,"CORTICOSTEROIDS FOR SYSTEMIC USE, COMBINATIONS",H02,3
+H02C,ANTIADRENAL PREPARATIONS,H02,3
+H03A,THYROID PREPARATIONS,H03,3
+H03B,ANTITHYROID PREPARATIONS,H03,3
+H03C,IODINE THERAPY,H03,3
+H04A,GLYCOGENOLYTIC HORMONES,H04,3
+H05A,PARATHYROID HORMONES AND ANALOGUES,H05,3
+H05B,ANTI-PARATHYROID AGENTS,H05,3
+H01AA,ACTH,H01A,4
+H01AB,Thyrotropin,H01A,4
+H01AC,Somatropin and somatropin agonists,H01A,4
+H01AX,Other anterior pituitary lobe hormones and analogues,H01A,4
+H01BA,Vasopressin and analogues,H01B,4
+H01BB,Oxytocin and analogues,H01B,4
+H01CA,Gonadotropin-releasing hormones,H01C,4
+H01CB,Somatostatin and analogues,H01C,4
+H01CC,Anti-gonadotropin-releasing hormones,H01C,4
+H02AA,Mineralocorticoids,H02A,4
+H02AB,Glucocorticoids,H02A,4
+H02BX,"Corticosteroids for systemic use, combinations",H02B,4
+H02CA,Anticorticosteroids,H02C,4
+H03AA,Thyroid hormones,H03A,4
+H03BA,Thiouracils,H03B,4
+H03BB,Sulfur-containing imidazole derivatives,H03B,4
+H03BC,Perchlorates,H03B,4
+H03BX,Other antithyroid preparations,H03B,4
+H03CA,Iodine therapy,H03C,4
+H04AA,Glycogenolytic hormones,H04A,4
+H05AA,Parathyroid hormones and analogues,H05A,4
+H05BA,Calcitonin preparations,H05B,4
+H05BX,Other anti-parathyroid agents,H05B,4
+J,ANTIINFECTIVES FOR SYSTEMIC USE,,1
+J01,ANTIBACTERIALS FOR SYSTEMIC USE,J,2
+J02,ANTIMYCOTICS FOR SYSTEMIC USE,J,2
+J04,ANTIMYCOBACTERIALS,J,2
+J05,ANTIVIRALS FOR SYSTEMIC USE,J,2
+J06,IMMUNE SERA AND IMMUNOGLOBULINS,J,2
+J07,VACCINES,J,2
+J01A,TETRACYCLINES,J01,3
+J01B,AMPHENICOLS,J01,3
+J01C,"BETA-LACTAM ANTIBACTERIALS, PENICILLINS",J01,3
+J01D,OTHER BETA-LACTAM ANTIBACTERIALS,J01,3
+J01E,SULFONAMIDES AND TRIMETHOPRIM,J01,3
+J01F,"MACROLIDES, LINCOSAMIDES AND STREPTOGRAMINS",J01,3
+J01G,AMINOGLYCOSIDE ANTIBACTERIALS,J01,3
+J01M,QUINOLONE ANTIBACTERIALS,J01,3
+J01R,COMBINATIONS OF ANTIBACTERIALS,J01,3
+J01X,OTHER ANTIBACTERIALS,J01,3
+J02A,ANTIMYCOTICS FOR SYSTEMIC USE,J02,3
+J04A,DRUGS FOR TREATMENT OF TUBERCULOSIS,J04,3
+J04B,DRUGS FOR TREATMENT OF LEPRA,J04,3
+J05A,DIRECT ACTING ANTIVIRALS,J05,3
+J06A,IMMUNE SERA,J06,3
+J06B,IMMUNOGLOBULINS,J06,3
+J07A,BACTERIAL VACCINES,J07,3
+J07B,VIRAL VACCINES,J07,3
+J07C,"BACTERIAL AND VIRAL VACCINES, COMBINED",J07,3
+J07X,OTHER VACCINES,J07,3
+J01AA,Tetracyclines,J01A,4
+J01BA,Amphenicols,J01B,4
+J01CA,Penicillins with extended spectrum,J01C,4
+J01CE,Beta-lactamase sensitive penicillins,J01C,4
+J01CF,Beta-lactamase resistant penicillins,J01C,4
+J01CG,Beta-lactamase inhibitors,J01C,4
+J01CR,"Combinations of penicillins, incl. beta-lactamase inhibitors",J01C,4
+J01DB,First-generation cephalosporins,J01D,4
+J01DC,Second-generation cephalosporins,J01D,4
+J01DD,Third-generation cephalosporins,J01D,4
+J01DE,Fourth-generation cephalosporins,J01D,4
+J01DF,Monobactams,J01D,4
+J01DH,Carbapenems,J01D,4
+J01DI,Other cephalosporins and penems,J01D,4
+J01EA,Trimethoprim and derivatives,J01E,4
+J01EB,Short-acting sulfonamides,J01E,4
+J01EC,Intermediate-acting sulfonamides,J01E,4
+J01ED,Long-acting sulfonamides,J01E,4
+J01EE,"Combinations of sulfonamides and trimethoprim, incl. derivatives",J01E,4
+J01FA,Macrolides,J01F,4
+J01FF,Lincosamides,J01F,4
+J01FG,Streptogramins,J01F,4
+J01GA,Streptomycins,J01G,4
+J01GB,Other aminoglycosides,J01G,4
+J01MA,Fluoroquinolones,J01M,4
+J01MB,Other quinolones,J01M,4
+J01RA,Combinations of antibacterials,J01R,4
+J01XA,Glycopeptide antibacterials,J01X,4
+J01XB,Polymyxins,J01X,4
+J01XC,Steroid antibacterials,J01X,4
+J01XD,Imidazole derivatives,J01X,4
+J01XE,Nitrofuran derivatives,J01X,4
+J01XX,Other antibacterials,J01X,4
+J02AA,Antibiotics,J02A,4
+J02AB,Imidazole derivatives,J02A,4
+J02AC,Triazole and tetrazole derivatives,J02A,4
+J02AX,Other antimycotics for systemic use,J02A,4
+J04AA,Aminosalicylic acid and derivatives,J04A,4
+J04AB,Antibiotics,J04A,4
+J04AC,Hydrazides,J04A,4
+J04AD,Thiocarbamide derivatives,J04A,4
+J04AK,Other drugs for treatment of tuberculosis,J04A,4
+J04AM,Combinations of drugs for treatment of tuberculosis,J04A,4
+J04BA,Drugs for treatment of lepra,J04B,4
+J05AA,Thiosemicarbazones,J05A,4
+J05AB,Nucleosides and nucleotides excl. reverse transcriptase inhibitors,J05A,4
+J05AC,Cyclic amines,J05A,4
+J05AD,Phosphonic acid derivatives,J05A,4
+J05AE,Protease inhibitors,J05A,4
+J05AF,Nucleoside and nucleotide reverse transcriptase inhibitors,J05A,4
+J05AG,Non-nucleoside reverse transcriptase inhibitors,J05A,4
+J05AH,Neuraminidase inhibitors,J05A,4
+J05AJ,Integrase inhibitors,J05A,4
+J05AP,Antivirals for treatment of HCV infections,J05A,4
+J05AR,"Antivirals for treatment of HIV infections, combinations",J05A,4
+J05AX,Other antivirals,J05A,4
+J06AA,Immune sera,J06A,4
+J06BA,"Immunoglobulins, normal human",J06B,4
+J06BB,Specific immunoglobulins,J06B,4
+J06BC,Antibacterial monoclonal antibodies,J06B,4
+J06BD,Antiviral monoclonal antibodies,J06B,4
+J07AC,Anthrax vaccines,J07A,4
+J07AD,Brucellosis vaccines,J07A,4
+J07AE,Cholera vaccines,J07A,4
+J07AF,Diphtheria vaccines,J07A,4
+J07AG,Haemophilus influenzae B vaccines,J07A,4
+J07AH,Meningococcal vaccines,J07A,4
+J07AJ,Pertussis vaccines,J07A,4
+J07AK,Plague vaccines,J07A,4
+J07AL,Pneumococcal vaccines,J07A,4
+J07AM,Tetanus vaccines,J07A,4
+J07AN,Tuberculosis vaccines,J07A,4
+J07AP,Typhoid vaccines,J07A,4
+J07AR,Typhus (exanthematicus) vaccines,J07A,4
+J07AX,Other bacterial vaccines,J07A,4
+J07BA,Encephalitis vaccines,J07B,4
+J07BB,Influenza vaccines,J07B,4
+J07BC,Hepatitis vaccines,J07B,4
+J07BD,Measles vaccines,J07B,4
+J07BE,Mumps vaccines,J07B,4
+J07BF,Poliomyelitis vaccines,J07B,4
+J07BG,Rabies vaccines,J07B,4
+J07BH,Rota virus diarrhea vaccines,J07B,4
+J07BJ,Rubella vaccines,J07B,4
+J07BK,Varicella zoster vaccines,J07B,4
+J07BL,Yellow fever vaccines,J07B,4
+J07BM,Papillomavirus vaccines,J07B,4
+J07BN,Covid-19 vaccines,J07B,4
+J07BX,Other viral vaccines,J07B,4
+J07CA,"Bacterial and viral vaccines, combined",J07C,4
+J07XA,Parasitic vaccines,J07X,4
+L,ANTINEOPLASTIC AND IMMUNOMODULATING AGENTS,,1
+L01,ANTINEOPLASTIC AGENTS,L,2
+L02,ENDOCRINE THERAPY,L,2
+L03,IMMUNOSTIMULANTS,L,2
+L04,IMMUNOSUPPRESSANTS,L,2
+L01A,ALKYLATING AGENTS,L01,3
+L01B,ANTIMETABOLITES,L01,3
+L01C,PLANT ALKALOIDS AND OTHER NATURAL PRODUCTS,L01,3
+L01D,CYTOTOXIC ANTIBIOTICS AND RELATED SUBSTANCES,L01,3
+L01E,PROTEIN KINASE INHIBITORS,L01,3
+L01F,MONOCLONAL ANTIBODIES AND ANTIBODY DRUG CONJUGATES,L01,3
+L01X,OTHER ANTINEOPLASTIC AGENTS,L01,3
+L02A,HORMONES AND RELATED AGENTS,L02,3
+L02B,HORMONE ANTAGONISTS AND RELATED AGENTS,L02,3
+L03A,IMMUNOSTIMULANTS,L03,3
+L04A,IMMUNOSUPPRESSANTS,L04,3
+L01AA,Nitrogen mustard analogues,L01A,4
+L01AB,Alkyl sulfonates,L01A,4
+L01AC,Ethylene imines,L01A,4
+L01AD,Nitrosoureas,L01A,4
+L01AG,Epoxides,L01A,4
+L01AX,Other alkylating agents,L01A,4
+L01BA,Folic acid analogues,L01B,4
+L01BB,Purine analogues,L01B,4
+L01BC,Pyrimidine analogues,L01B,4
+L01CA,Vinca alkaloids and analogues,L01C,4
+L01CB,Podophyllotoxin derivatives,L01C,4
+L01CC,Colchicine derivatives,L01C,4
+L01CD,Taxanes,L01C,4
+L01CE,Topoisomerase 1 (TOP1) inhibitors,L01C,4
+L01CX,Other plant alkaloids and natural products,L01C,4
+L01DA,Actinomycines,L01D,4
+L01DB,Anthracyclines and related substances,L01D,4
+L01DC,Other cytotoxic antibiotics,L01D,4
+L01EA,BCR-ABL tyrosine kinase inhibitors,L01E,4
+L01EB,Epidermal growth factor receptor (EGFR) tyrosine kinase inhibitors,L01E,4
+L01EC,B-Raf serine-threonine kinase (BRAF) inhibitors,L01E,4
+L01ED,Anaplastic lymphoma kinase (ALK) inhibitors,L01E,4
+L01EE,Mitogen-activated protein kinase (MEK) inhibitors,L01E,4
+L01EF,Cyclin-dependent kinase (CDK) inhibitors,L01E,4
+L01EG,Mammalian target of rapamycin (mTOR) kinase inhibitors,L01E,4
+L01EH,Human epidermal growth factor receptor 2 (HER2) tyrosine kinase inhibitors,L01E,4
+L01EJ,Janus-associated kinase (JAK) inhibitors,L01E,4
+L01EK,Vascular endothelial growth factor receptor (VEGFR) tyrosine kinase inhibitors,L01E,4
+L01EL,Bruton's tyrosine kinase (BTK) inhibitors,L01E,4
+L01EM,Phosphatidylinositol-3-kinase (Pi3K) inhibitors,L01E,4
+L01EN,Fibroblast growth factor receptor (FGFR) tyrosine kinase inhibitors,L01E,4
+L01EX,Other protein kinase inhibitors,L01E,4
+L01FA,CD20 (Clusters of Differentiation 20) inhibitors,L01F,4
+L01FB,CD22 (Clusters of Differentiation 22) inhibitors,L01F,4
+L01FC,CD38 (Clusters of Differentiation 38) inhibitors,L01F,4
+L01FD,HER2 (Human Epidermal Growth Factor Receptor 2) inhibitors,L01F,4
+L01FE,EGFR (Epidermal Growth Factor Receptor) inhibitors,L01F,4
+L01FF,PD-1/PD-L1 (Programmed cell death protein 1/death ligand 1) inhibitors,L01F,4
+L01FG,VEGF/VEGFR (Vascular Endothelial Growth Factor) inhibitors,L01F,4
+L01FX,Other monoclonal antibodies and antibody drug conjugates,L01F,4
+L01FY,Combinations of monoclonal antibodies and antibody drug conjugates,L01F,4
+L01XA,Platinum compounds,L01X,4
+L01XB,Methylhydrazines,L01X,4
+L01XD,Sensitizers used in photodynamic/radiation therapy,L01X,4
+L01XF,Retinoids for cancer treatment,L01X,4
+L01XG,Proteasome inhibitors,L01X,4
+L01XH,Histone deacetylase (HDAC) inhibitors,L01X,4
+L01XJ,Hedgehog pathway inhibitors,L01X,4
+L01XK,Poly (ADP-ribose) polymerase (PARP) inhibitors,L01X,4
+L01XL,Antineoplastic cell and gene therapy,L01X,4
+L01XX,Other antineoplastic agents,L01X,4
+L01XY,Combinations of antineoplastic agents,L01X,4
+L02AA,Estrogens,L02A,4
+L02AB,Progestogens,L02A,4
+L02AE,Gonadotropin releasing hormone analogues,L02A,4
+L02AX,Other hormones,L02A,4
+L02BA,Anti-estrogens,L02B,4
+L02BB,Anti-androgens,L02B,4
+L02BG,Aromatase inhibitors,L02B,4
+L02BX,Other hormone antagonists and related agents,L02B,4
+L03AA,Colony stimulating factors,L03A,4
+L03AB,Interferons,L03A,4
+L03AC,Interleukins,L03A,4
+L03AX,Other immunostimulants,L03A,4
+L04AA,Selective immunosuppressants,L04A,4
+L04AB,Tumor necrosis factor alpha (TNF-α) inhibitors,L04A,4
+L04AC,Interleukin inhibitors,L04A,4
+L04AD,Calcineurin inhibitors,L04A,4
+L04AE,Sphingosine-1-phosphate (S1P) receptor modulators,L04A,4
+L04AF,Janus-associated kinase (JAK) inhibitors,L04A,4
+L04AG,Monoclonal antibodies,L04A,4
+L04AH,Mammalian target of rapamycin (mTOR) kinase inhibitors,L04A,4
+L04AJ,Complement inhibitors,L04A,4
+L04AK,Dihydroorotate dehydrogenase (DHODH) inhibitors,L04A,4
+L04AX,Other immunosuppressants,L04A,4
+M,MUSCULO-SKELETAL SYSTEM,,1
+M01,ANTIINFLAMMATORY AND ANTIRHEUMATIC PRODUCTS,M,2
+M02,TOPICAL PRODUCTS FOR JOINT AND MUSCULAR PAIN,M,2
+M03,MUSCLE RELAXANTS,M,2
+M04,ANTIGOUT PREPARATIONS,M,2
+M05,DRUGS FOR TREATMENT OF BONE DISEASES,M,2
+M09,OTHER DRUGS FOR DISORDERS OF THE MUSCULO-SKELETAL SYSTEM,M,2
+M01A,"ANTIINFLAMMATORY AND ANTIRHEUMATIC PRODUCTS, NON-STEROIDS",M01,3
+M01B,ANTIINFLAMMATORY/ANTIRHEUMATIC AGENTS IN COMBINATION,M01,3
+M01C,SPECIFIC ANTIRHEUMATIC AGENTS,M01,3
+M02A,TOPICAL PRODUCTS FOR JOINT AND MUSCULAR PAIN,M02,3
+M03A,"MUSCLE RELAXANTS, PERIPHERALLY ACTING AGENTS",M03,3
+M03B,"MUSCLE RELAXANTS, CENTRALLY ACTING AGENTS",M03,3
+M03C,"MUSCLE RELAXANTS, DIRECTLY ACTING AGENTS",M03,3
+M04A,ANTIGOUT PREPARATIONS,M04,3
+M05B,DRUGS AFFECTING BONE STRUCTURE AND MINERALIZATION,M05,3
+M09A,OTHER DRUGS FOR DISORDERS OF THE MUSCULO-SKELETAL SYSTEM,M09,3
+M01AA,Butylpyrazolidines,M01A,4
+M01AB,Acetic acid derivatives and related substances,M01A,4
+M01AC,Oxicams,M01A,4
+M01AE,Propionic acid derivatives,M01A,4
+M01AG,Fenamates,M01A,4
+M01AH,Coxibs,M01A,4
+M01AX,"Other antiinflammatory and antirheumatic agents, non-steroids",M01A,4
+M01BA,Antiinflammatory/antirheumatic agents in combination with corticosteroids,M01B,4
+M01BX,Other antiinflammatory/antirheumatic agents in combination with other drugs,M01B,4
+M01CA,Quinolines,M01C,4
+M01CB,Gold preparations,M01C,4
+M01CC,Penicillamine and similar agents,M01C,4
+M01CX,Other specific antirheumatic agents,M01C,4
+M02AA,"Antiinflammatory preparations, non-steroids for topical use",M02A,4
+M02AB,Capsaicin and similar agents,M02A,4
+M02AC,Preparations with salicylic acid derivatives,M02A,4
+M02AX,Other topical products for joint and muscular pain,M02A,4
+M03AA,Curare alkaloids,M03A,4
+M03AB,Choline derivatives,M03A,4
+M03AC,Other quaternary ammonium compounds,M03A,4
+M03AX,"Other muscle relaxants, peripherally acting agents",M03A,4
+M03BA,Carbamic acid esters,M03B,4
+M03BB,"Oxazol, thiazine, and triazine derivatives",M03B,4
+M03BC,"Ethers, chemically close to antihistamines",M03B,4
+M03BX,Other centrally acting agents,M03B,4
+M03CA,Dantrolene and derivatives,M03C,4
+M04AA,Preparations inhibiting uric acid production,M04A,4
+M04AB,Preparations increasing uric acid excretion,M04A,4
+M04AC,Preparations with no effect on uric acid metabolism,M04A,4
+M04AX,Other antigout preparations,M04A,4
+M05BA,Bisphosphonates,M05B,4
+M05BB,"Bisphosphonates, combinations",M05B,4
+M05BC,Bone morphogenetic proteins,M05B,4
+M05BX,Other drugs affecting bone structure and mineralization,M05B,4
+M09AA,Quinine and derivatives,M09A,4
+M09AB,Enzymes,M09A,4
+M09AX,Other drugs for disorders of the musculo-skeletal system,M09A,4
+N,NERVOUS SYSTEM,,1
+N01,ANESTHETICS,N,2
+N02,ANALGESICS,N,2
+N03,ANTIEPILEPTICS,N,2
+N04,ANTI-PARKINSON DRUGS,N,2
+N05,PSYCHOLEPTICS,N,2
+N06,PSYCHOANALEPTICS,N,2
+N07,OTHER NERVOUS SYSTEM DRUGS,N,2
+N01A,"ANESTHETICS, GENERAL",N01,3
+N01B,"ANESTHETICS, LOCAL",N01,3
+N02A,OPIOIDS,N02,3
+N02B,OTHER ANALGESICS AND ANTIPYRETICS,N02,3
+N02C,ANTIMIGRAINE PREPARATIONS,N02,3
+N03A,ANTIEPILEPTICS,N03,3
+N04A,ANTICHOLINERGIC AGENTS,N04,3
+N04B,DOPAMINERGIC AGENTS,N04,3
+N04C,OTHER ANTIPARKINSON DRUGS,N04,3
+N05A,ANTIPSYCHOTICS,N05,3
+N05B,ANXIOLYTICS,N05,3
+N05C,HYPNOTICS AND SEDATIVES,N05,3
+N06A,ANTIDEPRESSANTS,N06,3
+N06B,"PSYCHOSTIMULANTS, AGENTS USED FOR ADHD AND NOOTROPICS",N06,3
+N06C,PSYCHOLEPTICS AND PSYCHOANALEPTICS IN COMBINATION,N06,3
+N06D,ANTI-DEMENTIA DRUGS,N06,3
+N07A,PARASYMPATHOMIMETICS,N07,3
+N07B,DRUGS USED IN ADDICTIVE DISORDERS,N07,3
+N07C,ANTIVERTIGO PREPARATIONS,N07,3
+N07X,OTHER NERVOUS SYSTEM DRUGS,N07,3
+N01AA,Ethers,N01A,4
+N01AB,Halogenated hydrocarbons,N01A,4
+N01AF,"Barbiturates, plain",N01A,4
+N01AG,Barbiturates in combination with other drugs,N01A,4
+N01AH,Opioid anesthetics,N01A,4
+N01AX,Other general anesthetics,N01A,4
+N01BA,Esters of aminobenzoic acid,N01B,4
+N01BB,Amides,N01B,4
+N01BC,Esters of benzoic acid,N01B,4
+N01BX,Other local anesthetics,N01B,4
+N02AA,Natural opium alkaloids,N02A,4
+N02AB,Phenylpiperidine derivatives,N02A,4
+N02AC,Diphenylpropylamine derivatives,N02A,4
+N02AD,Benzomorphan derivatives,N02A,4
+N02AE,Oripavine derivatives,N02A,4
+N02AF,Morphinan derivatives,N02A,4
+N02AG,Opioids in combination with antispasmodics,N02A,4
+N02AJ,Opioids in combination with non-opioid analgesics,N02A,4
+N02AX,Other opioids,N02A,4
+N02BA,Salicylic acid and derivatives,N02B,4
+N02BB,Pyrazolones,N02B,4
+N02BE,Anilides,N02B,4
+N02BF,Gabapentinoids,N02B,4
+N02BG,Other analgesics and antipyretics,N02B,4
+N02CA,Ergot alkaloids,N02C,4
+N02CB,Corticosteroid derivatives,N02C,4
+N02CC,Selective serotonin (5HT1) agonists,N02C,4
+N02CD,Calcitonin gene-related peptide (CGRP) antagonists,N02C,4
+N02CX,Other antimigraine preparations,N02C,4
+N03AA,Barbiturates and derivatives,N03A,4
+N03AB,Hydantoin derivatives,N03A,4
+N03AC,Oxazolidine derivatives,N03A,4
+N03AD,Succinimide derivatives,N03A,4
+N03AE,Benzodiazepine derivatives,N03A,4
+N03AF,Carboxamide derivatives,N03A,4
+N03AG,Fatty acid derivatives,N03A,4
+N03AX,Other antiepileptics,N03A,4
+N04AA,Tertiary amines,N04A,4
+N04AB,Ethers chemically close to antihistamines,N04A,4
+N04AC,Ethers of tropine or tropine derivatives,N04A,4
+N04BA,Dopa and dopa derivatives,N04B,4
+N04BB,Adamantane derivatives,N04B,4
+N04BC,Dopamine agonists,N04B,4
+N04BD,Monoamine oxidase B inhibitors,N04B,4
+N04BX,Other dopaminergic agents,N04B,4
+N04CX,Other antiparkinson drugs,N04C,4
+N05AA,Phenothiazines with aliphatic side-chain,N05A,4
+N05AB,Phenothiazines with piperazine structure,N05A,4
+N05AC,Phenothiazines with piperidine structure,N05A,4
+N05AD,Butyrophenone derivatives,N05A,4
+N05AE,Indole derivatives,N05A,4
+N05AF,Thioxanthene derivatives,N05A,4
+N05AG,Diphenylbutylpiperidine derivatives,N05A,4
+N05AH,"Diazepines, oxazepines, thiazepines and oxepines",N05A,4
+N05AL,Benzamides,N05A,4
+N05AN,Lithium,N05A,4
+N05AX,Other antipsychotics,N05A,4
+N05BA,Benzodiazepine derivatives,N05B,4
+N05BB,Diphenylmethane derivatives,N05B,4
+N05BC,Carbamates,N05B,4
+N05BD,Dibenzo-bicyclo-octadiene derivatives,N05B,4
+N05BE,Azaspirodecanedione derivatives,N05B,4
+N05BX,Other anxiolytics,N05B,4
+N05CA,"Barbiturates, plain",N05C,4
+N05CB,"Barbiturates, combinations",N05C,4
+N05CC,Aldehydes and derivatives,N05C,4
+N05CD,Benzodiazepine derivatives,N05C,4
+N05CE,Piperidinedione derivatives,N05C,4
+N05CF,Benzodiazepine related drugs,N05C,4
+N05CH,Melatonin receptor agonists,N05C,4
+N05CJ,Orexin receptor antagonists,N05C,4
+N05CM,Other hypnotics and sedatives,N05C,4
+N05CX,"Hypnotics and sedatives in combination, excl. barbiturates",N05C,4
+N06AA,Non-selective monoamine reuptake inhibitors,N06A,4
+N06AB,Selective serotonin reuptake inhibitors,N06A,4
+N06AF,"Monoamine oxidase inhibitors, non-selective",N06A,4
+N06AG,Monoamine oxidase A inhibitors,N06A,4
+N06AX,Other antidepressants,N06A,4
+N06BA,Centrally acting sympathomimetics,N06B,4
+N06BC,Xanthine derivatives,N06B,4
+N06BX,Other psychostimulants and nootropics,N06B,4
+N06CA,Antidepressants in combination with psycholeptics,N06C,4
+N06CB,Psychostimulants in combination with psycholeptics,N06C,4
+N06DA,Anticholinesterases,N06D,4
+N06DX,Other anti-dementia drugs,N06D,4
+N07AA,Anticholinesterases,N07A,4
+N07AB,Choline esters,N07A,4
+N07AX,Other parasympathomimetics,N07A,4
+N07BA,Drugs used in nicotine dependence,N07B,4
+N07BB,Drugs used in alcohol dependence,N07B,4
+N07BC,Drugs used in opioid dependence,N07B,4
+N07CA,Antivertigo preparations,N07C,4
+N07XA,Gangliosides and ganglioside derivatives,N07X,4
+N07XX,Other nervous system drugs,N07X,4
+P,"ANTIPARASITIC PRODUCTS, INSECTICIDES AND REPELLENTS",,1
+P01,ANTIPROTOZOALS,P,2
+P02,ANTHELMINTICS,P,2
+P03,"ECTOPARASITICIDES, INCL. SCABICIDES, INSECTICIDES AND REPELLENTS",P,2
+P01A,AGENTS AGAINST AMOEBIASIS AND OTHER PROTOZOAL DISEASES,P01,3
+P01B,ANTIMALARIALS,P01,3
+P01C,AGENTS AGAINST LEISHMANIASIS AND TRYPANOSOMIASIS,P01,3
+P02B,ANTITREMATODALS,P02,3
+P02C,ANTINEMATODAL AGENTS,P02,3
+P02D,ANTICESTODALS,P02,3
+P03A,"ECTOPARASITICIDES, INCL. SCABICIDES",P03,3
+P03B,INSECTICIDES AND REPELLENTS,P03,3
+P01AA,Hydroxyquinoline derivatives,P01A,4
+P01AB,Nitroimidazole derivatives,P01A,4
+P01AC,Dichloroacetamide derivatives,P01A,4
+P01AR,Arsenic compounds,P01A,4
+P01AX,Other agents against amoebiasis and other protozoal diseases,P01A,4
+P01BA,Aminoquinolines,P01B,4
+P01BB,Biguanides,P01B,4
+P01BC,Methanolquinolines,P01B,4
+P01BD,Diaminopyrimidines,P01B,4
+P01BE,"Artemisinin and derivatives, plain",P01B,4
+P01BF,"Artemisinin and derivatives, combinations",P01B,4
+P01BX,Other antimalarials,P01B,4
+P01CA,Nitroimidazole derivatives,P01C,4
+P01CB,Antimony compounds,P01C,4
+P01CC,Nitrofuran derivatives,P01C,4
+P01CD,Arsenic compounds,P01C,4
+P01CX,Other agents against leishmaniasis and trypanosomiasis,P01C,4
+P02BA,Quinoline derivatives and related substances,P02B,4
+P02BB,Organophosphorous compounds,P02B,4
+P02BX,Other antitrematodal agents,P02B,4
+P02CA,Benzimidazole derivatives,P02C,4
+P02CB,Piperazine and derivatives,P02C,4
+P02CC,Tetrahydropyrimidine derivatives,P02C,4
+P02CE,Imidazothiazole derivatives,P02C,4
+P02CF,Avermectines,P02C,4
+P02CX,Other antinematodals,P02C,4
+P02DA,Salicylic acid derivatives,P02D,4
+P02DX,Other anticestodals,P02D,4
+P03AA,Sulfur containing products,P03A,4
+P03AB,Chlorine containing products,P03A,4
+P03AC,"Pyrethrines, incl. synthetic compounds",P03A,4
+P03AX,"Other ectoparasiticides, incl. scabicides",P03A,4
+P03BA,Pyrethrines,P03B,4
+P03BX,Other insecticides and repellents,P03B,4
+R,RESPIRATORY SYSTEM,,1
+R01,NASAL PREPARATIONS,R,2
+R02,THROAT PREPARATIONS,R,2
+R03,DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES,R,2
+R05,COUGH AND COLD PREPARATIONS,R,2
+R06,ANTIHISTAMINES FOR SYSTEMIC USE,R,2
+R07,OTHER RESPIRATORY SYSTEM PRODUCTS,R,2
+R01A,DECONGESTANTS AND OTHER NASAL PREPARATIONS FOR TOPICAL USE,R01,3
+R01B,NASAL DECONGESTANTS FOR SYSTEMIC USE,R01,3
+R02A,THROAT PREPARATIONS,R02,3
+R03A,"ADRENERGICS, INHALANTS",R03,3
+R03B,"OTHER DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES, INHALANTS",R03,3
+R03C,ADRENERGICS FOR SYSTEMIC USE,R03,3
+R03D,OTHER SYSTEMIC DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES,R03,3
+R05C,"EXPECTORANTS, EXCL. COMBINATIONS WITH COUGH SUPPRESSANTS",R05,3
+R05D,"COUGH SUPPRESSANTS, EXCL. COMBINATIONS WITH EXPECTORANTS",R05,3
+R05F,"COUGH SUPPRESSANTS AND EXPECTORANTS, COMBINATIONS",R05,3
+R05X,OTHER COLD PREPARATIONS,R05,3
+R06A,ANTIHISTAMINES FOR SYSTEMIC USE,R06,3
+R07A,OTHER RESPIRATORY SYSTEM PRODUCTS,R07,3
+R01AA,"Sympathomimetics, plain",R01A,4
+R01AB,"Sympathomimetics, combinations excl. corticosteroids",R01A,4
+R01AC,"Antiallergic agents, excl. corticosteroids",R01A,4
+R01AD,Corticosteroids,R01A,4
+R01AX,Other nasal preparations,R01A,4
+R01BA,Sympathomimetics,R01B,4
+R02AA,Antiseptics,R02A,4
+R02AB,Antibiotics,R02A,4
+R02AD,"Anesthetics, local",R02A,4
+R02AX,Other throat preparations,R02A,4
+R03AA,Alpha- and beta-adrenoreceptor agonists,R03A,4
+R03AB,Non-selective beta-adrenoreceptor agonists,R03A,4
+R03AC,Selective beta-2-adrenoreceptor agonists,R03A,4
+R03AH,Combinations of adrenergics,R03A,4
+R03AK,"Adrenergics in combination with corticosteroids or other drugs, excl. anticholinergics",R03A,4
+R03AL,Adrenergics in combination with anticholinergics incl. triple combinations with corticosteroids,R03A,4
+R03BA,Glucocorticoids,R03B,4
+R03BB,Anticholinergics,R03B,4
+R03BC,"Antiallergic agents, excl. corticosteroids",R03B,4
+R03BX,"Other drugs for obstructive airway diseases, inhalants",R03B,4
+R03CA,Alpha- and beta-adrenoreceptor agonists,R03C,4
+R03CB,Non-selective beta-adrenoreceptor agonists,R03C,4
+R03CC,Selective beta-2-adrenoreceptor agonists,R03C,4
+R03CK,Adrenergics and other drugs for obstructive airway diseases,R03C,4
+R03DA,Xanthines,R03D,4
+R03DB,Xanthines and adrenergics,R03D,4
+R03DC,Leukotriene receptor antagonists,R03D,4
+R03DX,Other systemic drugs for obstructive airway diseases,R03D,4
+R05CA,Expectorants,R05C,4
+R05CB,Mucolytics,R05C,4
+R05DA,Opium alkaloids and derivatives,R05D,4
+R05DB,Other cough suppressants,R05D,4
+R05FA,Opium derivatives and expectorants,R05F,4
+R05FB,Other cough suppressants and expectorants,R05F,4
+R06AA,Aminoalkyl ethers,R06A,4
+R06AB,Substituted alkylamines,R06A,4
+R06AC,Substituted ethylene diamines,R06A,4
+R06AD,Phenothiazine derivatives,R06A,4
+R06AE,Piperazine derivatives,R06A,4
+R06AK,Combinations of antihistamines,R06A,4
+R06AX,Other antihistamines for systemic use,R06A,4
+R07AA,Lung surfactants,R07A,4
+R07AB,Respiratory stimulants,R07A,4
+R07AX,Other respiratory system products,R07A,4
+S,SENSORY ORGANS,,1
+S01,OPHTHALMOLOGICALS,S,2
+S02,OTOLOGICALS,S,2
+S03,OPHTHALMOLOGICAL AND OTOLOGICAL PREPARATIONS,S,2
+S01A,ANTIINFECTIVES,S01,3
+S01B,ANTIINFLAMMATORY AGENTS,S01,3
+S01C,ANTIINFLAMMATORY AGENTS AND ANTIINFECTIVES IN COMBINATION,S01,3
+S01E,ANTIGLAUCOMA PREPARATIONS AND MIOTICS,S01,3
+S01F,MYDRIATICS AND CYCLOPLEGICS,S01,3
+S01G,DECONGESTANTS AND ANTIALLERGICS,S01,3
+S01H,LOCAL ANESTHETICS,S01,3
+S01J,DIAGNOSTIC AGENTS,S01,3
+S01K,SURGICAL AIDS,S01,3
+S01L,OCULAR VASCULAR DISORDER AGENTS,S01,3
+S01X,OTHER OPHTHALMOLOGICALS,S01,3
+S02A,ANTIINFECTIVES,S02,3
+S02B,CORTICOSTEROIDS,S02,3
+S02C,CORTICOSTEROIDS AND ANTIINFECTIVES IN COMBINATION,S02,3
+S02D,OTHER OTOLOGICALS,S02,3
+S03A,ANTIINFECTIVES,S03,3
+S03B,CORTICOSTEROIDS,S03,3
+S03C,CORTICOSTEROIDS AND ANTIINFECTIVES IN COMBINATION,S03,3
+S03D,OTHER OPHTHALMOLOGICAL AND OTOLOGICAL PREPARATIONS,S03,3
+S01AA,Antibiotics,S01A,4
+S01AB,Sulfonamides,S01A,4
+S01AD,Antivirals,S01A,4
+S01AE,Fluoroquinolones,S01A,4
+S01AX,Other antiinfectives,S01A,4
+S01BA,"Corticosteroids, plain",S01B,4
+S01BB,Corticosteroids and mydriatics in combination,S01B,4
+S01BC,"Antiinflammatory agents, non-steroids",S01B,4
+S01CA,Corticosteroids and antiinfectives in combination,S01C,4
+S01CB,Corticosteroids/antiinfectives/mydriatics in combination,S01C,4
+S01CC,"Antiinflammatory agents, non-steroids and antiinfectives in combination",S01C,4
+S01EA,Sympathomimetics in glaucoma therapy,S01E,4
+S01EB,Parasympathomimetics,S01E,4
+S01EC,Carbonic anhydrase inhibitors,S01E,4
+S01ED,Beta blocking agents,S01E,4
+S01EE,Prostaglandin analogues,S01E,4
+S01EX,Other antiglaucoma preparations,S01E,4
+S01FA,Anticholinergics,S01F,4
+S01FB,Sympathomimetics excl. antiglaucoma preparations,S01F,4
+S01GA,Sympathomimetics used as decongestants,S01G,4
+S01GX,Other antiallergics,S01G,4
+S01HA,Local anesthetics,S01H,4
+S01JA,Colouring agents,S01J,4
+S01JX,Other ophthalmological diagnostic agents,S01J,4
+S01KA,Viscoelastic substances,S01K,4
+S01KX,Other surgical aids,S01K,4
+S01LA,Antineovascularisation agents,S01L,4
+S01XA,Other ophthalmologicals,S01X,4
+S02AA,Antiinfectives,S02A,4
+S02BA,Corticosteroids,S02B,4
+S02CA,Corticosteroids and antiinfectives in combination,S02C,4
+S02DA,Analgesics and anesthetics,S02D,4
+S02DC,Indifferent preparations,S02D,4
+S03AA,Antiinfectives,S03A,4
+S03BA,Corticosteroids,S03B,4
+S03CA,Corticosteroids and antiinfectives in combination,S03C,4
+V,VARIOUS,,1
+V01,ALLERGENS,V,2
+V03,ALL OTHER THERAPEUTIC PRODUCTS,V,2
+V04,DIAGNOSTIC AGENTS,V,2
+V06,GENERAL NUTRIENTS,V,2
+V07,ALL OTHER NON-THERAPEUTIC PRODUCTS,V,2
+V08,CONTRAST MEDIA,V,2
+V09,DIAGNOSTIC RADIOPHARMACEUTICALS,V,2
+V10,THERAPEUTIC RADIOPHARMACEUTICALS,V,2
+V20,SURGICAL DRESSINGS,V,2
+V01A,ALLERGENS,V01,3
+V03A,ALL OTHER THERAPEUTIC PRODUCTS,V03,3
+V04B,URINE TESTS,V04,3
+V04C,OTHER DIAGNOSTIC AGENTS,V04,3
+V06A,DIET FORMULATIONS FOR TREATMENT OF OBESITY,V06,3
+V06B,PROTEIN SUPPLEMENTS,V06,3
+V06C,INFANT FORMULAS,V06,3
+V06D,OTHER NUTRIENTS,V06,3
+V07A,ALL OTHER NON-THERAPEUTIC PRODUCTS,V07,3
+V08A,"X-RAY CONTRAST MEDIA, IODINATED",V08,3
+V08B,"X-RAY CONTRAST MEDIA, NON-IODINATED",V08,3
+V08C,MAGNETIC RESONANCE IMAGING CONTRAST MEDIA,V08,3
+V08D,ULTRASOUND CONTRAST MEDIA,V08,3
+V09A,CENTRAL NERVOUS SYSTEM,V09,3
+V09B,SKELETON,V09,3
+V09C,RENAL SYSTEM,V09,3
+V09D,HEPATIC AND RETICULO ENDOTHELIAL SYSTEM,V09,3
+V09E,RESPIRATORY SYSTEM,V09,3
+V09F,THYROID,V09,3
+V09G,CARDIOVASCULAR SYSTEM,V09,3
+V09H,INFLAMMATION AND INFECTION DETECTION,V09,3
+V09I,TUMOUR DETECTION,V09,3
+V09X,OTHER DIAGNOSTIC RADIOPHARMACEUTICALS,V09,3
+V10A,ANTIINFLAMMATORY AGENTS,V10,3
+V10B,PAIN PALLIATION (BONE SEEKING AGENTS),V10,3
+V10X,OTHER THERAPEUTIC RADIOPHARMACEUTICALS,V10,3
+V01AA,Allergen extracts,V01A,4
+V03AB,Antidotes,V03A,4
+V03AC,Iron chelating agents,V03A,4
+V03AE,Drugs for treatment of hyperkalemia and hyperphosphatemia,V03A,4
+V03AF,Detoxifying agents for antineoplastic treatment,V03A,4
+V03AG,Drugs for treatment of hypercalcemia,V03A,4
+V03AH,Drugs for treatment of hypoglycemia,V03A,4
+V03AK,Tissue adhesives,V03A,4
+V03AM,Drugs for embolisation,V03A,4
+V03AN,Medical gases,V03A,4
+V03AX,Other therapeutic products,V03A,4
+V03AZ,Nerve depressants,V03A,4
+V04CA,Tests for diabetes,V04C,4
+V04CB,Tests for fat absorption,V04C,4
+V04CC,Tests for bile duct patency,V04C,4
+V04CD,Tests for pituitary function,V04C,4
+V04CE,Tests for liver functional capacity,V04C,4
+V04CF,Tuberculosis diagnostics,V04C,4
+V04CG,Tests for gastric secretion,V04C,4
+V04CH,Tests for renal function and ureteral injuries,V04C,4
+V04CJ,Tests for thyreoidea function,V04C,4
+V04CK,Tests for pancreatic function,V04C,4
+V04CL,Tests for allergic diseases,V04C,4
+V04CM,Tests for fertility disturbances,V04C,4
+V04CX,Other diagnostic agents,V04C,4
+V06AA,Low-energy diets,V06A,4
+V06CA,Nutrients without phenylalanine,V06C,4
+V06DA,"Carbohydrates/proteins/minerals/vitamins, combinations",V06D,4
+V06DB,"Fat/carbohydrates/proteins/minerals/vitamins, combinations",V06D,4
+V06DC,Carbohydrates,V06D,4
+V06DD,"Amino acids, incl. combinations with polypeptides",V06D,4
+V06DE,"Amino acids/carbohydrates/minerals/vitamins, combinations",V06D,4
+V06DF,Milk substitutes,V06D,4
+V06DX,Other combinations of nutrients,V06D,4
+V07AA,Plasters,V07A,4
+V07AB,"Solvents and diluting agents, incl. irrigating solutions",V07A,4
+V07AC,"Blood transfusion, auxiliary products",V07A,4
+V07AD,"Blood tests, auxiliary products",V07A,4
+V07AN,Incontinence equipment,V07A,4
+V07AR,"Sensitivity tests, discs and tablets",V07A,4
+V07AS,Stomi equipment,V07A,4
+V07AT,Cosmetics,V07A,4
+V07AV,Technical disinfectants,V07A,4
+V07AX,Washing agents etc.,V07A,4
+V07AY,Other non-therapeutic auxiliary products,V07A,4
+V07AZ,Chemicals and reagents for analysis,V07A,4
+V08AA,"Watersoluble, nephrotropic, high osmolar X-ray contrast media",V08A,4
+V08AB,"Watersoluble, nephrotropic, low osmolar X-ray contrast media",V08A,4
+V08AC,"Watersoluble, hepatotropic X-ray contrast media",V08A,4
+V08AD,Non-watersoluble X-ray contrast media,V08A,4
+V08BA,Barium sulfate containing X-ray contrast media,V08B,4
+V08CA,Paramagnetic contrast media,V08C,4
+V08CB,Superparamagnetic contrast media,V08C,4
+V08CX,Other magnetic resonance imaging contrast media,V08C,4
+V08DA,Ultrasound contrast media,V08D,4
+V09AA,Technetium (99mTc) compounds,V09A,4
+V09AB,Iodine (123I) compounds,V09A,4
+V09AX,Other central nervous system diagnostic radiopharmaceuticals,V09A,4
+V09BA,Technetium (99mTc) compounds,V09B,4
+V09CA,Technetium (99mTc) compounds,V09C,4
+V09CX,Other renal system diagnostic radiopharmaceuticals,V09C,4
+V09DA,Technetium (99mTc) compounds,V09D,4
+V09DB,"Technetium (99mTc), particles and colloids",V09D,4
+V09DX,Other hepatic and reticulo endothelial system diagnostic radiopharmaceuticals,V09D,4
+V09EA,"Technetium (99mTc), inhalants",V09E,4
+V09EB,"Technetium (99mTc), particles for injection",V09E,4
+V09EX,Other respiratory system diagnostic radiopharmaceuticals,V09E,4
+V09FX,Various thyroid diagnostic radiopharmaceuticals,V09F,4
+V09GA,Technetium (99mTc) compounds,V09G,4
+V09GB,Iodine (125I) compounds,V09G,4
+V09GX,Other cardiovascular system diagnostic radiopharmaceuticals,V09G,4
+V09HA,Technetium (99mTc) compounds,V09H,4
+V09HB,Indium (111In) compounds,V09H,4
+V09HX,Other diagnostic radiopharmaceuticals for inflammation and infection detection,V09H,4
+V09IA,Technetium (99mTc) compounds,V09I,4
+V09IB,Indium (111In) compounds,V09I,4
+V09IX,Other diagnostic radiopharmaceuticals for tumour detection,V09I,4
+V09XA,Iodine (131I) compounds,V09X,4
+V09XX,Various diagnostic radiopharmaceuticals,V09X,4
+V10AA,Yttrium (90Y) compounds,V10A,4
+V10AX,Other antiinflammatory therapeutic radiopharmaceuticals,V10A,4
+V10BX,Various pain palliation radiopharmaceuticals,V10B,4
+V10XA,Iodine (131I) compounds,V10X,4
+V10XX,Various therapeutic radiopharmaceuticals,V10X,4
