@@ -5332,9 +5332,9 @@ function initAnamnesisNotesDrawer(){
     try{ localStorage.setItem(ANAMNESIS_NOTES_BULLETS_KEY, bullets.checked ? "1" : "0"); }catch(e){}
   });
 
-  toggle.addEventListener("click", ()=> drawer.classList.add("open"));
-  close.addEventListener("click", ()=> drawer.classList.remove("open"));
-  edge.addEventListener("click", ()=> drawer.classList.remove("open"));
+  toggle.addEventListener("click", ()=> setAnamnesisNotesDrawerOpen(true));
+  close.addEventListener("click", ()=> setAnamnesisNotesDrawerOpen(false));
+  edge.addEventListener("click", ()=> setAnamnesisNotesDrawerOpen(false));
 
   notes.addEventListener("keydown", (e)=>{
     if(e.key !== "Enter" || !bullets.checked) return;
@@ -5366,6 +5366,16 @@ const anamnesisMobileToolbarState = {
 let anamnesisPhoneToolsOpen = false;
 let anamnesisPhoneRegistryVisible = false;
 
+function setAnamnesisNotesDrawerOpen(open){
+  const toggle = document.getElementById("anamnesis-notes-toggle");
+  const drawer = document.getElementById("anamnesis-notes-drawer");
+  if(!drawer) return;
+  const next = !!open;
+  drawer.classList.toggle("open", next);
+  drawer.setAttribute("aria-hidden", next ? "false" : "true");
+  if(toggle) toggle.setAttribute("aria-expanded", next ? "true" : "false");
+}
+
 function usesFloatingAnamnesisToolbar(){
   return false;
 }
@@ -5394,6 +5404,16 @@ function updateAnamnesisMobileToolbarMetrics(){
   screen.style.setProperty("--anam-toolbar-mobile-offset", `${Math.max(120, offset)}px`);
 }
 
+function updateAnamnesisMobileHeaderMetrics(){
+  const screen = document.getElementById("screen-anamnesis");
+  const header = document.querySelector("#screen-anamnesis .anamnesis-mobile-header");
+  if(!screen || !header) return;
+  const style = window.getComputedStyle(header);
+  const marginBottom = parseFloat(style.marginBottom || "0") || 0;
+  const offset = Math.ceil(header.getBoundingClientRect().height + marginBottom + 6);
+  screen.style.setProperty("--anam-mobile-header-offset", `${Math.max(86, offset)}px`);
+}
+
 function applyAnamnesisMobileToolbarState(expanded, revealVisible){
   const screen = document.getElementById("screen-anamnesis");
   const reveal = document.getElementById("anamnesis-toolbar-reveal");
@@ -5410,6 +5430,7 @@ function setAnamnesisPhoneToolsOpen(open){
   const toggle = document.getElementById("anamnesis-mobile-tools-toggle");
   const next = !!open;
   anamnesisPhoneToolsOpen = next;
+  updateAnamnesisMobileHeaderMetrics();
   if(screen) screen.classList.toggle("anam-mobile-tools-open", next);
   if(toggle) toggle.setAttribute("aria-expanded", next ? "true" : "false");
 }
@@ -5484,6 +5505,7 @@ function updateAnamnesisMobileHeader(record){
     mobileSaveButton.disabled = !record;
   }
   updateAnamnesisTypeIndicators(record ? record.anamnesisType : "internal", { showPatientsLabel: !record });
+  requestAnimationFrame(()=> updateAnamnesisMobileHeaderMetrics());
 }
 
 function updateAnamnesisMobileHeaderPreview(){
@@ -5600,6 +5622,8 @@ function initAnamnesisMobileToolbar(){
   window.addEventListener("scroll", ()=> syncAnamnesisMobileToolbar(), { passive: true });
   window.addEventListener("resize", ()=> syncAnamnesisMobileToolbar());
   window.addEventListener("orientationchange", ()=> syncAnamnesisMobileToolbar());
+  window.addEventListener("resize", ()=> updateAnamnesisMobileHeaderMetrics());
+  window.addEventListener("orientationchange", ()=> updateAnamnesisMobileHeaderMetrics());
 }
 
 function normalizeAnamnesisLayoutMode(raw){
@@ -5664,7 +5688,8 @@ function applyAnamnesisLayoutMode(){
   const resolved = getResolvedAnamnesisLayoutMode();
   if(screen) screen.dataset.anamLayout = resolved;
   if(select) select.value = anamnesisLayoutMode;
-  anamnesisPhoneRegistryVisible = !getActiveAnamnesisPatientRecord();
+  anamnesisPhoneRegistryVisible = anamnesisPhoneRegistryVisible || !getActiveAnamnesisPatientRecord();
+  updateAnamnesisMobileHeaderMetrics();
   setAnamnesisPhoneToolsOpen(false);
   syncAnamnesisMobileToolbar();
 }
@@ -7343,10 +7368,17 @@ function updateAnamnesisEditorChrome(record){
   const showRegistry = !hasRecord || anamnesisPhoneRegistryVisible;
   const showEditor = hasRecord && !anamnesisPhoneRegistryVisible;
   const collapseRegistry = showEditor;
-  if(screen) screen.classList.toggle("anamnesis-record-open", showEditor);
+  const showNotesWorkspace = hasRecord && showEditor;
+  if(screen){
+    screen.classList.toggle("anamnesis-record-open", showEditor);
+    screen.classList.toggle("anamnesis-notes-hidden", !showNotesWorkspace);
+  }
   if(shell) shell.classList.toggle("is-editor-active", collapseRegistry);
   if(registryCard) registryCard.classList.toggle("hidden", !showRegistry);
   if(editorCard) editorCard.classList.toggle("hidden", !showEditor);
+  if(!showNotesWorkspace){
+    setAnamnesisNotesDrawerOpen(false);
+  }
   updateAnamnesisMobileHeader(record);
   if(!hasRecord){
     anamnesisPhoneRegistryVisible = true;
@@ -8518,6 +8550,7 @@ async function prepareScreenAfterNavigation(screenId){
   if(id === "screen-anamnesis"){
     await ensureAnamnesisDictionaryLoaded();
     await ensureAnamnesisRegistryReady();
+    showAnamnesisPatientListView({ focus: false });
     return;
   }
   if(id === "screen-search"){
@@ -8873,6 +8906,7 @@ async function init(){
     showScreen('screen-anamnesis');
     await ensureAnamnesisDictionaryLoaded();
     await ensureAnamnesisRegistryReady();
+    showAnamnesisPatientListView({ focus: false });
   });
 
   const searchInput = document.getElementById('search-input');
