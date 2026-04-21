@@ -5762,12 +5762,33 @@ function buildCourseChartExercise({ title, prompt, rows, note, speakTokens = fal
   };
 }
 
+function setLatinCourseExerciseState(exerciseIndex = 0){
+  latinCourseState.activeExerciseIndex = exerciseIndex;
+  latinCourseState.checked = false;
+  latinCourseState.correctInSession = 0;
+  latinCourseState.attemptedInSession = 0;
+  latinCourseState.selectedDragToken = "";
+}
+
+function generateLatinCourseLessonExercises(lessonId, { scrollToDrill = false } = {}){
+  const lesson = latinCourseState.lessons.find(item => item && item.id === lessonId);
+  if(!lesson || typeof lesson.generateExercises !== "function") return;
+  lesson.exercises = (lesson.generateExercises() || [])
+    .filter(ex => ex && (ex.type !== "choice" || (ex.answer && ex.options.length >= 2)));
+  latinCourseState.activeLessonId = lesson.id;
+  setLatinCourseExerciseState(0);
+  renderLatinCourseUI();
+  if(scrollToDrill && lesson.exercises.length){
+    document.querySelector(".course-drill-panel")?.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      block: "start"
+    });
+  }
+}
+
 function buildLatinCourseLessons(){
   const unitOne = latinCourseState.unitOneTerms;
   const nouns = unitOne.filter(term => /noun/i.test(term.partOfSpeech));
-  const adjectives = unitOne.filter(term => /adjective/i.test(term.partOfSpeech));
-  const prepositions = unitOne.filter(term => /preposition/i.test(term.partOfSpeech));
-  const definitions = unitOne.filter(term => term.note).slice(0, 18);
   const tables = latinCourseState.courseTables;
   const pronunciation = tables.pronunciation || [];
   const declension = tables.declension || [];
@@ -5781,16 +5802,16 @@ function buildLatinCourseLessons(){
   const targetCandidates = getCourseTargetCandidates(unitOne);
   const targetTerms = unitOne.filter(term => getCourseTargetValue(term));
   const targetNouns = nouns.filter(term => getCourseTargetValue(term));
-  const theoryPrefix = isEnglishTrack ? "Theory" : "Teória";
-  const testPrefix = isEnglishTrack ? "Test" : "Test";
   const trainPrefix = isEnglishTrack ? "Train" : "Tréning";
-  const targetVerb = isEnglishTrack ? "English" : "slovenský";
-  const theoryCards = theory.map(row => ({
-    label: row.section_title,
-    title: row.section_title,
-    body: row.theory_point
-  }));
-  const courseTheoryCards = isEnglishTrack ? theoryCards : [
+  const englishFoundationCards = [
+    { label: "Word classes", title: "Nouns and adjectives", body: "Medical Latin most often works with nouns and adjectives." },
+    { label: "Gender", title: "m. / f. / n.", body: "Nouns can be masculine, feminine, or neuter." },
+    { label: "Number", title: "singular / plural", body: "The form of a word depends on singular or plural number." },
+    { label: "Cases", title: "nominative, genitive, accusative, ablative", body: "For terminology, the dictionary form and genitive are especially important." },
+    { label: "Declension", title: "genitive singular ending", body: "You identify the declension by the ending of the genitive singular." },
+    { label: "Stem", title: "remove the ending", body: "You get the stem by removing the ending of the genitive singular." }
+  ];
+  const courseTheoryCards = isEnglishTrack ? englishFoundationCards : [
     { label: "Slovn\u00e9 druhy", title: "Substant\u00edva a adjekt\u00edva", body: "V medic\u00ednskej latin\u010dine sa naj\u010dastej\u0161ie pracuje s podstatn\u00fdmi a pr\u00eddavn\u00fdmi menami." },
     { label: "Rod", title: "m. / f. / n.", body: "Podstatn\u00e9 men\u00e1 maj\u00fa mu\u017esk\u00fd, \u017eensk\u00fd alebo stredn\u00fd rod." },
     { label: "\u010c\u00edslo", title: "singul\u00e1r / plur\u00e1l", body: "Tvar slova z\u00e1vis\u00ed od jednotn\u00e9ho alebo mno\u017en\u00e9ho \u010d\u00edsla." },
@@ -5799,12 +5820,65 @@ function buildLatinCourseLessons(){
     { label: "Kme\u0148", title: "odober koncovku", body: "Kme\u0148 z\u00edska\u0161 odstr\u00e1nen\u00edm koncovky genit\u00edvu singul\u00e1ru." }
   ];
   const targetCourseTerms = targetTerms.length ? targetTerms : unitOne;
-  const targetDefinitions = targetTerms.filter(term => getCourseTargetValue(term)).slice(0, 18);
   const targetChoicePrompt = term => isEnglishTrack
     ? `Choose the English meaning of ${term.latin}.`
     : `Vyber slovensk\u00fd v\u00fdznam pre ${term.latin}.`;
   const translationTitle = isEnglishTrack ? "English translation" : "Slovensk\u00fd preklad";
   const latinToTargetLabel = isEnglishTrack ? "Latin -> English" : "Latin\u010dina -> Sloven\u010dina";
+  const buildTermCardBody = term => [courseText(term && term.gender), courseText(term && term.genitive), getCourseTargetValue(term)].join(" | ");
+  const buildStudyCards = terms => (terms || []).map(term => ({
+    label: courseText(term && term.gender),
+    title: courseText(term && term.latin),
+    body: buildTermCardBody(term)
+  }));
+  const buildChoiceExercisesForTerms = terms => (terms || []).map(term => buildCourseChoiceExercise({
+    title: translationTitle,
+    prompt: targetChoicePrompt(term),
+    answer: getCourseTargetValue(term),
+    candidates: targetCandidates,
+    explanation: buildTermCardBody(term),
+    speakOptions: isEnglishTrack
+  }));
+  const pickCourseTermSet = (count = 10) => pickCourseItems(targetCourseTerms, Math.min(count, targetCourseTerms.length));
+  const chapter32Terms = pickCourseTermSet(10);
+  const chapter33Terms = pickCourseTermSet(10);
+  const englishFoundationArticle = [
+    {
+      heading: "Word classes",
+      paragraphs: ["In medical Latin, the most commonly used word classes are:"],
+      bullets: ["nouns (substantives)", "adjectives"],
+      after: "These form the basis of most technical medical terms."
+    },
+    {
+      heading: "Gender (genus)",
+      paragraphs: ["Every noun has a grammatical gender:"],
+      bullets: ["masculine (m.)", "feminine (f.)", "neuter (n.)"],
+      after: "Gender is especially important when adjectives must agree with the noun."
+    },
+    {
+      heading: "Number (numerus)",
+      paragraphs: ["Nouns exist in two numbers:"],
+      bullets: ["singular", "plural"],
+      after: "The form of the word changes according to number."
+    },
+    {
+      heading: "Cases (casus)",
+      paragraphs: ["In medical Latin, these cases are used most often:"],
+      bullets: ["nominative - the basic dictionary form", "genitive - expresses belonging or relation", "accusative - often used after prepositions", "ablative - used with certain prepositions"],
+      after: "These cases are essential for building correct medical terms."
+    },
+    {
+      heading: "Declension",
+      paragraphs: ["Nouns are declined according to declension patterns.", "You identify the declension by the ending of the genitive singular."],
+      examples: ["vena, ae -> 1st declension", "digitus, i -> 2nd declension"]
+    },
+    {
+      heading: "Word stem",
+      paragraphs: ["You obtain the noun stem by removing the ending of the genitive singular."],
+      examples: ["vena, ae -> stem: ven-", "digitus, i -> stem: digit-"],
+      after: "Case endings are then added to this stem."
+    }
+  ];
   const slovakFoundationArticle = [
     {
       heading: "Slovn\u00e9 druhy",
@@ -5840,6 +5914,44 @@ function buildLatinCourseLessons(){
       paragraphs: ["Kme\u0148 podstatn\u00e9ho mena z\u00edskame odstr\u00e1nen\u00edm koncovky genit\u00edvu singul\u00e1ru."],
       examples: ["vena, ae \u2192 kme\u0148: ven-", "digitus, i \u2192 kme\u0148: digit-"],
       after: "Na tento kme\u0148 sa potom prip\u00e1jaj\u00fa p\u00e1dov\u00e9 koncovky."
+    }
+  ];
+  const englishPronunciationArticle = [
+    {
+      heading: "The vowel -i-",
+      paragraphs: ["After a consonant and before a vowel, it is pronounced like \"ij\"."],
+      examples: ["arteria -> arterija"],
+      after: "At the beginning of a word before a vowel, it is pronounced like \"j\".",
+      afterExamples: ["iatrogenes -> jatrogenes"]
+    },
+    {
+      heading: "Diphthongs",
+      paragraphs: ["ae and oe are pronounced like \"e\"."],
+      examples: ["praematurus -> prematurus"]
+    },
+    {
+      heading: "The consonant -c-",
+      paragraphs: ["Before e, i, y, ae, and oe, it is pronounced as a soft \"c\"."],
+      examples: ["cervix -> cerviks"],
+      after: "In other positions, it is pronounced like \"k\".",
+      afterExamples: ["corpus -> korpus"]
+    },
+    {
+      heading: "The consonant -s-",
+      paragraphs: ["Between two vowels, it is pronounced like \"z\"."],
+      examples: ["sclerosis -> sklerozis"]
+    },
+    {
+      heading: "The consonant -x-",
+      paragraphs: ["It is usually pronounced like \"ks\"."],
+      examples: ["larynx -> larynks"],
+      after: "Between vowels, it may also sound like \"gz\".",
+      afterExamples: ["exitus -> egzitus"]
+    },
+    {
+      heading: "The group -ti-",
+      paragraphs: ["Before a vowel or diphthong, it is pronounced like \"ci\"."],
+      examples: ["substantia -> substancia"]
     }
   ];
   const slovakPronunciationArticle = [
@@ -5886,23 +5998,21 @@ function buildLatinCourseLessons(){
       id: "theory-foundations",
       kind: "theory",
       chapter: "Chapter 1.1",
-      title: isEnglishTrack ? `${theoryPrefix}: medical Latin basics` : "Te\u00f3ria: Z\u00e1klady medic\u00ednskej latin\u010diny",
-      subtitle: isEnglishTrack
-        ? "Read the core word classes, gender, number, cases, and term-building rules first."
-        : "Najprv si prejdi slovné druhy, rod, číslo, pády a pravidlá tvorby termínov.",
+      title: isEnglishTrack ? "Medical Latin basics" : "Z\u00e1klady medic\u00ednskej latin\u010diny",
+      subtitle: "",
       focus: isEnglishTrack
         ? ["Word classes", "Gender and number", "Cases", "Declension by genitive singular"]
         : ["Slovné druhy", "Rod a číslo", "Pády", "Deklinácia podľa genitívu singuláru"],
       cards: courseTheoryCards.slice(0, 10),
-      articleIntro: isEnglishTrack ? "" : "Najprv je potrebn\u00e9 pochopi\u0165 z\u00e1kladn\u00e9 gramatick\u00e9 princ\u00edpy, na ktor\u00fdch je medic\u00ednska latin\u010dina postaven\u00e1. V terminol\u00f3gii sa pracuje najm\u00e4 s podstatn\u00fdmi menami a pr\u00eddavn\u00fdmi menami, ktor\u00e9 sa navz\u00e1jom sp\u00e1jaj\u00fa pod\u013ea presn\u00fdch pravidiel.",
-      article: isEnglishTrack ? null : slovakFoundationArticle,
+      articleIntro: "",
+      article: isEnglishTrack ? englishFoundationArticle : slovakFoundationArticle,
       exercises: []
     },
     {
       id: "pronunciation-theory",
       kind: "theory",
       chapter: "Chapter 1.2",
-      title: isEnglishTrack ? `${theoryPrefix}: pronunciation` : "Te\u00f3ria: V\u00fdslovnos\u0165 medic\u00ednskej latin\u010diny",
+      title: isEnglishTrack ? "Pronunciation" : "V\u00fdslovnos\u0165 medic\u00ednskej latin\u010diny",
       subtitle: isEnglishTrack
         ? "Study how medical Latin is read before answering pronunciation questions."
         : "Pred otázkami si preštuduj, ako sa medicínska latinčina číta.",
@@ -5914,132 +6024,17 @@ function buildLatinCourseLessons(){
           ? `${row.pronunciation_sk || ""}${row.example_pronounced ? ` | ${row.example_pronounced}` : ""}`
           : (row.example_pronounced || row.pattern || "")
       })),
-      articleIntro: isEnglishTrack ? "" : "Pred \u0161t\u00fadiom terminol\u00f3gie je potrebn\u00e9 porozumie\u0165 z\u00e1kladn\u00fdm pravidl\u00e1m v\u00fdslovnosti. Latinsk\u00e9 slov\u00e1 sa s\u00edce \u010d\u00edtaj\u00fa podobne ako slovensk\u00e9, ale existuje nieko\u013eko d\u00f4le\u017eit\u00fdch odli\u0161nost\u00ed.",
-      article: isEnglishTrack ? null : slovakPronunciationArticle,
+      articleIntro: isEnglishTrack
+        ? "Before studying terminology, it helps to understand the main pronunciation rules. Medical Latin is read quite consistently, but several patterns are important to learn early."
+        : "Pred \u0161t\u00fadiom terminol\u00f3gie je potrebn\u00e9 porozumie\u0165 z\u00e1kladn\u00fdm pravidl\u00e1m v\u00fdslovnosti. Latinsk\u00e9 slov\u00e1 sa s\u00edce \u010d\u00edtaj\u00fa podobne ako slovensk\u00e9, ale existuje nieko\u013eko d\u00f4le\u017eit\u00fdch odli\u0161nost\u00ed.",
+      article: isEnglishTrack ? englishPronunciationArticle : slovakPronunciationArticle,
       exercises: []
-    },
-    {
-      id: "pronunciation-test",
-      kind: "quiz",
-      chapter: "Chapter 1.3",
-      title: isEnglishTrack ? `${testPrefix}: pronunciation` : "Test: v\u00fdslovnos\u0165",
-      subtitle: isEnglishTrack ? "Now test only the reading patterns." : "Teraz si otestuj len výslovnosť.",
-      focus: ["Choose the pronounced form"],
-      cards: [],
-      exercises: pickCourseItems(pronunciation.filter(row => row.example_latin && row.example_pronounced), 6).map(row => buildCourseChoiceExercise({
-        title: "Pronunciation",
-        prompt: isEnglishTrack ? `How would you read ${row.example_latin}?` : `Ako pre\u010d\u00edta\u0161 ${row.example_latin}?`,
-        answer: row.example_pronounced,
-        candidates: pronunciation.map(x => x.example_pronounced),
-        explanation: isEnglishTrack ? `${row.pattern}: ${row.pronunciation_sk}` : row.pattern
-      }))
-    },
-    {
-      id: "unit-one-words-theory",
-      kind: "theory",
-      chapter: "Chapter 2.1",
-      title: isEnglishTrack ? `${theoryPrefix}: 1st declension words` : "Te\u00f3ria: slov\u00e1 1. deklin\u00e1cie",
-      subtitle: isEnglishTrack
-        ? "Read the chapter vocabulary from latin_units.csv before training English recall."
-        : "Prejdi si slovnú zásobu z latin_units.csv pred tréningom slovenskej terminológie.",
-      focus: isEnglishTrack ? ["Latin + genitive", "English"] : ["Latinsk\u00fd tvar + genit\u00edv", "Sloven\u010dina"],
-      cards: [
-        ...nouns.slice(0, 8).map(term => ({
-          label: term.gender || term.partOfSpeech,
-          title: term.latin,
-          body: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | ")
-        })),
-        ...adjectives.slice(0, 4).map(term => ({
-          label: term.partOfSpeech,
-          title: term.latin,
-          body: getCourseTargetValue(term)
-        })),
-        ...prepositions.slice(0, 3).map(term => ({
-          label: term.partOfSpeech,
-          title: term.latin,
-          body: courseNonEmpty([getCourseTargetValue(term), term.note]).join(" | ")
-        }))
-      ],
-      exercises: []
-    },
-    {
-      id: "unit-one-words-sk-en",
-      kind: "quiz",
-      chapter: "Chapter 2.2",
-      title: `${trainPrefix}: ${latinToTargetLabel}`,
-      subtitle: isEnglishTrack
-        ? "Train the chapter words against English meanings."
-        : "Precvičuj latinské slová proti slovenským významom.",
-      focus: [latinToTargetLabel],
-      cards: [],
-      exercises: [
-        ...pickCourseItems(targetNouns, 4).map(term => buildCourseChoiceExercise({
-          title: translationTitle,
-          prompt: targetChoicePrompt(term),
-          answer: getCourseTargetValue(term),
-          candidates: targetCandidates,
-          explanation: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | "),
-          speakOptions: isEnglishTrack
-        })),
-        ...pickCourseItems(targetTerms, 3).map(term => buildCourseChoiceExercise({
-          title: translationTitle,
-          prompt: targetChoicePrompt(term),
-          answer: getCourseTargetValue(term),
-          candidates: targetCandidates,
-          explanation: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | "),
-          speakOptions: isEnglishTrack
-        }))
-      ]
-    },
-    {
-      id: "unit-one-words-de-match",
-      kind: "quiz",
-      chapter: "Chapter 2.3",
-      title: isEnglishTrack ? "Train: English listening and matching" : "Tréning: slovenské párovanie",
-      subtitle: isEnglishTrack
-        ? "Continue with English listening buttons and Latin-English matching."
-        : "Pokračuj slovenským párovaním bez hlasového čítania.",
-      focus: isEnglishTrack ? ["Latin -> English", "English listening"] : ["Latin -> Slovenčina", "Párovanie významov"],
-      title: isEnglishTrack ? "Train: English listening and matching" : "Tr\u00e9ning: slovensk\u00e9 p\u00e1rovanie",
-      subtitle: isEnglishTrack ? "Continue with English listening buttons and Latin-English matching." : "Pokra\u010duj slovensk\u00fdm p\u00e1rovan\u00edm bez hlasov\u00e9ho \u010d\u00edtania.",
-      cards: [],
-      focus: isEnglishTrack ? ["Latin -> English", "English listening"] : ["Latin\u010dina -> Sloven\u010dina", "P\u00e1rovanie v\u00fdznamov"],
-      exercises: [
-        ...pickCourseItems(targetTerms, 2).map(term => buildCourseChoiceExercise({
-          title: translationTitle,
-          prompt: targetChoicePrompt(term),
-          answer: getCourseTargetValue(term),
-          candidates: targetCandidates,
-          explanation: getCourseTargetHint(term),
-          speakOptions: isEnglishTrack
-        })),
-        ...(isEnglishTrack ? [buildCourseListeningMatchExercise({
-          title: "Listen and match English",
-          prompt: "Match each Latin term with the listening button that reads its English meaning.",
-          pairs: pickCourseItems(nouns.filter(term => term.latin && term.english), 5).map(term => ({
-            left: term.latin,
-            audio: term.english,
-            answer: term.english,
-            hint: term.genitive
-          }))
-        })] : []),
-        buildCourseMatchingExercise({
-          title: isEnglishTrack ? "English matching" : "Slovensk\u00e9 p\u00e1rovanie",
-          prompt: isEnglishTrack ? "Drag each English meaning to the matching Latin term." : "Potiahni ka\u017ed\u00fd slovensk\u00fd v\u00fdznam k spr\u00e1vnemu latinsk\u00e9mu term\u00ednu.",
-          pairs: pickCourseItems(targetNouns, 5).map(term => ({
-            left: term.latin,
-            right: getCourseTargetValue(term),
-            hint: term.genitive
-          })),
-          speakTokens: isEnglishTrack
-        })
-      ]
     },
     {
       id: "declension-theory",
       kind: "theory",
-      chapter: "Chapter 3.1",
-      title: isEnglishTrack ? "Theory: 1st declension forms" : "Te\u00f3ria: tvary 1. deklin\u00e1cie",
+      chapter: "Chapter 2.1",
+      title: isEnglishTrack ? "1st declension forms" : "Tvary 1. deklin\u00e1cie",
       subtitle: isEnglishTrack ? "Study the paradigm before filling any charts." : "Najprv si pre\u010d\u00edtaj paradigmu, a\u017e potom dop\u013a\u0148aj tabu\u013eky.",
       focus: isEnglishTrack
         ? ["Nominative: vena", "Genitive: venae", "Accusative: venam", "Ablative: vena"]
@@ -6064,7 +6059,7 @@ function buildLatinCourseLessons(){
     {
       id: "declension-chart-test",
       kind: "quiz",
-      chapter: "Chapter 3.2",
+      chapter: "Chapter 2.2",
       title: isEnglishTrack ? "Test: declension chart" : "Test: deklina\u010dn\u00e1 tabu\u013eka",
       subtitle: isEnglishTrack ? "Fill the forms after studying the paradigm." : "Dopl\u0148 tvary po pre\u010d\u00edtan\u00ed paradigmy.",
       focus: isEnglishTrack ? ["Drag forms", "Case recognition", "Singular and plural"] : ["Doplnenie tvarov", "Rozpoznanie p\u00e1dov", "Singul\u00e1r a plur\u00e1l"],
@@ -6099,10 +6094,58 @@ function buildLatinCourseLessons(){
       ]
     },
     {
+      id: "unit-one-words-theory",
+      kind: "theory",
+      chapter: "Chapter 3.1",
+      title: isEnglishTrack ? "1st declension words" : "Slov\u00e1 1. deklin\u00e1cie",
+      subtitle: isEnglishTrack
+        ? "Read the chapter vocabulary from latin_units.csv before training English recall."
+        : "Prejdi si slovnú zásobu z latin_units.csv pred tréningom slovenskej terminológie.",
+      focus: isEnglishTrack ? ["Latin + genitive", "English"] : ["Latinsk\u00fd tvar + genit\u00edv", "Sloven\u010dina"],
+      cards: buildStudyCards(targetCourseTerms),
+      showAllCards: true,
+      exercises: []
+    },
+    {
+      id: "unit-one-words-sk-en",
+      kind: "quiz",
+      chapter: "Chapter 3.2",
+      title: `${trainPrefix}: ${latinToTargetLabel}`,
+      subtitle: isEnglishTrack
+        ? "Train the chapter words against English meanings."
+        : "Precvičuj latinské slová proti slovenským významom.",
+      focus: isEnglishTrack ? [latinToTargetLabel, "Multiple choice", "10 questions"] : [latinToTargetLabel, "Viac mo\u017enost\u00ed", "10 ot\u00e1zok"],
+      cards: [],
+      exercises: buildChoiceExercisesForTerms(chapter32Terms)
+    },
+    {
+      id: "unit-one-words-de-match",
+      kind: "quiz",
+      chapter: "Chapter 3.3",
+      title: isEnglishTrack ? "Train: English matching" : "Tréning: slovenské párovanie",
+      subtitle: isEnglishTrack
+        ? "Match 10 chapter terms with their translations."
+        : "Spoj 10 slov z kapitoly s ich prekladmi.",
+      cards: [],
+      focus: isEnglishTrack ? ["Latin -> English", "Matching", "10 word translations"] : ["Latin\u010dina -> Sloven\u010dina", "P\u00e1rovanie", "10 prekladov slov"],
+      exercises: [
+        buildCourseMatchingExercise({
+          title: isEnglishTrack ? "Chapter 3.3 matching" : "P\u00e1rovanie kapitoly 3.3",
+          prompt: isEnglishTrack ? "Match the 10 selected meanings to the correct Latin terms." : "Spoj 10 vybran\u00fdch slovensk\u00fdch v\u00fdznamov so spr\u00e1vnymi latinsk\u00fdmi term\u00ednmi.",
+          pairs: chapter33Terms.map(term => ({
+            left: term.latin,
+            right: getCourseTargetValue(term),
+            hint: term.genitive
+          })),
+          speakTokens: isEnglishTrack
+        })
+      ]
+    },
+    {
       id: "construction-theory",
       kind: "theory",
       chapter: "Chapter 4.1",
-      title: isEnglishTrack ? "Theory: build medical terms" : "Te\u00f3ria: tvorba medic\u00ednskych term\u00ednov",
+      title: isEnglishTrack ? "Build medical terms" : "Tvorba medic\u00ednskych term\u00ednov",
       subtitle: isEnglishTrack ? "Read noun + noun, noun + adjective, and preposition + noun patterns." : "Prejdi si vzory substant\u00edvum + substant\u00edvum, substant\u00edvum + adjekt\u00edvum a predlo\u017eka + substant\u00edvum.",
       focus: isEnglishTrack ? ["Adjective agreement", "Dependent genitive", "Preposition cases"] : ["Zhoda pr\u00eddavn\u00e9ho mena", "Z\u00e1visl\u00fd genit\u00edv", "P\u00e1dy po predlo\u017ek\u00e1ch"],
       cards: [
@@ -6157,41 +6200,13 @@ function buildLatinCourseLessons(){
       kind: "quiz",
       chapter: "Chapter 5.1",
       title: isEnglishTrack ? "Review: Latin - English sprint" : "Opakovanie: Latin\u010dina - Sloven\u010dina",
-      subtitle: isEnglishTrack ? "A final review across Latin forms and English meanings." : "Z\u00e1vere\u010dn\u00e9 opakovanie latinsk\u00fdch tvarov a slovensk\u00fdch v\u00fdznamov.",
-      focus: isEnglishTrack ? ["Definitions", "English recall", "High-yield medical nouns"] : ["V\u00fdznamy", "Slovensk\u00e9 preklady", "D\u00f4le\u017eit\u00e9 substant\u00edva"],
-      cards: targetDefinitions.slice(0, 8).map(term => ({
-        label: term.partOfSpeech,
-        title: term.latin,
-        body: courseNonEmpty([getCourseTargetValue(term), term.genitive]).join(" | ")
-      })),
-      exercises: [
-        ...pickCourseItems(targetDefinitions, 2).map(term => buildCourseChoiceExercise({
-          title: isEnglishTrack ? "Definition" : "V\u00fdznam",
-          prompt: targetChoicePrompt(term),
-          answer: getCourseTargetValue(term),
-          candidates: targetCandidates,
-          explanation: courseNonEmpty([term.latin, term.genitive]).join(" | "),
-          speakOptions: isEnglishTrack
-        })),
-        buildCourseMatchingExercise({
-          title: isEnglishTrack ? "Latin recall" : "Latinsk\u00e9 term\u00edny",
-          prompt: isEnglishTrack ? "Drag each Latin term to the English meaning." : "Prira\u010f latinsk\u00fd term\u00edn k slovensk\u00e9mu v\u00fdznamu.",
-          pairs: pickCourseItems(targetCourseTerms.filter(term => getCourseTargetValue(term)), 6).map(term => ({
-            left: getCourseTargetValue(term),
-            right: term.latin,
-            hint: term.genitive
-          }))
-        }),
-        buildCourseChoiceExercise({
-          title: isEnglishTrack ? "1st declension signal" : "Znak 1. deklin\u00e1cie",
-          prompt: isEnglishTrack ? "Which form most clearly identifies a 1st declension noun?" : "Ktor\u00fd tvar najlep\u0161ie rozpozn\u00e1 1. deklin\u00e1ciu?",
-          answer: isEnglishTrack ? "genitive singular -ae" : "genit\u00edv singul\u00e1ru -ae",
-          candidates: isEnglishTrack
-            ? ["nominative singular -us", "genitive singular -is", "ablative plural -ibus", "genitive singular -ae"]
-            : ["nominat\u00edv singul\u00e1ru -us", "genit\u00edv singul\u00e1ru -is", "ablat\u00edv plur\u00e1lu -ibus", "genit\u00edv singul\u00e1ru -ae"],
-          explanation: isEnglishTrack ? "Declension is recognized by the genitive singular ending." : "Deklin\u00e1cia sa ur\u010duje pod\u013ea koncovky genit\u00edvu singul\u00e1ru."
-        })
-      ]
+      subtitle: isEnglishTrack ? "List of all chapter terms with an option to generate a full test." : "Zoznam v\u0161etk\u00fdch pojmov kapitoly s mo\u017enos\u0165ou vygenerova\u0165 kompletn\u00fd test.",
+      focus: isEnglishTrack ? ["All chapter terms", "Full chapter test", "Latin -> English"] : ["V\u0161etky pojmy kapitoly", "Kompletn\u00fd test kapitoly", "Latin\u010dina -> Sloven\u010dina"],
+      cards: buildStudyCards(targetCourseTerms),
+      showAllCards: true,
+      exercises: [],
+      generatorCtaLabel: isEnglishTrack ? "Generate full chapter test" : "Vygenerova\u0165 kompletn\u00fd test kapitoly",
+      generateExercises: () => buildChoiceExercisesForTerms(targetCourseTerms)
     }
   ];
 
@@ -6425,15 +6440,18 @@ function renderLatinCourseLessonContent(lesson){
     wrap.innerHTML = `<p class="muted">${escapeHTML(tOr("feature_load_failed", "Failed to load this section."))}</p>`;
     return;
   }
+  const cards = Array.isArray(lesson.cards)
+    ? (lesson.showAllCards ? lesson.cards : lesson.cards.slice(0, 8))
+    : [];
   const studyBody = Array.isArray(lesson.article) && lesson.article.length
     ? renderCourseTheoryArticle(lesson)
     : Array.isArray(lesson.chartRows) && lesson.chartRows.length
       ? renderCourseDeclensionTheoryChart(lesson)
       : `
       <div class="course-card-grid">
-        ${lesson.cards.slice(0, 8).map(card => `
+        ${cards.map(card => `
           <article class="course-study-card">
-            <span>${escapeHTML(card.label || "")}</span>
+            ${card.label ? `<span>${escapeHTML(card.label)}</span>` : ""}
             <strong>${escapeHTML(card.title || "")}</strong>
             <p>${escapeHTML(card.body || "")}</p>
           </article>
@@ -6441,19 +6459,26 @@ function renderLatinCourseLessonContent(lesson){
       </div>
     `;
   const subtitle = lesson.articleIntro || lesson.subtitle || "";
-  const contentKicker = isLatinCourseTargetEnglish() ? tOr("courses_theory", "Theory") : "Te\u00f3ria";
+  const actionHtml = lesson.generateExercises ? `
+    <div class="course-content-actions">
+      <button type="button" class="primary" data-course-generate="${escapeHTML(lesson.id)}">${escapeHTML(lesson.generatorCtaLabel || getCourseUiText("Generate full chapter test", "Vygenerovať kompletný test kapitoly"))}</button>
+    </div>
+  ` : "";
   wrap.innerHTML = `
     <div class="course-content-head">
       <div class="course-section-title-row">
         <div>
-          <p class="course-kicker">${escapeHTML(contentKicker)}</p>
           <h4>${escapeHTML(lesson.title)}</h4>
         </div>
       </div>
-      <p>${escapeHTML(subtitle)}</p>
+      ${subtitle ? `<p>${escapeHTML(subtitle)}</p>` : ""}
     </div>
     ${studyBody}
+    ${actionHtml}
   `;
+  wrap.querySelectorAll("[data-course-generate]").forEach(btn => {
+    btn.addEventListener("click", ()=> generateLatinCourseLessonExercises(btn.getAttribute("data-course-generate") || "", { scrollToDrill: true }));
+  });
 }
 
 function courseSpeakButton(text){
@@ -6851,12 +6876,14 @@ function renderLatinCourseUI(){
   if(trackCopy) trackCopy.textContent = courseText(cfg.subtitle);
   if(chapter && lesson) chapter.textContent = lesson.chapter;
   if(title && lesson) title.textContent = lesson.title;
-  if(copy && lesson) copy.textContent = lesson.subtitle;
+  if(copy && lesson) copy.textContent = lesson.subtitle || "";
   const hasQuiz = !!(lesson && lesson.exercises && lesson.exercises.length);
   if(startBtn){
-    startBtn.textContent = hasQuiz
+    startBtn.textContent = lesson && lesson.generateExercises && !hasQuiz
+      ? (lesson.generatorCtaLabel || getCourseUiText("Generate full chapter test", "Vygenerovať kompletný test kapitoly"))
+      : hasQuiz
       ? (latinCourseState.activeExerciseIndex > 0 ? tOr("continue", "Continue") : tOr("courses_start_lesson", "Start lesson"))
-      : tOr("courses_complete_theory", "Complete theory");
+      : getCourseUiText("Complete chapter", "Dokončiť kapitolu");
   }
   renderLatinCourseLessonList();
   renderLatinCourseLessonContent(lesson);
@@ -10973,6 +11000,10 @@ async function init(){
     const lesson = getActiveCourseLesson();
     if(!lesson) return;
     if(!lesson.exercises || lesson.exercises.length === 0){
+      if(typeof lesson.generateExercises === "function"){
+        generateLatinCourseLessonExercises(lesson.id, { scrollToDrill: true });
+        return;
+      }
       nextLatinCourseExercise();
       return;
     }

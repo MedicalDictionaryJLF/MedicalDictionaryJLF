@@ -5014,6 +5014,11 @@ body[data-theme="dark"] .entry-history-item{
   gap:7px;
 }
 
+.course-content-actions{
+  display:flex;
+  justify-content:flex-start;
+}
+
 .course-section-title-row{
   display:flex;
   align-items:flex-start;
