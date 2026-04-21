@@ -1,0 +1,11 @@
+section_order,section_title,theory_point
+1,Core Word Classes,"In medical Latin, the most relevant word classes are nouns, adjectives, numerals, verbs, adverbs, prepositions, and conjunctions"
+2,Gender,"Nouns have masculine (m.), feminine (f.), or neuter (n.) gender"
+3,Number,Forms may be singular (sg.) or plural (pl.)
+4,Cases,"For medical terminology, the most important cases are nominative, genitive, accusative, and ablative"
+5,Declension Identification,Declension is recognized by the genitive singular ending
+6,Declension Overview,"I: -ae, II: -i, III consonant: -is, III vowel: -is, IV: -us, V: -ei"
+7,Stem Formation,The stem is obtained by removing the genitive singular ending
+8,Substantive + Adjective,"The adjective must agree with the noun in case, gender, and number"
+9,Substantive + Substantive,"Without a preposition, the second noun is usually in the genitive and functions as a non-agreeing attribute"
+10,Prepositions,"A preposition requires a specific case; some, such as in and sub, may take accusative or ablative depending on meaning"

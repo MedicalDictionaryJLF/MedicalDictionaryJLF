@@ -2338,6 +2338,10 @@ function getAtcChildren(parentCode){
   return pharmacologyRepository.getAtcChildren(parentCode);
 }
 
+function getAtcHierarchy(atcCode){
+  return pharmacologyRepository.getAtcHierarchy(atcCode);
+}
+
 function getAtcFilterLabel(atcCode){
   return pharmacologyRepository.getAtcFilterLabel(atcCode);
 }
@@ -2354,7 +2358,14 @@ async function ensurePharmacologyIndexLoaded(options = {}){
 
 // --- Muscles loader ---
 let muscleTerms = [];
+let anatomyTerms = [];
+const ANATOMY_DATASET_SELECT_KEY = "anatomy_dataset_select";
 const musclesLoadState = {
+  loaded: false,
+  failed: false,
+  loadPromise: null
+};
+const anatomyLoadState = {
   loaded: false,
   failed: false,
   loadPromise: null
@@ -2385,9 +2396,42 @@ async function ensureMusclesLoaded(){
   return muscleTerms;
 }
 
+async function loadAnatomyTerms() {
+  try {
+    const txt = await loadBaseFile('terminology/anatomy.csv');
+    const rows = parseCSVLines(txt);
+    anatomyTerms = rows.length > 1 ? rowsToObjects(rows) : [];
+    anatomyLoadState.loaded = true;
+    anatomyLoadState.failed = false;
+  } catch(e) {
+    console.warn('Anatomy load failed:', e.message);
+    anatomyTerms = [];
+    anatomyLoadState.loaded = false;
+    anatomyLoadState.failed = true;
+  }
+}
+
+async function ensureAnatomyTermsLoaded(){
+  if(anatomyLoadState.loaded) return anatomyTerms;
+  if(anatomyLoadState.loadPromise) return anatomyLoadState.loadPromise;
+  anatomyLoadState.loadPromise = loadAnatomyTerms().finally(()=>{
+    anatomyLoadState.loadPromise = null;
+  });
+  await anatomyLoadState.loadPromise;
+  return anatomyTerms;
+}
+
 // --- Biophysics True/False loader ---
 const BIOPHYSICS_TF_FILE = "terminology/biophysics.csv";
 const BIOPHYSICS_TF_AUTO_NEXT_KEY = "biophysics_tf/auto_next_v1";
+const BIOPHYSICS_TF_KEYBINDS_KEY = "biophysics_tf/keybinds_v1";
+const BIOPHYSICS_TF_DEFAULT_KEYBINDS = {
+  truePrimary: "t",
+  trueSecondary: "1",
+  falsePrimary: "f",
+  falseSecondary: "0",
+  next: "enter"
+};
 let biophysicsTfItems = [];
 const biophysicsTfState = {
   pool: [],
@@ -2411,6 +2455,83 @@ function setBiophysicsTfAutoNextEnabled(enabled){
   if(el) el.checked = val;
 }
 
+function normalizeBiophysicsTfKey(value){
+  const raw = String(value || "").trim().toLowerCase();
+  if(!raw) return "";
+  if(raw === "spacebar") return " ";
+  if(raw === "space") return " ";
+  if(raw === "return") return "enter";
+  if(raw === "esc") return "escape";
+  return raw;
+}
+
+function getBiophysicsTfKeybinds(){
+  try{
+    const raw = localStorage.getItem(BIOPHYSICS_TF_KEYBINDS_KEY);
+    if(!raw) return { ...BIOPHYSICS_TF_DEFAULT_KEYBINDS };
+    const parsed = JSON.parse(raw);
+    return {
+      truePrimary: normalizeBiophysicsTfKey(parsed.truePrimary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.truePrimary,
+      trueSecondary: normalizeBiophysicsTfKey(parsed.trueSecondary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.trueSecondary,
+      falsePrimary: normalizeBiophysicsTfKey(parsed.falsePrimary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.falsePrimary,
+      falseSecondary: normalizeBiophysicsTfKey(parsed.falseSecondary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.falseSecondary,
+      next: normalizeBiophysicsTfKey(parsed.next) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.next
+    };
+  }catch(e){
+    return { ...BIOPHYSICS_TF_DEFAULT_KEYBINDS };
+  }
+}
+
+function setBiophysicsTfKeybinds(nextKeybinds){
+  const merged = {
+    ...BIOPHYSICS_TF_DEFAULT_KEYBINDS,
+    ...(nextKeybinds || {})
+  };
+  const normalized = {
+    truePrimary: normalizeBiophysicsTfKey(merged.truePrimary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.truePrimary,
+    trueSecondary: normalizeBiophysicsTfKey(merged.trueSecondary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.trueSecondary,
+    falsePrimary: normalizeBiophysicsTfKey(merged.falsePrimary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.falsePrimary,
+    falseSecondary: normalizeBiophysicsTfKey(merged.falseSecondary) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.falseSecondary,
+    next: normalizeBiophysicsTfKey(merged.next) || BIOPHYSICS_TF_DEFAULT_KEYBINDS.next
+  };
+  localStorage.setItem(BIOPHYSICS_TF_KEYBINDS_KEY, JSON.stringify(normalized));
+  renderBiophysicsTfKeybindInputs();
+  renderBiophysicsTfShortcutSummary();
+}
+
+function formatBiophysicsTfKeyLabel(key){
+  const normalized = normalizeBiophysicsTfKey(key);
+  if(normalized === " ") return "Space";
+  if(normalized === "enter") return "Enter";
+  if(normalized === "escape") return "Esc";
+  if(normalized.length === 1) return normalized.toUpperCase();
+  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function renderBiophysicsTfShortcutSummary(){
+  const el = document.getElementById("biophysics-tf-shortcuts");
+  if(!el) return;
+  const keybinds = getBiophysicsTfKeybinds();
+  const trueKeys = [keybinds.truePrimary, keybinds.trueSecondary].filter(Boolean).map(formatBiophysicsTfKeyLabel).join(" or ");
+  const falseKeys = [keybinds.falsePrimary, keybinds.falseSecondary].filter(Boolean).map(formatBiophysicsTfKeyLabel).join(" or ");
+  el.textContent = `Shortcuts: ${trueKeys} = ${tOr("biophysics_true", "True")}, ${falseKeys} = ${tOr("biophysics_false", "False")}, ${formatBiophysicsTfKeyLabel(keybinds.next)} = ${tOr("next", "Next")} (after answer).`;
+}
+
+function renderBiophysicsTfKeybindInputs(){
+  const keybinds = getBiophysicsTfKeybinds();
+  const fieldMap = {
+    "biophysics-key-true-primary": keybinds.truePrimary,
+    "biophysics-key-true-secondary": keybinds.trueSecondary,
+    "biophysics-key-false-primary": keybinds.falsePrimary,
+    "biophysics-key-false-secondary": keybinds.falseSecondary,
+    "biophysics-key-next": keybinds.next
+  };
+  Object.entries(fieldMap).forEach(([id, value])=>{
+    const el = document.getElementById(id);
+    if(el) el.value = formatBiophysicsTfKeyLabel(value);
+  });
+}
+
 function parseBooleanCell(value){
   const v = String(value || "").trim().toLowerCase();
   if(["true", "t", "1", "yes", "y"].includes(v)) return true;
@@ -2418,11 +2539,16 @@ function parseBooleanCell(value){
   return null;
 }
 
+function capitalizeBiophysicsSentence(value){
+  const text = String(value || "");
+  return text.replace(/^([a-z])/, (match) => match.toUpperCase());
+}
+
 function getBiophysicsTfText(item, kind){
   const lang = normalizeLanguage(state.language);
   if(kind === "statement"){
-    if(lang === "Slovensky" && item.statementSk) return item.statementSk;
-    return item.statementEn || item.statementSk || "";
+    if(lang === "Slovensky" && item.statementSk) return capitalizeBiophysicsSentence(item.statementSk);
+    return capitalizeBiophysicsSentence(item.statementEn || item.statementSk || "");
   }
   if(lang === "Slovensky" && item.reasoningSk) return item.reasoningSk;
   return item.reasoningEn || item.reasoningSk || "";
@@ -2536,20 +2662,42 @@ function handleBiophysicsTfKeyboard(event){
   if(isTypingTarget) return;
 
   const key = String(event.key || "").toLowerCase();
-  if((key === "t" || key === "1") && !biophysicsTfState.answered){
+  const keybinds = getBiophysicsTfKeybinds();
+  const trueKeys = new Set([keybinds.truePrimary, keybinds.trueSecondary].filter(Boolean));
+  const falseKeys = new Set([keybinds.falsePrimary, keybinds.falseSecondary].filter(Boolean));
+  if(trueKeys.has(key) && !biophysicsTfState.answered){
     event.preventDefault();
     answerBiophysicsTf(true);
     return;
   }
-  if((key === "f" || key === "2") && !biophysicsTfState.answered){
+  if(falseKeys.has(key) && !biophysicsTfState.answered){
     event.preventDefault();
     answerBiophysicsTf(false);
     return;
   }
-  if(key === "enter" && biophysicsTfState.answered){
+  if(key === keybinds.next && biophysicsTfState.answered){
     event.preventDefault();
     nextBiophysicsTfQuestion();
   }
+}
+
+function bindBiophysicsTfKeybindInput(id, keyName){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener("keydown", (event)=>{
+    event.preventDefault();
+    event.stopPropagation();
+    const current = getBiophysicsTfKeybinds();
+    if(event.key === "Tab") return;
+    if(event.key === "Backspace" || event.key === "Delete"){
+      current[keyName] = BIOPHYSICS_TF_DEFAULT_KEYBINDS[keyName];
+    }else{
+      current[keyName] = normalizeBiophysicsTfKey(event.key);
+    }
+    setBiophysicsTfKeybinds(current);
+    el.focus();
+  });
+  el.addEventListener("focus", ()=> el.select());
 }
 
 async function ensureBiophysicsTfLoaded(){
@@ -2622,7 +2770,8 @@ let state = {
 };
 
 const ENTRY_CATEGORY_DATASETS = {
-  basic_sciences: ["anatomy", "physiology"],
+  anatomy: ["anatomy", "muscles"],
+  physiology: ["physiology"],
   diagnostics_procedures: ["diagnostic_methods", "procedures"],
   disease_and_symptoms: ["disease_and_symptoms"],
   lab_parameters: ["lab_parameters"],
@@ -2640,8 +2789,8 @@ function getDatasetAdapterByKey(datasetKey){
 
 function getEntryCategory(){
   const select = document.getElementById("entry-category");
-  const value = String((select && select.value) || "basic_sciences");
-  return ENTRY_CATEGORY_DATASETS[value] ? value : "basic_sciences";
+  const value = String((select && select.value) || "anatomy");
+  return ENTRY_CATEGORY_DATASETS[value] ? value : "anatomy";
 }
 
 function getEntryDatasetOptionsForCategory(categoryKey){
@@ -3800,6 +3949,8 @@ async function setLanguage(lang){
   applyTranslationsToDom();
   applyAnamnesisTranslationsToDom();
   updateAnamnesisMobileHeader(getActiveAnamnesisPatientRecord());
+  renderBiophysicsTfShortcutSummary();
+  renderBiophysicsTfKeybindInputs();
 
   const si = document.getElementById('search-input');
   if(si && si.value && si.value.trim().length >= 2){
@@ -3870,6 +4021,8 @@ let muscleQuizCurrent = null;
 let muscleQuizRevealed = false;
 let muscleQuizSelectedRegions = new Set();
 let muscleQuizSelectedCategories = new Set();
+let anatomySelectedSystems = new Set();
+let anatomySelectedRegions = new Set();
 let muscleQuizPersistentFields = new Set();
 let muscleQuizTempFields = new Set();
 let latinQuizPool = [];
@@ -4031,14 +4184,118 @@ function addMuscleField(container, label, value, key, showToggles, highlightQuer
   container.appendChild(row);
 }
 
+function getAnatomyDatasetMode(){
+  const select = document.getElementById('anatomy-dataset-select');
+  const value = String((select && select.value) || 'muscles').trim().toLowerCase();
+  return value === 'anatomy' ? 'anatomy' : 'muscles';
+}
+
+function getAnatomyTermsForScreen(){
+  return getAnatomyDatasetMode() === 'anatomy' ? anatomyTerms : muscleTerms;
+}
+
+function populateAnatomySearchFieldOptions(){
+  const fieldSel = document.getElementById('muscle-search-field');
+  if(!fieldSel) return;
+  const dataset = getAnatomyDatasetMode();
+  const previous = fieldSel.value || 'any';
+  const options = dataset === 'anatomy'
+    ? [
+        ['any', 'Any'],
+        ['system', 'System'],
+        ['region', 'Region'],
+        ['latin_term', 'Latin name'],
+        ['english_term', 'English name'],
+        ['german_term', 'German name'],
+        ['slovak_term', 'Slovak name'],
+        ['synonyms', 'Synonyms'],
+        ['related_structures', 'Related structures'],
+        ['notes', 'Notes']
+      ]
+    : [
+        ['any', tOr('any', 'Any')],
+        ['region', tOr('muscle_search_region', 'Region')],
+        ['category', tOr('muscle_search_category', 'Category')],
+        ['latin_muscle_name', tOr('muscle_search_latin_name', 'Latin name')],
+        ['english_muscle_name', tOr('muscle_search_english_name', 'English name')],
+        ['origo', tOr('muscle_search_origo', 'Origo')],
+        ['insercio', tOr('muscle_search_insercio', 'Insercio')],
+        ['blood_supply', tOr('muscle_search_blood_supply', 'Blood supply')],
+        ['innervation', tOr('muscle_search_innervation', 'Innervation')],
+        ['movement_function', tOr('muscle_search_type_of_movement', 'Type of movement')]
+      ];
+  fieldSel.innerHTML = options.map(([value, label]) => `<option value="${escapeHTML(value)}">${escapeHTML(label)}</option>`).join('');
+  if(options.some(([value]) => value === previous)){
+    fieldSel.value = previous;
+  }
+}
+
+function syncAnatomySearchPlaceholder(){
+  const input = document.getElementById('muscle-search-input');
+  if(!input) return;
+  const isAnatomy = getAnatomyDatasetMode() === 'anatomy';
+  input.placeholder = isAnatomy ? 'Search anatomy term (min 2 chars)' : tOr('search_muscle_text', 'Search muscle name (min 2 chars)');
+}
+
 function renderMuscleSearchResults(){
   const input = document.getElementById('muscle-search-input');
   const fieldSel = document.getElementById('muscle-search-field');
   const results = document.getElementById('muscle-search-results');
   if(!input || !results) return;
+  const dataset = getAnatomyDatasetMode();
   const q = input.value.trim().toLowerCase();
   results.innerHTML = '';
   if(q.length < 2) return;
+
+  if(dataset === 'anatomy'){
+    const matches = anatomyTerms.filter(r => {
+      if(fieldSel && fieldSel.value !== 'any'){
+        return includesQuery(r[fieldSel.value], q);
+      }
+      return (
+        includesQuery(r.system, q) ||
+        includesQuery(r.region, q) ||
+        includesQuery(r.latin_term, q) ||
+        includesQuery(r.english_term, q) ||
+        includesQuery(r.german_term, q) ||
+        includesQuery(r.slovak_term, q) ||
+        includesQuery(r.synonyms, q) ||
+        includesQuery(r.related_structures, q) ||
+        includesQuery(r.notes, q)
+      );
+    });
+    const sortedMatches = [...matches].sort((a, b) => {
+      const aName = String(a.english_term || a.latin_term || '').trim();
+      const bName = String(b.english_term || b.latin_term || '').trim();
+      return aName.localeCompare(bName, undefined, { sensitivity: 'base' });
+    });
+    if(sortedMatches.length === 0){
+      results.textContent = 'No anatomy results found.';
+      return;
+    }
+    const limit = 50;
+    sortedMatches.slice(0, limit).forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'muscle-result';
+      addMuscleField(card, 'System', r.system, null, false, fieldSel && fieldSel.value === 'system' ? q : null);
+      addMuscleField(card, 'Region', r.region, null, false, fieldSel && fieldSel.value === 'region' ? q : null);
+      addMuscleField(card, 'Latin name', r.latin_term, null, false, fieldSel && fieldSel.value === 'latin_term' ? q : null);
+      addMuscleField(card, 'English name', r.english_term, null, false, fieldSel && fieldSel.value === 'english_term' ? q : null);
+      addMuscleField(card, 'German name', r.german_term, null, false, fieldSel && fieldSel.value === 'german_term' ? q : null);
+      addMuscleField(card, 'Slovak name', r.slovak_term, null, false, fieldSel && fieldSel.value === 'slovak_term' ? q : null);
+      addMuscleField(card, 'Synonyms', r.synonyms, null, false, fieldSel && fieldSel.value === 'synonyms' ? q : null);
+      addMuscleField(card, 'Related structures', r.related_structures, null, false, fieldSel && fieldSel.value === 'related_structures' ? q : null);
+      addMuscleField(card, 'Notes', r.notes, null, false, fieldSel && fieldSel.value === 'notes' ? q : null);
+      results.appendChild(card);
+    });
+    if(sortedMatches.length > limit){
+      const note = document.createElement('div');
+      note.className = 'muted';
+      note.textContent = `Showing first ${limit} results.`;
+      results.appendChild(note);
+    }
+    return;
+  }
 
   const regionField = getMuscleRegionField();
   const categoryField = getMuscleCategoryField();
@@ -4102,6 +4359,146 @@ function renderMuscleSearchResults(){
 }
 
 function renderMuscleRegionList(){
+  if(getAnatomyDatasetMode() === 'anatomy'){
+    const list = document.getElementById('muscle-region-list');
+    if(!list) return;
+    const systems = new Map();
+    for(const row of anatomyTerms){
+      const systemKey = String(row.system || '').trim();
+      const regionKey = String(row.region || '').trim();
+      if(!systemKey) continue;
+      if(!systems.has(systemKey)){
+        systems.set(systemKey, new Set());
+      }
+      if(regionKey) systems.get(systemKey).add(regionKey);
+    }
+    const systemKeys = [...systems.keys()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    list.innerHTML = '';
+    if(systemKeys.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'muted';
+      empty.textContent = 'No anatomy systems available.';
+      list.appendChild(empty);
+      return;
+    }
+    const controls = document.createElement('div');
+    controls.className = 'muscle-region-controls';
+    const clearAllBtn = document.createElement('button');
+    clearAllBtn.type = 'button';
+    clearAllBtn.className = 'muscle-region-action-btn danger';
+    clearAllBtn.textContent = 'Clear all';
+    clearAllBtn.disabled = anatomySelectedSystems.size === 0 && anatomySelectedRegions.size === 0;
+    clearAllBtn.addEventListener('click', ()=>{
+      if(!window.confirm('Clear all selected systems and regions?')) return;
+      anatomySelectedSystems.clear();
+      anatomySelectedRegions.clear();
+      renderMuscleRegionList();
+    });
+    controls.appendChild(clearAllBtn);
+    list.appendChild(controls);
+
+    systemKeys.forEach(systemKey => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'muscle-region-item';
+      const header = document.createElement('div');
+      header.className = 'muscle-region-header';
+      const systemCb = document.createElement('input');
+      systemCb.type = 'checkbox';
+      systemCb.checked = anatomySelectedSystems.has(systemKey);
+      const label = document.createElement('span');
+      label.textContent = systemKey;
+      const actions = document.createElement('div');
+      actions.className = 'muscle-region-actions';
+      const allBtn = document.createElement('button');
+      allBtn.type = 'button';
+      allBtn.className = 'muscle-region-action-btn';
+      allBtn.textContent = 'All';
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'muscle-region-action-btn';
+      clearBtn.textContent = 'Clear';
+      actions.appendChild(allBtn);
+      actions.appendChild(clearBtn);
+      header.appendChild(systemCb);
+      header.appendChild(label);
+      header.appendChild(actions);
+      wrapper.appendChild(header);
+
+      const regionWrap = document.createElement('div');
+      regionWrap.className = 'muscle-region-categories checkbox-grid';
+      if(!systemCb.checked) regionWrap.classList.add('hidden');
+      const regionKeys = [...systems.get(systemKey)].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      if(regionKeys.length === 0){
+        const none = document.createElement('div');
+        none.className = 'muted';
+        none.textContent = 'No regions for this system.';
+        regionWrap.appendChild(none);
+      } else {
+        regionKeys.forEach(regionKey => {
+          const item = document.createElement('label');
+          item.className = 'checkbox-item';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          const key = `${systemKey}||${regionKey}`;
+          cb.value = key;
+          cb.checked = anatomySelectedRegions.has(key);
+          cb.addEventListener('change', ()=>{
+            if(cb.checked){
+              anatomySelectedRegions.add(key);
+              anatomySelectedSystems.add(systemKey);
+              systemCb.checked = true;
+              regionWrap.classList.remove('hidden');
+            } else {
+              anatomySelectedRegions.delete(key);
+            }
+          });
+          const span = document.createElement('span');
+          span.textContent = regionKey;
+          item.appendChild(cb);
+          item.appendChild(span);
+          regionWrap.appendChild(item);
+        });
+      }
+      const regionCbs = ()=> [...regionWrap.querySelectorAll('input[type="checkbox"]')];
+      allBtn.disabled = regionKeys.length === 0;
+      clearBtn.disabled = regionKeys.length === 0;
+      allBtn.addEventListener('click', ()=>{
+        anatomySelectedSystems.add(systemKey);
+        systemCb.checked = true;
+        regionWrap.classList.remove('hidden');
+        regionCbs().forEach(cb => {
+          cb.checked = true;
+          anatomySelectedRegions.add(cb.value);
+        });
+      });
+      clearBtn.addEventListener('click', ()=>{
+        anatomySelectedSystems.delete(systemKey);
+        systemCb.checked = false;
+        regionCbs().forEach(cb => {
+          cb.checked = false;
+          anatomySelectedRegions.delete(cb.value);
+        });
+        regionWrap.classList.add('hidden');
+      });
+      systemCb.addEventListener('change', ()=>{
+        if(systemCb.checked){
+          anatomySelectedSystems.add(systemKey);
+          regionWrap.classList.remove('hidden');
+        } else {
+          anatomySelectedSystems.delete(systemKey);
+          regionWrap.classList.add('hidden');
+          regionCbs().forEach(cb => {
+            cb.checked = false;
+            anatomySelectedRegions.delete(cb.value);
+          });
+        }
+      });
+      wrapper.appendChild(regionWrap);
+      list.appendChild(wrapper);
+    });
+    return;
+  }
+
   const list = document.getElementById('muscle-region-list');
   if(!list) return;
   const regionField = getMuscleRegionField();
@@ -4335,10 +4732,21 @@ function startMuscleQuiz(){
 }
 
 function refreshMuscleTrainingUI(){
+  populateAnatomySearchFieldOptions();
+  syncAnatomySearchPlaceholder();
   renderMuscleRegionList();
   renderMuscleQuizFields();
   const input = document.getElementById('muscle-search-input');
   if(input && input.value.trim().length >= 2) renderMuscleSearchResults();
+}
+
+async function ensureAnatomyWorkspaceDatasetLoaded(){
+  if(getAnatomyDatasetMode() === 'anatomy'){
+    await ensureAnatomyTermsLoaded();
+    return anatomyTerms;
+  }
+  await ensureMusclesLoaded();
+  return muscleTerms;
 }
 
 function getLatinTerms(){
@@ -8841,9 +9249,9 @@ async function init(){
     }
   });
   on('to-biophysics-tf','click', async ()=> {
-    showScreen('screen-biophysics-tf');
     await ensureBiophysicsTfLoaded();
     startBiophysicsTfSession();
+    showScreen('screen-biophysics-tf');
   });
   on('to-flashcards','click', async ()=> {
     showScreen('screen-flashcards');
@@ -8863,8 +9271,8 @@ async function init(){
     setMuscleQuizSetupCollapsed(false);
     setFeatureStatus('muscle-region-list', tOr("loading", "Loading..."), "loading");
     try{
-      await ensureMusclesLoaded();
-      renderMuscleRegionList();
+      await ensureAnatomyWorkspaceDatasetLoaded();
+      refreshMuscleTrainingUI();
     }catch(e){
       setFeatureStatus('muscle-region-list', tOr("feature_load_failed", "Failed to load this section."), "error");
     }
@@ -8905,6 +9313,7 @@ async function init(){
       if(!target) return;
       const selectBtn = target.closest('[data-atc-select]');
       if(selectBtn){
+        event.preventDefault();
         selectPharmacologyAtcCode(selectBtn.getAttribute('data-atc-select') || '');
       }
     });
@@ -8913,6 +9322,7 @@ async function init(){
     pharmacologySelectedFilter.addEventListener('click', (event)=>{
       const target = event.target instanceof Element ? event.target.closest('[data-atc-select]') : null;
       if(!target) return;
+      event.preventDefault();
       selectPharmacologyAtcCode(target.getAttribute('data-atc-select') || '');
     });
   }
@@ -8938,12 +9348,30 @@ async function init(){
   if(muscleSearchField){
     const savedRaw = localStorage.getItem(MUSCLE_SEARCH_FIELD_KEY);
     const saved = savedRaw === 'type_of_movement' ? 'movement_function' : savedRaw;
-    if(saved && [...muscleSearchField.options].some(o=>o.value === saved)){
-      muscleSearchField.value = saved;
-    }
     muscleSearchField.addEventListener('change', renderMuscleSearchResults);
     muscleSearchField.addEventListener('change', ()=>{
       localStorage.setItem(MUSCLE_SEARCH_FIELD_KEY, muscleSearchField.value);
+    });
+  }
+  const anatomyDatasetSelect = document.getElementById('anatomy-dataset-select');
+  if(anatomyDatasetSelect){
+    const savedDataset = String(localStorage.getItem(ANATOMY_DATASET_SELECT_KEY) || 'muscles').trim().toLowerCase();
+    anatomyDatasetSelect.value = savedDataset === 'anatomy' ? 'anatomy' : 'muscles';
+    populateAnatomySearchFieldOptions();
+    syncAnatomySearchPlaceholder();
+    if(muscleSearchField){
+      const savedRaw = localStorage.getItem(MUSCLE_SEARCH_FIELD_KEY);
+      const saved = savedRaw === 'type_of_movement' ? 'movement_function' : savedRaw;
+      if(saved && [...muscleSearchField.options].some(o=>o.value === saved)){
+        muscleSearchField.value = saved;
+      }
+    }
+    anatomyDatasetSelect.addEventListener('change', async ()=>{
+      localStorage.setItem(ANATOMY_DATASET_SELECT_KEY, anatomyDatasetSelect.value);
+      populateAnatomySearchFieldOptions();
+      syncAnatomySearchPlaceholder();
+      await ensureAnatomyWorkspaceDatasetLoaded();
+      refreshMuscleTrainingUI();
     });
   }
   onOptional('muscle-quiz-start','click', ()=> startMuscleQuiz());
@@ -9308,6 +9736,19 @@ async function init(){
       setBiophysicsTfAutoNextEnabled(!!biophysicsAutoNext.checked);
     });
   }
+  bindBiophysicsTfKeybindInput('biophysics-key-true-primary', 'truePrimary');
+  bindBiophysicsTfKeybindInput('biophysics-key-true-secondary', 'trueSecondary');
+  bindBiophysicsTfKeybindInput('biophysics-key-false-primary', 'falsePrimary');
+  bindBiophysicsTfKeybindInput('biophysics-key-false-secondary', 'falseSecondary');
+  bindBiophysicsTfKeybindInput('biophysics-key-next', 'next');
+  const biophysicsKeybindReset = document.getElementById('biophysics-keybind-reset');
+  if(biophysicsKeybindReset){
+    biophysicsKeybindReset.addEventListener('click', ()=>{
+      setBiophysicsTfKeybinds(BIOPHYSICS_TF_DEFAULT_KEYBINDS);
+    });
+  }
+  renderBiophysicsTfShortcutSummary();
+  renderBiophysicsTfKeybindInputs();
   if(document.getElementById('flashcard-back')){
     on('flashcard-back','click', ()=> showScreen('screen-submenu'));
   }
@@ -13664,7 +14105,7 @@ function exposeSmokeTestApi(){
       const marker = String(token || `smoke-${Date.now()}`);
       showScreen('screen-entry', { skipNavStack: true });
       const categorySelect = document.getElementById('entry-category');
-      if(categorySelect) categorySelect.value = 'basic_sciences';
+      if(categorySelect) categorySelect.value = 'anatomy';
       await renderEntryCategoryFields();
       const firstField = document.querySelector('#entry-dynamic-fields input:not([type="file"]), #entry-dynamic-fields textarea');
       if(!firstField) return false;

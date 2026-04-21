@@ -1,0 +1,17 @@
+declension_group,example_word,meaning_sk,gender,number,case,form,note
+I. a-declension,vena,žila,f.,singular,nominative,vena,basic dictionary form
+I. a-declension,vena,žila,f.,singular,genitive,venae,gen. sg. ending identifies I. declension
+I. a-declension,vena,žila,f.,singular,accusative,venam,
+I. a-declension,vena,žila,f.,singular,ablative,venā,medical terminology often uses nom./gen./acc./abl.
+I. a-declension,vena,žila,f.,plural,nominative,venae,
+I. a-declension,vena,žila,f.,plural,genitive,venarum,
+I. a-declension,vena,žila,f.,plural,accusative,venas,
+I. a-declension,vena,žila,f.,plural,ablative,venis,
+I. a-declension,raphe,šev,f.,singular,nominative,raphe,Greek noun used in medical terminology
+I. a-declension,raphe,šev,f.,singular,genitive,raphes,Greek-type form in medical Latin
+I. a-declension,raphe,šev,f.,singular,accusative,raphen,
+I. a-declension,raphe,šev,f.,singular,ablative,raphe,
+I. a-declension,raphe,šev,f.,plural,nominative,raphae,plural often latinized in usage
+I. a-declension,raphe,šev,f.,plural,genitive,rapharum,template / didactic paradigm
+I. a-declension,raphe,šev,f.,plural,accusative,raphas,template / didactic paradigm
+I. a-declension,raphe,šev,f.,plural,ablative,raphis,template / didactic paradigm

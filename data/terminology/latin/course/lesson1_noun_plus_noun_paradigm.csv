@@ -1,0 +1,9 @@
+construction_type,dictionary_form_1,dictionary_form_2,meaning_sk,number_of_head,case,head_noun_form,dependent_form,dependent_case,full_term,note
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,singular,nominative,glandula,linguae,genitive singular,glandula linguae,dependent noun stays in genitive
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,singular,genitive,glandulae,linguae,genitive singular,glandulae linguae,dependent noun stays in genitive
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,singular,accusative,glandulam,linguae,genitive singular,glandulam linguae,dependent noun stays in genitive
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,singular,ablative,glandulā,linguae,genitive singular,glandulā linguae,dependent noun stays in genitive
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,plural,nominative,glandulae,linguae,genitive singular,glandulae linguae,exact didactic pattern from lesson page
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,plural,genitive,glandularum,linguae,genitive singular,glandularum linguae,exact didactic pattern from lesson page
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,plural,accusative,glandulas,linguae,genitive singular,glandulas linguae,exact didactic pattern from lesson page
+substantive + substantive,"glandula, ae, f.","lingua, ae, f.",jazyková žľaza / žľaza jazyka,plural,ablative,glandulis,linguae,genitive singular,glandulis linguae,exact didactic pattern from lesson page

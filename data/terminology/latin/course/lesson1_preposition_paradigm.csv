@@ -1,0 +1,7 @@
+construction_type,preposition,governing_case,dictionary_form_noun,meaning_sk,number,case_required,noun_form,full_term,note
+preposition + substantive,post,accusative,"infarctus, us, m.",po infarkte,singular,accusative,infarctum,post infarctum,preposition determines case
+preposition + substantive,pro,ablative,"infarctus, us, m.",pre / pre infarktom,singular,ablative,infarctu,pro infarctu,example of ablative-governing preposition
+preposition + substantive,in,accusative,"vena, ae, f.",do žily,singular,accusative,venam,in venam,direction -> accusative
+preposition + substantive,in,ablative,"vena, ae, f.",v žile,singular,ablative,vena,in venā,location -> ablative
+preposition + substantive,sub,accusative,"vena, ae, f.",pod žilu,singular,accusative,venam,sub venam,direction -> accusative
+preposition + substantive,sub,ablative,"vena, ae, f.",pod žilou,singular,ablative,vena,sub venā,location -> ablative

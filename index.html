@@ -190,7 +190,7 @@
           <button type="button" id="to-biophysics-tf" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4zm0 7h10v2H4zm0 7h16v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="biophysics_true_false">Biophysics True/False</span><span class="menu-desc" data-i18n="submenu_desc_biophysics">Test conceptual statements with instant feedback.</span></span></button>
           <button type="button" id="to-flashcards" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v10h-2V6H5zm-2 4h12a2 2 0 0 1 2 2v10H5a2 2 0 0 1-2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="flashcards">Flashcards</span><span class="menu-desc" data-i18n="submenu_desc_flashcards">Build sessions and review with spaced repetition.</span></span></button>
           <button type="button" id="to-anamnesis" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 1.5V8h3.5L14 4.5zM9 11h6v1.8H9V11zm0 4h6v1.8H9V15z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="anamnesis">Anamnesis</span><span class="menu-desc" data-i18n="submenu_desc_anamnesis">Structured intake forms for internal, psychiatry, and pediatrics.</span></span></button>
-          <button type="button" id="to-lab-parameters" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 640 640"><path d="M384 64L224 64C206.3 64 192 78.3 192 96C192 113.7 206.3 128 224 128L224 279.5L103.5 490.3C98.6 499 96 508.7 96 518.7C96 550.4 121.6 576 153.3 576L486.7 576C518.3 576 544 550.4 544 518.7C544 508.7 541.4 498.9 536.5 490.3L416 279.5L416 128C433.7 128 448 113.7 448 96C448 78.3 433.7 64 416 64L384 64zM288 279.5L288 128L352 128L352 279.5C352 290.6 354.9 301.6 360.4 311.3L402 384L238 384L279.6 311.3C285.1 301.6 288 290.7 288 279.5z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="laboratory_parameters">Lab parameters</span><span class="menu-desc" data-i18n="submenu_desc_lab">Filter analytes by tag and compare reference ranges.</span></span></button>
+          <button type="button" id="to-lab-parameters" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 640 640"><path d="M384 64L224 64C206.3 64 192 78.3 192 96C192 113.7 206.3 128 224 128L224 279.5L103.5 490.3C98.6 499 96 508.7 96 518.7C96 550.4 121.6 576 153.3 576L486.7 576C518.3 576 544 550.4 544 518.7C544 508.7 541.4 498.9 536.5 490.3L416 279.5L416 128C433.7 128 448 113.7 448 96C448 78.3 433.7 64 416 64L384 64zM288 279.5L288 128L352 128L352 279.5C352 290.6 354.9 301.6 360.4 311.3L402 384L238 384L279.6 311.3C285.1 301.6 288 290.7 288 279.5z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="laboratory_parameters">Laboratory parameters</span><span class="menu-desc" data-i18n="submenu_desc_lab">Filter analytes by tag and compare reference ranges.</span></span></button>
           <button type="button" id="to-pharmacology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 4h7A2.5 2.5 0 0 1 18 6.5V8h.5A2.5 2.5 0 0 1 21 10.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-7A2.5 2.5 0 0 1 5.5 8H6V6.5A2.5 2.5 0 0 1 8.5 4zm0 2A.5.5 0 0 0 8 6.5V8h8V6.5a.5.5 0 0 0-.5-.5h-7zm-3 4a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13zm2 2h9v2h-9v-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="pharmacology">Pharmacology</span><span class="menu-desc" data-i18n="submenu_desc_pharmacology">Search drugs, ATC classes, and core pharmacology details.</span></span></button>
         </div>
         </div>
@@ -209,7 +209,8 @@
               <label class="search-label" for="search-dataset" data-i18n="search_scope">Scope</label>
               <select id="search-dataset" aria-label="Search dataset" data-i18n-aria-label="search_dataset" class="search-dataset-native" tabindex="-1" aria-hidden="true">
                 <option value="all" data-i18n="any">Any</option>
-                <option value="basic_sciences" data-i18n="basic_sciences">Basic sciences</option>
+                <option value="anatomy" data-i18n="dataset_anatomy">Anatomy</option>
+                <option value="physiology" data-i18n="dataset_physiology">Physiology</option>
                 <option value="diagnostics_procedures" data-i18n="diagnostics_procedures">Diagnostics &amp; Procedures</option>
                 <option value="disease_and_symptoms" data-i18n="disease_and_symptoms">Diseases and symptoms</option>
                 <option value="lab_parameters" data-i18n="laboratory_parameters">Laboratory parameters</option>
@@ -219,10 +220,11 @@
               </select>
               <div class="search-quick-filters" aria-label="Quick search scopes" data-i18n-aria-label="search_quick_scopes">
                 <button type="button" class="search-filter-chip is-active" data-search-dataset="all" aria-pressed="true" data-i18n="all">All</button>
-                <button type="button" class="search-filter-chip" data-search-dataset="basic_sciences" aria-pressed="false" data-i18n="basic_sciences">Basic sciences</button>
+                <button type="button" class="search-filter-chip" data-search-dataset="anatomy" aria-pressed="false" data-i18n="dataset_anatomy">Anatomy</button>
+                <button type="button" class="search-filter-chip" data-search-dataset="physiology" aria-pressed="false" data-i18n="dataset_physiology">Physiology</button>
                 <button type="button" class="search-filter-chip" data-search-dataset="diagnostics_procedures" aria-pressed="false" data-i18n="search_scope_diagnostics">Diagnostics</button>
                 <button type="button" class="search-filter-chip" data-search-dataset="disease_and_symptoms" aria-pressed="false" data-i18n="search_scope_diseases">Diseases</button>
-                <button type="button" class="search-filter-chip" data-search-dataset="lab_parameters" aria-pressed="false" data-i18n="search_scope_labs">Labs</button>
+                <button type="button" class="search-filter-chip" data-search-dataset="lab_parameters" aria-pressed="false" data-i18n="laboratory_parameters">Laboratory parameters</button>
                 <button type="button" class="search-filter-chip" data-search-dataset="latin" aria-pressed="false" data-i18n="latin">Latin</button>
                 <button type="button" class="search-filter-chip" data-search-dataset="microorganisms" aria-pressed="false" data-i18n="search_scope_microbes">Microbes</button>
                 <button type="button" class="search-filter-chip" data-search-dataset="pharmacology" aria-pressed="false" data-i18n="pharmacology">Pharmacology</button>
@@ -337,7 +339,8 @@
             <div class="entry-sidebar-panel">
               <label for="entry-category" class="entry-label" data-i18n="category">Category</label>
               <select id="entry-category">
-                <option value="basic_sciences" data-i18n="basic_sciences">Basic sciences</option>
+                <option value="anatomy" data-i18n="dataset_anatomy">Anatomy</option>
+                <option value="physiology" data-i18n="dataset_physiology">Physiology</option>
                 <option value="diagnostics_procedures" data-i18n="diagnostics_procedures">Diagnostics &amp; Procedures</option>
                 <option value="disease_and_symptoms" data-i18n="disease_and_symptoms">Diseases and symptoms</option>
                 <option value="lab_parameters" data-i18n="laboratory_parameters">Laboratory parameters</option>
@@ -739,6 +742,27 @@
               <div class="biophysics-stat-card">
                 <span class="biophysics-stat-label" data-i18n="biophysics_shortcuts_label">Shortcuts</span>
                 <p id="biophysics-tf-shortcuts" class="small" data-i18n="biophysics_shortcuts">Shortcuts: T or 1 = True, F or 2 = False, Enter = Next (after answer).</p>
+                <div class="biophysics-keybind-grid">
+                  <label class="biophysics-keybind-item">
+                    <span>True</span>
+                    <div class="biophysics-keybind-pair">
+                      <input id="biophysics-key-true-primary" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+                      <input id="biophysics-key-true-secondary" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+                    </div>
+                  </label>
+                  <label class="biophysics-keybind-item">
+                    <span>False</span>
+                    <div class="biophysics-keybind-pair">
+                      <input id="biophysics-key-false-primary" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+                      <input id="biophysics-key-false-secondary" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+                    </div>
+                  </label>
+                  <label class="biophysics-keybind-item">
+                    <span>Next</span>
+                    <input id="biophysics-key-next" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+                  </label>
+                </div>
+                <button type="button" id="biophysics-keybind-reset" class="secondary biophysics-keybind-reset">Reset defaults</button>
               </div>
             </div>
           </aside>
@@ -781,7 +805,14 @@
                   <h3 class="dataset-title" data-i18n="anatomy_region_selection">Region selection</h3>
                 </div>
               </div>
-              <div id="muscle-region-list"></div>
+              <div class="dataset-controls anatomy-dataset-controls">
+                <label for="anatomy-dataset-select" class="search-label">Dataset</label>
+                <select id="anatomy-dataset-select">
+                  <option value="muscles">Muscles</option>
+                  <option value="anatomy">Anatomy</option>
+                </select>
+              </div>
+              <div id="muscle-region-list" class="anatomy-filter-list scrollable"></div>
             </div>
           </aside>
           <div class="card dataset-stage anatomy-stage">

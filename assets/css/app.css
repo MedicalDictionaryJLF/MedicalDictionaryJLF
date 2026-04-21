@@ -4605,6 +4605,40 @@ body:not([data-theme="dark"]) #screen-menu #btn-google-drive *{
   font-size:calc(1.2rem * var(--text-scale, 1));
 }
 
+.biophysics-keybind-grid{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:14px;
+}
+
+.biophysics-keybind-item{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:calc(.92rem * var(--text-scale, 1));
+  font-weight:600;
+}
+
+.biophysics-keybind-pair{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+}
+
+.biophysics-keybind-item input{
+  min-width:0;
+  text-transform:uppercase;
+  text-align:center;
+  font-weight:700;
+  letter-spacing:.04em;
+}
+
+.biophysics-keybind-reset{
+  margin-top:12px;
+  width:100%;
+}
+
 .biophysics-stat-label{
   font-size:calc(12px * var(--text-scale, 1));
   letter-spacing:.14em;
@@ -4769,6 +4803,10 @@ body[data-theme="dark"] .latin-copy{
   justify-content:flex-start;
 }
 
+#screen-pharmacology .dataset-shell{
+  align-items:start;
+}
+
 .dataset-shell{
   width:100%;
   display:grid;
@@ -4857,13 +4895,40 @@ body[data-theme="dark"] .latin-copy{
 
 .anatomy-shell{
   grid-template-columns:minmax(340px, 410px) minmax(0, 1fr);
+  align-items:stretch;
+  min-height:640px;
+}
+
+.anatomy-sidebar{
+  height:auto;
+  min-height:0;
+  max-height:calc(100vh - 32px);
+  overflow:auto;
+  padding-right:6px;
 }
 
 .anatomy-region-card{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
   padding:20px;
   border-radius:24px;
   border:1px solid rgba(22,101,52,.10);
   background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(247,251,248,.62));
+}
+
+.anatomy-dataset-controls{
+  margin-bottom:12px;
+}
+
+.anatomy-filter-list{
+  flex:1 1 auto;
+  min-height:0;
+  max-height:62vh;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:4px;
 }
 
 .anatomy-search-controls{
@@ -4899,10 +4964,16 @@ body[data-theme="dark"] .anatomy-region-card{
 
   .dataset-sidebar{
     position:static;
+    min-height:0;
+    height:auto;
   }
 
   .anatomy-search-row{
     grid-template-columns:1fr;
+  }
+
+  .anatomy-filter-list{
+    max-height:62vh;
   }
 }
 
@@ -5067,17 +5138,23 @@ body[data-theme="dark"] .lab-search-controls{
 
 /* pharmacology focused ATC cascade */
 .pharmacology-filters{
+  display:flex;
+  flex-direction:column;
   overflow:visible;
 }
 
 #screen-pharmacology .dataset-sidebar{
-  max-height:calc(100vh - 32px);
-  overflow:auto;
-  padding-right:6px;
+  height:auto;
+  min-height:0;
+  max-height:700px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:8px;
 }
 
 #screen-pharmacology .pharmacology-filters{
-  flex:1 1 auto;
+  flex:0 0 auto;
+  min-height:auto;
 }
 
 .pharmacology-filter-head-row{
@@ -5099,20 +5176,31 @@ body[data-theme="dark"] .lab-search-controls{
 .pharmacology-atc-tree{
   display:flex;
   flex-direction:column;
+  flex:0 0 auto;
+  min-height:0;
+  max-height:none;
   gap:10px;
   margin-top:0;
+  overflow:visible;
+  padding-right:0;
 }
 
 .pharmacology-atc-pill{
   width:100%;
   max-width:none;
   border-radius:18px;
+  position:relative;
+  z-index:1;
+  cursor:pointer;
 }
 
 @media (max-width:980px){
   #screen-pharmacology .dataset-sidebar{
-    max-height:none;
-    overflow:visible;
+    height:auto;
+    min-height:0;
+    max-height:560px;
+    overflow-y:auto;
+    overflow-x:hidden;
     padding-right:0;
   }
 }

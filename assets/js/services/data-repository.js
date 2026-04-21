@@ -14,7 +14,8 @@ export const TERMINOLOGY_SOURCES = [
 ];
 
 export const SEARCH_GROUP_DEFINITIONS = [
-  { key: "basic_sciences", label: "Basic sciences", datasets: ["anatomy", "physiology"] },
+  { key: "anatomy", label: "Anatomy", datasets: ["anatomy", "muscles"] },
+  { key: "physiology", label: "Physiology", datasets: ["physiology"] },
   { key: "diagnostics_procedures", label: "Diagnostics & Procedures", datasets: ["diagnostic_methods", "procedures"] },
   { key: "disease_and_symptoms", label: "Diseases and symptoms", datasets: ["disease_and_symptoms"] },
   { key: "lab_parameters", label: "Laboratory parameters", datasets: ["lab_parameters"] },
@@ -24,8 +25,9 @@ export const SEARCH_GROUP_DEFINITIONS = [
 ];
 
 export const SEARCH_GROUP_BY_DATASET = {
-  anatomy: "basic_sciences",
-  physiology: "basic_sciences",
+  anatomy: "anatomy",
+  muscles: "anatomy",
+  physiology: "physiology",
   diagnostic_methods: "diagnostics_procedures",
   procedures: "diagnostics_procedures",
   disease_and_symptoms: "disease_and_symptoms",
@@ -583,6 +585,7 @@ export function createPharmacologyRepository({
     getAtcChildren(parentCode) {
       return atcReferenceChildrenByParent.get(normalizeAtcCode(parentCode)) || [];
     },
+    getAtcHierarchy,
     getAtcFilterLabel(atcCode) {
       const node = atcReferenceByCode.get(normalizeAtcCode(atcCode));
       if (!node) return normalizeAtcCode(atcCode);

@@ -1,0 +1,14 @@
+topic,pattern,pronunciation_sk,example_latin,example_pronounced
+vowel,-i- after consonant before vowel,i with inserted j,arteria,arterija
+vowel,i- at beginning before vowel,j,iatrogenes,jatrogenes
+diphthong,"ae, oe",é,praematurus,prématurus
+consonant,"c before e, i, y, ae, oe",c,cervix,cerviks
+consonant,c in other positions,k,corpus,korpus
+consonant,s between two vowels,z,sclerosis,sklerozis
+consonant,x,ks / gz between vowels,larynx / exitus,larynks / egzitus
+group,ti before vowel/diphthong,ci,substantia,substancija
+group,qu,kv,aqua,akva
+group,ngu,ngv,lingua,lingva
+group,ph,f,pharynx,farynks
+group,th,t,thorax,toraks
+group,rh,r,rhaemorrhagia,rhemoragia

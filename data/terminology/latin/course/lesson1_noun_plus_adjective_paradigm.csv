@@ -1,0 +1,5 @@
+construction_type,dictionary_form_noun,dictionary_form_adjective,meaning_sk,rule,number,case,noun_form,adjective_form,full_term
+substantive + adjective,"infarctus, us, m.","acutus, a, um",náhly infarkt,"Adjective agrees with noun in case, gender, and number",singular,nominative,infarctus,acutus,infarctus acutus
+substantive + adjective,"infarctus, us, m.","acutus, a, um",náhly infarkt,"Adjective agrees with noun in case, gender, and number",singular,genitive,infarctus,acuti,infarctus acuti
+substantive + adjective,"infarctus, us, m.","acutus, a, um",náhly infarkt,"Adjective agrees with noun in case, gender, and number",singular,accusative,infarctum,acutum,infarctum acutum
+substantive + adjective,"infarctus, us, m.","acutus, a, um",náhly infarkt,"Adjective agrees with noun in case, gender, and number",singular,ablative,infarctu,acuto,infarctu acuto
