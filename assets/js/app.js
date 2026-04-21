@@ -2031,6 +2031,13 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     courses_correct: "Correct. Keep going.",
     courses_try_again: "Not quite. The highlighted answer shows what to fix.",
     courses_reset_confirm: "Reset all course progress?",
+    courses_show_only: "Show only",
+    courses_all_parts_of_speech: "All parts of speech",
+    courses_color_by_part_of_speech: "Color by part of speech",
+    courses_color_intensity: "Color intensity",
+    courses_color_level_1: "Low",
+    courses_color_level_2: "Medium",
+    courses_color_level_3: "High",
     latin_pos_noun: "Nouns",
     latin_pos_adjective: "Adjectives",
     latin_pos_preposition: "Prepositions",
@@ -2080,6 +2087,13 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     courses_correct: "Richtig. Weiter so.",
     courses_try_again: "Nicht ganz. Die markierte Antwort zeigt, was korrigiert werden muss.",
     courses_reset_confirm: "Den gesamten Kursfortschritt zuruecksetzen?",
+    courses_show_only: "Nur anzeigen",
+    courses_all_parts_of_speech: "Alle Wortarten",
+    courses_color_by_part_of_speech: "Nach Wortart faerben",
+    courses_color_intensity: "Farbintensitaet",
+    courses_color_level_1: "Niedrig",
+    courses_color_level_2: "Mittel",
+    courses_color_level_3: "Hoch",
     latin_pos_noun: "Substantive",
     latin_pos_adjective: "Adjektive",
     latin_pos_preposition: "Praepositionen",
@@ -2100,41 +2114,48 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     courses_kicker: "Latinsky kurz",
     courses_intro: "Trening medicinskej latinciny z terminologie repozitara. Vyberte si jazykovy kurz.",
     courses_choose_track: "Vyberte si kurz",
-    courses_open_track: "Otvorit kurz",
-    courses_current_lesson: "Aktualna lekcia",
+    courses_open_track: "Otvori\u0165 kurz",
+    courses_current_lesson: "Aktu\u00e1lna lekcia",
     courses_back_to_courses: "Kurzy",
-    courses_completed: "Dokoncene",
-    courses_streak: "Skore relacie",
+    courses_completed: "Dokon\u010den\u00e9",
+    courses_streak: "Sk\u00f3re rel\u00e1cie",
     courses_lessons: "Lekcie kurzu",
-    courses_reset: "Resetovat kurz",
+    courses_reset: "Resetova\u0165 kurz",
     courses_lesson_progress: "Postup v lekcii",
-    courses_start_lesson: "Spustit lekciu",
-    courses_statistics: "Statistiky",
+    courses_start_lesson: "Spusti\u0165 lekciu",
+    courses_statistics: "\u0160tatistiky",
     courses_repository_chart: "Graf repozitara",
-    courses_unit_one_profile: "Profil 1. deklinacie",
+    courses_unit_one_profile: "Profil 1. deklin\u00e1cie",
     courses_focus: "Zameranie",
-    courses_training: "Trening",
-    courses_theory: "Teoria",
+    courses_training: "Tr\u00e9ning",
+    courses_theory: "Te\u00f3ria",
     courses_test: "Test",
-    courses_complete_theory: "Dokoncit teoriu",
-    courses_read_button: "Precitat nahlas",
-    courses_speech_unavailable: "Hlasove citanie nie je v tomto prehliadaci dostupne.",
-    courses_check: "Skontrolovat",
-    courses_next: "Dalsie",
+    courses_complete_theory: "Dokon\u010di\u0165 te\u00f3riu",
+    courses_read_button: "Pre\u010d\u00edta\u0165 nahlas",
+    courses_speech_unavailable: "Hlasov\u00e9 \u010d\u00edtanie nie je v tomto prehliada\u010di dostupn\u00e9.",
+    courses_check: "Skontrolova\u0165",
+    courses_next: "\u010ealej",
     courses_lesson: "Lekcia",
-    courses_drop_here: "Potiahnite sem",
-    courses_done_title: "Lekcia dokoncena",
-    courses_done_copy: "Dobra praca. Dalsia lekcia je odomknuta.",
-    courses_answer_first: "Najprv vyplnte odpoved.",
-    courses_correct: "Spravne. Pokracujte.",
-    courses_try_again: "Este nie. Zvyraznena odpoved ukazuje, co treba opravit.",
-    courses_reset_confirm: "Resetovat cely postup v kurze?",
-    latin_pos_noun: "Substantiva",
-    latin_pos_adjective: "Adjektiva",
-    latin_pos_preposition: "Predlozky",
+    courses_drop_here: "Potiahni sem",
+    courses_done_title: "Lekcia dokon\u010den\u00e1",
+    courses_done_copy: "Dobr\u00e1 pr\u00e1ca. \u010eal\u0161ia lekcia je odomknut\u00e1.",
+    courses_answer_first: "Najprv vypl\u0148 odpove\u010f.",
+    courses_correct: "Spr\u00e1vne. Pokra\u010duj.",
+    courses_try_again: "E\u0161te nie. Zv\u00fdraznen\u00e1 odpove\u010f ukazuje, \u010do treba opravi\u0165.",
+    courses_reset_confirm: "Resetova\u0165 cel\u00fd postup v kurze?",
+    courses_show_only: "Zobrazi\u0165 iba",
+    courses_all_parts_of_speech: "V\u0161etky slovn\u00e9 druhy",
+    courses_color_by_part_of_speech: "Farbi\u0165 pod\u013ea slovn\u00e9ho druhu",
+    courses_color_intensity: "Intenzita farby",
+    courses_color_level_1: "Jemn\u00e1",
+    courses_color_level_2: "Stredn\u00e1",
+    courses_color_level_3: "Siln\u00e1",
+    latin_pos_noun: "Substant\u00edva",
+    latin_pos_adjective: "Adjekt\u00edva",
+    latin_pos_preposition: "Predlo\u017eky",
     latin_pos_conjunction: "Spojky",
-    field_normal_range_units: "Normalne rozmedzie a jednotky",
-    latin_search_notes: "Poznamky"
+    field_normal_range_units: "Norm\u00e1lne rozmedzie a jednotky",
+    latin_search_notes: "Pozn\u00e1mky"
   }
 };
 const ANAMNESIS_DICTIONARY_CANDIDATE_GROUPS = [
@@ -4187,7 +4208,10 @@ let latinCourseState = {
   attemptedInSession: 0,
   unitOneTerms: [],
   courseTables: {},
-  selectedDragToken: ""
+  selectedDragToken: "",
+  studyCardPartOfSpeechFilter: "all",
+  studyCardColoringEnabled: false,
+  studyCardColorIntensity: 2
 };
 let activeAnamnesisTab = "internal";
 let anamnesisLayoutMode = "auto";
@@ -5497,6 +5521,16 @@ function courseNonEmpty(values){
   return values.map(courseText).filter(Boolean);
 }
 
+function getCoursePartOfSpeechKey(value){
+  const raw = courseText(value).toLowerCase();
+  if(!raw) return "other";
+  if(raw.includes("noun")) return "noun";
+  if(raw.includes("adjective")) return "adjective";
+  if(raw.includes("preposition")) return "preposition";
+  if(raw.includes("conjunction")) return "conjunction";
+  return "other";
+}
+
 function uniqueCourseValues(values){
   const seen = new Set();
   const out = [];
@@ -5588,6 +5622,20 @@ function getCourseConstructionBody(row, type){
     return row.note || row.dependent_case || row.governing_case || "";
   }
   return courseNonEmpty([row.meaning_sk, type === "adjective" ? "zhoda pr\u00eddavn\u00e9ho mena" : row.dependent_case || row.governing_case]).join(" | ");
+}
+
+function normalizeCourseColorIntensity(value){
+  const numeric = Number(value);
+  if(numeric >= 3) return 3;
+  if(numeric <= 1) return 1;
+  return 2;
+}
+
+function getCourseColorIntensityLabel(value){
+  const intensity = normalizeCourseColorIntensity(value);
+  if(intensity === 1) return tOr("courses_color_level_1", "Low");
+  if(intensity === 3) return tOr("courses_color_level_3", "High");
+  return tOr("courses_color_level_2", "Medium");
 }
 
 function latinCourseTermId(row){
@@ -5825,11 +5873,17 @@ function buildLatinCourseLessons(){
     : `Vyber slovensk\u00fd v\u00fdznam pre ${term.latin}.`;
   const translationTitle = isEnglishTrack ? "English translation" : "Slovensk\u00fd preklad";
   const latinToTargetLabel = isEnglishTrack ? "Latin -> English" : "Latin\u010dina -> Sloven\u010dina";
-  const buildTermCardBody = term => [courseText(term && term.gender), courseText(term && term.genitive), getCourseTargetValue(term)].join(" | ");
+  const buildTermCardBody = term => courseNonEmpty([courseText(term && term.gender), courseText(term && term.genitive), getCourseTargetValue(term)]).join(" | ");
   const buildStudyCards = terms => (terms || []).map(term => ({
-    label: courseText(term && term.gender),
+    label: "",
     title: courseText(term && term.latin),
-    body: buildTermCardBody(term)
+    body: buildTermCardBody(term),
+    gender: courseText(term && term.gender),
+    genitive: courseText(term && term.genitive),
+    partOfSpeech: courseText(term && term.partOfSpeech),
+    partOfSpeechLabel: getLocalizedPartOfSpeechLabel(term && term.partOfSpeech),
+    partOfSpeechKey: getCoursePartOfSpeechKey(term && term.partOfSpeech),
+    translation: getCourseTargetValue(term)
   }));
   const buildChoiceExercisesForTerms = terms => (terms || []).map(term => buildCourseChoiceExercise({
     title: translationTitle,
@@ -5842,6 +5896,331 @@ function buildLatinCourseLessons(){
   const pickCourseTermSet = (count = 10) => pickCourseItems(targetCourseTerms, Math.min(count, targetCourseTerms.length));
   const chapter32Terms = pickCourseTermSet(10);
   const chapter33Terms = pickCourseTermSet(10);
+  const chartCaseRows = forms => forms.map(row => ({
+    label: `${getCourseNumberLabel("singular")} ${getCourseCaseLabel(row.case)}`,
+    answer: row.form,
+    meta: row.meta
+  }));
+  const constructionTypeOptions = isEnglishTrack
+    ? ["noun + noun (genitive)", "noun + adjective (agreement)", "preposition + noun", "combined clinical term"]
+    : ["substant\u00edvum + substant\u00edvum (genit\u00edv)", "substant\u00edvum + adjekt\u00edvum (zhoda)", "predlo\u017eka + substant\u00edvum", "kombinovan\u00fd klinick\u00fd term\u00edn"];
+  const constructionTheoryArticle = isEnglishTrack ? [
+    {
+      heading: "Noun + noun (genitive)",
+      paragraphs: ["The second noun is placed in the genitive and names what the head noun belongs to or specifies."],
+      bullets: [
+        "glandula linguae - gland of the tongue",
+        "fractura costae - fracture of the rib",
+        "caput femoris - head of the femur",
+        "corpus vertebrae - body of the vertebra",
+        "apex pulmonis - apex of the lung",
+        "cavitas nasi - cavity of the nose",
+        "radix dentis - root of the tooth",
+        "collum humeri - neck of the humerus"
+      ]
+    },
+    {
+      heading: "Declension drill: glandula linguae",
+      paragraphs: ["Only the head noun changes case here. The dependent noun lingua stays in genitive singular as linguae."],
+      bullets: ["nom: glandula linguae", "gen: glandulae linguae", "acc: glandulam linguae", "abl: glandul\u0101 linguae"]
+    },
+    {
+      heading: "Declension drill: caput femoris",
+      paragraphs: ["The neuter noun caput changes its stem to capit- in the oblique cases, while femoris stays fixed in genitive singular."],
+      bullets: ["nom: caput femoris", "gen: capitis femoris", "acc: caput femoris", "abl: capite femoris"]
+    },
+    {
+      heading: "Noun + adjective (agreement)",
+      paragraphs: ["The adjective must agree with the noun in gender, number, and case."],
+      bullets: [
+        "infarctus acutus - acute infarction",
+        "musculus longus - long muscle",
+        "vena profunda - deep vein",
+        "nervus opticus - optic nerve",
+        "ligamentum latum - broad ligament",
+        "morbus chronicus - chronic disease",
+        "corpus humanum - human body"
+      ]
+    },
+    {
+      heading: "Agreement drill: vena profunda",
+      paragraphs: ["Both words change together because the adjective profunda has to mirror the noun vena."],
+      bullets: ["nom: vena profunda", "gen: venae profundae", "acc: venam profundam", "abl: ven\u0101 profund\u0101"]
+    },
+    {
+      heading: "Agreement drill: nervus opticus",
+      paragraphs: ["Masculine second-declension endings appear on both the noun and the adjective."],
+      bullets: ["nom: nervus opticus", "gen: nervi optici", "acc: nervum opticum", "abl: nervo optico"]
+    },
+    {
+      heading: "Preposition + noun",
+      paragraphs: ["Prepositions govern a specific case. In these chapter drills, accusative usually marks movement and ablative marks location."],
+      bullets: [
+        "Accusative (direction): in venam, sub cutem, ad cor, per os, post operationem",
+        "Ablative (location): in ven\u0101, sub cute, in cavitate, cum dolore, sine febre"
+      ]
+    },
+    {
+      heading: "Combined clinical terms",
+      paragraphs: ["Real medical terms often combine several patterns at once."],
+      bullets: [
+        "fractura costae dextrae - fracture of the right rib",
+        "inflammatio mucosae nasi - inflammation of the nasal mucosa",
+        "tumor cerebri malignus - malignant brain tumor",
+        "status post infarctum acutum - state after acute infarction",
+        "ruptura ligamenti cruciati - rupture of the cruciate ligament",
+        "carcinoma pulmonis sinistri - carcinoma of the left lung"
+      ]
+    }
+  ] : [
+    {
+      heading: "Substant\u00edvum + substant\u00edvum (genit\u00edv)",
+      paragraphs: ["Druh\u00e9 substant\u00edvum stoj\u00ed v genit\u00edve a spres\u0148uje, komu alebo \u010domu prv\u00e9 slovo patr\u00ed."],
+      bullets: [
+        "glandula linguae - \u017e\u013eaza jazyka",
+        "fractura costae - zlomenina rebra",
+        "caput femoris - hlava stehennej kosti",
+        "corpus vertebrae - telo stavca",
+        "apex pulmonis - vrchol p\u013e\u00fac",
+        "cavitas nasi - dutina nosa",
+        "radix dentis - kore\u0148 zuba",
+        "collum humeri - krk ramennej kosti"
+      ]
+    },
+    {
+      heading: "Sklo\u0148ovanie: glandula linguae",
+      paragraphs: ["Men\u00ed sa len hlavn\u00e9 substant\u00edvum. Z\u00e1visl\u00e9 slovo lingua zost\u00e1va v genit\u00edve singul\u00e1ru ako linguae."],
+      bullets: ["nom: glandula linguae", "gen: glandulae linguae", "akuz: glandulam linguae", "abl: glandul\u0101 linguae"]
+    },
+    {
+      heading: "Sklo\u0148ovanie: caput femoris",
+      paragraphs: ["Neutrum caput men\u00ed kme\u0148 na capit-, k\u00fdm femoris zost\u00e1va ako genit\u00edv singul\u00e1ru."],
+      bullets: ["nom: caput femoris", "gen: capitis femoris", "akuz: caput femoris", "abl: capite femoris"]
+    },
+    {
+      heading: "Substant\u00edvum + adjekt\u00edvum (zhoda)",
+      paragraphs: ["Adjekt\u00edvum sa mus\u00ed zhodova\u0165 so substant\u00edvom v rode, \u010d\u00edsle a p\u00e1de."],
+      bullets: [
+        "infarctus acutus - n\u00e1hly infarkt",
+        "musculus longus - dlh\u00fd sval",
+        "vena profunda - hlbok\u00e1 \u017eila",
+        "nervus opticus - zrakov\u00fd nerv",
+        "ligamentum latum - \u0161irok\u00fd v\u00e4z",
+        "morbus chronicus - chronick\u00e9 ochorenie",
+        "corpus humanum - \u013eudsk\u00e9 telo"
+      ]
+    },
+    {
+      heading: "Sklo\u0148ovanie: vena profunda",
+      paragraphs: ["Obe slov\u00e1 sa menia spolu, preto\u017ee adjekt\u00edvum profunda kop\u00edruje tvar substant\u00edva vena."],
+      bullets: ["nom: vena profunda", "gen: venae profundae", "akuz: venam profundam", "abl: ven\u0101 profund\u0101"]
+    },
+    {
+      heading: "Sklo\u0148ovanie: nervus opticus",
+      paragraphs: ["Pri maskul\u00ednach II. deklin\u00e1cie sa men\u00ed koncovka substant\u00edva aj adjekt\u00edva naraz."],
+      bullets: ["nom: nervus opticus", "gen: nervi optici", "akuz: nervum opticum", "abl: nervo optico"]
+    },
+    {
+      heading: "Predlo\u017eka + substant\u00edvum",
+      paragraphs: ["Predlo\u017eky via\u017eu konkr\u00e9tny p\u00e1d. V tomto bloku akuzat\u00edv vyjadruje smer a ablat\u00edv miesto."],
+      bullets: [
+        "Akuzat\u00edv (kam?): in venam, sub cutem, ad cor, per os, post operationem",
+        "Ablat\u00edv (kde?): in ven\u0101, sub cute, in cavitate, cum dolore, sine febre"
+      ]
+    },
+    {
+      heading: "Kombinovan\u00e9 klinick\u00e9 term\u00edny",
+      paragraphs: ["V re\u00e1lnych medic\u00ednskych term\u00ednoch sa \u010dasto kombinuj\u00fa viacer\u00e9 typy spojenia naraz."],
+      bullets: [
+        "fractura costae dextrae - zlomenina prav\u00e9ho rebra",
+        "inflammatio mucosae nasi - z\u00e1pal sliznice nosa",
+        "tumor cerebri malignus - zhubn\u00fd n\u00e1dor mozgu",
+        "status post infarctum acutum - stav po ak\u00fatnom infarkte",
+        "ruptura ligamenti cruciati - ruptura kr\u00ed\u017eov\u00e9ho v\u00e4zu",
+        "carcinoma pulmonis sinistri - karcin\u00f3m \u013eav\u00e9ho p\u013ecneho kr\u00eddla"
+      ]
+    }
+  ];
+  const constructionCaseExercises = [
+    buildCourseChartExercise({
+      title: "glandula linguae",
+      prompt: isEnglishTrack ? "Complete the singular forms of glandula linguae." : "Dopl\u0148 singul\u00e1rov\u00e9 tvary spojenia glandula linguae.",
+      rows: chartCaseRows([
+        { case: "nominative", form: "glandula linguae", meta: isEnglishTrack ? "dictionary form" : "slovn\u00edkov\u00fd tvar" },
+        { case: "genitive", form: "glandulae linguae", meta: isEnglishTrack ? "head noun declines" : "sklo\u0148uje sa hlavn\u00e9 substant\u00edvum" },
+        { case: "accusative", form: "glandulam linguae", meta: isEnglishTrack ? "accusative singular" : "akuzat\u00edv singul\u00e1ru" },
+        { case: "ablative", form: "glandul\u0101 linguae", meta: isEnglishTrack ? "ablative singular" : "ablat\u00edv singul\u00e1ru" }
+      ]),
+      note: isEnglishTrack ? "Lingua remains in genitive singular as linguae." : "Lingua zost\u00e1va v genit\u00edve singul\u00e1ru ako linguae."
+    }),
+    buildCourseChartExercise({
+      title: "caput femoris",
+      prompt: isEnglishTrack ? "Complete the singular forms of caput femoris." : "Dopl\u0148 singul\u00e1rov\u00e9 tvary spojenia caput femoris.",
+      rows: chartCaseRows([
+        { case: "nominative", form: "caput femoris", meta: isEnglishTrack ? "nominative and accusative match in neuter" : "pri neutre je nominat\u00edv a akuzat\u00edv rovnak\u00fd" },
+        { case: "genitive", form: "capitis femoris", meta: isEnglishTrack ? "stem changes to capit-" : "kmen sa men\u00ed na capit-" },
+        { case: "accusative", form: "caput femoris", meta: isEnglishTrack ? "same as nominative" : "rovnak\u00e9 ako nominat\u00edv" },
+        { case: "ablative", form: "capite femoris", meta: isEnglishTrack ? "ablative singular" : "ablat\u00edv singul\u00e1ru" }
+      ]),
+      note: isEnglishTrack ? "Watch the stem change caput -> capit- in the oblique cases." : "Sleduj zmenu kme\u0148a caput -> capit- v nepriamych p\u00e1doch."
+    }),
+    buildCourseChartExercise({
+      title: "vena profunda",
+      prompt: isEnglishTrack ? "Complete the singular forms of vena profunda." : "Dopl\u0148 singul\u00e1rov\u00e9 tvary spojenia vena profunda.",
+      rows: chartCaseRows([
+        { case: "nominative", form: "vena profunda", meta: isEnglishTrack ? "agreement in feminine singular" : "zhoda v \u017eenskom rode singul\u00e1ru" },
+        { case: "genitive", form: "venae profundae", meta: isEnglishTrack ? "both words take genitive endings" : "obe slov\u00e1 dostan\u00fa genit\u00edvne koncovky" },
+        { case: "accusative", form: "venam profundam", meta: isEnglishTrack ? "both words change together" : "obe slov\u00e1 sa menia spolu" },
+        { case: "ablative", form: "ven\u0101 profund\u0101", meta: isEnglishTrack ? "ablative singular" : "ablat\u00edv singul\u00e1ru" }
+      ]),
+      note: isEnglishTrack ? "The adjective must always follow the noun in case, number, and gender." : "Adjekt\u00edvum mus\u00ed v\u017edy nasledova\u0165 substant\u00edvum v p\u00e1de, \u010d\u00edsle a rode."
+    }),
+    buildCourseChartExercise({
+      title: "nervus opticus",
+      prompt: isEnglishTrack ? "Complete the singular forms of nervus opticus." : "Dopl\u0148 singul\u00e1rov\u00e9 tvary spojenia nervus opticus.",
+      rows: chartCaseRows([
+        { case: "nominative", form: "nervus opticus", meta: isEnglishTrack ? "masculine nominative singular" : "maskul\u00ednum v nominat\u00edve singul\u00e1ru" },
+        { case: "genitive", form: "nervi optici", meta: isEnglishTrack ? "genitive singular endings -i / -i" : "genit\u00edvne koncovky -i / -i" },
+        { case: "accusative", form: "nervum opticum", meta: isEnglishTrack ? "accusative singular endings -um / -um" : "akuzat\u00edvne koncovky -um / -um" },
+        { case: "ablative", form: "nervo optico", meta: isEnglishTrack ? "ablative singular endings -o / -o" : "ablat\u00edvne koncovky -o / -o" }
+      ]),
+      note: isEnglishTrack ? "Second-declension masculine nouns and adjectives often move in parallel." : "Maskul\u00edna II. deklin\u00e1cie sa pri substant\u00edve aj adjekt\u00edve \u010dasto menia paralelne."
+    })
+  ];
+  const constructionMixedExercises = [
+    ...[
+      {
+        title: isEnglishTrack ? "Fill the correct form" : "Dopl\u0148 spr\u00e1vny tvar",
+        prompt: "glandula ______ (lingua)",
+        answer: "linguae",
+        candidates: ["linguae", "lingua", "linguam", "linguarum"],
+        explanation: isEnglishTrack ? "The dependent noun stays in genitive singular." : "Z\u00e1visl\u00e9 substant\u00edvum stoj\u00ed v genit\u00edve singul\u00e1ru."
+      },
+      {
+        title: isEnglishTrack ? "Fill the correct form" : "Dopl\u0148 spr\u00e1vny tvar",
+        prompt: "fractura ______ (costa)",
+        answer: "costae",
+        candidates: ["costae", "costam", "costa", "costarum"],
+        explanation: isEnglishTrack ? "Fractura takes a dependent genitive." : "Po slove fractura nasleduje z\u00e1visl\u00fd genit\u00edv."
+      },
+      {
+        title: isEnglishTrack ? "Fill the correct form" : "Dopl\u0148 spr\u00e1vny tvar",
+        prompt: "vena ______ (profundus)",
+        answer: "profunda",
+        candidates: ["profunda", "profundam", "profundae", "profundus"],
+        explanation: isEnglishTrack ? "The adjective agrees with vena in nominative singular feminine." : "Adjekt\u00edvum sa zhoduje s vena v nominat\u00edve singul\u00e1ru femin\u00edna."
+      },
+      {
+        title: isEnglishTrack ? "Fill the correct form" : "Dopl\u0148 spr\u00e1vny tvar",
+        prompt: "nervus ______ (opticus)",
+        answer: "opticus",
+        candidates: ["opticus", "optici", "opticum", "optica"],
+        explanation: isEnglishTrack ? "The adjective agrees with nervus in masculine nominative singular." : "Adjekt\u00edvum sa zhoduje s nervus v maskul\u00edne nominat\u00edvu singul\u00e1ru."
+      }
+    ].map(item => buildCourseChoiceExercise(item)),
+    ...[
+      {
+        title: isEnglishTrack ? "Translate into Latin" : "Prelo\u017e do latin\u010diny",
+        prompt: isEnglishTrack ? "gland of the tongue" : "\u017e\u013eaza jazyka",
+        answer: "glandula linguae",
+        candidates: ["glandula linguae", "glandula lingua", "lingua glandulae", "glandulam linguae"],
+        explanation: isEnglishTrack ? "This is a noun + noun phrase with a dependent genitive." : "Ide o spojenie substant\u00edvum + substant\u00edvum so z\u00e1visl\u00fdm genit\u00edvom."
+      },
+      {
+        title: isEnglishTrack ? "Translate into Latin" : "Prelo\u017e do latin\u010diny",
+        prompt: isEnglishTrack ? "deep vein" : "hlbok\u00e1 \u017eila",
+        answer: "vena profunda",
+        candidates: ["vena profunda", "vena profundam", "vena profundae", "profunda venae"],
+        explanation: isEnglishTrack ? "The adjective has to agree with the noun." : "Adjekt\u00edvum sa mus\u00ed zhodova\u0165 so substant\u00edvom."
+      },
+      {
+        title: isEnglishTrack ? "Translate into Latin" : "Prelo\u017e do latin\u010diny",
+        prompt: isEnglishTrack ? "into the cavity" : "do dutiny",
+        answer: "in cavitatem",
+        candidates: ["in cavitatem", "in cavitate", "ad cavitate", "cum cavitate"],
+        explanation: isEnglishTrack ? "Motion with in takes the accusative here." : "Pri vyjadren\u00ed smeru via\u017ee predlo\u017eka in akuzat\u00edv."
+      },
+      {
+        title: isEnglishTrack ? "Translate into Latin" : "Prelo\u017e do latin\u010diny",
+        prompt: isEnglishTrack ? "in the heart" : "v srdci",
+        answer: "in corde",
+        candidates: ["in corde", "in cor", "ad cor", "per cor"],
+        explanation: isEnglishTrack ? "Location with in takes the ablative here." : "Pri vyjadren\u00ed miesta via\u017ee predlo\u017eka in ablat\u00edv."
+      },
+      {
+        title: isEnglishTrack ? "Translate into Latin" : "Prelo\u017e do latin\u010diny",
+        prompt: isEnglishTrack ? "inflammation of the nose" : "z\u00e1pal nosa",
+        answer: "inflammatio nasi",
+        candidates: ["inflammatio nasi", "inflammatio nasalis", "inflammatio nasum", "inflammationem nasi"],
+        explanation: isEnglishTrack ? "The dependent noun goes into genitive singular." : "Z\u00e1visl\u00e9 substant\u00edvum ide do genit\u00edvu singul\u00e1ru."
+      },
+      {
+        title: isEnglishTrack ? "Identify the construction" : "Ur\u010di typ spojenia",
+        prompt: "glandula linguae",
+        answer: constructionTypeOptions[0],
+        candidates: constructionTypeOptions,
+        explanation: isEnglishTrack ? "The second noun is in the genitive." : "Druh\u00e9 substant\u00edvum je v genit\u00edve."
+      },
+      {
+        title: isEnglishTrack ? "Identify the construction" : "Ur\u010di typ spojenia",
+        prompt: "infarctus acutus",
+        answer: constructionTypeOptions[1],
+        candidates: constructionTypeOptions,
+        explanation: isEnglishTrack ? "The adjective agrees with the noun." : "Adjekt\u00edvum sa zhoduje so substant\u00edvom."
+      },
+      {
+        title: isEnglishTrack ? "Identify the construction" : "Ur\u010di typ spojenia",
+        prompt: "in ven\u0101",
+        answer: constructionTypeOptions[2],
+        candidates: constructionTypeOptions,
+        explanation: isEnglishTrack ? "A preposition governs the noun in ablative." : "Predlo\u017eka via\u017ee substant\u00edvum v ablat\u00edve."
+      },
+      {
+        title: isEnglishTrack ? "Identify the construction" : "Ur\u010di typ spojenia",
+        prompt: "fractura costae dextrae",
+        answer: constructionTypeOptions[3],
+        candidates: constructionTypeOptions,
+        explanation: isEnglishTrack ? "This phrase combines a dependent genitive and adjective agreement." : "Tento term\u00edn kombinuje z\u00e1visl\u00fd genit\u00edv aj zhodu adjekt\u00edva."
+      }
+    ].map(item => buildCourseChoiceExercise(item)),
+    buildCourseMatchingExercise({
+      title: isEnglishTrack ? "Clinical term matching" : "P\u00e1rovanie klinick\u00fdch term\u00ednov",
+      prompt: isEnglishTrack ? "Match each combined medical term to its meaning." : "Prira\u010f ka\u017ed\u00fd kombinovan\u00fd medic\u00ednsky term\u00edn k jeho v\u00fdznamu.",
+      pairs: [
+        {
+          left: "fractura costae dextrae",
+          right: isEnglishTrack ? "fracture of the right rib" : "zlomenina prav\u00e9ho rebra",
+          hint: constructionTypeOptions[3]
+        },
+        {
+          left: "inflammatio mucosae nasi",
+          right: isEnglishTrack ? "inflammation of the nasal mucosa" : "z\u00e1pal sliznice nosa",
+          hint: constructionTypeOptions[3]
+        },
+        {
+          left: "tumor cerebri malignus",
+          right: isEnglishTrack ? "malignant brain tumor" : "zhubn\u00fd n\u00e1dor mozgu",
+          hint: constructionTypeOptions[3]
+        },
+        {
+          left: "status post infarctum acutum",
+          right: isEnglishTrack ? "state after acute infarction" : "stav po ak\u00fatnom infarkte",
+          hint: constructionTypeOptions[3]
+        },
+        {
+          left: "ruptura ligamenti cruciati",
+          right: isEnglishTrack ? "rupture of the cruciate ligament" : "ruptura kr\u00ed\u017eov\u00e9ho v\u00e4zu",
+          hint: constructionTypeOptions[3]
+        },
+        {
+          left: "carcinoma pulmonis sinistri",
+          right: isEnglishTrack ? "carcinoma of the left lung" : "karcin\u00f3m \u013eav\u00fdch p\u013e\u00fac",
+          hint: constructionTypeOptions[3]
+        }
+      ],
+      speakTokens: isEnglishTrack
+    })
+  ];
   const englishFoundationArticle = [
     {
       heading: "Word classes",
@@ -6145,55 +6524,35 @@ function buildLatinCourseLessons(){
       id: "construction-theory",
       kind: "theory",
       chapter: "Chapter 4.1",
-      title: isEnglishTrack ? "Build medical terms" : "Tvorba medic\u00ednskych term\u00ednov",
-      subtitle: isEnglishTrack ? "Read noun + noun, noun + adjective, and preposition + noun patterns." : "Prejdi si vzory substant\u00edvum + substant\u00edvum, substant\u00edvum + adjekt\u00edvum a predlo\u017eka + substant\u00edvum.",
-      focus: isEnglishTrack ? ["Adjective agreement", "Dependent genitive", "Preposition cases"] : ["Zhoda pr\u00eddavn\u00e9ho mena", "Z\u00e1visl\u00fd genit\u00edv", "P\u00e1dy po predlo\u017ek\u00e1ch"],
-      cards: [
-        ...nounNoun.slice(0, 4).map(row => ({ label: isEnglishTrack ? "noun + noun" : "substant\u00edvum + substant\u00edvum", title: row.full_term, body: getCourseConstructionBody(row, "noun") })),
-        ...nounAdjective.slice(0, 4).map(row => ({ label: isEnglishTrack ? "noun + adjective" : "substant\u00edvum + adjekt\u00edvum", title: row.full_term, body: getCourseConstructionBody(row, "adjective") })),
-        ...prepositionTable.slice(0, 6).map(row => ({ label: row.governing_case, title: row.full_term, body: getCourseConstructionBody(row, "preposition") }))
-      ],
+      title: isEnglishTrack ? "Medical term patterns" : "Typy medic\u00ednskych term\u00ednov",
+      subtitle: isEnglishTrack ? "Study pure training examples for noun + noun, noun + adjective, preposition + noun, and mixed clinical phrases." : "Prejdi si \u010dist\u00e9 tr\u00e9ningov\u00e9 pr\u00edklady pre substant\u00edvum + substant\u00edvum, substant\u00edvum + adjekt\u00edvum, predlo\u017eka + substant\u00edvum a kombinovan\u00e9 term\u00edny.",
+      focus: isEnglishTrack ? ["Dependent genitive", "Adjective agreement", "Accusative vs. ablative", "Mixed clinical phrases"] : ["Z\u00e1visl\u00fd genit\u00edv", "Zhoda adjekt\u00edva", "Akuzat\u00edv verzus ablat\u00edv", "Kombinovan\u00e9 klinick\u00e9 term\u00edny"],
+      cards: [],
+      articleIntro: isEnglishTrack
+        ? "This chapter collects the exact training patterns you will need in drills: two nouns with a dependent genitive, noun-adjective agreement, preposition phrases, and real combined medical terms."
+        : "V tejto kapitole s\u00fa presne tie typy spojenia, ktor\u00e9 bude\u0161 potom rie\u0161i\u0165 v tr\u00e9ningu: dve substant\u00edva so z\u00e1visl\u00fdm genit\u00edvom, zhoda adjekt\u00edva, predlo\u017ekov\u00e9 spojenia a re\u00e1lne kombinovan\u00e9 medic\u00ednske term\u00edny.",
+      article: constructionTheoryArticle,
       exercises: []
     },
     {
       id: "construction-test",
       kind: "quiz",
       chapter: "Chapter 4.2",
-      title: isEnglishTrack ? "Test: term construction" : "Test: tvorba term\u00ednov",
-      subtitle: isEnglishTrack ? "Build and match terms after reading the construction rules." : "Po te\u00f3rii skladaj a p\u00e1ruj latinsk\u00e9 term\u00edny.",
-      focus: isEnglishTrack ? ["Drag full terms", "Match preposition meanings"] : ["Doplnenie cel\u00fdch term\u00ednov", "V\u00fdznam predlo\u017eiek"],
+      title: isEnglishTrack ? "Test: case patterns" : "Test: p\u00e1dov\u00e9 vzory",
+      subtitle: isEnglishTrack ? "Train the four key cases on full Latin phrases before moving to mixed tasks." : "Precvi\u010d si \u0161tyri hlavn\u00e9 p\u00e1dy na cel\u00fdch latinsk\u00fdch spojeniach, k\u00fdm p\u00f4jde\u0161 na zmie\u0161an\u00fd tr\u00e9ning.",
+      focus: isEnglishTrack ? ["4 cases", "Noun + noun", "Noun + adjective", "Whole phrase forms"] : ["4 p\u00e1dy", "Substant\u00edvum + substant\u00edvum", "Substant\u00edvum + adjekt\u00edvum", "Tvary cel\u00fdch spojen\u00ed"],
       cards: [],
-      exercises: [
-        buildCourseChartExercise({
-          title: "glandula linguae",
-          prompt: isEnglishTrack ? "Drag the correct full term into the chart." : "Potiahni spr\u00e1vny cel\u00fd term\u00edn do tabu\u013eky.",
-          rows: nounNoun.slice(0, 4).map(row => ({
-            label: `${getCourseNumberLabel(row.number_of_head)} ${getCourseCaseLabel(row.case)}`,
-            answer: row.full_term,
-            meta: row.dependent_case
-          })),
-          note: isEnglishTrack ? "The dependent noun lingua stays in genitive singular: linguae." : "Z\u00e1visl\u00e9 substant\u00edvum lingua zost\u00e1va v genit\u00edve singul\u00e1ru: linguae."
-        }),
-        buildCourseChartExercise({
-          title: "infarctus acutus",
-          prompt: isEnglishTrack ? "Drag the agreeing adjective phrase into each slot." : "Dopl\u0148 spojenie s pr\u00eddavn\u00fdm menom v zhode.",
-          rows: nounAdjective.slice(0, 4).map(row => ({
-            label: `${getCourseNumberLabel(row.number)} ${getCourseCaseLabel(row.case)}`,
-            answer: row.full_term,
-            meta: isEnglishTrack ? row.rule : row.meaning_sk
-          })),
-          note: isEnglishTrack ? "The adjective ending changes with case, gender, and number." : "Koncovka adjekt\u00edva sa men\u00ed pod\u013ea p\u00e1du, rodu a \u010d\u00edsla."
-        }),
-        buildCourseMatchingExercise({
-          title: isEnglishTrack ? "Preposition logic" : "Predlo\u017eky",
-          prompt: isEnglishTrack ? "Match each Latin prepositional phrase to its case rule." : "Prira\u010f latinsk\u00fa predlo\u017ekov\u00fa fr\u00e1zu k slovensk\u00e9mu v\u00fdznamu.",
-          pairs: prepositionTable.slice(0, 6).map(row => ({
-            left: row.full_term,
-            right: isEnglishTrack ? (row.note || row.governing_case) : row.meaning_sk,
-            hint: row.governing_case
-          }))
-        })
-      ]
+      exercises: constructionCaseExercises
+    },
+    {
+      id: "construction-mixed-test",
+      kind: "quiz",
+      chapter: "Chapter 4.3",
+      title: isEnglishTrack ? "Test: mixed term building" : "Test: zmie\u0161an\u00e1 tvorba term\u00ednov",
+      subtitle: isEnglishTrack ? "Fill forms, translate into Latin, identify the construction type, and match clinical phrases." : "Dop\u013a\u0148 tvary, prekladaj do latin\u010diny, ur\u010duj typ spojenia a p\u00e1ruj klinick\u00e9 term\u00edny.",
+      focus: isEnglishTrack ? ["Fill the ending", "Translate to Latin", "Identify the pattern", "Clinical matching"] : ["Doplnenie koncovky", "Preklad do latin\u010diny", "Ur\u010denie typu spojenia", "Klinick\u00e9 p\u00e1rovanie"],
+      cards: [],
+      exercises: constructionMixedExercises
     },
     {
       id: "clinic-sprint",
@@ -6443,14 +6802,56 @@ function renderLatinCourseLessonContent(lesson){
   const cards = Array.isArray(lesson.cards)
     ? (lesson.showAllCards ? lesson.cards : lesson.cards.slice(0, 8))
     : [];
+  const supportsPartOfSpeechFilter = lesson.showAllCards && cards.some(card => courseText(card && card.partOfSpeech));
+  const partOfSpeechValues = supportsPartOfSpeechFilter
+    ? [...new Set(cards.map(card => courseText(card && card.partOfSpeech)).filter(Boolean))]
+        .sort((a, b) => getLocalizedPartOfSpeechLabel(a).localeCompare(getLocalizedPartOfSpeechLabel(b), undefined, { sensitivity: "base" }))
+    : [];
+  const requestedPartOfSpeechFilter = supportsPartOfSpeechFilter ? latinCourseState.studyCardPartOfSpeechFilter || "all" : "all";
+  const partOfSpeechFilter = supportsPartOfSpeechFilter && requestedPartOfSpeechFilter !== "all" && !partOfSpeechValues.includes(requestedPartOfSpeechFilter)
+    ? "all"
+    : requestedPartOfSpeechFilter;
+  if(partOfSpeechFilter !== requestedPartOfSpeechFilter){
+    latinCourseState.studyCardPartOfSpeechFilter = partOfSpeechFilter;
+  }
+  const visibleCards = supportsPartOfSpeechFilter && partOfSpeechFilter !== "all"
+    ? cards.filter(card => courseText(card && card.partOfSpeech) === partOfSpeechFilter)
+    : cards;
+  const colorIntensity = normalizeCourseColorIntensity(latinCourseState.studyCardColorIntensity);
+  if(colorIntensity !== latinCourseState.studyCardColorIntensity){
+    latinCourseState.studyCardColorIntensity = colorIntensity;
+  }
+  const toolbarHtml = supportsPartOfSpeechFilter ? `
+      <div class="course-card-toolbar">
+        <div class="course-card-filter">
+          <label for="course-card-pos-filter">${escapeHTML(tOr("courses_show_only", "Show only"))}</label>
+          <select id="course-card-pos-filter">
+            <option value="all"${partOfSpeechFilter === "all" ? " selected" : ""}>${escapeHTML(tOr("courses_all_parts_of_speech", "All parts of speech"))}</option>
+            ${partOfSpeechValues.map(value => `<option value="${escapeHTML(value)}"${partOfSpeechFilter === value ? " selected" : ""}>${escapeHTML(getLocalizedPartOfSpeechLabel(value))}</option>`).join("")}
+          </select>
+        </div>
+        <label class="course-card-toggle">
+          <input type="checkbox" id="course-card-coloring"${latinCourseState.studyCardColoringEnabled ? " checked" : ""} />
+          <span>${escapeHTML(tOr("courses_color_by_part_of_speech", "Color by part of speech"))}</span>
+        </label>
+        <div class="course-card-range">
+          <label for="course-card-color-intensity">${escapeHTML(tOr("courses_color_intensity", "Color intensity"))}</label>
+          <div class="course-card-range-control">
+            <input type="range" id="course-card-color-intensity" min="1" max="3" step="1" value="${colorIntensity}"${latinCourseState.studyCardColoringEnabled ? "" : " disabled"} />
+            <strong>${escapeHTML(getCourseColorIntensityLabel(colorIntensity))}</strong>
+          </div>
+        </div>
+      </div>
+    ` : "";
   const studyBody = Array.isArray(lesson.article) && lesson.article.length
     ? renderCourseTheoryArticle(lesson)
     : Array.isArray(lesson.chartRows) && lesson.chartRows.length
       ? renderCourseDeclensionTheoryChart(lesson)
       : `
-      <div class="course-card-grid">
-        ${cards.map(card => `
-          <article class="course-study-card">
+      ${toolbarHtml}
+      <div class="course-card-grid${latinCourseState.studyCardColoringEnabled ? " is-pos-coloring" : ""}" data-color-intensity="${colorIntensity}">
+        ${visibleCards.map(card => `
+          <article class="course-study-card" data-course-pos="${escapeHTML(card.partOfSpeechKey || getCoursePartOfSpeechKey(card.partOfSpeech))}">
             ${card.label ? `<span>${escapeHTML(card.label)}</span>` : ""}
             <strong>${escapeHTML(card.title || "")}</strong>
             <p>${escapeHTML(card.body || "")}</p>
@@ -6830,7 +7231,7 @@ function updateLatinCourseHeaderStats(){
 }
 
 function getSpeechLanguageForCourse(){
-  return "en-US";
+  return isLatinCourseTargetEnglish() ? "en-US" : "sk-SK";
 }
 
 function speakCourseTextValue(value){
@@ -11038,6 +11439,27 @@ async function init(){
       const btn = event.target && event.target.closest ? event.target.closest('[data-course-lesson]') : null;
       if(!btn || btn.disabled) return;
       setActiveCourseLesson(btn.getAttribute('data-course-lesson'));
+    });
+  }
+  const courseLessonContent = document.getElementById('course-lesson-content');
+  if(courseLessonContent){
+    courseLessonContent.addEventListener('change', event => {
+      const target = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
+      if(!target) return;
+      if(target.id === 'course-card-pos-filter'){
+        latinCourseState.studyCardPartOfSpeechFilter = target.value || 'all';
+        renderLatinCourseLessonContent(getActiveCourseLesson());
+        return;
+      }
+      if(target.id === 'course-card-coloring'){
+        latinCourseState.studyCardColoringEnabled = !!target.checked;
+        renderLatinCourseLessonContent(getActiveCourseLesson());
+        return;
+      }
+      if(target.id === 'course-card-color-intensity'){
+        latinCourseState.studyCardColorIntensity = normalizeCourseColorIntensity(target.value);
+        renderLatinCourseLessonContent(getActiveCourseLesson());
+      }
     });
   }
 
