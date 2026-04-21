@@ -1997,6 +1997,44 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_remedies: "Remedies",
     dataset_latin_units: "Latin units",
     dataset_muscles: "Muscles",
+    courses: "Courses",
+    submenu_desc_courses: "Unlock medical Latin lessons with translation drills and drag charts.",
+    courses_kicker: "Latin course",
+    courses_intro: "Medical Latin training built from repository terminology. Choose one language track.",
+    courses_choose_track: "Choose a language track",
+    courses_open_track: "Open course",
+    courses_current_lesson: "Current lesson",
+    courses_back_to_courses: "Courses",
+    courses_completed: "Completed",
+    courses_streak: "Session score",
+    courses_lessons: "Course lessons",
+    courses_reset: "Reset course",
+    courses_lesson_progress: "Lesson progress",
+    courses_start_lesson: "Start lesson",
+    courses_statistics: "Statistics",
+    courses_repository_chart: "Repository chart",
+    courses_unit_one_profile: "1st declension profile",
+    courses_focus: "Focus",
+    courses_training: "Training",
+    courses_theory: "Theory",
+    courses_test: "Test",
+    courses_complete_theory: "Complete theory",
+    courses_read_button: "Read aloud",
+    courses_speech_unavailable: "Read aloud is not available in this browser.",
+    courses_check: "Check",
+    courses_next: "Next",
+    courses_lesson: "Lesson",
+    courses_drop_here: "Drop here",
+    courses_done_title: "Lesson complete",
+    courses_done_copy: "Nice work. The next lesson is now unlocked.",
+    courses_answer_first: "Fill in an answer first.",
+    courses_correct: "Correct. Keep going.",
+    courses_try_again: "Not quite. The highlighted answer shows what to fix.",
+    courses_reset_confirm: "Reset all course progress?",
+    latin_pos_noun: "Nouns",
+    latin_pos_adjective: "Adjectives",
+    latin_pos_preposition: "Prepositions",
+    latin_pos_conjunction: "Conjunctions",
     field_normal_range_units: "Normal range and units",
     latin_search_notes: "Notes"
   },
@@ -2008,6 +2046,44 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_remedies: "Heilmittel",
     dataset_latin_units: "Lateinische Lektionen",
     dataset_muscles: "Muskeln",
+    courses: "Kurse",
+    submenu_desc_courses: "Schalten Sie medizinische Lateinlektionen mit Uebersetzungsuebungen und Zieh-Tabellen frei.",
+    courses_kicker: "Lateinkurs",
+    courses_intro: "Medizinisches Lateintraining aus der Terminologie dieses Repositories. Waehlen Sie eine Sprachstrecke.",
+    courses_choose_track: "Sprachstrecke waehlen",
+    courses_open_track: "Kurs oeffnen",
+    courses_current_lesson: "Aktuelle Lektion",
+    courses_back_to_courses: "Kurse",
+    courses_completed: "Abgeschlossen",
+    courses_streak: "Sitzungsergebnis",
+    courses_lessons: "Kurslektionen",
+    courses_reset: "Kurs zuruecksetzen",
+    courses_lesson_progress: "Lektionsfortschritt",
+    courses_start_lesson: "Lektion starten",
+    courses_statistics: "Statistik",
+    courses_repository_chart: "Repository-Diagramm",
+    courses_unit_one_profile: "Profil der 1. Deklination",
+    courses_focus: "Fokus",
+    courses_training: "Training",
+    courses_theory: "Theorie",
+    courses_test: "Test",
+    courses_complete_theory: "Theorie abschliessen",
+    courses_read_button: "Vorlesen",
+    courses_speech_unavailable: "Vorlesen ist in diesem Browser nicht verfuegbar.",
+    courses_check: "Pruefen",
+    courses_next: "Weiter",
+    courses_lesson: "Lektion",
+    courses_drop_here: "Hier ablegen",
+    courses_done_title: "Lektion abgeschlossen",
+    courses_done_copy: "Gute Arbeit. Die naechste Lektion ist jetzt freigeschaltet.",
+    courses_answer_first: "Fuellen Sie zuerst eine Antwort ein.",
+    courses_correct: "Richtig. Weiter so.",
+    courses_try_again: "Nicht ganz. Die markierte Antwort zeigt, was korrigiert werden muss.",
+    courses_reset_confirm: "Den gesamten Kursfortschritt zuruecksetzen?",
+    latin_pos_noun: "Substantive",
+    latin_pos_adjective: "Adjektive",
+    latin_pos_preposition: "Praepositionen",
+    latin_pos_conjunction: "Konjunktionen",
     field_normal_range_units: "Referenzbereich und Einheiten",
     latin_search_notes: "Notizen"
   },
@@ -2019,6 +2095,44 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_remedies: "Lieciva",
     dataset_latin_units: "Latinske lekcie",
     dataset_muscles: "Svaly",
+    courses: "Kurzy",
+    submenu_desc_courses: "Odomykajte lekcie medicinskej latinciny s prekladovymi ulohami a tahacimi tabulkami.",
+    courses_kicker: "Latinsky kurz",
+    courses_intro: "Trening medicinskej latinciny z terminologie repozitara. Vyberte si jazykovy kurz.",
+    courses_choose_track: "Vyberte si kurz",
+    courses_open_track: "Otvorit kurz",
+    courses_current_lesson: "Aktualna lekcia",
+    courses_back_to_courses: "Kurzy",
+    courses_completed: "Dokoncene",
+    courses_streak: "Skore relacie",
+    courses_lessons: "Lekcie kurzu",
+    courses_reset: "Resetovat kurz",
+    courses_lesson_progress: "Postup v lekcii",
+    courses_start_lesson: "Spustit lekciu",
+    courses_statistics: "Statistiky",
+    courses_repository_chart: "Graf repozitara",
+    courses_unit_one_profile: "Profil 1. deklinacie",
+    courses_focus: "Zameranie",
+    courses_training: "Trening",
+    courses_theory: "Teoria",
+    courses_test: "Test",
+    courses_complete_theory: "Dokoncit teoriu",
+    courses_read_button: "Precitat nahlas",
+    courses_speech_unavailable: "Hlasove citanie nie je v tomto prehliadaci dostupne.",
+    courses_check: "Skontrolovat",
+    courses_next: "Dalsie",
+    courses_lesson: "Lekcia",
+    courses_drop_here: "Potiahnite sem",
+    courses_done_title: "Lekcia dokoncena",
+    courses_done_copy: "Dobra praca. Dalsia lekcia je odomknuta.",
+    courses_answer_first: "Najprv vyplnte odpoved.",
+    courses_correct: "Spravne. Pokracujte.",
+    courses_try_again: "Este nie. Zvyraznena odpoved ukazuje, co treba opravit.",
+    courses_reset_confirm: "Resetovat cely postup v kurze?",
+    latin_pos_noun: "Substantiva",
+    latin_pos_adjective: "Adjektiva",
+    latin_pos_preposition: "Predlozky",
+    latin_pos_conjunction: "Spojky",
     field_normal_range_units: "Normalne rozmedzie a jednotky",
     latin_search_notes: "Poznamky"
   }
@@ -3964,6 +4078,7 @@ async function setLanguage(lang){
   renderQuizGeneratorUi();
   renderQuizBuilderDomainUi();
   if(flashcardsV2State.loaded) refreshFlashcardsBuilderUI();
+  if(latinCourseState.loaded) renderLatinCourseUI();
 }
 
 function t(key){
@@ -3995,6 +4110,11 @@ function applyTranslationsToDom(){
     const k = el.getAttribute('data-i18n-aria-label');
     const fallback = el.getAttribute('aria-label') || "";
     el.setAttribute('aria-label', tOr(k, fallback || k));
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const k = el.getAttribute('data-i18n-title');
+    const fallback = el.getAttribute('title') || "";
+    el.setAttribute('title', tOr(k, fallback || k));
   });
   refreshFieldOverflowUX(document);
 }
@@ -4033,6 +4153,42 @@ let latinQuizPersistentFields = new Set();
 let latinQuizTempFields = new Set();
 let latinSearchSelectedUnits = new Set();
 let latinSearchUnitsInitialized = false;
+const LATIN_COURSE_PROGRESS_PREFIX = "latin_course_progress_v1:";
+const LATIN_COURSE_DEFINITIONS = [
+  {
+    id: "latin-english",
+    title: "Latin - English",
+    subtitle: "Medical Latin vocabulary and forms trained against English meanings.",
+    target: "english",
+    targetLabel: "English",
+    targetPreposition: "in English"
+  },
+  {
+    id: "latin-slovak",
+    title: "Latinčina - Slovenčina",
+    subtitle: "Medicinska latincina precvicovana v slovencine.",
+    target: "slovak",
+    targetLabel: "Slovenčina",
+    targetPreposition: "po slovensky"
+  }
+];
+LATIN_COURSE_DEFINITIONS[1].title = "Latin\u010dina - Sloven\u010dina";
+LATIN_COURSE_DEFINITIONS[1].subtitle = "Medic\u00ednska latin\u010dina precvi\u010dovan\u00e1 v sloven\u010dine.";
+LATIN_COURSE_DEFINITIONS[1].targetLabel = "Sloven\u010dina";
+let latinCourseState = {
+  loaded: false,
+  loadPromise: null,
+  lessons: [],
+  activeCourseId: "",
+  activeLessonId: "",
+  activeExerciseIndex: 0,
+  checked: false,
+  correctInSession: 0,
+  attemptedInSession: 0,
+  unitOneTerms: [],
+  courseTables: {},
+  selectedDragToken: ""
+};
 let activeAnamnesisTab = "internal";
 let anamnesisLayoutMode = "auto";
 let anamnesisInputMode = "keyboard";
@@ -5330,6 +5486,1412 @@ function refreshLatinTerminologyUI(){
   renderLatinQuizFields();
   const input = document.getElementById('latin-search-input');
   if(input && input.value.trim().length >= 2) renderLatinSearchResults();
+}
+
+// --- Latin course helpers ---
+function courseText(value){
+  return repairMojibake(String(value || "").trim());
+}
+
+function courseNonEmpty(values){
+  return values.map(courseText).filter(Boolean);
+}
+
+function uniqueCourseValues(values){
+  const seen = new Set();
+  const out = [];
+  for(const value of values){
+    const text = courseText(value);
+    if(!text) continue;
+    const key = normalizeSearchLoose(text);
+    if(seen.has(key)) continue;
+    seen.add(key);
+    out.push(text);
+  }
+  return out;
+}
+
+function latinCourseProgressKey(){
+  const courseId = latinCourseState.activeCourseId || "latin-english";
+  return `${LATIN_COURSE_PROGRESS_PREFIX}${courseId}:${getUserStorageKey()}`;
+}
+
+function loadLatinCourseProgress(){
+  const raw = readJsonLS(latinCourseProgressKey(), { completed: {}, scores: {} }) || {};
+  return {
+    completed: raw.completed && typeof raw.completed === "object" ? raw.completed : {},
+    scores: raw.scores && typeof raw.scores === "object" ? raw.scores : {}
+  };
+}
+
+function saveLatinCourseProgress(progress){
+  writeJsonLS(latinCourseProgressKey(), progress || { completed: {}, scores: {} });
+}
+
+function getLatinCourseDefinition(id = latinCourseState.activeCourseId){
+  return LATIN_COURSE_DEFINITIONS.find(course => course.id === id) || LATIN_COURSE_DEFINITIONS[0];
+}
+
+function isLatinCourseTargetEnglish(){
+  return getLatinCourseDefinition().target === "english";
+}
+
+function getCourseTargetValue(term){
+  const cfg = getLatinCourseDefinition();
+  return courseText(term && term[cfg.target]);
+}
+
+function getCourseTargetCandidates(terms = latinCourseState.unitOneTerms){
+  return uniqueCourseValues((terms || []).map(term => getCourseTargetValue(term)));
+}
+
+function getCourseTargetHint(term){
+  const cfg = getLatinCourseDefinition();
+  if(cfg.target === "english") return courseNonEmpty([term.genitive, term.english]).join(" | ");
+  return courseNonEmpty([term.genitive, term.slovak]).join(" | ");
+}
+
+function getCourseUiText(en, sk){
+  return isLatinCourseTargetEnglish() ? en : sk;
+}
+
+function getCourseCaseLabel(value){
+  const text = courseText(value).toLowerCase();
+  if(isLatinCourseTargetEnglish()) return text;
+  const map = {
+    nominative: "nominat\u00edv",
+    genitive: "genit\u00edv",
+    accusative: "akuzat\u00edv",
+    ablative: "ablat\u00edv"
+  };
+  return map[text] || text;
+}
+
+function getCourseNumberLabel(value){
+  const text = courseText(value).toLowerCase();
+  if(isLatinCourseTargetEnglish()) return text;
+  const map = {
+    singular: "singul\u00e1r",
+    plural: "plur\u00e1l"
+  };
+  return map[text] || text;
+}
+
+function getCourseDeclensionMeta(row){
+  if(isLatinCourseTargetEnglish()) return courseNonEmpty([row.example_word, row.note]).join(" | ");
+  return row.meaning_sk || row.example_word || "";
+}
+
+function getCourseConstructionBody(row, type){
+  if(isLatinCourseTargetEnglish()){
+    if(type === "adjective") return row.rule || "Adjective agrees with the noun.";
+    return row.note || row.dependent_case || row.governing_case || "";
+  }
+  return courseNonEmpty([row.meaning_sk, type === "adjective" ? "zhoda pr\u00eddavn\u00e9ho mena" : row.dependent_case || row.governing_case]).join(" | ");
+}
+
+function latinCourseTermId(row){
+  return [
+    row && row.__sourcePath,
+    row && row.unit_number,
+    row && row.latin_term,
+    row && row.english_translation,
+    row && row.slovak_translation
+  ].map(v => String(v || "").trim()).join("|");
+}
+
+function mapLatinCourseTerm(row){
+  return {
+    id: latinCourseTermId(row),
+    latin: courseText(row && (row.latin_term || row.latin_translation || row.full_form || row.name)),
+    genitive: courseText(row && row.latin_genitive),
+    partOfSpeech: courseText(row && row.part_of_speech),
+    gender: courseText(row && row.gender),
+    english: courseText(row && (row.english_translation || row.english_description || row.english_definition)),
+    german: courseText(row && (row.german_translation || row.german_description || row.german_definition)),
+    slovak: courseText(row && (row.slovak_translation || row.slovak_description || row.slovak_definition)),
+    note: courseText(row && (row.notes || row.english_definition || row.slovak_definition || row.german_definition))
+  };
+}
+
+function getLatinCourseUnitOneTerms(){
+  return getLatinTerms()
+    .filter(row => {
+      const src = String(row && row.__sourcePath || "").toLowerCase();
+      if(!src.endsWith("latin_units.csv")) return false;
+      const num = String(row.unit_number || "").trim();
+      const name = String(row.unit_name || "").toLowerCase();
+      return num === "1" || name.includes("1st") || name.includes("a-declension");
+    })
+    .map(mapLatinCourseTerm)
+    .filter(term => term.latin && (term.english || term.slovak || term.german));
+}
+
+async function loadLatinCourseTable(path){
+  try{
+    const text = await loadBaseFile(path);
+    const rows = rowsToObjects(parseCSVLines(text));
+    return rows.map(row => {
+      const out = {};
+      for(const [key, value] of Object.entries(row || {})){
+        out[key] = courseText(value);
+      }
+      return out;
+    });
+  }catch(e){
+    console.warn("Latin course table load failed:", path, e);
+    return [];
+  }
+}
+
+function getCourseProgressForLesson(lessonId){
+  const progress = loadLatinCourseProgress();
+  const score = progress.scores[String(lessonId || "")] || null;
+  return score && typeof score === "object" ? score : { correct: 0, total: 0 };
+}
+
+function isCourseLessonCompleted(lessonId){
+  return !!loadLatinCourseProgress().completed[String(lessonId || "")];
+}
+
+function isCourseLessonUnlocked(index){
+  if(index <= 0) return true;
+  const progress = loadLatinCourseProgress();
+  const prev = latinCourseState.lessons[index - 1];
+  return !!(prev && progress.completed[prev.id]);
+}
+
+function getActiveCourseLesson(){
+  return latinCourseState.lessons.find(lesson => lesson.id === latinCourseState.activeLessonId) || latinCourseState.lessons[0] || null;
+}
+
+function setActiveCourseLesson(id){
+  const index = latinCourseState.lessons.findIndex(lesson => lesson.id === id);
+  if(index < 0 || !isCourseLessonUnlocked(index)) return;
+  latinCourseState.activeLessonId = id;
+  latinCourseState.activeExerciseIndex = 0;
+  latinCourseState.checked = false;
+  latinCourseState.correctInSession = 0;
+  latinCourseState.attemptedInSession = 0;
+  latinCourseState.selectedDragToken = "";
+  document.getElementById("course-shell")?.classList.remove("show-map");
+  renderLatinCourseUI();
+}
+
+function pickCourseItems(items, count){
+  const copy = [...items];
+  shuffle(copy);
+  return copy.slice(0, Math.max(0, count));
+}
+
+function buildCourseChoiceExercise({ title, prompt, answer, candidates, explanation, speakOptions = false, speakPrompt = false }){
+  const correct = courseText(answer);
+  const options = uniqueCourseValues([correct, ...pickCourseItems(candidates.filter(v => courseText(v) !== correct), 5)]).slice(0, 4);
+  while(options.length < 4 && candidates.length){
+    const candidate = courseText(candidates[Math.floor(Math.random() * candidates.length)]);
+    if(candidate && !options.includes(candidate)) options.push(candidate);
+    else break;
+  }
+  shuffle(options);
+  return {
+    type: "choice",
+    title,
+    prompt,
+    answer: correct,
+    options,
+    explanation: courseText(explanation),
+    speakOptions: !!speakOptions,
+    speakPrompt: !!speakPrompt
+  };
+}
+
+function buildCourseMatchingExercise({ title, prompt, pairs, speakTokens = false }){
+  const cleaned = pairs
+    .map(pair => ({ left: courseText(pair.left), right: courseText(pair.right), hint: courseText(pair.hint) }))
+    .filter(pair => pair.left && pair.right);
+  const tokens = cleaned.map(pair => pair.right);
+  shuffle(tokens);
+  return {
+    type: "match",
+    title,
+    prompt,
+    pairs: cleaned,
+    tokens,
+    speakTokens: !!speakTokens
+  };
+}
+
+function buildCourseListeningMatchExercise({ title, prompt, pairs }){
+  const cleaned = pairs
+    .map(pair => ({
+      left: courseText(pair.left),
+      audio: courseText(pair.audio || pair.right),
+      answer: courseText(pair.answer || pair.audio || pair.right),
+      hint: courseText(pair.hint)
+    }))
+    .filter(pair => pair.left && pair.audio && pair.answer);
+  const tokens = cleaned.map((pair, index) => ({
+    id: `listen-${index}-${normalizeSearchLoose(pair.answer).slice(0, 18)}`,
+    audio: pair.audio,
+    answer: pair.answer
+  }));
+  shuffle(tokens);
+  return {
+    type: "listen-match",
+    title,
+    prompt,
+    pairs: cleaned,
+    tokens
+  };
+}
+
+function buildCourseChartExercise({ title, prompt, rows, note, speakTokens = false }){
+  const cleaned = rows
+    .map(row => ({ label: courseText(row.label), answer: courseText(row.answer), meta: courseText(row.meta) }))
+    .filter(row => row.label && row.answer);
+  const tokens = cleaned.map(row => row.answer);
+  shuffle(tokens);
+  return {
+    type: "chart",
+    title,
+    prompt,
+    rows: cleaned,
+    tokens,
+    note: courseText(note),
+    speakTokens: !!speakTokens
+  };
+}
+
+function buildLatinCourseLessons(){
+  const unitOne = latinCourseState.unitOneTerms;
+  const nouns = unitOne.filter(term => /noun/i.test(term.partOfSpeech));
+  const adjectives = unitOne.filter(term => /adjective/i.test(term.partOfSpeech));
+  const prepositions = unitOne.filter(term => /preposition/i.test(term.partOfSpeech));
+  const definitions = unitOne.filter(term => term.note).slice(0, 18);
+  const tables = latinCourseState.courseTables;
+  const pronunciation = tables.pronunciation || [];
+  const declension = tables.declension || [];
+  const nounNoun = tables.nounNoun || [];
+  const nounAdjective = tables.nounAdjective || [];
+  const prepositionTable = tables.preposition || [];
+  const theory = tables.theory || [];
+
+  const cfg = getLatinCourseDefinition();
+  const isEnglishTrack = cfg.target === "english";
+  const targetCandidates = getCourseTargetCandidates(unitOne);
+  const targetTerms = unitOne.filter(term => getCourseTargetValue(term));
+  const targetNouns = nouns.filter(term => getCourseTargetValue(term));
+  const theoryPrefix = isEnglishTrack ? "Theory" : "Teória";
+  const testPrefix = isEnglishTrack ? "Test" : "Test";
+  const trainPrefix = isEnglishTrack ? "Train" : "Tréning";
+  const targetVerb = isEnglishTrack ? "English" : "slovenský";
+  const theoryCards = theory.map(row => ({
+    label: row.section_title,
+    title: row.section_title,
+    body: row.theory_point
+  }));
+  const courseTheoryCards = isEnglishTrack ? theoryCards : [
+    { label: "Slovn\u00e9 druhy", title: "Substant\u00edva a adjekt\u00edva", body: "V medic\u00ednskej latin\u010dine sa naj\u010dastej\u0161ie pracuje s podstatn\u00fdmi a pr\u00eddavn\u00fdmi menami." },
+    { label: "Rod", title: "m. / f. / n.", body: "Podstatn\u00e9 men\u00e1 maj\u00fa mu\u017esk\u00fd, \u017eensk\u00fd alebo stredn\u00fd rod." },
+    { label: "\u010c\u00edslo", title: "singul\u00e1r / plur\u00e1l", body: "Tvar slova z\u00e1vis\u00ed od jednotn\u00e9ho alebo mno\u017en\u00e9ho \u010d\u00edsla." },
+    { label: "P\u00e1dy", title: "nominat\u00edv, genit\u00edv, akuzat\u00edv, ablat\u00edv", body: "Pre terminol\u00f3giu s\u00fa k\u013e\u00fa\u010dov\u00e9 najm\u00e4 slovn\u00edkov\u00fd tvar a genit\u00edv." },
+    { label: "Deklin\u00e1cia", title: "genit\u00edv singul\u00e1ru", body: "Deklin\u00e1ciu rozozn\u00e1va\u0161 pod\u013ea koncovky genit\u00edvu singul\u00e1ru." },
+    { label: "Kme\u0148", title: "odober koncovku", body: "Kme\u0148 z\u00edska\u0161 odstr\u00e1nen\u00edm koncovky genit\u00edvu singul\u00e1ru." }
+  ];
+  const targetCourseTerms = targetTerms.length ? targetTerms : unitOne;
+  const targetDefinitions = targetTerms.filter(term => getCourseTargetValue(term)).slice(0, 18);
+  const targetChoicePrompt = term => isEnglishTrack
+    ? `Choose the English meaning of ${term.latin}.`
+    : `Vyber slovensk\u00fd v\u00fdznam pre ${term.latin}.`;
+  const translationTitle = isEnglishTrack ? "English translation" : "Slovensk\u00fd preklad";
+  const latinToTargetLabel = isEnglishTrack ? "Latin -> English" : "Latin\u010dina -> Sloven\u010dina";
+  const slovakFoundationArticle = [
+    {
+      heading: "Slovn\u00e9 druhy",
+      paragraphs: ["V medic\u00ednskej latin\u010dine sa naj\u010dastej\u0161ie pou\u017e\u00edvaj\u00fa:"],
+      bullets: ["podstatn\u00e9 men\u00e1 (substant\u00edva)", "pr\u00eddavn\u00e9 men\u00e1 (adjekt\u00edva)"],
+      after: "Tieto tvoria z\u00e1klad v\u00e4\u010d\u0161iny odborn\u00fdch term\u00ednov."
+    },
+    {
+      heading: "Rod (genus)",
+      paragraphs: ["Ka\u017ed\u00e9 podstatn\u00e9 meno m\u00e1 svoj rod:"],
+      bullets: ["maskul\u00ednum (m.) - mu\u017esk\u00fd rod", "femin\u00ednum (f.) - \u017eensk\u00fd rod", "neutrum (n.) - stredn\u00fd rod"],
+      after: "Rod je d\u00f4le\u017eit\u00fd najm\u00e4 pri zhode s pr\u00eddavn\u00fdm menom."
+    },
+    {
+      heading: "\u010c\u00edslo (numerus)",
+      paragraphs: ["Podstatn\u00e9 men\u00e1 existuj\u00fa v dvoch \u010d\u00edslach:"],
+      bullets: ["singul\u00e1r (jednotn\u00e9 \u010d\u00edslo)", "plur\u00e1l (mno\u017en\u00e9 \u010d\u00edslo)"],
+      after: "Tvar slova sa men\u00ed pod\u013ea \u010d\u00edsla."
+    },
+    {
+      heading: "P\u00e1dy (casus)",
+      paragraphs: ["V medic\u00ednskej latin\u010dine sa naj\u010dastej\u0161ie pou\u017e\u00edvaj\u00fa tieto p\u00e1dy:"],
+      bullets: ["nominat\u00edv - z\u00e1kladn\u00fd tvar (slovn\u00edkov\u00fd)", "genit\u00edv - vyjadruje pr\u00edslu\u0161nos\u0165", "akuzat\u00edv - \u010dasto po predlo\u017ek\u00e1ch", "ablat\u00edv - pou\u017e\u00edva sa s niektor\u00fdmi predlo\u017ekami"],
+      after: "Tieto p\u00e1dy s\u00fa k\u013e\u00fa\u010dov\u00e9 pre spr\u00e1vne tvorenie odborn\u00fdch term\u00ednov."
+    },
+    {
+      heading: "Deklin\u00e1cia",
+      paragraphs: ["Podstatn\u00e9 men\u00e1 sa sklo\u0148uj\u00fa pod\u013ea deklin\u00e1ci\u00ed.", "Deklin\u00e1ciu ur\u010duje koncovka genit\u00edvu singul\u00e1ru."],
+      examples: ["vena, ae \u2192 I. deklin\u00e1cia", "digitus, i \u2192 II. deklin\u00e1cia"]
+    },
+    {
+      heading: "Kme\u0148 slova",
+      paragraphs: ["Kme\u0148 podstatn\u00e9ho mena z\u00edskame odstr\u00e1nen\u00edm koncovky genit\u00edvu singul\u00e1ru."],
+      examples: ["vena, ae \u2192 kme\u0148: ven-", "digitus, i \u2192 kme\u0148: digit-"],
+      after: "Na tento kme\u0148 sa potom prip\u00e1jaj\u00fa p\u00e1dov\u00e9 koncovky."
+    }
+  ];
+  const slovakPronunciationArticle = [
+    {
+      heading: "Samohl\u00e1ska -i-",
+      paragraphs: ["Po spoluhl\u00e1ske a pred samohl\u00e1skou sa vyslovuje ako \"ij\"."],
+      examples: ["arteria \u2192 arterija"],
+      after: "Na za\u010diatku slova pred samohl\u00e1skou sa vyslovuje ako \"j\".",
+      afterExamples: ["iatrogenes \u2192 jatrogenes"]
+    },
+    {
+      heading: "Dvojhl\u00e1sky",
+      paragraphs: ["ae, oe sa vyslovuj\u00fa ako \"\u00e9\"."],
+      examples: ["praematurus \u2192 pr\u00e9maturus"]
+    },
+    {
+      heading: "Spoluhl\u00e1ska -c-",
+      paragraphs: ["Pred e, i, y, ae, oe sa vyslovuje ako \"c\" (m\u00e4kk\u00e9)."],
+      examples: ["cervix \u2192 cerviks"],
+      after: "V ostatn\u00fdch pr\u00edpadoch sa vyslovuje ako \"k\".",
+      afterExamples: ["corpus \u2192 korpus"]
+    },
+    {
+      heading: "Spoluhl\u00e1ska -s-",
+      paragraphs: ["Medzi dvoma samohl\u00e1skami sa vyslovuje ako \"z\"."],
+      examples: ["sclerosis \u2192 sklerozis"]
+    },
+    {
+      heading: "Spoluhl\u00e1ska -x-",
+      paragraphs: ["Vyslovuje sa ako \"ks\"."],
+      examples: ["larynx \u2192 larynks"],
+      after: "Medzi samohl\u00e1skami sa m\u00f4\u017ee vyslovova\u0165 ako \"gz\".",
+      afterExamples: ["exitus \u2192 egzitus"]
+    },
+    {
+      heading: "Skupina -ti-",
+      paragraphs: ["Pred samohl\u00e1skou alebo dvojhl\u00e1skou sa vyslovuje ako \"ci\"."],
+      examples: ["substantia \u2192 substancia"]
+    }
+  ];
+
+  const lessons = [
+    {
+      id: "theory-foundations",
+      kind: "theory",
+      chapter: "Chapter 1.1",
+      title: isEnglishTrack ? `${theoryPrefix}: medical Latin basics` : "Te\u00f3ria: Z\u00e1klady medic\u00ednskej latin\u010diny",
+      subtitle: isEnglishTrack
+        ? "Read the core word classes, gender, number, cases, and term-building rules first."
+        : "Najprv si prejdi slovné druhy, rod, číslo, pády a pravidlá tvorby termínov.",
+      focus: isEnglishTrack
+        ? ["Word classes", "Gender and number", "Cases", "Declension by genitive singular"]
+        : ["Slovné druhy", "Rod a číslo", "Pády", "Deklinácia podľa genitívu singuláru"],
+      cards: courseTheoryCards.slice(0, 10),
+      articleIntro: isEnglishTrack ? "" : "Najprv je potrebn\u00e9 pochopi\u0165 z\u00e1kladn\u00e9 gramatick\u00e9 princ\u00edpy, na ktor\u00fdch je medic\u00ednska latin\u010dina postaven\u00e1. V terminol\u00f3gii sa pracuje najm\u00e4 s podstatn\u00fdmi menami a pr\u00eddavn\u00fdmi menami, ktor\u00e9 sa navz\u00e1jom sp\u00e1jaj\u00fa pod\u013ea presn\u00fdch pravidiel.",
+      article: isEnglishTrack ? null : slovakFoundationArticle,
+      exercises: []
+    },
+    {
+      id: "pronunciation-theory",
+      kind: "theory",
+      chapter: "Chapter 1.2",
+      title: isEnglishTrack ? `${theoryPrefix}: pronunciation` : "Te\u00f3ria: V\u00fdslovnos\u0165 medic\u00ednskej latin\u010diny",
+      subtitle: isEnglishTrack
+        ? "Study how medical Latin is read before answering pronunciation questions."
+        : "Pred otázkami si preštuduj, ako sa medicínska latinčina číta.",
+      focus: ["ae / oe", "c before e, i, y, ae, oe", "qu, ph, th, rh"],
+      cards: pronunciation.slice(0, 12).map(row => ({
+        label: row.pattern || row.topic,
+        title: row.example_latin,
+        body: isEnglishTrack
+          ? `${row.pronunciation_sk || ""}${row.example_pronounced ? ` | ${row.example_pronounced}` : ""}`
+          : (row.example_pronounced || row.pattern || "")
+      })),
+      articleIntro: isEnglishTrack ? "" : "Pred \u0161t\u00fadiom terminol\u00f3gie je potrebn\u00e9 porozumie\u0165 z\u00e1kladn\u00fdm pravidl\u00e1m v\u00fdslovnosti. Latinsk\u00e9 slov\u00e1 sa s\u00edce \u010d\u00edtaj\u00fa podobne ako slovensk\u00e9, ale existuje nieko\u013eko d\u00f4le\u017eit\u00fdch odli\u0161nost\u00ed.",
+      article: isEnglishTrack ? null : slovakPronunciationArticle,
+      exercises: []
+    },
+    {
+      id: "pronunciation-test",
+      kind: "quiz",
+      chapter: "Chapter 1.3",
+      title: isEnglishTrack ? `${testPrefix}: pronunciation` : "Test: v\u00fdslovnos\u0165",
+      subtitle: isEnglishTrack ? "Now test only the reading patterns." : "Teraz si otestuj len výslovnosť.",
+      focus: ["Choose the pronounced form"],
+      cards: [],
+      exercises: pickCourseItems(pronunciation.filter(row => row.example_latin && row.example_pronounced), 6).map(row => buildCourseChoiceExercise({
+        title: "Pronunciation",
+        prompt: isEnglishTrack ? `How would you read ${row.example_latin}?` : `Ako pre\u010d\u00edta\u0161 ${row.example_latin}?`,
+        answer: row.example_pronounced,
+        candidates: pronunciation.map(x => x.example_pronounced),
+        explanation: isEnglishTrack ? `${row.pattern}: ${row.pronunciation_sk}` : row.pattern
+      }))
+    },
+    {
+      id: "unit-one-words-theory",
+      kind: "theory",
+      chapter: "Chapter 2.1",
+      title: isEnglishTrack ? `${theoryPrefix}: 1st declension words` : "Te\u00f3ria: slov\u00e1 1. deklin\u00e1cie",
+      subtitle: isEnglishTrack
+        ? "Read the chapter vocabulary from latin_units.csv before training English recall."
+        : "Prejdi si slovnú zásobu z latin_units.csv pred tréningom slovenskej terminológie.",
+      focus: isEnglishTrack ? ["Latin + genitive", "English"] : ["Latinsk\u00fd tvar + genit\u00edv", "Sloven\u010dina"],
+      cards: [
+        ...nouns.slice(0, 8).map(term => ({
+          label: term.gender || term.partOfSpeech,
+          title: term.latin,
+          body: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | ")
+        })),
+        ...adjectives.slice(0, 4).map(term => ({
+          label: term.partOfSpeech,
+          title: term.latin,
+          body: getCourseTargetValue(term)
+        })),
+        ...prepositions.slice(0, 3).map(term => ({
+          label: term.partOfSpeech,
+          title: term.latin,
+          body: courseNonEmpty([getCourseTargetValue(term), term.note]).join(" | ")
+        }))
+      ],
+      exercises: []
+    },
+    {
+      id: "unit-one-words-sk-en",
+      kind: "quiz",
+      chapter: "Chapter 2.2",
+      title: `${trainPrefix}: ${latinToTargetLabel}`,
+      subtitle: isEnglishTrack
+        ? "Train the chapter words against English meanings."
+        : "Precvičuj latinské slová proti slovenským významom.",
+      focus: [latinToTargetLabel],
+      cards: [],
+      exercises: [
+        ...pickCourseItems(targetNouns, 4).map(term => buildCourseChoiceExercise({
+          title: translationTitle,
+          prompt: targetChoicePrompt(term),
+          answer: getCourseTargetValue(term),
+          candidates: targetCandidates,
+          explanation: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | "),
+          speakOptions: isEnglishTrack
+        })),
+        ...pickCourseItems(targetTerms, 3).map(term => buildCourseChoiceExercise({
+          title: translationTitle,
+          prompt: targetChoicePrompt(term),
+          answer: getCourseTargetValue(term),
+          candidates: targetCandidates,
+          explanation: courseNonEmpty([term.genitive, getCourseTargetValue(term)]).join(" | "),
+          speakOptions: isEnglishTrack
+        }))
+      ]
+    },
+    {
+      id: "unit-one-words-de-match",
+      kind: "quiz",
+      chapter: "Chapter 2.3",
+      title: isEnglishTrack ? "Train: English listening and matching" : "Tréning: slovenské párovanie",
+      subtitle: isEnglishTrack
+        ? "Continue with English listening buttons and Latin-English matching."
+        : "Pokračuj slovenským párovaním bez hlasového čítania.",
+      focus: isEnglishTrack ? ["Latin -> English", "English listening"] : ["Latin -> Slovenčina", "Párovanie významov"],
+      title: isEnglishTrack ? "Train: English listening and matching" : "Tr\u00e9ning: slovensk\u00e9 p\u00e1rovanie",
+      subtitle: isEnglishTrack ? "Continue with English listening buttons and Latin-English matching." : "Pokra\u010duj slovensk\u00fdm p\u00e1rovan\u00edm bez hlasov\u00e9ho \u010d\u00edtania.",
+      cards: [],
+      focus: isEnglishTrack ? ["Latin -> English", "English listening"] : ["Latin\u010dina -> Sloven\u010dina", "P\u00e1rovanie v\u00fdznamov"],
+      exercises: [
+        ...pickCourseItems(targetTerms, 2).map(term => buildCourseChoiceExercise({
+          title: translationTitle,
+          prompt: targetChoicePrompt(term),
+          answer: getCourseTargetValue(term),
+          candidates: targetCandidates,
+          explanation: getCourseTargetHint(term),
+          speakOptions: isEnglishTrack
+        })),
+        ...(isEnglishTrack ? [buildCourseListeningMatchExercise({
+          title: "Listen and match English",
+          prompt: "Match each Latin term with the listening button that reads its English meaning.",
+          pairs: pickCourseItems(nouns.filter(term => term.latin && term.english), 5).map(term => ({
+            left: term.latin,
+            audio: term.english,
+            answer: term.english,
+            hint: term.genitive
+          }))
+        })] : []),
+        buildCourseMatchingExercise({
+          title: isEnglishTrack ? "English matching" : "Slovensk\u00e9 p\u00e1rovanie",
+          prompt: isEnglishTrack ? "Drag each English meaning to the matching Latin term." : "Potiahni ka\u017ed\u00fd slovensk\u00fd v\u00fdznam k spr\u00e1vnemu latinsk\u00e9mu term\u00ednu.",
+          pairs: pickCourseItems(targetNouns, 5).map(term => ({
+            left: term.latin,
+            right: getCourseTargetValue(term),
+            hint: term.genitive
+          })),
+          speakTokens: isEnglishTrack
+        })
+      ]
+    },
+    {
+      id: "declension-theory",
+      kind: "theory",
+      chapter: "Chapter 3.1",
+      title: isEnglishTrack ? "Theory: 1st declension forms" : "Te\u00f3ria: tvary 1. deklin\u00e1cie",
+      subtitle: isEnglishTrack ? "Study the paradigm before filling any charts." : "Najprv si pre\u010d\u00edtaj paradigmu, a\u017e potom dop\u013a\u0148aj tabu\u013eky.",
+      focus: isEnglishTrack
+        ? ["Nominative: vena", "Genitive: venae", "Accusative: venam", "Ablative: vena"]
+        : ["Nominat\u00edv: vena", "Genit\u00edv: venae", "Akuzat\u00edv: venam", "Ablat\u00edv: vena"],
+      cards: declension.slice(0, 16).map(row => ({
+        label: `${getCourseNumberLabel(row.number)} ${getCourseCaseLabel(row.case)}`,
+        title: row.form,
+        body: getCourseDeclensionMeta(row)
+      })),
+      chartRows: declension
+        .filter(row => row.example_word === "vena")
+        .map(row => ({
+          number: row.number,
+          numberLabel: getCourseNumberLabel(row.number),
+          case: row.case,
+          caseLabel: getCourseCaseLabel(row.case),
+          form: row.form,
+          meta: getCourseDeclensionMeta(row)
+        })),
+      exercises: []
+    },
+    {
+      id: "declension-chart-test",
+      kind: "quiz",
+      chapter: "Chapter 3.2",
+      title: isEnglishTrack ? "Test: declension chart" : "Test: deklina\u010dn\u00e1 tabu\u013eka",
+      subtitle: isEnglishTrack ? "Fill the forms after studying the paradigm." : "Dopl\u0148 tvary po pre\u010d\u00edtan\u00ed paradigmy.",
+      focus: isEnglishTrack ? ["Drag forms", "Case recognition", "Singular and plural"] : ["Doplnenie tvarov", "Rozpoznanie p\u00e1dov", "Singul\u00e1r a plur\u00e1l"],
+      cards: [],
+      exercises: [
+        buildCourseChartExercise({
+          title: "Vena paradigm",
+          prompt: isEnglishTrack ? "Drag the correct Latin form into each case slot." : "Potiahni spr\u00e1vny latinsk\u00fd tvar do p\u00e1dovej tabu\u013eky.",
+          rows: declension
+            .filter(row => row.example_word === "vena" && row.number === "singular")
+            .map(row => ({ label: `${getCourseNumberLabel(row.number)} ${getCourseCaseLabel(row.case)}`, answer: row.form, meta: getCourseDeclensionMeta(row) })),
+          note: isEnglishTrack ? "The genitive singular ending -ae identifies the 1st declension." : "Koncovka genit\u00edvu singul\u00e1ru -ae ozna\u010duje 1. deklin\u00e1ciu."
+        }),
+        buildCourseChartExercise({
+          title: isEnglishTrack ? "Plural endings" : "Koncovky plur\u00e1lu",
+          prompt: isEnglishTrack ? "Complete the plural forms of vena." : "Dopl\u0148 plur\u00e1lov\u00e9 tvary slova vena.",
+          rows: declension
+            .filter(row => row.example_word === "vena" && row.number === "plural")
+            .map(row => ({ label: `${getCourseNumberLabel(row.number)} ${getCourseCaseLabel(row.case)}`, answer: row.form, meta: getCourseDeclensionMeta(row) })),
+          note: isEnglishTrack ? "Medical terminology often needs nominative, genitive, accusative, and ablative." : "V terminol\u00f3gii sa \u010dasto pou\u017e\u00edva nominat\u00edv, genit\u00edv, akuzat\u00edv a ablat\u00edv."
+        }),
+        buildCourseMatchingExercise({
+          title: "Dictionary forms",
+          prompt: isEnglishTrack ? "Match the Latin dictionary form to its English meaning." : "Prira\u010f latinsk\u00fd slovn\u00edkov\u00fd tvar k slovensk\u00e9mu v\u00fdznamu.",
+          pairs: pickCourseItems(targetNouns.filter(term => term.genitive && getCourseTargetValue(term)), 5).map(term => ({
+            left: `${term.latin}, ${term.genitive}`,
+            right: getCourseTargetValue(term),
+            hint: term.genitive
+          })),
+          speakTokens: isEnglishTrack
+        })
+      ]
+    },
+    {
+      id: "construction-theory",
+      kind: "theory",
+      chapter: "Chapter 4.1",
+      title: isEnglishTrack ? "Theory: build medical terms" : "Te\u00f3ria: tvorba medic\u00ednskych term\u00ednov",
+      subtitle: isEnglishTrack ? "Read noun + noun, noun + adjective, and preposition + noun patterns." : "Prejdi si vzory substant\u00edvum + substant\u00edvum, substant\u00edvum + adjekt\u00edvum a predlo\u017eka + substant\u00edvum.",
+      focus: isEnglishTrack ? ["Adjective agreement", "Dependent genitive", "Preposition cases"] : ["Zhoda pr\u00eddavn\u00e9ho mena", "Z\u00e1visl\u00fd genit\u00edv", "P\u00e1dy po predlo\u017ek\u00e1ch"],
+      cards: [
+        ...nounNoun.slice(0, 4).map(row => ({ label: isEnglishTrack ? "noun + noun" : "substant\u00edvum + substant\u00edvum", title: row.full_term, body: getCourseConstructionBody(row, "noun") })),
+        ...nounAdjective.slice(0, 4).map(row => ({ label: isEnglishTrack ? "noun + adjective" : "substant\u00edvum + adjekt\u00edvum", title: row.full_term, body: getCourseConstructionBody(row, "adjective") })),
+        ...prepositionTable.slice(0, 6).map(row => ({ label: row.governing_case, title: row.full_term, body: getCourseConstructionBody(row, "preposition") }))
+      ],
+      exercises: []
+    },
+    {
+      id: "construction-test",
+      kind: "quiz",
+      chapter: "Chapter 4.2",
+      title: isEnglishTrack ? "Test: term construction" : "Test: tvorba term\u00ednov",
+      subtitle: isEnglishTrack ? "Build and match terms after reading the construction rules." : "Po te\u00f3rii skladaj a p\u00e1ruj latinsk\u00e9 term\u00edny.",
+      focus: isEnglishTrack ? ["Drag full terms", "Match preposition meanings"] : ["Doplnenie cel\u00fdch term\u00ednov", "V\u00fdznam predlo\u017eiek"],
+      cards: [],
+      exercises: [
+        buildCourseChartExercise({
+          title: "glandula linguae",
+          prompt: isEnglishTrack ? "Drag the correct full term into the chart." : "Potiahni spr\u00e1vny cel\u00fd term\u00edn do tabu\u013eky.",
+          rows: nounNoun.slice(0, 4).map(row => ({
+            label: `${getCourseNumberLabel(row.number_of_head)} ${getCourseCaseLabel(row.case)}`,
+            answer: row.full_term,
+            meta: row.dependent_case
+          })),
+          note: isEnglishTrack ? "The dependent noun lingua stays in genitive singular: linguae." : "Z\u00e1visl\u00e9 substant\u00edvum lingua zost\u00e1va v genit\u00edve singul\u00e1ru: linguae."
+        }),
+        buildCourseChartExercise({
+          title: "infarctus acutus",
+          prompt: isEnglishTrack ? "Drag the agreeing adjective phrase into each slot." : "Dopl\u0148 spojenie s pr\u00eddavn\u00fdm menom v zhode.",
+          rows: nounAdjective.slice(0, 4).map(row => ({
+            label: `${getCourseNumberLabel(row.number)} ${getCourseCaseLabel(row.case)}`,
+            answer: row.full_term,
+            meta: isEnglishTrack ? row.rule : row.meaning_sk
+          })),
+          note: isEnglishTrack ? "The adjective ending changes with case, gender, and number." : "Koncovka adjekt\u00edva sa men\u00ed pod\u013ea p\u00e1du, rodu a \u010d\u00edsla."
+        }),
+        buildCourseMatchingExercise({
+          title: isEnglishTrack ? "Preposition logic" : "Predlo\u017eky",
+          prompt: isEnglishTrack ? "Match each Latin prepositional phrase to its case rule." : "Prira\u010f latinsk\u00fa predlo\u017ekov\u00fa fr\u00e1zu k slovensk\u00e9mu v\u00fdznamu.",
+          pairs: prepositionTable.slice(0, 6).map(row => ({
+            left: row.full_term,
+            right: isEnglishTrack ? (row.note || row.governing_case) : row.meaning_sk,
+            hint: row.governing_case
+          }))
+        })
+      ]
+    },
+    {
+      id: "clinic-sprint",
+      kind: "quiz",
+      chapter: "Chapter 5.1",
+      title: isEnglishTrack ? "Review: Latin - English sprint" : "Opakovanie: Latin\u010dina - Sloven\u010dina",
+      subtitle: isEnglishTrack ? "A final review across Latin forms and English meanings." : "Z\u00e1vere\u010dn\u00e9 opakovanie latinsk\u00fdch tvarov a slovensk\u00fdch v\u00fdznamov.",
+      focus: isEnglishTrack ? ["Definitions", "English recall", "High-yield medical nouns"] : ["V\u00fdznamy", "Slovensk\u00e9 preklady", "D\u00f4le\u017eit\u00e9 substant\u00edva"],
+      cards: targetDefinitions.slice(0, 8).map(term => ({
+        label: term.partOfSpeech,
+        title: term.latin,
+        body: courseNonEmpty([getCourseTargetValue(term), term.genitive]).join(" | ")
+      })),
+      exercises: [
+        ...pickCourseItems(targetDefinitions, 2).map(term => buildCourseChoiceExercise({
+          title: isEnglishTrack ? "Definition" : "V\u00fdznam",
+          prompt: targetChoicePrompt(term),
+          answer: getCourseTargetValue(term),
+          candidates: targetCandidates,
+          explanation: courseNonEmpty([term.latin, term.genitive]).join(" | "),
+          speakOptions: isEnglishTrack
+        })),
+        buildCourseMatchingExercise({
+          title: isEnglishTrack ? "Latin recall" : "Latinsk\u00e9 term\u00edny",
+          prompt: isEnglishTrack ? "Drag each Latin term to the English meaning." : "Prira\u010f latinsk\u00fd term\u00edn k slovensk\u00e9mu v\u00fdznamu.",
+          pairs: pickCourseItems(targetCourseTerms.filter(term => getCourseTargetValue(term)), 6).map(term => ({
+            left: getCourseTargetValue(term),
+            right: term.latin,
+            hint: term.genitive
+          }))
+        }),
+        buildCourseChoiceExercise({
+          title: isEnglishTrack ? "1st declension signal" : "Znak 1. deklin\u00e1cie",
+          prompt: isEnglishTrack ? "Which form most clearly identifies a 1st declension noun?" : "Ktor\u00fd tvar najlep\u0161ie rozpozn\u00e1 1. deklin\u00e1ciu?",
+          answer: isEnglishTrack ? "genitive singular -ae" : "genit\u00edv singul\u00e1ru -ae",
+          candidates: isEnglishTrack
+            ? ["nominative singular -us", "genitive singular -is", "ablative plural -ibus", "genitive singular -ae"]
+            : ["nominat\u00edv singul\u00e1ru -us", "genit\u00edv singul\u00e1ru -is", "ablat\u00edv plur\u00e1lu -ibus", "genit\u00edv singul\u00e1ru -ae"],
+          explanation: isEnglishTrack ? "Declension is recognized by the genitive singular ending." : "Deklin\u00e1cia sa ur\u010duje pod\u013ea koncovky genit\u00edvu singul\u00e1ru."
+        })
+      ]
+    }
+  ];
+
+  lessons.forEach(lesson => {
+    lesson.cards = lesson.cards.filter(card => card && (card.title || card.body));
+    lesson.exercises = (lesson.exercises || []).filter(ex => ex && (ex.type !== "choice" || (ex.answer && ex.options.length >= 2)));
+  });
+  return lessons;
+}
+
+async function ensureLatinCourseLoaded(){
+  if(latinCourseState.loaded) return latinCourseState;
+  if(latinCourseState.loadPromise) return latinCourseState.loadPromise;
+  latinCourseState.loadPromise = (async ()=>{
+    await ensureMedicalDatasetsLoaded([LATIN_DATASET_KEY]);
+    latinCourseState.unitOneTerms = getLatinCourseUnitOneTerms();
+    const [
+      overview,
+      theory,
+      pronunciation,
+      declension,
+      nounNoun,
+      nounAdjective,
+      preposition
+    ] = await Promise.all([
+      loadLatinCourseTable("terminology/latin/course/course_backbone_overview.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_theory_backbone.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_pronunciation_backbone.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_declension_I_paradigms.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_noun_plus_noun_paradigm.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_noun_plus_adjective_paradigm.csv"),
+      loadLatinCourseTable("terminology/latin/course/lesson1_preposition_paradigm.csv")
+    ]);
+    latinCourseState.courseTables = { overview, theory, pronunciation, declension, nounNoun, nounAdjective, preposition };
+    latinCourseState.loaded = true;
+    return latinCourseState;
+  })();
+  return latinCourseState.loadPromise;
+}
+
+function renderLatinCourseLessonList(){
+  const list = document.getElementById("course-lesson-list");
+  if(!list) return;
+  const progress = loadLatinCourseProgress();
+  list.innerHTML = latinCourseState.lessons.map((lesson, index) => {
+    const unlocked = isCourseLessonUnlocked(index);
+    const active = lesson.id === latinCourseState.activeLessonId;
+    const done = !!progress.completed[lesson.id];
+    const score = progress.scores[lesson.id];
+    const scoreText = score && score.total ? `${Math.round((score.correct / score.total) * 100)}%` : "";
+    return `
+      <button type="button" class="course-lesson-node${active ? " is-active" : ""}${done ? " is-done" : ""}" data-course-lesson="${escapeHTML(lesson.id)}" ${unlocked ? "" : "disabled"}>
+        <span class="course-node-index">${done ? "OK" : unlocked ? index + 1 : "L"}</span>
+        <span class="course-node-copy">
+          <span>${escapeHTML(lesson.title)}</span>
+          <small>${escapeHTML(lesson.chapter)}${scoreText ? ` | ${escapeHTML(scoreText)}` : ""}</small>
+        </span>
+      </button>
+    `;
+  }).join("");
+}
+
+function renderLatinCourseCatalog(){
+  const list = document.getElementById("course-catalog-list");
+  if(!list) return;
+  list.innerHTML = LATIN_COURSE_DEFINITIONS.map(course => `
+    <button type="button" class="course-track-card" data-course-open="${escapeHTML(course.id)}">
+      <span class="course-kicker">${escapeHTML(course.targetLabel)}</span>
+      <strong>${escapeHTML(courseText(course.title))}</strong>
+      <small>${escapeHTML(courseText(course.subtitle))}</small>
+    </button>
+  `).join("");
+}
+
+function showLatinCourseCatalog(){
+  latinCourseState.activeCourseId = "";
+  latinCourseState.activeLessonId = "";
+  latinCourseState.lessons = [];
+  latinCourseState.activeExerciseIndex = 0;
+  latinCourseState.checked = false;
+  latinCourseState.correctInSession = 0;
+  latinCourseState.attemptedInSession = 0;
+  document.getElementById("course-catalog")?.classList.remove("hidden");
+  document.getElementById("course-shell")?.classList.add("hidden");
+  renderLatinCourseCatalog();
+}
+
+function selectLatinCourse(courseId){
+  const cfg = getLatinCourseDefinition(courseId);
+  latinCourseState.activeCourseId = cfg.id;
+  latinCourseState.lessons = buildLatinCourseLessons();
+  const progress = loadLatinCourseProgress();
+  const firstOpen = latinCourseState.lessons.find((lesson, index) => isCourseLessonUnlocked(index) && !progress.completed[lesson.id])
+    || latinCourseState.lessons.find((lesson, index) => isCourseLessonUnlocked(index))
+    || latinCourseState.lessons[0];
+  latinCourseState.activeLessonId = firstOpen ? firstOpen.id : "";
+  latinCourseState.activeExerciseIndex = 0;
+  latinCourseState.checked = false;
+  latinCourseState.correctInSession = 0;
+  latinCourseState.attemptedInSession = 0;
+  latinCourseState.selectedDragToken = "";
+  document.getElementById("course-catalog")?.classList.add("hidden");
+  const shell = document.getElementById("course-shell");
+  shell?.classList.remove("hidden");
+  shell?.classList.remove("show-map");
+  renderLatinCourseUI();
+}
+
+function renderLatinCourseChart(){
+  const chart = document.getElementById("course-chart");
+  if(!chart) return;
+  const terms = latinCourseState.unitOneTerms;
+  const counts = [
+    { label: tOr("latin_pos_noun", "Nouns"), value: terms.filter(t => /noun/i.test(t.partOfSpeech)).length },
+    { label: tOr("latin_pos_adjective", "Adjectives"), value: terms.filter(t => /adjective/i.test(t.partOfSpeech)).length },
+    { label: tOr("latin_pos_preposition", "Prepositions"), value: terms.filter(t => /preposition/i.test(t.partOfSpeech)).length },
+    { label: tOr("latin_pos_conjunction", "Conjunctions"), value: terms.filter(t => /conjunction/i.test(t.partOfSpeech)).length }
+  ].filter(item => item.value > 0);
+  const max = Math.max(1, ...counts.map(item => item.value));
+  const fem = terms.filter(t => /feminine/i.test(t.gender)).length;
+  const masc = terms.filter(t => /masculine/i.test(t.gender)).length;
+  const coverage = [
+    { label: "SK", value: terms.filter(t => t.slovak).length },
+    { label: "EN", value: terms.filter(t => t.english).length },
+    { label: "DE", value: terms.filter(t => t.german).length }
+  ];
+  chart.innerHTML = `
+    <div class="course-bars">
+      ${counts.map(item => `
+        <div class="course-bar-row">
+          <span>${escapeHTML(item.label)}</span>
+          <div class="course-bar-track"><i style="width:${Math.max(6, Math.round((item.value / max) * 100))}%"></i></div>
+          <strong>${item.value}</strong>
+        </div>
+      `).join("")}
+    </div>
+    <div class="course-mini-grid">
+      <div><span>f.</span><strong>${fem}</strong></div>
+      <div><span>m.</span><strong>${masc}</strong></div>
+      <div><span>terms</span><strong>${terms.length}</strong></div>
+    </div>
+    <div class="course-coverage">
+      ${coverage.map(item => `<span style="--v:${terms.length ? Math.round((item.value / terms.length) * 100) : 0}%">${escapeHTML(item.label)} ${item.value}</span>`).join("")}
+    </div>
+  `;
+}
+
+function renderLatinCourseFocus(lesson){
+  const list = document.getElementById("course-focus-list");
+  if(!list) return;
+  const focus = lesson && Array.isArray(lesson.focus) ? lesson.focus : [];
+  list.innerHTML = focus.map(item => `<span>${escapeHTML(item)}</span>`).join("");
+}
+
+function renderCourseTheoryArticle(lesson){
+  const sections = Array.isArray(lesson && lesson.article) ? lesson.article : [];
+  return `
+    <article class="course-theory-article">
+      ${sections.map(section => `
+        <section class="course-theory-section">
+          <h5>${escapeHTML(section.heading || "")}</h5>
+          ${(section.paragraphs || []).map(text => `<p>${escapeHTML(text)}</p>`).join("")}
+          ${section.bullets && section.bullets.length ? `
+            <ul>
+              ${section.bullets.map(item => `<li>${escapeHTML(item)}</li>`).join("")}
+            </ul>
+          ` : ""}
+          ${section.examples && section.examples.length ? `
+            <div class="course-theory-examples">
+              ${section.examples.map(item => `<span>${escapeHTML(item)}</span>`).join("")}
+            </div>
+          ` : ""}
+          ${section.after ? `<p>${escapeHTML(section.after)}</p>` : ""}
+          ${section.afterExamples && section.afterExamples.length ? `
+            <div class="course-theory-examples">
+              ${section.afterExamples.map(item => `<span>${escapeHTML(item)}</span>`).join("")}
+            </div>
+          ` : ""}
+        </section>
+      `).join("")}
+    </article>
+  `;
+}
+
+function renderCourseDeclensionTheoryChart(lesson){
+  const rows = Array.isArray(lesson && lesson.chartRows) ? lesson.chartRows : [];
+  const order = ["nominative", "genitive", "accusative", "ablative"];
+  const byCase = new Map();
+  rows.forEach(row => {
+    const caseKey = courseText(row.case).toLowerCase();
+    if(!byCase.has(caseKey)) byCase.set(caseKey, {});
+    const bucket = byCase.get(caseKey);
+    const numberKey = courseText(row.number).toLowerCase();
+    bucket[numberKey] = row;
+  });
+  const cases = order.filter(caseKey => byCase.has(caseKey));
+  return `
+    <div class="course-paradigm-chart" role="table" aria-label="${escapeHTML(lesson.title)}">
+      <div class="course-paradigm-row course-paradigm-head" role="row">
+        <div role="columnheader">${escapeHTML(isLatinCourseTargetEnglish() ? "Case" : "P\u00e1d")}</div>
+        <div role="columnheader">${escapeHTML(isLatinCourseTargetEnglish() ? "Singular" : "Singul\u00e1r")}</div>
+        <div role="columnheader">${escapeHTML(isLatinCourseTargetEnglish() ? "Plural" : "Plur\u00e1l")}</div>
+      </div>
+      ${cases.map(caseKey => {
+        const bucket = byCase.get(caseKey) || {};
+        const singular = bucket.singular || {};
+        const plural = bucket.plural || {};
+        const label = singular.caseLabel || plural.caseLabel || caseKey;
+        return `
+          <div class="course-paradigm-row" role="row">
+            <div class="course-paradigm-case" role="rowheader">${escapeHTML(label)}</div>
+            <div role="cell">
+              <strong>${escapeHTML(singular.form || "")}</strong>
+              ${singular.meta ? `<small>${escapeHTML(singular.meta)}</small>` : ""}
+            </div>
+            <div role="cell">
+              <strong>${escapeHTML(plural.form || "")}</strong>
+              ${plural.meta ? `<small>${escapeHTML(plural.meta)}</small>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderLatinCourseLessonContent(lesson){
+  const wrap = document.getElementById("course-lesson-content");
+  if(!wrap) return;
+  if(!lesson){
+    wrap.innerHTML = `<p class="muted">${escapeHTML(tOr("feature_load_failed", "Failed to load this section."))}</p>`;
+    return;
+  }
+  const studyBody = Array.isArray(lesson.article) && lesson.article.length
+    ? renderCourseTheoryArticle(lesson)
+    : Array.isArray(lesson.chartRows) && lesson.chartRows.length
+      ? renderCourseDeclensionTheoryChart(lesson)
+      : `
+      <div class="course-card-grid">
+        ${lesson.cards.slice(0, 8).map(card => `
+          <article class="course-study-card">
+            <span>${escapeHTML(card.label || "")}</span>
+            <strong>${escapeHTML(card.title || "")}</strong>
+            <p>${escapeHTML(card.body || "")}</p>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  const subtitle = lesson.articleIntro || lesson.subtitle || "";
+  const contentKicker = isLatinCourseTargetEnglish() ? tOr("courses_theory", "Theory") : "Te\u00f3ria";
+  wrap.innerHTML = `
+    <div class="course-content-head">
+      <div class="course-section-title-row">
+        <div>
+          <p class="course-kicker">${escapeHTML(contentKicker)}</p>
+          <h4>${escapeHTML(lesson.title)}</h4>
+        </div>
+      </div>
+      <p>${escapeHTML(subtitle)}</p>
+    </div>
+    ${studyBody}
+  `;
+}
+
+function courseSpeakButton(text){
+  const value = courseText(text);
+  if(!value) return "";
+  const label = escapeHTML(tOr("courses_read_button", "Read aloud"));
+  return `
+    <button type="button" class="course-icon-btn course-speak-btn" data-course-speak="${escapeHTML(value)}" aria-label="${label}" title="${label}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5-1.5-1.4 1.4A4 4 0 0 1 16 12a4 4 0 0 1-.9 2.5l1.4 1.4A6 6 0 0 0 18 12a6 6 0 0 0-1.5-4.5zm2.8-2.8-1.4 1.4A9 9 0 0 1 20 12a9 9 0 0 1-2.1 5.9l1.4 1.4A11 11 0 0 0 22 12a11 11 0 0 0-2.7-7.3z"/></svg>
+    </button>
+  `;
+}
+
+function renderCourseChoiceExercise(exercise){
+  return `
+    <div class="course-question">
+      <div class="course-quiz-prompt">
+        <p>${escapeHTML(exercise.prompt)}</p>
+        ${exercise.speakPrompt ? courseSpeakButton(exercise.prompt) : ""}
+      </div>
+      <div class="course-choice-grid">
+        ${exercise.options.map(option => `
+          <div class="course-choice-option">
+            <button type="button" class="course-choice" data-course-choice="${escapeHTML(option)}">${escapeHTML(option)}</button>
+            ${exercise.speakOptions ? courseSpeakButton(option) : ""}
+          </div>
+        `).join("")}
+      </div>
+      ${exercise.explanation ? `<small>${escapeHTML(exercise.explanation)}</small>` : ""}
+    </div>
+  `;
+}
+
+function renderCourseDragTokens(tokens, speakTokens = false){
+  return `
+    <div class="course-token-bank">
+      ${tokens.map(token => `
+        <div class="course-token-wrap">
+          <button type="button" class="course-token" draggable="true" data-course-token="${escapeHTML(token)}">${escapeHTML(token)}</button>
+          ${speakTokens ? courseSpeakButton(token) : ""}
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderCourseChartExercise(exercise){
+  return `
+    <div class="course-question">
+      <div class="course-quiz-prompt">
+        <p>${escapeHTML(exercise.prompt)}</p>
+        ${exercise.speakPrompt ? courseSpeakButton(exercise.prompt) : ""}
+      </div>
+      <div class="course-chart-match">
+        <div class="course-chart-fill">
+          ${exercise.rows.map((row, index) => `
+            <div class="course-chart-row">
+              <span>${escapeHTML(row.label)}</span>
+              <button type="button" class="course-dropzone" data-course-drop="${index}" data-answer="${escapeHTML(row.answer)}">${escapeHTML(tOr("courses_drop_here", "Drop here"))}</button>
+              <small>${escapeHTML(row.meta || "")}</small>
+            </div>
+          `).join("")}
+        </div>
+        <div class="course-match-options">
+          ${renderCourseDragTokens(exercise.tokens, !!exercise.speakTokens)}
+        </div>
+      </div>
+      ${exercise.note ? `<small>${escapeHTML(exercise.note)}</small>` : ""}
+    </div>
+  `;
+}
+
+function renderCourseMatchExercise(exercise){
+  return `
+    <div class="course-question">
+      <div class="course-quiz-prompt">
+        <p>${escapeHTML(exercise.prompt)}</p>
+        ${exercise.speakPrompt ? courseSpeakButton(exercise.prompt) : ""}
+      </div>
+      <div class="course-match-board">
+        <div class="course-match-grid">
+          ${exercise.pairs.map((pair, index) => `
+            <div class="course-match-row">
+              <div>
+                <strong>${escapeHTML(pair.left)}</strong>
+                ${pair.hint ? `<small>${escapeHTML(pair.hint)}</small>` : ""}
+              </div>
+              <button type="button" class="course-dropzone" data-course-drop="${index}" data-answer="${escapeHTML(pair.right)}">${escapeHTML(tOr("courses_drop_here", "Drop here"))}</button>
+            </div>
+          `).join("")}
+        </div>
+        <div class="course-match-options">
+          ${renderCourseDragTokens(exercise.tokens, !!exercise.speakTokens)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCourseListeningMatchExercise(exercise){
+  return `
+    <div class="course-question">
+      <div class="course-quiz-prompt">
+        <p>${escapeHTML(exercise.prompt)}</p>
+      </div>
+      <div class="course-listen-match">
+        <div class="course-listen-column">
+          ${exercise.pairs.map((pair, index) => `
+            <div class="course-listen-row">
+              <div>
+                <strong>${escapeHTML(pair.left)}</strong>
+                ${pair.hint ? `<small>${escapeHTML(pair.hint)}</small>` : ""}
+              </div>
+              <button type="button" class="course-dropzone" data-course-drop="${index}" data-answer="${escapeHTML(pair.answer)}">${escapeHTML(tOr("courses_drop_here", "Drop here"))}</button>
+            </div>
+          `).join("")}
+        </div>
+        <div class="course-listen-bank">
+          ${exercise.tokens.map(token => `
+            <button type="button" class="course-listen-token" draggable="true" data-course-token="${escapeHTML(token.answer)}" data-course-speak="${escapeHTML(token.audio)}" aria-label="${escapeHTML(tOr("courses_read_button", "Read aloud"))}" title="${escapeHTML(tOr("courses_read_button", "Read aloud"))}">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5-1.5-1.4 1.4A4 4 0 0 1 16 12a4 4 0 0 1-.9 2.5l1.4 1.4A6 6 0 0 0 18 12a6 6 0 0 0-1.5-4.5zm2.8-2.8-1.4 1.4A9 9 0 0 1 20 12a9 9 0 0 1-2.1 5.9l1.4 1.4A11 11 0 0 0 22 12a11 11 0 0 0-2.7-7.3z"/></svg>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function bindCourseExerciseInteractions(){
+  const exerciseEl = document.getElementById("course-exercise");
+  if(!exerciseEl) return;
+  exerciseEl.querySelectorAll("[data-course-speak]").forEach(btn => {
+    btn.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      speakCourseTextValue(btn.getAttribute("data-course-speak") || "");
+    });
+  });
+  exerciseEl.querySelectorAll("[data-course-choice]").forEach(btn => {
+    btn.addEventListener("click", ()=>{
+      if(latinCourseState.checked) return;
+      exerciseEl.querySelectorAll("[data-course-choice]").forEach(other => other.classList.remove("is-selected"));
+      btn.classList.add("is-selected");
+    });
+  });
+  exerciseEl.querySelectorAll("[data-course-token]").forEach(token => {
+    token.addEventListener("dragstart", event => {
+      event.dataTransfer.setData("text/plain", token.getAttribute("data-course-token") || "");
+    });
+    token.addEventListener("click", ()=>{
+      if(latinCourseState.checked) return;
+      latinCourseState.selectedDragToken = token.getAttribute("data-course-token") || "";
+      exerciseEl.querySelectorAll("[data-course-token]").forEach(other => other.classList.remove("is-selected"));
+      token.classList.add("is-selected");
+    });
+  });
+  exerciseEl.querySelectorAll("[data-course-drop]").forEach(zone => {
+    zone.addEventListener("dragover", event => event.preventDefault());
+    zone.addEventListener("drop", event => {
+      event.preventDefault();
+      if(latinCourseState.checked) return;
+      const value = event.dataTransfer.getData("text/plain");
+      setCourseDropzoneValue(zone, value);
+    });
+    zone.addEventListener("click", ()=>{
+      if(latinCourseState.checked || !latinCourseState.selectedDragToken) return;
+      setCourseDropzoneValue(zone, latinCourseState.selectedDragToken);
+      latinCourseState.selectedDragToken = "";
+      exerciseEl.querySelectorAll("[data-course-token]").forEach(other => other.classList.remove("is-selected"));
+    });
+  });
+}
+
+function setCourseDropzoneValue(zone, value){
+  const text = courseText(value);
+  if(!zone || !text) return;
+  zone.textContent = text;
+  zone.dataset.value = text;
+  zone.classList.add("has-value");
+}
+
+function renderLatinCourseExercise(){
+  const lesson = getActiveCourseLesson();
+  const exercise = lesson && lesson.exercises[latinCourseState.activeExerciseIndex];
+  const title = document.getElementById("course-exercise-title");
+  const counter = document.getElementById("course-exercise-counter");
+  const wrap = document.getElementById("course-exercise");
+  const status = document.getElementById("course-status");
+  const checkBtn = document.getElementById("course-check");
+  const nextBtn = document.getElementById("course-next");
+  if(!wrap || !title || !counter) return;
+  if(status) status.textContent = "";
+  if(!lesson || !exercise){
+    title.textContent = tOr("courses_done_title", "Lesson complete");
+    counter.textContent = "0/0";
+    wrap.innerHTML = `<div class="course-finished"><strong>${escapeHTML(tOr("courses_done_title", "Lesson complete"))}</strong><p>${escapeHTML(tOr("courses_done_copy", "Nice work. The next lesson is now unlocked."))}</p></div>`;
+    if(checkBtn) checkBtn.disabled = true;
+    if(nextBtn) nextBtn.disabled = false;
+    return;
+  }
+  title.textContent = exercise.title || tOr("courses_training", "Training");
+  counter.textContent = `${latinCourseState.activeExerciseIndex + 1}/${lesson.exercises.length}`;
+  if(exercise.type === "choice") wrap.innerHTML = renderCourseChoiceExercise(exercise);
+  else if(exercise.type === "chart") wrap.innerHTML = renderCourseChartExercise(exercise);
+  else if(exercise.type === "listen-match") wrap.innerHTML = renderCourseListeningMatchExercise(exercise);
+  else wrap.innerHTML = renderCourseMatchExercise(exercise);
+  if(checkBtn) checkBtn.disabled = false;
+  if(nextBtn) nextBtn.disabled = false;
+  bindCourseExerciseInteractions();
+}
+
+function updateLatinCourseDrillVisibility(lesson){
+  const panel = document.querySelector(".course-drill-panel");
+  if(!panel) return;
+  const hasQuiz = !!(lesson && Array.isArray(lesson.exercises) && lesson.exercises.length > 0);
+  panel.classList.toggle("hidden", !hasQuiz);
+}
+
+function getCourseExerciseResult(exercise){
+  const wrap = document.getElementById("course-exercise");
+  if(!wrap || !exercise) return { correct: false, answered: false };
+  if(exercise.type === "choice"){
+    const selected = wrap.querySelector(".course-choice.is-selected");
+    const value = selected ? selected.getAttribute("data-course-choice") || "" : "";
+    const correct = normalizeSearchLoose(value) === normalizeSearchLoose(exercise.answer);
+    wrap.querySelectorAll(".course-choice").forEach(btn => {
+      const btnValue = btn.getAttribute("data-course-choice") || "";
+      btn.classList.toggle("is-correct", normalizeSearchLoose(btnValue) === normalizeSearchLoose(exercise.answer));
+      btn.classList.toggle("is-wrong", btn === selected && !correct);
+    });
+    return { correct, answered: !!value };
+  }
+  let answered = true;
+  let correct = true;
+  wrap.querySelectorAll(".course-dropzone").forEach(zone => {
+    const value = zone.dataset.value || "";
+    const answer = zone.dataset.answer || "";
+    const isRight = normalizeSearchLoose(value) === normalizeSearchLoose(answer);
+    if(!value) answered = false;
+    if(!isRight) correct = false;
+    zone.classList.toggle("is-correct", isRight);
+    zone.classList.toggle("is-wrong", !!value && !isRight);
+    if(!isRight && value){
+      zone.title = `${tOr("correct", "Correct")}: ${answer}`;
+    }
+  });
+  return { correct, answered };
+}
+
+function checkLatinCourseExercise(){
+  const lesson = getActiveCourseLesson();
+  const exercise = lesson && lesson.exercises[latinCourseState.activeExerciseIndex];
+  const status = document.getElementById("course-status");
+  if(!lesson || !exercise) return false;
+  const result = getCourseExerciseResult(exercise);
+  if(!result.answered){
+    if(status) status.textContent = tOr("courses_answer_first", "Fill in an answer first.");
+    return false;
+  }
+  if(!latinCourseState.checked){
+    latinCourseState.attemptedInSession += 1;
+    if(result.correct) latinCourseState.correctInSession += 1;
+  }
+  latinCourseState.checked = true;
+  if(status){
+    status.textContent = result.correct
+      ? tOr("courses_correct", "Correct. Keep going.")
+      : tOr("courses_try_again", "Not quite. The highlighted answer shows what to fix.");
+  }
+  updateLatinCourseHeaderStats();
+  return result.correct;
+}
+
+function completeLatinCourseLesson(lesson){
+  const progress = loadLatinCourseProgress();
+  const total = lesson && lesson.exercises ? lesson.exercises.length : 0;
+  progress.completed[lesson.id] = nowIso();
+  progress.scores[lesson.id] = {
+    correct: latinCourseState.correctInSession,
+    total,
+    updatedAt: nowIso()
+  };
+  saveLatinCourseProgress(progress);
+}
+
+function nextLatinCourseExercise(){
+  const lesson = getActiveCourseLesson();
+  if(!lesson) return;
+  if(!lesson.exercises || lesson.exercises.length === 0){
+    completeLatinCourseLesson(lesson);
+    moveToNextLatinCourseLesson(lesson);
+    renderLatinCourseUI();
+    return;
+  }
+  const exercise = lesson.exercises[latinCourseState.activeExerciseIndex];
+  if(exercise && !latinCourseState.checked){
+    const ok = checkLatinCourseExercise();
+    if(!ok) return;
+  }
+  if(latinCourseState.activeExerciseIndex < lesson.exercises.length - 1){
+    latinCourseState.activeExerciseIndex += 1;
+    latinCourseState.checked = false;
+    latinCourseState.selectedDragToken = "";
+    renderLatinCourseUI();
+    return;
+  }
+  completeLatinCourseLesson(lesson);
+  moveToNextLatinCourseLesson(lesson);
+  renderLatinCourseUI();
+}
+
+function moveToNextLatinCourseLesson(lesson){
+  const nextLesson = latinCourseState.lessons.find((item, index) => {
+    const currentIndex = latinCourseState.lessons.findIndex(x => x.id === lesson.id);
+    return index > currentIndex && isCourseLessonUnlocked(index);
+  });
+  if(nextLesson){
+    latinCourseState.activeLessonId = nextLesson.id;
+    latinCourseState.activeExerciseIndex = 0;
+    latinCourseState.correctInSession = 0;
+    latinCourseState.attemptedInSession = 0;
+    latinCourseState.checked = false;
+  } else {
+    latinCourseState.activeExerciseIndex = lesson.exercises.length;
+    latinCourseState.checked = true;
+  }
+}
+
+function updateLatinCourseHeaderStats(){
+  const progress = loadLatinCourseProgress();
+  const completed = Object.keys(progress.completed || {}).length;
+  const total = latinCourseState.lessons.length;
+  const completedEl = document.getElementById("course-completed-count");
+  const scoreEl = document.getElementById("course-score-mini");
+  const percentEl = document.getElementById("course-progress-percent");
+  if(completedEl) completedEl.textContent = `${completed}/${total}`;
+  const sessionPercent = latinCourseState.attemptedInSession
+    ? Math.round((latinCourseState.correctInSession / latinCourseState.attemptedInSession) * 100)
+    : 0;
+  if(scoreEl) scoreEl.textContent = `${sessionPercent}%`;
+  const lesson = getActiveCourseLesson();
+  const lessonPercent = lesson && lesson.exercises && lesson.exercises.length
+    ? Math.round((latinCourseState.activeExerciseIndex / lesson.exercises.length) * 100)
+    : lesson && isCourseLessonCompleted(lesson.id)
+      ? 100
+      : 0;
+  if(percentEl) percentEl.textContent = `${lessonPercent}%`;
+}
+
+function getSpeechLanguageForCourse(){
+  return "en-US";
+}
+
+function speakCourseTextValue(value){
+  const status = document.getElementById("course-status");
+  if(!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined"){
+    if(status) status.textContent = tOr("courses_speech_unavailable", "Read aloud is not available in this browser.");
+    return;
+  }
+  const text = courseText(value);
+  if(!text) return;
+  try{
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = getSpeechLanguageForCourse();
+    utterance.rate = 0.92;
+    window.speechSynthesis.speak(utterance);
+  }catch(e){
+    if(status) status.textContent = tOr("courses_speech_unavailable", "Read aloud is not available in this browser.");
+  }
+}
+
+function setCourseStatisticsOpen(open){
+  const panel = document.getElementById("course-statistics-panel");
+  const btn = document.getElementById("course-statistics-toggle");
+  if(panel) panel.classList.toggle("hidden", !open);
+  if(btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function renderLatinCourseUI(){
+  if(!latinCourseState.activeCourseId){
+    showLatinCourseCatalog();
+    return;
+  }
+  const lesson = getActiveCourseLesson();
+  const chapter = document.getElementById("course-chapter-label");
+  const title = document.getElementById("course-active-title");
+  const copy = document.getElementById("course-active-copy");
+  const startBtn = document.getElementById("course-start-lesson");
+  const cfg = getLatinCourseDefinition();
+  const trackTitle = document.getElementById("course-track-title");
+  const trackCopy = document.getElementById("course-track-copy");
+  if(trackTitle) trackTitle.textContent = courseText(cfg.title);
+  if(trackCopy) trackCopy.textContent = courseText(cfg.subtitle);
+  if(chapter && lesson) chapter.textContent = lesson.chapter;
+  if(title && lesson) title.textContent = lesson.title;
+  if(copy && lesson) copy.textContent = lesson.subtitle;
+  const hasQuiz = !!(lesson && lesson.exercises && lesson.exercises.length);
+  if(startBtn){
+    startBtn.textContent = hasQuiz
+      ? (latinCourseState.activeExerciseIndex > 0 ? tOr("continue", "Continue") : tOr("courses_start_lesson", "Start lesson"))
+      : tOr("courses_complete_theory", "Complete theory");
+  }
+  renderLatinCourseLessonList();
+  renderLatinCourseLessonContent(lesson);
+  renderLatinCourseChart();
+  renderLatinCourseFocus(lesson);
+  updateLatinCourseDrillVisibility(lesson);
+  if(hasQuiz) renderLatinCourseExercise();
+  updateLatinCourseHeaderStats();
+}
+
+async function openLatinCourseScreen(){
+  showScreen("screen-courses");
+  const catalogList = document.getElementById("course-catalog-list");
+  document.getElementById("course-catalog")?.classList.remove("hidden");
+  document.getElementById("course-shell")?.classList.add("hidden");
+  if(catalogList) catalogList.innerHTML = `<p class="feature-status" data-status-tone="loading">${escapeHTML(tOr("loading", "Loading..."))}</p>`;
+  try{
+    await ensureLatinCourseLoaded();
+    showLatinCourseCatalog();
+  }catch(e){
+    console.warn("Latin course failed:", e);
+    if(catalogList) catalogList.innerHTML = `<p class="feature-status" data-status-tone="error">${escapeHTML(tOr("feature_load_failed", "Failed to load this section."))}</p>`;
+  }
+}
+
+function resetLatinCourseProgress(){
+  const confirmText = tOr("courses_reset_confirm", "Reset all course progress?");
+  if(!window.confirm(confirmText)) return;
+  saveLatinCourseProgress({ completed: {}, scores: {} });
+  latinCourseState.activeLessonId = latinCourseState.lessons[0] ? latinCourseState.lessons[0].id : "";
+  latinCourseState.activeExerciseIndex = 0;
+  latinCourseState.checked = false;
+  latinCourseState.correctInSession = 0;
+  latinCourseState.attemptedInSession = 0;
+  renderLatinCourseUI();
 }
 
 // --- Anamnesis helpers ---
@@ -8950,6 +10512,11 @@ async function prepareScreenAfterNavigation(screenId){
     refreshLatinTerminologyUI();
     return;
   }
+  if(id === "screen-courses"){
+    await ensureLatinCourseLoaded();
+    showLatinCourseCatalog();
+    return;
+  }
   if(id === "screen-muscle-training"){
     await ensureMusclesLoaded();
     renderMuscleRegionList();
@@ -9235,6 +10802,9 @@ async function init(){
       setFeatureStatus('latin-search-results', tOr("feature_load_failed", "Failed to load this section."), "error");
     }
   });
+  on('to-courses','click', async ()=> {
+    await openLatinCourseScreen();
+  });
   on('to-quiz','click', async ()=> {
     showScreen('screen-quiz');
     setQuizSetupCollapsed(false);
@@ -9399,6 +10969,46 @@ async function init(){
   onOptional('latin-quiz-start','click', ()=> startLatinQuiz());
   onOptional('latin-quiz-reveal','click', ()=>{ latinQuizRevealed = true; renderLatinQuizFields(); });
   onOptional('latin-quiz-next','click', ()=> showNextLatinTerm());
+  onOptional('course-start-lesson','click', ()=> {
+    const lesson = getActiveCourseLesson();
+    if(!lesson) return;
+    if(!lesson.exercises || lesson.exercises.length === 0){
+      nextLatinCourseExercise();
+      return;
+    }
+    renderLatinCourseExercise();
+    document.querySelector('.course-drill-panel')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  });
+  onOptional('course-check','click', ()=> checkLatinCourseExercise());
+  onOptional('course-next','click', ()=> nextLatinCourseExercise());
+  onOptional('course-reset-progress','click', ()=> resetLatinCourseProgress());
+  onOptional('course-statistics-toggle','click', ()=> {
+    const panel = document.getElementById('course-statistics-panel');
+    setCourseStatisticsOpen(panel ? panel.classList.contains('hidden') : true);
+  });
+  onOptional('course-back-catalog','click', ()=> showLatinCourseCatalog());
+  onOptional('course-show-lessons','click', ()=> {
+    document.getElementById('course-shell')?.classList.add('show-map');
+  });
+  onOptional('course-show-current','click', ()=> {
+    document.getElementById('course-shell')?.classList.remove('show-map');
+  });
+  const courseCatalogList = document.getElementById('course-catalog-list');
+  if(courseCatalogList){
+    courseCatalogList.addEventListener('click', event => {
+      const btn = event.target && event.target.closest ? event.target.closest('[data-course-open]') : null;
+      if(!btn) return;
+      selectLatinCourse(btn.getAttribute('data-course-open') || '');
+    });
+  }
+  const courseLessonList = document.getElementById('course-lesson-list');
+  if(courseLessonList){
+    courseLessonList.addEventListener('click', event => {
+      const btn = event.target && event.target.closest ? event.target.closest('[data-course-lesson]') : null;
+      if(!btn || btn.disabled) return;
+      setActiveCourseLesson(btn.getAttribute('data-course-lesson'));
+    });
+  }
 
   const anamForm = document.getElementById('anamnesis-form');
   if(anamForm){

@@ -185,6 +185,7 @@
           <button type="button" id="to-search" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.43 4.44 1.41-1.42-4.44-4.43A6.5 6.5 0 0 0 10.5 4zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="search">Search</span><span class="menu-desc" data-i18n="submenu_desc_search">Find terms, definitions, and language variants quickly.</span></span></button>
           <button type="button" id="to-entry" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="add_term">Add New Terms</span><span class="menu-desc" data-i18n="submenu_desc_add_term">Create and save your own terms with attachments.</span></span></button>
           <button type="button" id="to-latin-terminology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="latin_terminology">Latin terminology</span><span class="menu-desc" data-i18n="submenu_desc_latin">Browse units and drill foundational medical Latin.</span></span></button>
+          <button type="button" id="to-courses" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h10a4 4 0 0 1 4 4v14h-2v-2H7a2 2 0 0 0-2 2H3V5a2 2 0 0 1 2-2zm2 4v2h8V7H7zm0 4v2h6v-2H7z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="courses">Courses</span><span class="menu-desc" data-i18n="submenu_desc_courses">Unlock medical Latin lessons with translation drills and drag charts.</span></span></button>
           <button type="button" id="to-muscle-training" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zm-3 6h6c1.1 0 2 .9 2 2v3.2c0 .7-.6 1.3-1.3 1.3H14v6.5h-4V15H8.3c-.7 0-1.3-.6-1.3-1.3v-3.2c0-1.1.9-2 2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="anatomy">Anatomy</span><span class="menu-desc" data-i18n="submenu_desc_muscle">Study regions, OINA fields, and movement functions.</span></span></button>
           <button type="button" id="to-quiz" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 15a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-11a4 4 0 0 0-4 4h2a2 2 0 1 1 3.46 1.41c-.88.89-1.46 1.51-1.46 3.09h2c0-.8.17-1.12.88-1.83A4 4 0 0 0 12 6z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="quiz">Quiz</span><span class="menu-desc" data-i18n="submenu_desc_quiz">Generate custom quizzes across domains and fields.</span></span></button>
           <button type="button" id="to-biophysics-tf" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4zm0 7h10v2H4zm0 7h16v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="biophysics_true_false">Biophysics True/False</span><span class="menu-desc" data-i18n="submenu_desc_biophysics">Test conceptual statements with instant feedback.</span></span></button>
@@ -844,6 +845,97 @@
           </div>
         </div>
 
+      </section>
+
+      <section id="screen-courses" class="screen hidden">
+        <div id="course-catalog" class="course-catalog">
+          <div class="course-catalog-head">
+            <p class="course-kicker" data-i18n="courses_kicker">Latin course</p>
+            <h3 data-i18n="courses">Courses</h3>
+            <p data-i18n="courses_intro">Medical Latin training built from repository terminology. Choose one language track.</p>
+          </div>
+          <div id="course-catalog-list" class="course-catalog-list"></div>
+        </div>
+
+        <div id="course-shell" class="course-shell hidden">
+          <aside class="course-map-panel">
+            <div class="course-panel-head">
+              <p class="course-kicker" data-i18n="courses_kicker">Latin course</p>
+              <h3 id="course-track-title" data-i18n="courses">Courses</h3>
+              <p id="course-track-copy" data-i18n="courses_intro">Medical Latin training built from repository terminology. Choose one language track.</p>
+            </div>
+            <div class="course-progress-card">
+              <div>
+                <span data-i18n="courses_completed">Completed</span>
+                <strong id="course-completed-count">0/0</strong>
+              </div>
+              <div>
+                <span data-i18n="courses_streak">Session score</span>
+                <strong id="course-score-mini">0%</strong>
+              </div>
+            </div>
+            <div id="course-lesson-list" class="course-lesson-list" aria-label="Course lessons" data-i18n-aria-label="courses_lessons"></div>
+            <button type="button" id="course-show-current" class="secondary course-mobile-only" data-i18n="courses_current_lesson">Current lesson</button>
+            <button type="button" id="course-back-catalog" class="secondary" data-i18n="courses_back_to_courses">Courses</button>
+            <button type="button" id="course-reset-progress" class="course-reset-btn" data-i18n="courses_reset">Reset course</button>
+          </aside>
+
+          <section class="course-stage">
+            <div class="course-hero-panel">
+              <div class="course-hero-copy">
+                <p id="course-chapter-label" class="course-kicker">Chapter 1</p>
+                <h3 id="course-active-title">Medical Latin</h3>
+                <p id="course-active-copy" class="course-active-copy"></p>
+              </div>
+              <div class="course-hero-actions">
+                <div class="course-xp-ring" aria-label="Lesson progress" data-i18n-aria-label="courses_lesson_progress">
+                  <span id="course-progress-percent">0%</span>
+                </div>
+                <button type="button" id="course-show-lessons" class="secondary course-mobile-only" data-i18n="courses_lessons">Lessons</button>
+                <button type="button" id="course-statistics-toggle" class="secondary course-statistics-toggle" data-i18n="courses_statistics">Statistics</button>
+                <button type="button" id="course-start-lesson" class="primary">Start lesson</button>
+              </div>
+            </div>
+
+            <section id="course-statistics-panel" class="course-insights-panel hidden">
+              <div class="course-insight-head">
+                <p class="course-kicker" data-i18n="courses_repository_chart">Repository chart</p>
+                <h4 data-i18n="courses_unit_one_profile">1st declension profile</h4>
+              </div>
+              <div id="course-chart" class="course-chart"></div>
+              <div class="course-focus-box">
+                <p class="course-kicker" data-i18n="courses_focus">Focus</p>
+                <div id="course-focus-list" class="course-focus-list"></div>
+              </div>
+            </section>
+
+            <div class="course-grid">
+              <section class="course-work-panel">
+                <div id="course-lesson-content" class="course-lesson-content"></div>
+              </section>
+            </div>
+
+            <section class="course-drill-panel">
+              <div class="course-drill-head">
+                <div>
+                  <p class="course-kicker" data-i18n="courses_test">Test</p>
+                  <h4 id="course-exercise-title">Exercise</h4>
+                </div>
+                <span id="course-exercise-counter" class="course-pill">0/0</span>
+              </div>
+              <div id="course-exercise" class="course-exercise"></div>
+              <div class="course-drill-actions">
+                <button type="button" id="course-check" class="primary course-action-icon" aria-label="Check" title="Check" data-i18n-aria-label="courses_check" data-i18n-title="courses_check">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.2 16.2-3.4-3.4-1.4 1.4 4.8 4.8 10-10-1.4-1.4-8.6 8.6z"/></svg>
+                </button>
+                <button type="button" id="course-next" class="secondary course-action-icon" aria-label="Next" title="Next" data-i18n-aria-label="courses_next" data-i18n-title="courses_next">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13.2 5.8-1.4 1.4 3.8 3.8H4v2h11.6l-3.8 3.8 1.4 1.4L19.4 12l-6.2-6.2z"/></svg>
+                </button>
+              </div>
+              <p id="course-status" class="course-status" aria-live="polite"></p>
+            </section>
+          </section>
+        </div>
       </section>
 
       <section id="screen-latin-terminology" class="screen hidden">

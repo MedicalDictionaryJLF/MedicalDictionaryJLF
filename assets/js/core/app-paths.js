@@ -6,6 +6,7 @@ export const SCREEN_ROUTE_MAP = {
   "screen-lab-parameters": "lab-parameters",
   "screen-pharmacology": "pharmacology",
   "screen-entry": "entry",
+  "screen-courses": "courses",
   "screen-quiz": "quiz",
   "screen-flashcards": "flashcards",
   "screen-biophysics-tf": "biophysics",
@@ -30,6 +31,7 @@ export const SECTION_ROUTE_KEYS = new Set([
   "lab-parameters",
   "pharmacology",
   "entry",
+  "courses",
   "biophysics",
   "latin-terminology"
 ]);
