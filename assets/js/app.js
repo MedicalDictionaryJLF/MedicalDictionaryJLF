@@ -65,6 +65,8 @@ let profileSaveQueued = false;
 let anamnesisProfileSaveTimer = null;
 let attachmentsCache = [];
 let attachmentsSyncInFlight = false;
+let driveManualSyncInFlight = false;
+let storageSyncCooldownTimer = null;
 let settingsDialogController = null;
 let appReadyPromise = null;
 
@@ -78,6 +80,8 @@ const ATTACHMENTS_STORE = "attachments";
 const ATTACHMENT_SYNC_PREF_KEY = "attachment_sync_mode";
 const ATTACHMENT_LAST_SYNC_KEY = "attachment_last_sync_at";
 const ATTACHMENT_RETRY_QUEUE_KEY = "attachment_retry_queue_v1";
+const DRIVE_MANUAL_SYNC_LAST_KEY = "drive_manual_sync_last_at";
+const DRIVE_MANUAL_SYNC_COOLDOWN_MS = 10 * 60 * 1000;
 const STORAGE_MODE_LOCAL = "local";
 const STORAGE_MODE_DRIVE = "drive";
 
@@ -367,6 +371,41 @@ function formatSyncTimestamp(value){
   }
 }
 
+function getDriveManualSyncLastAt(){
+  return localStorage.getItem(DRIVE_MANUAL_SYNC_LAST_KEY) || localStorage.getItem(ATTACHMENT_LAST_SYNC_KEY) || "";
+}
+
+function getDriveManualSyncCooldownRemaining(){
+  const last = getDriveManualSyncLastAt();
+  if(!last) return 0;
+  const lastMs = new Date(last).getTime();
+  if(!Number.isFinite(lastMs)) return 0;
+  return Math.max(0, DRIVE_MANUAL_SYNC_COOLDOWN_MS - (Date.now() - lastMs));
+}
+
+function formatSyncCooldown(ms){
+  const totalSeconds = Math.max(0, Math.ceil((Number(ms) || 0) / 1000));
+  if(totalSeconds <= 0) return tOr("available_now", "available now");
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if(minutes <= 0) return `${seconds}s`;
+  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+}
+
+function scheduleStorageSyncCooldownRefresh(remainingMs){
+  if(storageSyncCooldownTimer){
+    clearTimeout(storageSyncCooldownTimer);
+    storageSyncCooldownTimer = null;
+  }
+  const delay = Math.max(0, Number(remainingMs) || 0);
+  if(delay > 0){
+    storageSyncCooldownTimer = setTimeout(()=>{
+      storageSyncCooldownTimer = null;
+      refreshStorageSyncUI();
+    }, Math.min(delay + 500, DRIVE_MANUAL_SYNC_COOLDOWN_MS + 1000));
+  }
+}
+
 function setFeatureStatus(containerId, text, tone = "loading"){
   const el = document.getElementById(containerId);
   if(!el) return;
@@ -382,30 +421,46 @@ function refreshStorageSyncUI(){
   const localRadio = document.getElementById("storage-mode-local");
   const driveRadio = document.getElementById("storage-mode-drive");
   const driveControls = document.getElementById("drive-sync-controls");
+  const connectBtn = document.getElementById("drive-connect-btn");
   const connectStatus = document.getElementById("drive-connection-status");
   const syncStatus = document.getElementById("drive-sync-status");
   const entrySyncBtn = document.getElementById("entry-sync-now-btn");
   const settingsSyncBtn = document.getElementById("drive-sync-now-btn");
   const syncSummary = summarizeAttachmentOperations(attachmentsCache);
-  const lastSyncAt = localStorage.getItem(ATTACHMENT_LAST_SYNC_KEY) || "";
+  const lastSyncAt = getDriveManualSyncLastAt();
+  const cooldownRemaining = getDriveManualSyncCooldownRemaining();
+  const loggedIn = !!state.currentUser || isProfileSessionActive();
   if(localRadio) localRadio.checked = mode === STORAGE_MODE_LOCAL;
   if(driveRadio) driveRadio.checked = mode === STORAGE_MODE_DRIVE;
   if(driveControls) driveControls.classList.toggle("hidden", mode !== STORAGE_MODE_DRIVE);
+  if(connectBtn){
+    connectBtn.classList.toggle("hidden", loggedIn);
+    connectBtn.disabled = gAuthInFlight || driveManualSyncInFlight;
+  }
   if(connectStatus){
-    connectStatus.textContent = state.currentUser
+    connectStatus.textContent = loggedIn
       ? `${tOr("connected_as", "Connected as")} ${state.currentUserEmail || state.currentUser}`
+      : gAuthInFlight
+        ? tOr("auth_connecting", "Connecting...")
       : tOr("storage_not_connected", "Not connected");
   }
   if(syncStatus){
-    syncStatus.textContent = `${tOr("last_sync", "Last sync")}: ${formatSyncTimestamp(lastSyncAt)} | ${tOr("pending_operations", "Pending")}: ${syncSummary.pendingCount}`;
+    const nextSync = cooldownRemaining > 0
+      ? `${tOr("available_in", "available in")} ${formatSyncCooldown(cooldownRemaining)}`
+      : tOr("available_now", "available now");
+    syncStatus.textContent = `${tOr("last_sync", "Last sync")}: ${formatSyncTimestamp(lastSyncAt)} | ${tOr("next_sync", "Next sync")}: ${nextSync} | ${tOr("pending_operations", "Pending")}: ${syncSummary.pendingCount}`;
   }
   if(entrySyncBtn){
     entrySyncBtn.classList.toggle("hidden", mode !== STORAGE_MODE_DRIVE);
     entrySyncBtn.disabled = attachmentsSyncInFlight || syncSummary.pendingCount <= 0;
   }
   if(settingsSyncBtn){
-    settingsSyncBtn.disabled = attachmentsSyncInFlight || mode !== STORAGE_MODE_DRIVE || syncSummary.pendingCount <= 0;
+    settingsSyncBtn.disabled = driveManualSyncInFlight || attachmentsSyncInFlight || mode !== STORAGE_MODE_DRIVE || !loggedIn || cooldownRemaining > 0;
+    settingsSyncBtn.title = cooldownRemaining > 0
+      ? `${tOr("next_sync", "Next sync")}: ${formatSyncCooldown(cooldownRemaining)}`
+      : "";
   }
+  scheduleStorageSyncCooldownRefresh(cooldownRemaining);
 }
 
 async function loadAttachmentsFromDb(){
@@ -580,19 +635,43 @@ function ensureGisScriptLoaded(){
     return Promise.resolve(true);
   }
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
-    if(existing){
-      existing.addEventListener("load", ()=> resolve(true), { once: true });
-      existing.addEventListener("error", ()=> reject(new Error("Failed to load Google Identity Services.")), { once: true });
-      return;
+    let settled = false;
+    let script = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    const cleanupFns = [];
+    const finish = (ok, err = null) => {
+      if(settled) return;
+      settled = true;
+      cleanupFns.forEach(fn => {
+        try{ fn(); }catch(e){}
+      });
+      if(ok) resolve(true);
+      else reject(err || new Error("Google Identity Services script not loaded."));
+    };
+    const hasGis = () => !!(window.google && google.accounts && google.accounts.oauth2);
+    const check = () => {
+      if(hasGis()) finish(true);
+    };
+    const loadHandler = () => setTimeout(check, 0);
+    const errorHandler = () => finish(false, new Error("Failed to load Google Identity Services."));
+    const interval = setInterval(check, 100);
+    const timeout = setTimeout(() => {
+      finish(false, new Error("Google Identity Services script not loaded. Check your internet connection or script blockers."));
+    }, 12000);
+    cleanupFns.push(()=> clearInterval(interval), ()=> clearTimeout(timeout));
+    if(!script){
+      script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
     }
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => reject(new Error("Failed to load Google Identity Services."));
-    document.head.appendChild(script);
+    script.addEventListener("load", loadHandler);
+    script.addEventListener("error", errorHandler);
+    cleanupFns.push(
+      ()=> script.removeEventListener("load", loadHandler),
+      ()=> script.removeEventListener("error", errorHandler)
+    );
+    check();
   });
 }
 
@@ -865,6 +944,74 @@ async function applyAttachmentSyncMode(mode){
   }
 }
 
+async function syncDriveProfileAndAttachmentsFromSettings(){
+  if(driveManualSyncInFlight) return;
+  if(!isDriveSyncEnabled()){
+    setLoginStatus(tOr("attachment_drive_sync_disabled", "Drive sync is disabled. Select Google Drive sync in Settings."), "error");
+    refreshStorageSyncUI();
+    return;
+  }
+  const cooldownRemaining = getDriveManualSyncCooldownRemaining();
+  if(cooldownRemaining > 0){
+    setLoginStatus(`${tOr("next_sync", "Next sync")}: ${formatSyncCooldown(cooldownRemaining)}`, "info");
+    refreshStorageSyncUI();
+    return;
+  }
+  const connected = await ensureDriveConnection();
+  if(!connected){
+    setLoginStatus(tOr("attachment_connect_drive_first", "Connect Google Drive first, then sync again."), "error");
+    refreshStorageSyncUI();
+    return;
+  }
+
+  driveManualSyncInFlight = true;
+  refreshStorageSyncUI();
+  setSyncLoadingScreen(true, "Synchronizing progress and attachments with Google Drive...");
+  try{
+    if(!profileFileId || !userProfile){
+      await loadOrCreateDriveProfile();
+    } else {
+      const remote = await driveDownloadFile(profileFileId);
+      userProfile = mergeProfiles(userProfile, remote.doc);
+      profileFileEtag = remote.etag || profileFileEtag;
+      profileDirty = true;
+    }
+
+    syncLatinCourseProgressWithProfile();
+    loadAnamnesisRegistryFromStorage();
+    if(profileDirty){
+      await saveUserProfileNow("manual_sync");
+    }
+    if(profileDirty){
+      throw new Error("Profile sync could not be saved. Please retry.");
+    }
+
+    await syncAllAttachments();
+    const syncedAt = nowIso();
+    localStorage.setItem(DRIVE_MANUAL_SYNC_LAST_KEY, syncedAt);
+    localStorage.setItem(ATTACHMENT_LAST_SYNC_KEY, syncedAt);
+    setLoginStatus(tOr("sync_completed", "Sync completed."), "ok");
+    if(anamnesisRegistryInitialized){
+      renderAnamnesisPatientList();
+      await loadAnamnesisForm();
+    }
+    renderQuizUI();
+    if(flashcardsV2State.loaded){
+      syncFlashcardsDashboard();
+      renderFlashcardsPlayer();
+    }
+    refreshLabParametersUI();
+  }catch(e){
+    console.warn("Manual Drive sync failed:", e);
+    setLoginStatus(`Error syncing with Drive: ${e.message || e}`, "error");
+  }finally{
+    driveManualSyncInFlight = false;
+    setSyncLoadingScreen(false);
+    refreshStorageSyncUI();
+    updateAuthUI();
+  }
+}
+
 async function initAttachmentsFeature(){
   await loadAttachmentsFromDb();
   renderAttachmentsList();
@@ -957,7 +1104,7 @@ async function initAttachmentsFeature(){
     });
   }
   if(settingsSyncBtn){
-    settingsSyncBtn.addEventListener("click", async ()=>{ await syncAllAttachments(); });
+    settingsSyncBtn.addEventListener("click", async ()=>{ await syncDriveProfileAndAttachmentsFromSettings(); });
   }
   if(entrySyncBtn){
     entrySyncBtn.addEventListener("click", async ()=>{ await syncAllAttachments(); });
@@ -1864,6 +2011,12 @@ async function handleGoogleTokenResponse(resp){
     if(profileDirty){
       await saveUserProfileNow("signin_merge");
     }
+    if(profileDirty){
+      throw new Error("Profile sync could not be saved. Please retry.");
+    }
+    const syncedAt = nowIso();
+    localStorage.setItem(DRIVE_MANUAL_SYNC_LAST_KEY, syncedAt);
+    localStorage.setItem(ATTACHMENT_LAST_SYNC_KEY, syncedAt);
     const about = await driveLoadCurrentUser().catch(()=> ({ displayName: "", emailAddress: "" }));
     const profileLang = normalizeLanguage((userProfile && userProfile.settings && userProfile.settings.app_language) || state.language);
     const profileTextSize = String((userProfile && userProfile.settings && userProfile.settings.text_size) || (localStorage.getItem(TEXT_SIZE_KEY) || "4"));
@@ -1877,6 +2030,7 @@ async function handleGoogleTokenResponse(resp){
     state.currentUser = about.displayName || about.emailAddress || tOr("auth_google_user", "Google user");
     state.currentUserEmail = about.emailAddress || "";
     updateAuthUI();
+    refreshStorageSyncUI();
     startProfileAutosave();
     setLoginStatus(tOr("auth_profile_loaded", "Profile loaded."), "ok");
     showScreen("screen-submenu");
@@ -1928,13 +2082,14 @@ async function driveLoadCurrentUser(){
   };
 }
 
-function requestGoogleAccessTokenFromClick(){
+async function requestGoogleAccessTokenFromClick(){
   console.log("[AUTH] signInWithGoogleDrive start");
   if(gAuthInFlight) return;
   gAuthInFlight = true;
   clearLoginStatus();
   setLoginStatus(tOr("auth_connecting", "Connecting..."), "info");
   try{
+    await ensureGisScriptLoaded();
     initGoogleTokenClient();
     console.log("[AUTH] requestAccessToken() called. userActivation expected.");
     gTokenClient.requestAccessToken({ prompt: "consent" });
@@ -11264,6 +11419,9 @@ async function init(){
   }
 
   wireGoogleBtnOnce();
+  ensureGisScriptLoaded().catch(e => {
+    console.warn("Google Identity Services preload failed:", e);
+  });
 
   function openGuestModal(){
     const ov = document.getElementById('guest-overlay');
