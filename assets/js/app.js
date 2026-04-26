@@ -1059,6 +1059,9 @@ function defaultProfile(){
       review_state: { items: {} },
       custom_quizzes: { items: [] }
     },
+    courses: {
+      latin_progress: {}
+    },
     anamnesis: {
       records: [],
       active_patient_id: ""
@@ -1100,6 +1103,11 @@ function ensureProfileShape(rawProfile){
   merged.learning.review_state = merged.learning.review_state && typeof merged.learning.review_state === "object" ? merged.learning.review_state : { items: {} };
   merged.learning.custom_quizzes = merged.learning.custom_quizzes && typeof merged.learning.custom_quizzes === "object" ? merged.learning.custom_quizzes : { items: [] };
   if(!Array.isArray(merged.learning.custom_quizzes.items)) merged.learning.custom_quizzes.items = [];
+  merged.courses = {
+    ...base.courses,
+    ...(merged.courses && typeof merged.courses === "object" ? merged.courses : {})
+  };
+  merged.courses.latin_progress = merged.courses.latin_progress && typeof merged.courses.latin_progress === "object" ? merged.courses.latin_progress : {};
   merged.anamnesis = merged.anamnesis && typeof merged.anamnesis === "object" ? merged.anamnesis : { records: [], active_patient_id: "" };
   if(!Array.isArray(merged.anamnesis.records)) merged.anamnesis.records = [];
   merged.anamnesis.active_patient_id = String(
@@ -1511,6 +1519,7 @@ function mergeProfiles(localProfileDoc, remoteProfileDoc){
   merged.flashcards.schedule = mergeObjectMap(remote.flashcards.schedule, local.flashcards.schedule);
   merged.flashcards.v2_progress = { ...(remote.flashcards.v2_progress || {}), ...(local.flashcards.v2_progress || {}) };
   merged.flashcards.stats = { ...(remote.flashcards.stats || {}), ...(local.flashcards.stats || {}) };
+  merged.courses.latin_progress = mergeObjectMap(remote.courses.latin_progress, local.courses.latin_progress);
 
   merged.learning.review_list = [...(remote.learning.review_list || [])];
   for(const row of (local.learning.review_list || [])){
@@ -1843,8 +1852,10 @@ async function handleGoogleTokenResponse(resp){
   const expiresIn = Number(resp && resp.expires_in || 0);
   gTokenExpiresAt = expiresIn > 0 ? (Date.now() + expiresIn * 1000) : 0;
   try{
+    setSyncLoadingScreen(true, "Synchronizing study progress with Google Drive...");
     console.log("[AUTH] got access token, loading Drive profile...");
     await loadOrCreateDriveProfile();
+    syncLatinCourseProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(getAttachmentSyncMode() !== STORAGE_MODE_DRIVE){
       await applyAttachmentSyncMode(STORAGE_MODE_DRIVE);
@@ -1883,6 +1894,7 @@ async function handleGoogleTokenResponse(resp){
     console.warn("Google sign-in failed:", e);
     setLoginStatus(`Error: ${e.message || e}`, "error");
   }finally{
+    setSyncLoadingScreen(false);
     gAuthInFlight = false;
   }
 }
@@ -5550,16 +5562,92 @@ function latinCourseProgressKey(){
   return `${LATIN_COURSE_PROGRESS_PREFIX}${courseId}:${getUserStorageKey()}`;
 }
 
-function loadLatinCourseProgress(){
-  const raw = readJsonLS(latinCourseProgressKey(), { completed: {}, scores: {} }) || {};
+function latinCourseCloudProgressKey(){
+  const courseId = latinCourseState.activeCourseId || "latin-english";
+  return `${courseId}:${getUserStorageKey()}`;
+}
+
+function normalizeLatinCourseProgress(raw){
+  const input = raw && typeof raw === "object" ? raw : {};
   return {
-    completed: raw.completed && typeof raw.completed === "object" ? raw.completed : {},
-    scores: raw.scores && typeof raw.scores === "object" ? raw.scores : {}
+    completed: input.completed && typeof input.completed === "object" ? input.completed : {},
+    scores: input.scores && typeof input.scores === "object" ? input.scores : {},
+    updatedAt: String(input.updatedAt || input.updated_at || "")
   };
 }
 
+function loadLatinCourseProgress(){
+  if(isProfileSessionActive()){
+    userProfile = ensureProfileShape(userProfile);
+    const bucket = userProfile.courses.latin_progress || {};
+    const cloudKey = latinCourseCloudProgressKey();
+    const profileProgress = normalizeLatinCourseProgress(bucket[cloudKey]);
+    const localProgress = normalizeLatinCourseProgress(readJsonLS(latinCourseProgressKey(), null));
+    const profileTs = profileTimeMs(profileProgress.updatedAt);
+    const localTs = profileTimeMs(localProgress.updatedAt);
+    const merged = profileTs >= localTs ? profileProgress : localProgress;
+    if(localTs > profileTs){
+      userProfile.courses.latin_progress[cloudKey] = deepClone(merged);
+      markProfileDirty();
+    }
+    writeJsonLS(latinCourseProgressKey(), merged);
+    return merged;
+  }
+  return normalizeLatinCourseProgress(readJsonLS(latinCourseProgressKey(), { completed: {}, scores: {} }));
+}
+
 function saveLatinCourseProgress(progress){
-  writeJsonLS(latinCourseProgressKey(), progress || { completed: {}, scores: {} });
+  const normalized = normalizeLatinCourseProgress(progress || { completed: {}, scores: {} });
+  normalized.updatedAt = nowIso();
+  writeJsonLS(latinCourseProgressKey(), normalized);
+  if(isProfileSessionActive()){
+    userProfile = ensureProfileShape(userProfile);
+    userProfile.courses.latin_progress[latinCourseCloudProgressKey()] = deepClone(normalized);
+    markProfileDirty();
+  }
+}
+
+function setSyncLoadingScreen(open, message = ""){
+  const overlay = document.getElementById("sync-loading-screen");
+  const text = document.getElementById("sync-loading-text");
+  if(text) text.textContent = String(message || "Synchronizing study progress with Google Drive...");
+  if(!overlay) return;
+  overlay.classList.toggle("open", !!open);
+  overlay.setAttribute("aria-hidden", open ? "false" : "true");
+}
+
+function syncLatinCourseProgressWithProfile(){
+  if(!isProfileSessionActive()) return;
+  userProfile = ensureProfileShape(userProfile);
+  const bucket = userProfile.courses.latin_progress;
+  const activeUserKey = getUserStorageKey();
+  const prefix = LATIN_COURSE_PROGRESS_PREFIX;
+  for(let i = 0; i < localStorage.length; i += 1){
+    const key = localStorage.key(i) || "";
+    if(!key.startsWith(prefix)) continue;
+    const rest = key.slice(prefix.length);
+    const splitAt = rest.indexOf(":");
+    if(splitAt <= 0) continue;
+    const courseId = rest.slice(0, splitAt);
+    const userKey = rest.slice(splitAt + 1) || activeUserKey;
+    const cloudKey = `${courseId}:${userKey}`;
+    const localProgress = normalizeLatinCourseProgress(readJsonLS(key, null));
+    const remoteProgress = normalizeLatinCourseProgress(bucket[cloudKey]);
+    const merged = profileTimeMs(localProgress.updatedAt) > profileTimeMs(remoteProgress.updatedAt)
+      ? localProgress
+      : remoteProgress;
+    bucket[cloudKey] = deepClone(merged);
+    writeJsonLS(key, merged);
+  }
+  for(const [cloudKey, progress] of Object.entries(bucket)){
+    const splitAt = String(cloudKey).indexOf(":");
+    if(splitAt <= 0) continue;
+    const courseId = String(cloudKey).slice(0, splitAt);
+    const userKey = String(cloudKey).slice(splitAt + 1);
+    if(userKey !== activeUserKey) continue;
+    writeJsonLS(`${prefix}${courseId}:${userKey}`, normalizeLatinCourseProgress(progress));
+  }
+  markProfileDirty();
 }
 
 function getLatinCourseDefinition(id = latinCourseState.activeCourseId){
@@ -7757,7 +7845,7 @@ function initAnamnesisNotesDrawer(){
 const anamnesisMobileToolbarState = {
   initialized: false,
   lastScrollY: 0,
-  expanded: false,
+  expanded: true,
   revealVisible: false,
   scrollHost: null
 };
@@ -7765,7 +7853,7 @@ let anamnesisPhoneToolsOpen = false;
 let anamnesisPhoneRegistryVisible = false;
 
 function usesFloatingAnamnesisToolbar(){
-  return false;
+  return isPhoneAnamnesisLayoutMode();
 }
 
 function isPhoneAnamnesisLayoutMode(){
@@ -7807,6 +7895,7 @@ function setAnamnesisPhoneToolsOpen(open){
   const screen = document.getElementById("screen-anamnesis");
   const toggle = document.getElementById("anamnesis-mobile-tools-toggle");
   const next = !!open;
+  syncAnamnesisSettingsPlacement();
   anamnesisPhoneToolsOpen = next;
   if(screen) screen.classList.toggle("anam-mobile-tools-open", next);
   if(toggle) toggle.setAttribute("aria-expanded", next ? "true" : "false");
@@ -7815,9 +7904,6 @@ function setAnamnesisPhoneToolsOpen(open){
 function buildAnamnesisMobileSubtitle(record){
   if(!record) return tOr("anamnesis_registry_hint", "Select an existing patient or create a new anamnesis record.");
   const parts = [];
-  if(Number.isFinite(Number(record.age)) && Number(record.age) >= 0){
-    parts.push(`${Number(record.age)} y`);
-  }
   const complaint = String(record.chiefComplaint || "").trim();
   if(complaint) parts.push(complaint);
   if(parts.length) return parts.join(" | ");
@@ -7831,6 +7917,11 @@ function getAnamnesisRecordDisplayName(record){
       ? (record.name || shared.ident_full_name)
       : tOr("anamnesis_unnamed_patient", "Unnamed patient")
   ).trim();
+}
+
+function getAnamnesisRecordAgeLabel(record){
+  const age = Number(record && record.age);
+  return Number.isFinite(age) && age >= 0 ? `${age} y` : "";
 }
 
 function updateAnamnesisTypeIndicators(type, opts = {}){
@@ -7855,6 +7946,7 @@ function updateAnamnesisMobileHeader(record){
   const nextTitle = record
     ? getAnamnesisRecordDisplayName(record)
     : tOr("anamnesis_patients", "Patients");
+  const nextAge = record ? getAnamnesisRecordAgeLabel(record) : "";
   const nextSubtitle = buildAnamnesisMobileSubtitle(record);
   if(titleEl){
     titleEl.textContent = record
@@ -7865,7 +7957,9 @@ function updateAnamnesisMobileHeader(record){
     subtitleEl.textContent = nextSubtitle;
   }
   if(mobileTitleEl){
-    mobileTitleEl.textContent = nextTitle;
+    mobileTitleEl.innerHTML = nextAge
+      ? `<span class="anamnesis-mobile-name">${escapeHTML(nextTitle)}</span><span class="anamnesis-mobile-age">${escapeHTML(nextAge)}</span>`
+      : `<span class="anamnesis-mobile-name">${escapeHTML(nextTitle)}</span>`;
   }
   if(mobileSubtitleEl){
     mobileSubtitleEl.textContent = nextSubtitle;
@@ -7949,12 +8043,13 @@ function syncAnamnesisMobileToolbar(opts = {}){
   let revealVisible = anamnesisMobileToolbarState.revealVisible;
 
   if(forceExpanded === true){
-    expanded = true;
+    expanded = false;
     revealVisible = false;
   } else if(forceCollapsed === true){
     expanded = false;
     revealVisible = true;
   } else {
+    expanded = false;
     revealVisible = !expanded;
   }
 
@@ -8056,12 +8151,30 @@ function refreshAnamnesisInputMode(){
   });
 }
 
+function syncAnamnesisSettingsPlacement(){
+  const editorCard = document.getElementById("anamnesis-editor-card");
+  const mobileHeader = editorCard ? editorCard.querySelector(".anamnesis-mobile-header") : null;
+  const toolbar = editorCard ? editorCard.querySelector(".anamnesis-patient-toolbar") : null;
+  const editorScroll = editorCard ? editorCard.querySelector(".anamnesis-editor-scroll") : null;
+  if(!editorCard || !mobileHeader || !toolbar || !editorScroll) return;
+  if(isPhoneAnamnesisLayoutMode()){
+    if(toolbar.parentElement !== mobileHeader){
+      mobileHeader.appendChild(toolbar);
+    }
+    return;
+  }
+  if(toolbar.parentElement !== editorCard || toolbar.nextElementSibling !== editorScroll){
+    editorCard.insertBefore(toolbar, editorScroll);
+  }
+}
+
 function applyAnamnesisLayoutMode(){
   const screen = document.getElementById("screen-anamnesis");
   const select = document.getElementById("anamnesis-layout-mode");
   const resolved = getResolvedAnamnesisLayoutMode();
   if(screen) screen.dataset.anamLayout = resolved;
   if(select) select.value = anamnesisLayoutMode;
+  syncAnamnesisSettingsPlacement();
   anamnesisPhoneRegistryVisible = !getActiveAnamnesisPatientRecord();
   setAnamnesisPhoneToolsOpen(false);
   syncAnamnesisMobileToolbar();

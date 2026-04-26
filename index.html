@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Medical Dictionary </title>
-  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/app.css?v=19">
 </head>
 <body>
   <div id="app">    <header>
       <div class="header-left">
-        <button id="header-back" class="header-btn hidden" type="button" aria-label="Back" data-i18n-aria-label="back">?</button>
+        <button id="header-back" class="header-btn header-back-btn hidden" type="button" aria-label="Back" data-i18n-aria-label="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 5.2 4 12l6.8 6.8 1.4-1.4L7.8 13H20v-2H7.8l4.4-4.4-1.4-1.4z"/></svg></button>
         <div class="brand-lockup">
           <span class="brand-kicker" data-i18n="header_brand_kicker">Clinical Study Workspace</span>
           <h1 id="app-title" data-i18n="app_title">Medical Dictionary</h1>
@@ -18,7 +18,7 @@
       <div class="header-actions">
         <button id="header-login-google" class="header-btn primary hidden" type="button" data-i18n="google_sign_in">Sign in with Google</button>
         <div id="header-account" class="whoami hidden">
-          <span data-i18n="signed_in_as">Signed in as</span> <strong id="header-account-name">—</strong>
+          <span data-i18n="signed_in_as">Signed in as</span> <strong id="header-account-name">-</strong>
           <button id="header-logout" class="header-link" type="button" data-i18n="log_out">Log out</button>
         </div>
         <button type="button" class="settings-btn" id="settings-toggle" aria-label="Settings" data-i18n-aria-label="settings_title">
@@ -28,6 +28,7 @@
     </header>
 
     <div id="settings-overlay" aria-hidden="true"></div>
+    <div id="sync-loading-screen" class="sync-loading-screen" aria-hidden="true" role="status" aria-live="polite"><div class="sync-loading-card"><div class="sync-loading-spinner" aria-hidden="true"></div><h2>Medical Dictionary</h2><p id="sync-loading-text">Synchronizing study progress with Google Drive...</p></div></div>
     <div id="settings-sidebar" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="settings-title" tabindex="-1">
       <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 0">
         <h3 id="settings-title" style="margin:0" data-i18n="settings_title">Settings</h3>
@@ -118,7 +119,7 @@
                 <div class="hero-copy">
                   <h2 class="hero-title" data-i18n="app_title">Medical Dictionary</h2>
                   <p class="hero-sub" data-i18n="hero_subtitle">Multilingual medical terminology with structured study tools for quizzes, muscle training, and anamnesis workflows.</p>
-                  <p class="hero-language-line">EN • DE • SK • LAT</p>
+                  <p class="hero-language-line"><span>EN</span><span>DE</span><span>SK</span><span>LAT</span></p>
                 </div>
               </div>
               <div class="hero-actions">
@@ -1903,10 +1904,10 @@
       </section>
 
     </main>
-    <footer class="app-copyright" aria-label="Copyright">© 2026 Daniel Marcok. All Rights Reserved.</footer>
+    <footer class="app-copyright" aria-label="Copyright">&copy; 2026 Daniel Marcok. All Rights Reserved.</footer>
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="assets/js/app.js?v=14"></script>
+<script type="module" src="assets/js/app.js?v=19"></script>
 </body>
 </html>
 
