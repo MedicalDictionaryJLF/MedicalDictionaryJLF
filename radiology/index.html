@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Radiology Trainer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="title-group">
+          <h1>Radiology Trainer</h1>
+          <div class="card-meta" id="cardMeta">Loading</div>
+        </div>
+        <div class="metrics" aria-label="Progress summary">
+          <div>
+            <span>Known</span>
+            <strong id="knownCount">0</strong>
+          </div>
+          <div>
+            <span>Review</span>
+            <strong id="reviewCount">0</strong>
+          </div>
+          <div>
+            <span>Unseen</span>
+            <strong id="unseenCount">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="study-panel" aria-label="Flashcard">
+          <div class="progress-row">
+            <span id="positionText">0 / 0</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="percentText">0%</span>
+          </div>
+
+          <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flip card">
+            <div class="flashcard-inner">
+              <section class="card-face card-front">
+                <div class="image-frame">
+                  <img id="cardImage" alt="" />
+                </div>
+              </section>
+              <section class="card-face card-back">
+                <div class="answer-scroll">
+                  <h2 id="answerTitle"></h2>
+                  <div id="answerBody" class="answer-body"></div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button type="button" id="prevButton" class="secondary">Prev</button>
+            <button type="button" id="flipButton" class="primary">Flip</button>
+            <button type="button" id="nextButton" class="secondary">Next</button>
+            <button type="button" id="reviewButton" class="warning">Needs review</button>
+            <button type="button" id="knownButton" class="success">Know it</button>
+          </div>
+        </section>
+
+        <aside class="queue-panel" aria-label="Ordered cards">
+          <div class="queue-header">
+            <h2>Queue</h2>
+            <button type="button" id="resetButton" class="ghost">Reset</button>
+          </div>
+          <div id="cardList" class="card-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
