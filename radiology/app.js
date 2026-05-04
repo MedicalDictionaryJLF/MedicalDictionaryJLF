@@ -25,14 +25,19 @@ const elements = {
   positionText: document.getElementById("positionText"),
   percentText: document.getElementById("percentText"),
   progressFill: document.getElementById("progressFill"),
+  studyPanel: document.querySelector(".study-panel"),
   flashcard: document.getElementById("flashcard"),
+  imageFrame: document.getElementById("imageFrame"),
   cardImage: document.getElementById("cardImage"),
+  magnifierLens: document.getElementById("magnifierLens"),
   answerTitle: document.getElementById("answerTitle"),
   answerBody: document.getElementById("answerBody"),
   cardList: document.getElementById("cardList"),
   prevButton: document.getElementById("prevButton"),
   flipButton: document.getElementById("flipButton"),
   nextButton: document.getElementById("nextButton"),
+  fullscreenButton: document.getElementById("fullscreenButton"),
+  magnifierButton: document.getElementById("magnifierButton"),
   reviewButton: document.getElementById("reviewButton"),
   knownButton: document.getElementById("knownButton"),
   resetButton: document.getElementById("resetButton"),
@@ -52,6 +57,10 @@ let saveInFlight = false;
 let saveQueued = false;
 let saveTimer = null;
 let accountLabel = "";
+let imageFullscreen = false;
+let magnifierEnabled = false;
+
+const MAGNIFIER_ZOOM = 2.45;
 
 function nowIso() {
   return new Date().toISOString();
@@ -694,6 +703,64 @@ function setFlipped(nextValue) {
   state.flipped = nextValue;
   elements.flashcard.classList.toggle("is-flipped", state.flipped);
   elements.flipButton.textContent = state.flipped ? "Image" : "Flip";
+  hideMagnifier();
+}
+
+function hideMagnifier() {
+  elements.magnifierLens.classList.remove("visible");
+}
+
+function setMagnifierEnabled(enabled) {
+  magnifierEnabled = !!enabled;
+  elements.magnifierButton.classList.toggle("active", magnifierEnabled);
+  elements.magnifierButton.setAttribute("aria-pressed", magnifierEnabled ? "true" : "false");
+  elements.magnifierButton.textContent = magnifierEnabled ? "Magnifier on" : "Magnifier";
+  if (!magnifierEnabled) hideMagnifier();
+}
+
+function positionMagnifier(event) {
+  if (!magnifierEnabled || state.flipped || !elements.cardImage.complete) return;
+
+  const rect = elements.cardImage.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
+  const y = Math.max(0, Math.min(event.clientY - rect.top, rect.height));
+  const lens = elements.magnifierLens;
+  const lensWidth = lens.offsetWidth || 190;
+  const lensHeight = lens.offsetHeight || 190;
+
+  lens.style.left = `${event.clientX - lensWidth / 2}px`;
+  lens.style.top = `${event.clientY - lensHeight / 2}px`;
+  lens.style.backgroundImage = `url("${elements.cardImage.currentSrc || elements.cardImage.src}")`;
+  lens.style.backgroundSize = `${rect.width * MAGNIFIER_ZOOM}px ${rect.height * MAGNIFIER_ZOOM}px`;
+  lens.style.backgroundPosition = `${-(x * MAGNIFIER_ZOOM - lensWidth / 2)}px ${-(y * MAGNIFIER_ZOOM - lensHeight / 2)}px`;
+  lens.classList.add("visible");
+}
+
+async function setImageFullscreen(open, options = {}) {
+  imageFullscreen = !!open;
+  document.body.classList.toggle("image-fullscreen", imageFullscreen);
+  elements.fullscreenButton.classList.toggle("active", imageFullscreen);
+  elements.fullscreenButton.textContent = imageFullscreen ? "Exit fullscreen" : "Fullscreen";
+  elements.fullscreenButton.setAttribute("aria-pressed", imageFullscreen ? "true" : "false");
+  hideMagnifier();
+
+  if (imageFullscreen) {
+    setFlipped(false);
+    if (!options.skipNative && elements.studyPanel.requestFullscreen && !document.fullscreenElement) {
+      try {
+        await elements.studyPanel.requestFullscreen();
+      } catch {}
+    }
+    return;
+  }
+
+  if (!options.skipNative && document.fullscreenElement === elements.studyPanel && document.exitFullscreen) {
+    try {
+      await document.exitFullscreen();
+    } catch {}
+  }
 }
 
 function displayTitle(card) {
@@ -778,6 +845,7 @@ function renderCard() {
 
   elements.cardImage.src = card.image;
   elements.cardImage.alt = `${card.label} radiology image`;
+  hideMagnifier();
   elements.answerTitle.textContent = displayTitle(card);
   const answerNodes = answerLines(card).map(renderAnswerLine);
   const answerImage = renderAnswerImage(card);
@@ -861,10 +929,20 @@ function bindEvents() {
   elements.loginButton.addEventListener("click", signIn);
   elements.syncButton.addEventListener("click", manualSync);
   elements.logoutButton.addEventListener("click", signOut);
-  elements.flashcard.addEventListener("click", () => setFlipped(!state.flipped));
+  elements.flashcard.addEventListener("click", () => {
+    if (imageFullscreen) return;
+    setFlipped(!state.flipped);
+  });
   elements.flipButton.addEventListener("click", () => setFlipped(!state.flipped));
   elements.prevButton.addEventListener("click", () => move(-1));
   elements.nextButton.addEventListener("click", () => move(1));
+  elements.fullscreenButton.addEventListener("click", () => {
+    void setImageFullscreen(!imageFullscreen);
+  });
+  elements.magnifierButton.addEventListener("click", () => setMagnifierEnabled(!magnifierEnabled));
+  elements.cardImage.addEventListener("pointerenter", positionMagnifier);
+  elements.cardImage.addEventListener("pointermove", positionMagnifier);
+  elements.cardImage.addEventListener("pointerleave", hideMagnifier);
   elements.reviewButton.addEventListener("click", () => mark("review"));
   elements.knownButton.addEventListener("click", () => mark("known"));
   elements.resetButton.addEventListener("click", resetProgress);
@@ -873,6 +951,11 @@ function bindEvents() {
     if (event.key === "Escape" && elements.settingsPanel.classList.contains("open")) {
       event.preventDefault();
       setSettingsOpen(false);
+      return;
+    }
+    if (event.key === "Escape" && imageFullscreen) {
+      event.preventDefault();
+      void setImageFullscreen(false);
       return;
     }
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
@@ -887,6 +970,12 @@ function bindEvents() {
     if (event.key === "ArrowRight") move(1);
     if (event.key === "1") mark("review");
     if (event.key === "2") mark("known");
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    if (imageFullscreen && !document.fullscreenElement) {
+      void setImageFullscreen(false, { skipNative: true });
+    }
   });
 
   window.addEventListener("beforeunload", () => {

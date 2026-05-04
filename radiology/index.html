@@ -61,8 +61,9 @@
           <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flip card">
             <div class="flashcard-inner">
               <section class="card-face card-front">
-                <div class="image-frame">
+                <div class="image-frame" id="imageFrame">
                   <img id="cardImage" alt="" />
+                  <div id="magnifierLens" class="magnifier-lens" aria-hidden="true"></div>
                 </div>
               </section>
               <section class="card-face card-back">
@@ -78,6 +79,8 @@
             <button type="button" id="prevButton" class="secondary">Prev</button>
             <button type="button" id="flipButton" class="primary">Flip</button>
             <button type="button" id="nextButton" class="secondary">Next</button>
+            <button type="button" id="fullscreenButton" class="secondary">Fullscreen</button>
+            <button type="button" id="magnifierButton" class="secondary" aria-pressed="false">Magnifier</button>
             <button type="button" id="reviewButton" class="warning">Needs review</button>
             <button type="button" id="knownButton" class="success">Know it</button>
           </div>

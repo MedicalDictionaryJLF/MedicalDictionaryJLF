@@ -2481,14 +2481,11 @@
       "section": "Head and neck",
       "label": "Head and neck | Obrazok 5",
       "title": "Obrázok 5 A, B – Schwannóm – MR, T1 natív/ postkontrast (17)",
-      "description": "",
+      "description": "Translation:\nMR examination of the brain, T1-weighted image: A native, B post-contrast, transverse section.\nIn the left pontocerebellar angle there is an iso- to hypointense lesion (arrow), widening the left internal acoustic meatus and displacing the pons and left cerebellar hemisphere. After contrast it enhances markedly.\nDiagnosis: schwannoma.",
       "page": null,
       "image": "assets/cards/card-191.png",
-      "imageWidth": 1500,
-      "imageHeight": 1252,
-      "answerImage": "assets/cards/card-191-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1345,
+      "imageHeight": 1140
     },
     {
       "id": "head_neck-013-192",
@@ -2497,14 +2494,11 @@
       "section": "Head and neck",
       "label": "Head and neck | Obrazok 13",
       "title": "Obrázok 13 – Makroadenóm adenohypofýzy – MR, T1 (27)",
-      "description": "",
+      "description": "Translation:\nPost-contrast MR examination of the brain, T1-weighted sagittal image.\nA tumorous lesion is present in the sellar region. After contrast it enhances heterogeneously (arrow).\nDiagnosis: macroadenoma of the adenohypophysis.",
       "page": null,
       "image": "assets/cards/card-192.png",
-      "imageWidth": 1586,
-      "imageHeight": 1230,
-      "answerImage": "assets/cards/card-192-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1455,
+      "imageHeight": 1125
     },
     {
       "id": "head_neck-040-193",
@@ -2513,14 +2507,11 @@
       "section": "Head and neck",
       "label": "Head and neck | Obrazok 40",
       "title": "Obrázok 40 – Cysty v maxilárnych síusoch – MR, T2 (61)",
-      "description": "",
+      "description": "Translation:\nMR examination of the brain, T2-weighted transverse image.\nHyperintense lesions are present in the ventromedial parts of both maxillary sinuses (arrows).\nDiagnosis: cysts of the maxillary sinuses.",
       "page": null,
       "image": "assets/cards/card-193.png",
-      "imageWidth": 1554,
-      "imageHeight": 1635,
-      "answerImage": "assets/cards/card-193-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1350,
+      "imageHeight": 1155
     },
     {
       "id": "head_neck-081-194",
@@ -2529,14 +2520,11 @@
       "section": "Head and neck",
       "label": "Head and neck | Obrazok 81",
       "title": "Obrázok 81 – Hashimotova tyreoiditída – USG (127)",
-      "description": "",
+      "description": "Translation:\nUltrasound examination of the thyroid gland, transverse section (A) and sagittal section (B), linear 12 MHz probe.\nThe thyroid gland has a diffusely heterogeneous pseudonodular structure (solid arrows) with thin hyperechogenic fibrotic strands (dashed arrows).\nDiagnosis: Hashimoto thyroiditis.",
       "page": null,
       "image": "assets/cards/card-194.png",
-      "imageWidth": 1650,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-194-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1330,
+      "imageHeight": 1220
     },
     {
       "id": "head_neck-085-195",
@@ -2545,14 +2533,11 @@
       "section": "Head and neck",
       "label": "Head and neck | Obrazok 85",
       "title": "Obrázok 85 – Struma nodosa – USG, Doppler (131)",
-      "description": "",
+      "description": "Translation:\nUltrasound examination of the thyroid gland, transverse section, linear 12 MHz probe, duplex mode with B-mode and Power Doppler.\nA heterogeneous nodule is seen in the right thyroid lobe (arrow), with vascularization mainly at the periphery.\nDiagnosis: nodular goiter.",
       "page": null,
       "image": "assets/cards/card-195.png",
-      "imageWidth": 1650,
-      "imageHeight": 1277,
-      "answerImage": "assets/cards/card-195-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1450,
+      "imageHeight": 1030
     },
     {
       "id": "spine-027-196",
@@ -2561,14 +2546,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 27",
       "title": "Obrázok 27 – Extrúzia intervertebrálneho disku – MR, T2 (214)",
-      "description": "",
+      "description": "Translation:\nMR examination of the lumbosacral spine, T2-weighted sagittal image.\nMediolateral left-sided extrusion of the L4-L5 intervertebral disc is shown by the arrow.\nDiagnosis: intervertebral disc extrusion.",
       "page": null,
       "image": "assets/cards/card-196.png",
-      "imageWidth": 1650,
-      "imageHeight": 1255,
-      "answerImage": "assets/cards/card-196-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 750,
+      "imageHeight": 1215
     },
     {
       "id": "spine-041-197",
@@ -2577,14 +2559,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 41",
       "title": "Obrázok 41 – Spondylodiscitída – postkontrastné MR, T1 STIR (231)",
-      "description": "",
+      "description": "Translation:\nPost-contrast MR examination of the lumbosacral spine, T1-weighted fat-suppressed image: sagittal section (A), coronal section (B).\nSpondylodiscitis at L4-L5: after contrast there is enhancement in the vertebral bodies adjacent to the L4-L5 disc (solid arrows).\nDiagnosis: spondylodiscitis.",
       "page": null,
       "image": "assets/cards/card-197.png",
-      "imageWidth": 1650,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-197-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1370,
+      "imageHeight": 1085
     },
     {
       "id": "spine-061-198",
@@ -2593,14 +2572,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 61",
       "title": "Obrázok 61 – Metastázy karcinómu GITu – MR, T2 (254)",
-      "description": "",
+      "description": "Translation:\nMR examination of the lumbosacral spine, T2-weighted sagittal image.\nHyperintense lesions are present in vertebral bodies, vertebral processes, and the sacrum; several are marked by arrows.\nDiagnosis: skeletal metastases from mucinous gastrointestinal carcinoma.",
       "page": null,
       "image": "assets/cards/card-198.png",
-      "imageWidth": 1650,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-198-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 805,
+      "imageHeight": 1215
     },
     {
       "id": "spine-062-199",
@@ -2609,14 +2585,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 62",
       "title": "Obrázok 62 – Metastázy karcinómu GITu – MR, STIR (255)",
-      "description": "",
+      "description": "Translation:\nMR examination of the lumbosacral spine, STIR sagittal sequence.\nHyperintense lesions are present in vertebral bodies, vertebral processes, and the sacrum; several are marked by arrows.\nDiagnosis: skeletal metastases from mucinous gastrointestinal carcinoma.",
       "page": null,
       "image": "assets/cards/card-199.png",
-      "imageWidth": 1650,
-      "imageHeight": 1696,
-      "answerImage": "assets/cards/card-199-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 795,
+      "imageHeight": 1225
     },
     {
       "id": "spine-063-200",
@@ -2625,14 +2598,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 63",
       "title": "Obrázok 63 – Metastázy karcinómu GITu – MR, T1 STIR (256)",
-      "description": "",
+      "description": "Translation:\nMR examination of the lumbosacral spine, T1-weighted fat-suppressed sagittal image before contrast (A) and after contrast (B).\nOn the native image there are suggested hyperintense lesions (arrows). After contrast, the lesions enhance (arrows).\nDiagnosis: skeletal metastases from mucinous gastrointestinal carcinoma.",
       "page": null,
       "image": "assets/cards/card-200.png",
-      "imageWidth": 1648,
-      "imageHeight": 1678,
-      "answerImage": "assets/cards/card-200-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1323,
+      "imageHeight": 1035
     },
     {
       "id": "spine-095-201",
@@ -2640,15 +2610,12 @@
       "sourceImageNumber": 95,
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 95",
-      "title": "Obrázok 95 – Fraktúra dnes axis – CT (294)",
-      "description": "",
+      "title": "Obrázok 95 – Fraktúra dens axis – CT (294)",
+      "description": "Translation:\nNative CT examination of the cervical spine, bone window, sagittal reconstruction.\nFracture of the dens axis with posterior displacement of the superior fragment (arrow).\nDiagnosis: dens axis fracture with dorsal dislocation.",
       "page": null,
       "image": "assets/cards/card-201.png",
-      "imageWidth": 1298,
-      "imageHeight": 1419,
-      "answerImage": "assets/cards/card-201-answer.jpg",
-      "answerImageWidth": 1800,
-      "answerImageHeight": 1350
+      "imageWidth": 1200,
+      "imageHeight": 1090
     },
     {
       "id": "spine-101-202",
@@ -2657,14 +2624,11 @@
       "section": "Spine and spinal canal",
       "label": "Spine and spinal canal | Obrazok 101",
       "title": "Obrázok 101 – Fraktúra C4 – CT (300)",
-      "description": "",
+      "description": "Translation:\nNative CT examination of the cervical spine, bone window, sagittal reconstruction.\nThe body and arch of C4 are fractured with reduction of vertebral body height and protrusion into the spinal canal (arrow). There is also a kyphotic angulation at C4.\nDiagnosis: unstable C4 vertebral fracture.",
       "page": null,
       "image": "assets/cards/card-202.png",
-      "imageWidth": 1364,
-      "imageHeight": 1436,
-      "answerImage": "assets/cards/card-202-answer.jpg",
-      "answerImageWidth": 1800,
-      "answerImageHeight": 1350
+      "imageWidth": 1120,
+      "imageHeight": 1145
     },
     {
       "id": "pediatrics-006-203",
@@ -2673,14 +2637,11 @@
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 6",
       "title": "Obrázok 6 – Dandy Walker syndróm – MR, T1 (327)",
-      "description": "",
+      "description": "Translation:\nNative MR examination of the brain, T1-weighted sagittal image.\nHypoplasia of the cerebellar vermis and cerebellar hemispheres is present, with a wide communication between the fourth ventricle and cisterna magna (arrow). The tentorium is not elevated.\nDiagnosis: Dandy-Walker syndrome.",
       "page": null,
       "image": "assets/cards/card-203.png",
-      "imageWidth": 1650,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-203-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1225,
+      "imageHeight": 1175
     },
     {
       "id": "pediatrics-046-204",
@@ -2689,14 +2650,11 @@
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 46",
       "title": "Obrázok 46 – Ren arcuatus – postkontrastné CT (372)",
-      "description": "",
+      "description": "Translation:\nPost-contrast CT examination of the abdominal cavity, transverse section.\nFusion of the lower poles of the kidneys is seen (arrow), forming a horseshoe kidney.\nDiagnosis: ren arcuatus.",
       "page": null,
       "image": "assets/cards/card-204.png",
-      "imageWidth": 1557,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-204-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1300,
+      "imageHeight": 1110
     },
     {
       "id": "pediatrics-051-205",
@@ -2705,14 +2663,11 @@
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 51",
       "title": "Obrázok 51 – Invaginácia – USG (377)",
-      "description": "",
+      "description": "Translation:\nUltrasound examination of the abdominal cavity.\nThe ultrasound shows a target-like image of the invaginated ileum (star) into the cecum (dashed arrow).\nDiagnosis: ileo-ileocecal intussusception.",
       "page": null,
       "image": "assets/cards/card-205.png",
-      "imageWidth": 1650,
-      "imageHeight": 1700,
-      "answerImage": "assets/cards/card-205-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 905,
+      "imageHeight": 1050
     },
     {
       "id": "pediatrics-053-206",
@@ -2721,14 +2676,11 @@
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 53",
       "title": "Obrázok 53 – Corpus alienum – RTG (379)",
-      "description": "",
+      "description": "Translation:\nAbdominal X-ray, AP projection.\nA radiopaque foreign body, an earring, projects in the stomach region at the level of the L1 vertebral body (arrow).\nDiagnosis: foreign body.",
       "page": null,
       "image": "assets/cards/card-206.png",
-      "imageWidth": 1650,
-      "imageHeight": 2200,
-      "answerImage": "assets/cards/card-206-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1050,
+      "imageHeight": 1180
     },
     {
       "id": "pediatrics-047-207",
@@ -2736,15 +2688,12 @@
       "sourceImageNumber": 47,
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 47",
-      "title": "Pediatric radiology | Obrazok 47",
-      "description": "",
+      "title": "Obrázok 47 – Ren arcuatus – MR, T2 (373)",
+      "description": "Translation:\nMR examination of the abdominal cavity, T2-weighted transverse image.\nFusion of the lower poles of the kidneys is shown by the arrow, forming a horseshoe kidney.\nDiagnosis: ren arcuatus.",
       "page": null,
       "image": "assets/cards/card-207.png",
-      "imageWidth": 1650,
-      "imageHeight": 1311,
-      "answerImage": "assets/cards/card-207-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 1375,
+      "imageHeight": 930
     },
     {
       "id": "pediatrics-048-208",
@@ -2752,15 +2701,12 @@
       "sourceImageNumber": 48,
       "section": "Pediatric radiology",
       "label": "Pediatric radiology | Obrazok 48",
-      "title": "Pediatric radiology | Obrazok 48",
-      "description": "",
+      "title": "Obrázok 48 – Zdvojenie ľavej obličky, dolichomegaureter – MR, T2 (374)",
+      "description": "Translation:\nMR examination of the abdominal cavity and pelvis, T2-weighted coronal image.\nDuplication of the left kidney is present with saccular dilatation of calyces in the cranial moiety (solid arrow), and a dilated tortuous left ureter (dashed arrow).\nDiagnosis: left duplicated collecting system with dolichomegaureter.",
       "page": null,
       "image": "assets/cards/card-208.png",
-      "imageWidth": 1500,
-      "imageHeight": 1585,
-      "answerImage": "assets/cards/card-208-answer.jpg",
-      "answerImageWidth": 1350,
-      "answerImageHeight": 1800
+      "imageWidth": 955,
+      "imageHeight": 1135
     },
     {
       "id": "ai-016-209",
@@ -2769,14 +2715,11 @@
       "section": "Artificial intelligence",
       "label": "Artificial intelligence | Obrazok 16",
       "title": "Obrázok 16 – Akútna ischémia v zóne M5/ M6 – CT (425)",
-      "description": "",
+      "description": "Translation:\nNative CT examination of the brain, transverse section.\nAn identical patient to images 13, 14, and 15 was automatically evaluated by software for acute ischemia in the M5 and M6 zones on the right.\nASPECTS score: 4. The patient may be included in the TENSION study.",
       "page": null,
       "image": "assets/cards/card-209.png",
-      "imageWidth": 1122,
-      "imageHeight": 1436,
-      "answerImage": "assets/cards/card-209-answer.jpg",
-      "answerImageWidth": 1800,
-      "answerImageHeight": 1350
+      "imageWidth": 800,
+      "imageHeight": 1220
     }
   ],
   "missing": []
