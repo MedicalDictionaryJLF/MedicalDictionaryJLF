@@ -1,0 +1,1491 @@
+[
+  {
+    "triplet_id": 1,
+    "title": "Absorption of Drugs / Insulin and Insulin Analogues / Intravenous General Anaesthetics",
+    "short_title": "Absorption / Insulin / IV Anaesthetics",
+    "difficulty": "core",
+    "estimated_time_min": 45,
+    "tags": ["general_pharmacology", "endocrine", "anaesthesia"],
+    "learning_goal": "Understand how drugs enter the body, how insulin controls glucose and potassium metabolism, and how common IV induction agents differ clinically.",
+    "why_it_matters": "This triplet joins pharmacokinetic basics with two high-yield clinical drug groups that examiners often use to test mechanism-to-bedside reasoning.",
+    "oral_exam_goals": [
+      "Define absorption and separate it from bioavailability.",
+      "Explain insulin receptor signaling, insulin classes, IV regular insulin, hypoglycemia, and potassium risk.",
+      "Compare propofol, thiopental, etomidate, and ketamine by mechanism, use, and major cautions."
+    ],
+    "topics": [
+      {
+        "topic_id": "1A",
+        "label": "Topic A",
+        "title": "Absorption of Drugs",
+        "category": "General Pharmacology",
+        "theory_short": "Absorption is transfer of drug from the administration site into blood. It determines onset, peak concentration, variability, and toxicity for extravascular routes.",
+        "definition": "Absorption is the transfer of a drug from the site of administration into systemic or portal circulation. IV administration has no absorption phase.",
+        "mechanism_steps": [
+          "Drug is released from the dosage form.",
+          "Drug dissolves in local fluid.",
+          "Drug crosses a biological membrane by diffusion, filtration, carrier transport, or vesicular uptake.",
+          "Drug enters portal or systemic blood.",
+          "Presystemic gut wall or hepatic metabolism may reduce the unchanged amount reaching systemic circulation."
+        ],
+        "classification": [
+          {
+            "name": "Passive diffusion",
+            "detail": "Down a concentration gradient; no carrier; no energy; favored by lipid solubility and non-ionized drug."
+          },
+          {
+            "name": "Filtration",
+            "detail": "Movement through aqueous pores; depends on molecule size and pressure gradients."
+          },
+          {
+            "name": "Facilitated diffusion",
+            "detail": "Carrier-mediated, selective, and saturable, but does not require energy."
+          },
+          {
+            "name": "Active transport",
+            "detail": "Carrier-mediated, saturable, energy-dependent, and can move drug against a gradient."
+          },
+          {
+            "name": "Endocytosis or pinocytosis",
+            "detail": "Vesicular uptake of larger molecules; uncommon for classic small-molecule drugs."
+          }
+        ],
+        "clinical_uses": [
+          "Route choice for urgent versus chronic therapy.",
+          "Explaining oral dose variability caused by food, motility, disease, formulation, or interactions.",
+          "Understanding why sublingual, transdermal, rectal, or parenteral routes may be chosen to bypass first-pass metabolism."
+        ],
+        "adverse_effects": [
+          "Poor absorption can cause treatment failure.",
+          "Rapid or unexpectedly high absorption can increase toxicity.",
+          "Chelation by calcium, magnesium, iron, or antacids can reduce absorption of tetracyclines and fluoroquinolones."
+        ],
+        "contraindications": [],
+        "exam_traps": [
+          "Absorption is not the same as bioavailability.",
+          "A drug may be well absorbed but have low bioavailability because first-pass metabolism removes it before systemic circulation.",
+          "Weak acids are more non-ionized in acidic media; weak bases are more non-ionized in alkaline media.",
+          "Ion trapping keeps ionized drug in a compartment; urinary alkalinization increases elimination of weak acids such as salicylates or phenobarbital."
+        ],
+        "oral_exam_answer": "Absorption is transfer of drug from the administration site into blood and is mainly relevant for extravascular routes. It depends on formulation, dissolution, membrane permeability, lipid solubility, ionization, surface area, blood flow, food, transporters, and disease. Bioavailability is different: it is the fraction reaching systemic circulation unchanged. Oral drugs may be absorbed well but still have low bioavailability because of intestinal or hepatic first-pass metabolism.",
+        "diagram_ids": ["absorption_first_pass"],
+        "resource_ids": ["merck_pk", "ncbi_pkpd", "khan_bioavailability"],
+        "flashcards": [
+          {
+            "id": "fc1_absorption_001",
+            "front": "What is the difference between absorption and bioavailability?",
+            "back": "Absorption is entry from administration site into blood or portal circulation; bioavailability is the fraction reaching systemic circulation unchanged."
+          },
+          {
+            "id": "fc1_absorption_002",
+            "front": "Which route has no absorption phase?",
+            "back": "Intravenous administration."
+          }
+        ],
+        "quiz_ids": ["q1_absorption_001", "q1_absorption_002"]
+      },
+      {
+        "topic_id": "1B",
+        "label": "Topic B",
+        "title": "Insulin and Insulin Analogues",
+        "category": "Endocrine Pharmacology",
+        "theory_short": "Insulin is an anabolic peptide hormone acting through a receptor tyrosine kinase. It increases glucose uptake, glycogen and protein synthesis, lipogenesis, and intracellular potassium shift.",
+        "definition": "Insulin is a pancreatic beta-cell peptide hormone used pharmacologically when endogenous insulin is absent, insufficient, or acutely needed for metabolic control.",
+        "mechanism_steps": [
+          "Insulin binds the insulin receptor, a receptor tyrosine kinase.",
+          "Autophosphorylation activates PI3K/Akt and MAPK signaling.",
+          "GLUT4 moves to the membrane in muscle and adipose tissue.",
+          "Glucose uptake rises; hepatic gluconeogenesis and glycogenolysis fall.",
+          "Potassium shifts into cells."
+        ],
+        "classification": [
+          {
+            "name": "Rapid-acting analogues",
+            "detail": "Lispro, aspart, glulisine; mealtime bolus and pumps."
+          },
+          {
+            "name": "Short-acting",
+            "detail": "Regular insulin; meals and IV use in DKA or hyperkalemia."
+          },
+          {
+            "name": "Intermediate-acting",
+            "detail": "NPH; basal insulin with a less predictable peak."
+          },
+          {
+            "name": "Long-acting",
+            "detail": "Glargine, detemir; flatter basal profile."
+          },
+          {
+            "name": "Ultra-long acting",
+            "detail": "Degludec; very long basal effect."
+          },
+          {
+            "name": "Premixed",
+            "detail": "Fixed rapid or short plus intermediate combinations; simpler but less flexible."
+          }
+        ],
+        "clinical_uses": [
+          "Type 1 diabetes mellitus.",
+          "Type 2 diabetes with severe hyperglycemia, catabolic symptoms, acute illness, pregnancy, surgery, or failure of non-insulin therapy.",
+          "DKA and hyperosmolar hyperglycemic state after fluid and potassium assessment.",
+          "Hyperkalemia with glucose to shift potassium into cells.",
+          "Gestational diabetes when lifestyle therapy is insufficient."
+        ],
+        "adverse_effects": [
+          "Hypoglycemia with sweating, tremor, palpitations, confusion, seizures, or coma.",
+          "Weight gain.",
+          "Lipodystrophy at injection sites.",
+          "Hypokalemia, especially with IV insulin.",
+          "Local reactions and rare allergy."
+        ],
+        "contraindications": [
+          "Do not start insulin in DKA without assessing potassium.",
+          "Long-acting analogues are not for acute IV correction."
+        ],
+        "exam_traps": [
+          "Regular insulin is the common insulin that can be given IV.",
+          "Main acute danger is hypoglycemia.",
+          "Insulin can be lifesaving in hyperkalemia but can worsen hypokalemia.",
+          "Rotate injection sites to reduce lipodystrophy."
+        ],
+        "oral_exam_answer": "Insulin is an anabolic peptide hormone acting through a receptor tyrosine kinase. It increases GLUT4-mediated glucose uptake in muscle and adipose tissue, promotes glycogen, lipid, and protein synthesis, suppresses hepatic glucose output, and shifts potassium into cells. Insulin is essential in type 1 diabetes and used in selected type 2 diabetes, DKA, hyperkalemia, pregnancy, surgery, and acute illness. Regular insulin can be given IV. Main risks are hypoglycemia, weight gain, lipodystrophy, and hypokalemia.",
+        "diagram_ids": ["insulin_receptor_pathway"],
+        "resource_ids": ["ninja_pharmacology_playlist"],
+        "flashcards": [
+          {
+            "id": "fc1_insulin_001",
+            "front": "What receptor type does insulin use?",
+            "back": "A receptor tyrosine kinase."
+          },
+          {
+            "id": "fc1_insulin_002",
+            "front": "Which insulin is used IV in DKA and hyperkalemia?",
+            "back": "Regular insulin."
+          }
+        ],
+        "quiz_ids": ["q1_insulin_001", "q1_insulin_002"]
+      },
+      {
+        "topic_id": "1C",
+        "label": "Topic C",
+        "title": "Intravenous General Anaesthetics",
+        "category": "Anaesthesia Pharmacology",
+        "theory_short": "IV anaesthetics act rapidly, mainly by CNS receptor modulation and redistribution. Most cause respiratory depression and lack analgesia; ketamine is the dissociative analgesic exception.",
+        "definition": "IV general anaesthetics are rapidly acting CNS depressant drugs used for induction, procedural sedation, short procedures, and total intravenous anaesthesia.",
+        "mechanism_steps": [
+          "Rapid brain entry produces induction within one circulation time.",
+          "Single-dose termination often depends on redistribution from brain to muscle and fat.",
+          "Propofol, thiopental, and etomidate mainly potentiate GABA-A signaling.",
+          "Ketamine blocks NMDA receptors and produces dissociative anaesthesia with analgesia.",
+          "Most agents require separate analgesic support unless ketamine is used."
+        ],
+        "classification": [
+          {
+            "name": "Propofol",
+            "detail": "GABA-A potentiation; smooth induction and recovery, antiemetic, TIVA; hypotension, apnea, injection pain, no analgesia."
+          },
+          {
+            "name": "Thiopental",
+            "detail": "Barbiturate; rapid redistribution; respiratory and cardiovascular depression; avoid in porphyria."
+          },
+          {
+            "name": "Etomidate",
+            "detail": "GABA-A potentiation; minimal cardiovascular depression; myoclonus, nausea, vomiting, adrenal suppression."
+          },
+          {
+            "name": "Ketamine",
+            "detail": "NMDA antagonist; dissociative anaesthesia, analgesia, bronchodilation, BP/HR support; hallucinations and hypersalivation."
+          }
+        ],
+        "clinical_uses": [
+          "Induction of general anaesthesia.",
+          "Short procedural sedation.",
+          "TIVA, especially with propofol.",
+          "Hemodynamic instability where etomidate may be favored.",
+          "Need for analgesia, bronchodilation, or blood pressure support where ketamine may be useful."
+        ],
+        "adverse_effects": [
+          "Respiratory depression and apnea, especially propofol and barbiturates.",
+          "Hypotension with propofol and thiopental.",
+          "Adrenal suppression with etomidate.",
+          "Emergence reactions, hallucinations, hypersalivation, increased BP/HR, and increased ICP/IOP with ketamine."
+        ],
+        "contraindications": [
+          "Thiopental is contraindicated in porphyria.",
+          "Use ketamine cautiously in psychosis, severe ischemic heart disease, uncontrolled hypertension, or raised intracranial/intraocular pressure.",
+          "Avoid prolonged etomidate infusion and use caution in sepsis."
+        ],
+        "exam_traps": [
+          "Ketamine provides analgesia; propofol, thiopental, and etomidate do not.",
+          "Etomidate is hemodynamically stable but suppresses adrenal steroid synthesis.",
+          "Thiopental effect after one dose ends mainly by redistribution.",
+          "Propofol has antiemetic properties but can cause hypotension and apnea."
+        ],
+        "oral_exam_answer": "IV anaesthetics are rapidly acting agents used mainly for induction and sedation. Propofol gives smooth induction and recovery but causes hypotension, apnea, and no analgesia. Thiopental is a barbiturate terminated by redistribution and is avoided in porphyria. Etomidate has minimal cardiovascular depression but suppresses adrenal steroid synthesis. Ketamine is an NMDA antagonist causing dissociative anaesthesia with analgesia, bronchodilation, and sympathetic stimulation, but can cause hallucinations and hypersalivation.",
+        "diagram_ids": ["iv_anaesthetic_grid"],
+        "resource_ids": ["ninja_pharmacology_playlist"],
+        "flashcards": [
+          {
+            "id": "fc1_anaesthesia_001",
+            "front": "Which IV anaesthetic provides dissociative anaesthesia and analgesia?",
+            "back": "Ketamine."
+          },
+          {
+            "id": "fc1_anaesthesia_002",
+            "front": "Which IV induction agent is known for minimal cardiovascular depression?",
+            "back": "Etomidate, with the caveat of adrenal suppression."
+          }
+        ],
+        "quiz_ids": ["q1_anaesthetic_001", "q1_anaesthetic_002"]
+      }
+    ],
+    "clinical_cases": [
+      {
+        "id": "case1_dka_potassium",
+        "topic_id": "1B",
+        "title": "DKA Before Insulin",
+        "case_text": "A patient with DKA is dehydrated and acidotic. The potassium result is low-normal before insulin infusion.",
+        "question": "What must be considered before starting insulin?",
+        "expected_answer": "Potassium must be assessed and corrected if low because insulin shifts potassium into cells and can precipitate dangerous hypokalemia."
+      },
+      {
+        "id": "case1_induction_choice",
+        "topic_id": "1C",
+        "title": "Induction In An Unstable Patient",
+        "case_text": "A hypotensive trauma patient needs urgent induction of anaesthesia.",
+        "question": "Which IV agent is classically chosen for minimal cardiovascular depression, and what is its major limitation?",
+        "expected_answer": "Etomidate is often chosen for hemodynamic stability, but it can suppress adrenal steroid synthesis, especially relevant with prolonged use or sepsis."
+      }
+    ],
+    "podcast": {
+      "audio_file": "",
+      "script": "This triplet connects pharmacokinetics, diabetes therapy, and anaesthetic induction. Start by separating absorption from bioavailability. Then explain insulin receptor tyrosine kinase signaling, GLUT4 translocation, IV regular insulin, hypoglycemia, and potassium shift. Finish by comparing propofol, thiopental, etomidate, and ketamine: propofol is smooth but hypotensive, etomidate is stable but suppresses adrenals, ketamine provides dissociative anaesthesia with analgesia, and thiopental is the classic barbiturate with redistribution.",
+      "summary_points": [
+        "Absorption is entry into blood; bioavailability is unchanged drug reaching systemic circulation.",
+        "Regular insulin can be given IV.",
+        "Insulin shifts potassium into cells.",
+        "Ketamine is the IV anaesthetic with analgesia and dissociation.",
+        "Etomidate has minimal cardiovascular depression but adrenal suppression."
+      ]
+    },
+    "final_review": [
+      "IV route has 100% bioavailability and no absorption phase.",
+      "First-pass metabolism can make bioavailability low despite good absorption.",
+      "Regular insulin is used IV in DKA and hyperkalemia.",
+      "Hypoglycemia and hypokalemia are key insulin dangers.",
+      "Propofol: hypotension/apnea/no analgesia; etomidate: stable/adrenal suppression; ketamine: analgesia/BP support/hallucinations; thiopental: barbiturate/porphyria warning."
+    ],
+    "module_test_ids": ["q1_absorption_001", "q1_absorption_002", "q1_insulin_001", "q1_insulin_002", "q1_anaesthetic_001", "q1_anaesthetic_002"]
+  },
+  {
+    "triplet_id": 2,
+    "title": "Enteral Administration of Drugs / Estrogens and Antiestrogens / Therapy of Benzodiazepine and Barbiturate Poisonings",
+    "short_title": "Enteral / Estrogens / Sedative Poisoning",
+    "difficulty": "core",
+    "estimated_time_min": 40,
+    "tags": ["general_pharmacology", "endocrine", "toxicology"],
+    "learning_goal": "Compare enteral routes, understand estrogen receptor pharmacology, and explain emergency management of sedative-hypnotic poisoning.",
+    "why_it_matters": "The same exam answer must move from route selection to receptor modulation to overdose priorities.",
+    "oral_exam_goals": ["Compare oral, sublingual, buccal, and rectal routes.", "Classify estrogens, SERMs, aromatase inhibitors, and fulvestrant.", "Explain ABC-first treatment of benzodiazepine and barbiturate poisoning."],
+    "topics": [
+      {
+        "topic_id": "2A",
+        "label": "Topic A",
+        "title": "Enteral Administration of Drugs",
+        "category": "General Pharmacology",
+        "theory_short": "Enteral routes use the GI tract or oral/rectal mucosa. They are convenient but absorption is variable and first-pass metabolism matters.",
+        "definition": "Enteral administration includes oral, sublingual, buccal, and rectal drug delivery.",
+        "mechanism_steps": ["Oral drugs pass through the GI tract and often the portal system.", "Sublingual and buccal drugs can enter systemic veins and reduce first-pass loss.", "Rectal administration partly avoids first-pass metabolism but absorption is irregular."],
+        "classification": [{"name": "Oral", "detail": "Cheap and convenient, but slower and affected by food, motility, and first-pass metabolism."}, {"name": "Sublingual", "detail": "Rapid and avoids first pass; suitable only for small doses."}, {"name": "Buccal", "detail": "Longer mucosal contact and partial first-pass avoidance."}, {"name": "Rectal", "detail": "Useful in vomiting, children, or unconscious patients; variable absorption."}],
+        "clinical_uses": ["Chronic oral therapy.", "Sublingual nitroglycerin for rapid angina relief.", "Rectal therapy when oral route is not possible."],
+        "adverse_effects": ["Local irritation, taste problems, variable exposure, and first-pass failure."],
+        "contraindications": [],
+        "exam_traps": ["Sublingual route avoids first-pass metabolism.", "Rectal route only partially avoids first pass.", "Oral route is convenient but not reliable in vomiting or unconscious patients."],
+        "oral_exam_answer": "Enteral administration includes oral, sublingual, buccal, and rectal routes. Oral dosing is safe and convenient but slow, variable, and subject to first-pass metabolism. Sublingual and buccal routes can be rapid and avoid first pass. Rectal administration is useful when oral dosing is impossible but absorption is unpredictable and only partly avoids first pass.",
+        "diagram_ids": ["enteral_route_comparison"],
+        "resource_ids": ["merck_pk"]
+      },
+      {
+        "topic_id": "2B",
+        "label": "Topic B",
+        "title": "Estrogens and Antiestrogens",
+        "category": "Endocrine Pharmacology",
+        "theory_short": "Estrogens act through nuclear receptors. Antiestrogen strategies include SERMs, aromatase inhibitors, and estrogen receptor degradation.",
+        "definition": "Estrogens are steroid hormones that regulate gene transcription through intracellular estrogen receptors.",
+        "mechanism_steps": ["Estrogen binds ER alpha or ER beta.", "The receptor-ligand complex regulates DNA transcription.", "SERMs act as tissue-selective agonists or antagonists.", "Aromatase inhibitors decrease estrogen synthesis.", "Fulvestrant antagonizes and degrades estrogen receptors."],
+        "classification": [{"name": "Estrogens", "detail": "Ethinylestradiol and endogenous estradiol; contraception, selected HRT, hypogonadism."}, {"name": "SERMs", "detail": "Tamoxifen, raloxifene, clomiphene."}, {"name": "Aromatase inhibitors", "detail": "Anastrozole, letrozole, exemestane."}, {"name": "ER antagonist/degrader", "detail": "Fulvestrant."}],
+        "clinical_uses": ["Contraception, selected HRT, ER-positive breast cancer, ovulation induction, osteoporosis risk reduction."],
+        "adverse_effects": ["VTE, hypertension, nausea, breast tenderness, endometrial hyperplasia if estrogen is unopposed, hot flashes or osteoporosis with estrogen deprivation."],
+        "contraindications": ["Pregnancy, estrogen-dependent tumors, active/history of thromboembolism, severe liver disease, unexplained vaginal bleeding."],
+        "exam_traps": ["Tamoxifen antagonizes breast ER but can stimulate endometrium.", "Clomiphene induces ovulation by blocking estrogen feedback.", "Unopposed estrogen in a patient with uterus increases endometrial risk."],
+        "oral_exam_answer": "Estrogens are nuclear receptor ligands used in contraception, selected HRT, and hypogonadism. Antiestrogens include SERMs such as tamoxifen, raloxifene, and clomiphene, aromatase inhibitors that reduce estrogen synthesis, and fulvestrant, which degrades the receptor. Major risks are thromboembolism and hormone-sensitive tumor or endometrial effects."
+      },
+      {
+        "topic_id": "2C",
+        "label": "Topic C",
+        "title": "Therapy of Benzodiazepine and Barbiturate Poisonings",
+        "category": "Toxicology",
+        "theory_short": "Sedative-hypnotic poisoning is treated first with airway, breathing, and circulation support. Flumazenil is only for selected benzodiazepine cases; barbiturate poisoning may need enhanced elimination.",
+        "definition": "Benzodiazepine and barbiturate poisonings are CNS depressant overdoses involving GABA-A-related mechanisms.",
+        "mechanism_steps": ["Benzodiazepines increase frequency of GABA-A chloride channel opening.", "Barbiturates prolong channel opening and can directly activate GABA-A at high dose.", "Initial management is ABC support.", "Flumazenil can reverse selected benzodiazepine sedation but may cause seizures.", "Severe phenobarbital poisoning can require repeated charcoal, urinary alkalinization, or dialysis."],
+        "classification": [{"name": "Benzodiazepine poisoning", "detail": "Sedation, ataxia, slurred speech; severe respiratory depression mainly with alcohol/opioids."}, {"name": "Barbiturate poisoning", "detail": "Coma, respiratory depression, hypotension, hypothermia; narrow therapeutic index."}],
+        "clinical_uses": ["Emergency stabilization, ventilation, decontamination if early and airway safe, selected antidote use."],
+        "adverse_effects": ["Respiratory depression, hypotension, coma, aspiration, seizures after inappropriate flumazenil."],
+        "contraindications": ["Avoid flumazenil in chronic benzodiazepine use, seizure disorder, or mixed proconvulsant overdose such as TCA ingestion."],
+        "exam_traps": ["ABC comes before antidote.", "Flumazenil is dangerous in chronic users or mixed overdose.", "Barbiturates have no universal antagonist and are more dangerous."],
+        "oral_exam_answer": "Both poisonings are CNS depressant emergencies. Treat airway, breathing, and circulation first. Benzodiazepines increase GABA-A opening frequency; barbiturates prolong opening and at high dose directly activate GABA-A, making them more lethal. Flumazenil is reserved for selected isolated benzodiazepine overdose or iatrogenic oversedation and is avoided in chronic users or mixed overdose. Severe barbiturate poisoning needs supportive care and sometimes enhanced elimination.",
+        "resource_ids": ["ninja_pharmacology_playlist"]
+      }
+    ],
+    "clinical_cases": [{"id": "case2_flumazenil", "topic_id": "2C", "title": "Mixed Sedative Overdose", "case_text": "A sedated patient took unknown tablets with alcohol and may use benzodiazepines chronically.", "question": "Should flumazenil be given routinely?", "expected_answer": "No. Airway and ventilation support come first. Flumazenil can provoke seizures in chronic benzodiazepine users or mixed proconvulsant overdose."}],
+    "podcast": {"audio_file": "", "script": "Compare enteral routes, then estrogen receptor modulation, then sedative-hypnotic poisoning with ABC-first treatment and careful flumazenil use.", "summary_points": ["Sublingual avoids first pass.", "Tamoxifen is tissue selective.", "Barbiturate overdose is more dangerous than benzodiazepine overdose.", "Flumazenil is not routine."]},
+    "final_review": ["Oral route is convenient but variable.", "Sublingual avoids first pass.", "Tamoxifen has breast antagonist and endometrial partial agonist behavior.", "Flumazenil can trigger seizures in chronic users or mixed overdose."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 3,
+    "title": "Parenteral Administration of Drugs / Non-Selective Adrenergic Receptor Agonists / Fibrinolytics",
+    "short_title": "Parenteral / Adrenergic Agonists / Fibrinolytics",
+    "difficulty": "core",
+    "estimated_time_min": 40,
+    "tags": ["general_pharmacology", "autonomic", "cardiovascular"],
+    "learning_goal": "Understand injection routes, receptor effects of major catecholamines, and fibrinolytic therapy in thrombotic emergencies.",
+    "why_it_matters": "This triplet tests rapid drug delivery, receptor profile logic, and high-risk reperfusion therapy.",
+    "oral_exam_goals": ["Compare IV, IM, SC, intradermal, intrathecal, epidural, and intraosseous routes.", "Explain adrenaline, noradrenaline, dopamine, and isoprenaline by receptor profile.", "Describe fibrinolytic mechanism, indications, contraindications, and bleeding risk."],
+    "topics": [
+      {
+        "topic_id": "3A",
+        "label": "Topic A",
+        "title": "Parenteral Administration of Drugs",
+        "category": "General Pharmacology",
+        "theory_short": "Parenteral administration bypasses the GI tract and is used when fast, reliable, or non-enteral delivery is needed.",
+        "definition": "Parenteral administration delivers drugs outside the gastrointestinal tract.",
+        "mechanism_steps": ["IV gives immediate systemic access and 100% bioavailability.", "IM and SC absorption depends on blood flow and formulation.", "Intrathecal or epidural routes deliver drug near the CNS or neuraxis.", "Intraosseous access is emergency vascular access when IV is impossible."],
+        "classification": [{"name": "IV", "detail": "Immediate, titratable, 100%; rapid toxicity cannot be taken back."}, {"name": "IM", "detail": "Depot forms possible; painful and unreliable in shock."}, {"name": "SC", "detail": "Insulin and heparin; small volumes and slower absorption."}, {"name": "Intrathecal/epidural", "detail": "Regional or CNS delivery with technical and infection risks."}],
+        "clinical_uses": ["Emergencies, unconscious or vomiting patients, drugs destroyed enterally, reliable bioavailability."],
+        "adverse_effects": ["Pain, infection, bleeding, embolism, extravasation, rapid toxicity."],
+        "contraindications": ["Avoid IM injection in significant anticoagulation when possible.", "Avoid irritating drugs SC or IM if tissue injury risk is high."],
+        "exam_traps": ["IV is 100% bioavailable.", "SC and IM absorption can be poor in shock.", "Intrathecal delivery bypasses the blood-brain barrier but has neurotoxicity risk."],
+        "oral_exam_answer": "Parenteral administration bypasses the GI tract and includes IV, IM, SC, intradermal, intrathecal, epidural, and intraosseous routes. It is useful for emergencies, reliable delivery, vomiting or unconscious patients, and drugs not suitable orally. Benefits are speed and control; risks are invasiveness, infection, pain, bleeding, and rapid toxicity."
+      },
+      {
+        "topic_id": "3B",
+        "label": "Topic B",
+        "title": "Non-Selective Adrenergic Receptor Agonists",
+        "category": "Autonomic Pharmacology",
+        "theory_short": "Non-selective adrenergic agonists stimulate multiple alpha, beta, and sometimes dopamine receptors, so effects depend on receptor profile and dose.",
+        "definition": "Adrenergic agonists mimic sympathetic signaling by activating adrenergic receptors.",
+        "mechanism_steps": ["Adrenaline activates alpha1, alpha2, beta1, and beta2.", "Noradrenaline strongly activates alpha receptors and beta1 with little beta2.", "Dopamine has D1, beta1, and alpha1 effects depending on dose.", "Isoprenaline activates beta1 and beta2."],
+        "classification": [{"name": "Adrenaline", "detail": "Anaphylaxis, cardiac arrest, local anaesthetic additive."}, {"name": "Noradrenaline", "detail": "Septic shock and severe hypotension."}, {"name": "Dopamine", "detail": "Selected shock contexts; dose-dependent receptor effects."}, {"name": "Isoprenaline", "detail": "Rare bradyarrhythmia use; beta agonist."}],
+        "clinical_uses": ["Anaphylaxis, shock, cardiac arrest, severe hypotension, selected bradyarrhythmias."],
+        "adverse_effects": ["Arrhythmia, hypertension, ischemia, tremor, anxiety, extravasation necrosis with vasoconstrictors."],
+        "contraindications": ["Use cautiously in tachyarrhythmias, severe ischemic heart disease, and uncontrolled hypertension depending on emergency context."],
+        "exam_traps": ["Adrenaline treats anaphylaxis through alpha1 vasoconstriction, beta1 cardiac support, and beta2 bronchodilation.", "Noradrenaline can cause reflex bradycardia.", "Dopamine receptor effects are dose-dependent."],
+        "oral_exam_answer": "Non-selective adrenergic agonists stimulate several adrenergic receptors. Adrenaline activates alpha and beta receptors and is first-line in anaphylaxis. Noradrenaline is mainly alpha with beta1 support and is used in shock. Dopamine has dose-dependent D1, beta1, and alpha1 effects. Isoprenaline is a beta agonist. Major risks are tachyarrhythmia, hypertension, and ischemia.",
+        "diagram_ids": ["adrenergic_receptor_effects"]
+      },
+      {
+        "topic_id": "3C",
+        "label": "Topic C",
+        "title": "Fibrinolytics",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Fibrinolytics convert plasminogen to plasmin and dissolve fibrin thrombi. They restore flow but carry major bleeding risk.",
+        "definition": "Fibrinolytics are reperfusion drugs that activate plasmin-mediated fibrin breakdown.",
+        "mechanism_steps": ["Plasminogen is converted to plasmin.", "Plasmin degrades fibrin within thrombi.", "Reperfusion may restore flow in STEMI, ischemic stroke, or massive PE.", "Systemic fibrinolysis increases bleeding risk."],
+        "classification": [{"name": "tPA derivatives", "detail": "Alteplase, reteplase, tenecteplase."}, {"name": "Non-fibrin-specific activators", "detail": "Streptokinase and urokinase."}],
+        "clinical_uses": ["STEMI when PCI is unavailable in time, acute ischemic stroke within time window after hemorrhage exclusion, massive PE with instability, selected catheter thrombosis."],
+        "adverse_effects": ["Bleeding, intracranial hemorrhage, hypotension or allergy with streptokinase."],
+        "contraindications": ["Active bleeding, prior hemorrhagic stroke, intracranial tumor or vascular lesion, recent major surgery or trauma, severe uncontrolled hypertension, suspected aortic dissection."],
+        "exam_traps": ["Fibrinolytics are reperfusion drugs, not simple anticoagulants.", "Intracranial hemorrhage is the key feared toxicity.", "Hemorrhage must be excluded before stroke thrombolysis."],
+        "oral_exam_answer": "Fibrinolytics activate plasminogen to plasmin, which degrades fibrin and dissolves thrombi. They are used for time-sensitive reperfusion in selected STEMI, ischemic stroke, massive PE, and catheter thrombosis cases. The major danger is severe bleeding, especially intracranial hemorrhage, so contraindications must be checked carefully."
+      }
+    ],
+    "clinical_cases": [{"id": "case3_anaphylaxis", "topic_id": "3B", "title": "Anaphylaxis Logic", "case_text": "A patient develops airway edema, hypotension, wheeze, and urticaria after a drug injection.", "question": "Why is adrenaline appropriate?", "expected_answer": "Alpha1 reverses vasodilation and edema, beta1 supports cardiac output, and beta2 bronchodilates and reduces mediator release."}],
+    "podcast": {"audio_file": "", "script": "Summarize reliable parenteral routes, receptor profiles of catecholamines, and fibrinolytic reperfusion with bleeding risk.", "summary_points": ["IV is immediate and 100%.", "Adrenaline is first-line for anaphylaxis.", "Fibrinolytics convert plasminogen to plasmin.", "Bleeding is the major fibrinolytic danger."]},
+    "final_review": ["IV means immediate and 100% bioavailability.", "Adrenaline covers alpha1, beta1, and beta2 needs in anaphylaxis.", "Noradrenaline is vasopressor-heavy.", "Fibrinolytics save tissue but risk intracranial bleeding."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 4,
+    "title": "Drug Dependence / H1 Receptor Antagonists and Mast Cell Stabilizers / Immunostimulants",
+    "short_title": "Dependence / H1 Blockers / Immunostimulants",
+    "difficulty": "core",
+    "estimated_time_min": 40,
+    "tags": ["cns", "immunology", "allergy"],
+    "learning_goal": "Differentiate dependence, tolerance and addiction, compare antihistamine generations, and classify immunostimulatory therapies.",
+    "why_it_matters": "This module tests terminology precision and clean classification of allergy and immune-support drugs.",
+    "oral_exam_goals": ["Separate tolerance, dependence, withdrawal, and addiction.", "Compare first- and second-generation H1 blockers with mast cell stabilizers.", "Classify vaccines, immunoglobulins, interferons, and colony-stimulating factors."],
+    "topics": [
+      {
+        "topic_id": "4A",
+        "label": "Topic A",
+        "title": "Drug Dependence",
+        "category": "CNS Pharmacology",
+        "theory_short": "Dependence is adaptation with withdrawal; addiction is compulsive use despite harm; tolerance is reduced effect after repeated exposure.",
+        "definition": "Drug dependence is a physiological or psychological adaptation to repeated drug exposure.",
+        "mechanism_steps": ["Addictive substances increase dopamine in the VTA -> nucleus accumbens pathway.", "Repeated exposure causes neuroadaptation.", "Stopping the drug can produce withdrawal.", "Relapse is promoted by cues, stress, and drug re-exposure."],
+        "classification": [{"name": "Tolerance", "detail": "Higher dose needed for same effect."}, {"name": "Physical dependence", "detail": "Withdrawal after stopping."}, {"name": "Psychological dependence", "detail": "Craving and emotional need."}, {"name": "Addiction", "detail": "Compulsive use despite harm."}],
+        "clinical_uses": ["Diagnosis, detoxification planning, substitution therapy, relapse prevention."],
+        "adverse_effects": ["Withdrawal, overdose, relapse, social and organ toxicity depending on substance."],
+        "contraindications": [],
+        "exam_traps": ["Dependence can occur with legitimate treatment; addiction implies behavioral loss of control.", "Tolerance and withdrawal are not the same as addiction."],
+        "oral_exam_answer": "Drug dependence is adaptation to repeated exposure with withdrawal after stopping. Tolerance means reduced effect requiring higher doses, and addiction means compulsive drug seeking despite harm. Many addictive drugs increase mesolimbic dopamine. Treatment combines detoxification, withdrawal management, substitution or antagonists where appropriate, and psychosocial relapse prevention.",
+        "diagram_ids": ["dependence_reward_pathway"]
+      },
+      {
+        "topic_id": "4B",
+        "label": "Topic B",
+        "title": "H1 Receptor Antagonists and Mast Cell Stabilizers",
+        "category": "Allergy Pharmacology",
+        "theory_short": "H1 blockers reduce effects of released histamine. Mast cell stabilizers prevent mediator release and must be used prophylactically.",
+        "definition": "H1 antihistamines are mostly inverse agonists at H1 receptors; mast cell stabilizers reduce degranulation.",
+        "mechanism_steps": ["First-generation H1 blockers cross the BBB and also block muscarinic receptors.", "Second-generation H1 blockers have lower CNS penetration.", "Cromolyn-like drugs prevent mast cell mediator release.", "Mast cell stabilizers are not acute anaphylaxis drugs."],
+        "classification": [{"name": "First-generation H1 blockers", "detail": "Diphenhydramine, promethazine, chlorpheniramine; sedating and anticholinergic."}, {"name": "Second-generation H1 blockers", "detail": "Cetirizine, loratadine, desloratadine, fexofenadine; less sedating."}, {"name": "Mast cell stabilizers", "detail": "Cromolyn, nedocromil, ketotifen; prophylaxis."}],
+        "clinical_uses": ["Allergic rhinitis, urticaria, pruritus, conjunctivitis, motion sickness or antiemesis for sedating drugs."],
+        "adverse_effects": ["Sedation, anticholinergic effects, falls, urinary retention, dry mouth; less common with second generation."],
+        "contraindications": ["Caution in elderly patients, glaucoma, BPH, and urinary retention with first-generation agents."],
+        "exam_traps": ["First-generation agents cross BBB more.", "Mast cell stabilizers prevent release; H1 blockers block released histamine effects.", "Neither replaces IM adrenaline in anaphylaxis."],
+        "oral_exam_answer": "H1 antihistamines block or inverse-agonize H1 receptors. First-generation drugs cross the BBB and cause sedation and anticholinergic effects; second-generation drugs are preferred for allergic rhinitis and urticaria because they are less sedating. Mast cell stabilizers such as cromolyn prevent degranulation and are prophylactic, not acute rescue drugs."
+      },
+      {
+        "topic_id": "4C",
+        "label": "Topic C",
+        "title": "Immunostimulants",
+        "category": "Immunology",
+        "theory_short": "Immunostimulants enhance immune responses and include active immunization, passive immunization, cytokines, interferons, and colony-stimulating factors.",
+        "definition": "Immunostimulants increase immune activity specifically or nonspecifically.",
+        "mechanism_steps": ["Vaccines induce active immune memory.", "Immunoglobulins provide immediate passive protection.", "Interferons modulate antiviral and immune signaling.", "CSFs stimulate leukocyte production."],
+        "classification": [{"name": "Vaccines", "detail": "Live, inactivated, toxoid, conjugate, recombinant, mRNA/vector."}, {"name": "Immunoglobulins", "detail": "IVIG and specific Ig preparations for passive immunity."}, {"name": "Interferons", "detail": "IFN-alpha, IFN-beta, IFN-gamma."}, {"name": "Colony-stimulating factors", "detail": "Filgrastim, pegfilgrastim, sargramostim."}],
+        "clinical_uses": ["Prevention of infection, post-exposure protection, immunodeficiency, autoimmune modulation, neutropenia support."],
+        "adverse_effects": ["Local vaccine reactions, fever, flu-like symptoms, depression or cytopenias with interferons, bone pain with G-CSF, thrombosis or renal dysfunction rarely with IVIG."],
+        "contraindications": ["Live vaccines are avoided in severe immunosuppression and pregnancy when relevant."],
+        "exam_traps": ["Active immunization builds memory; passive immunization gives immediate temporary antibodies.", "CSFs are supportive in neutropenia, not broad immune boosters."],
+        "oral_exam_answer": "Immunostimulants include vaccines for active immunization, immunoglobulins for passive immediate protection, interferons for antiviral or immune modulation, and colony-stimulating factors for neutropenia. Important risks include live vaccine contraindications, flu-like interferon effects, and bone pain with G-CSF."
+      }
+    ],
+    "clinical_cases": [{"id": "case4_antihistamine", "topic_id": "4B", "title": "Elderly Patient With Allergy", "case_text": "An older patient with BPH asks for a sedating first-generation antihistamine for hay fever.", "question": "What risk should you mention?", "expected_answer": "Anticholinergic effects such as urinary retention, confusion, dry mouth, constipation, and falls; a second-generation agent is usually safer."}],
+    "podcast": {"audio_file": "", "script": "Define dependence terminology, compare H1 antihistamine generations and mast cell stabilizers, then classify immunostimulants.", "summary_points": ["Dependence is not addiction.", "First-generation H1 blockers sedate.", "Mast cell stabilizers are prophylactic.", "Vaccines are active; immunoglobulins are passive."]},
+    "final_review": ["Tolerance means dose escalation for same effect.", "Addiction is compulsive use despite harm.", "First-generation H1 blockers cross BBB.", "Active immunization builds memory; passive immunization gives antibodies."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 5,
+    "title": "Distribution of Pharmaceuticals / Hypnotics / Lincosamide Antibiotics",
+    "short_title": "Distribution / Hypnotics / Lincosamides",
+    "difficulty": "core",
+    "estimated_time_min": 40,
+    "tags": ["general_pharmacology", "cns", "antimicrobial"],
+    "learning_goal": "Understand drug movement into tissues, compare sedative-hypnotic groups, and know clindamycin mechanism, uses, and C. difficile risk.",
+    "why_it_matters": "Distribution explains dose behavior; hypnotics and clindamycin are common exam traps because toxicity defines their safe use.",
+    "oral_exam_goals": ["Define volume of distribution, free drug, protein binding, and loading dose.", "Compare benzodiazepines, Z-drugs, barbiturates, melatonin agonists, and sedating antihistamines.", "Explain clindamycin coverage, 50S mechanism, toxin suppression, and C. difficile risk."],
+    "topics": [
+      {
+        "topic_id": "5A",
+        "label": "Topic A",
+        "title": "Distribution of Pharmaceuticals",
+        "category": "General Pharmacology",
+        "theory_short": "Distribution is reversible movement of drug from blood into tissues and determines target concentration, onset, duration, accumulation, and loading dose.",
+        "definition": "Distribution is transfer of drug from systemic circulation into interstitial and intracellular fluids.",
+        "mechanism_steps": ["Drug leaves plasma according to tissue blood flow and capillary permeability.", "Only free drug distributes, binds targets, is filtered, and is metabolized.", "BBB and placenta restrict or allow passage depending on drug properties.", "Tissue binding can create reservoirs.", "Loading dose depends on target concentration, Vd, and bioavailability."],
+        "classification": [{"name": "Low Vd", "detail": "Drug remains mainly in plasma, often highly protein bound."}, {"name": "High Vd", "detail": "Drug distributes extensively into tissues."}, {"name": "Barrier-limited", "detail": "BBB, placenta, and tissue barriers shape exposure."}],
+        "clinical_uses": ["Loading dose calculation, toxicity prediction, dialysis suitability, CNS penetration, placental transfer."],
+        "adverse_effects": ["High free fraction can increase toxicity; tissue accumulation can prolong toxicity."],
+        "contraindications": [],
+        "exam_traps": ["Only free drug is pharmacologically active.", "Vd = amount in body / plasma concentration.", "Loading dose = target concentration x Vd / bioavailability."],
+        "oral_exam_answer": "Distribution is reversible movement of drug from blood to tissues. It depends on blood flow, capillary permeability, lipid solubility, protein binding, tissue binding, and barriers such as the BBB and placenta. Only free drug is active and filtered. Volume of distribution describes apparent tissue distribution and is central for loading dose.",
+        "diagram_ids": ["volume_distribution_model"],
+        "resource_ids": ["merck_pk", "ncbi_pkpd"]
+      },
+      {
+        "topic_id": "5B",
+        "label": "Topic B",
+        "title": "Hypnotics",
+        "category": "CNS Pharmacology",
+        "theory_short": "Hypnotics induce or maintain sleep. Most important groups modulate GABA-A signaling, but overdose and dependence risks differ strongly.",
+        "definition": "Hypnotics are drugs that induce or maintain sleep.",
+        "mechanism_steps": ["Benzodiazepines increase GABA-A chloride channel opening frequency.", "Z-drugs prefer BZ1/omega1 GABA-A effects.", "Barbiturates prolong GABA-A opening and directly activate at high dose.", "Melatonin agonists activate MT1/MT2 receptors.", "Sedating antihistamines block H1 and often muscarinic receptors."],
+        "classification": [{"name": "Benzodiazepines", "detail": "Diazepam, midazolam, oxazepam, temazepam."}, {"name": "Z-drugs", "detail": "Zolpidem, zopiclone, zaleplon."}, {"name": "Barbiturates", "detail": "Phenobarbital, thiopental; narrow therapeutic index."}, {"name": "Melatonin agonists", "detail": "Melatonin, ramelteon."}, {"name": "Sedating antihistamines", "detail": "Diphenhydramine, doxylamine, promethazine."}],
+        "clinical_uses": ["Insomnia, sedation, anaesthesia adjuncts, seizure-related use for selected drugs."],
+        "adverse_effects": ["Sedation, falls, cognitive impairment, dependence, respiratory depression with CNS depressants, complex sleep behaviors with Z-drugs, anticholinergic burden with antihistamines."],
+        "contraindications": ["Avoid sedative stacking with alcohol, opioids, and other CNS depressants; caution in elderly and respiratory disease."],
+        "exam_traps": ["Benzodiazepines increase frequency; barbiturates prolong duration.", "Barbiturate overdose is more dangerous.", "Z-drugs can still cause dependence and abnormal sleep behaviors."],
+        "oral_exam_answer": "Hypnotics include benzodiazepines, Z-drugs, barbiturates, melatonin agonists, and sedating antihistamines. Benzodiazepines increase GABA-A opening frequency; barbiturates prolong opening and are dangerous in overdose. Main risks are sedation, falls, dependence, respiratory depression with other depressants, and anticholinergic effects for sedating antihistamines."
+      },
+      {
+        "topic_id": "5C",
+        "label": "Topic C",
+        "title": "Lincosamide Antibiotics",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "Clindamycin is the key lincosamide. It binds the 50S ribosomal subunit, covers Gram-positive cocci and anaerobes, and has high C. difficile risk.",
+        "definition": "Lincosamides are protein-synthesis-inhibiting antibiotics represented mainly by clindamycin.",
+        "mechanism_steps": ["Bind the 50S ribosomal subunit.", "Inhibit peptide chain elongation/translocation.", "Usually bacteriostatic.", "Protein synthesis inhibition can reduce toxin production.", "Dysbiosis can trigger C. difficile colitis."],
+        "classification": [{"name": "Clindamycin", "detail": "Main clinical lincosamide."}, {"name": "Lincomycin", "detail": "Older, less emphasized."}],
+        "clinical_uses": ["Anaerobic infections, dental infections, skin and soft tissue infections, bone/joint infections, selected aspiration-related infections, penicillin allergy alternatives, toxin suppression in severe streptococcal or staphylococcal infections."],
+        "adverse_effects": ["Antibiotic-associated diarrhea, C. difficile pseudomembranous colitis, GI upset, rash, hepatotoxicity rarely."],
+        "contraindications": ["Avoid for meningitis because CSF penetration is poor.", "Use cautiously with history of C. difficile."],
+        "exam_traps": ["Major adverse effect is C. difficile colitis.", "Poor Gram-negative aerobic coverage.", "Possible cross-resistance with macrolides via 50S methylation."],
+        "oral_exam_answer": "Lincosamides, especially clindamycin, bind the 50S ribosomal subunit and inhibit bacterial protein synthesis. They cover anaerobes and many Gram-positive organisms and can reduce toxin production. Main uses include dental, anaerobic, skin/soft tissue, and selected bone infections. The key adverse effect is C. difficile pseudomembranous colitis, and clindamycin is not a meningitis drug."
+      }
+    ],
+    "clinical_cases": [{"id": "case5_clindamycin", "topic_id": "5C", "title": "Diarrhea After Antibiotics", "case_text": "A patient develops severe diarrhea after clindamycin for a dental abscess.", "question": "What complication is high yield?", "expected_answer": "C. difficile antibiotic-associated pseudomembranous colitis."}],
+    "podcast": {"audio_file": "", "script": "Link Vd and protein binding to dosing, compare hypnotic GABA-A risks, and finish with clindamycin coverage and C. difficile risk.", "summary_points": ["Only free drug is active.", "Loading dose depends on Vd.", "Barbiturates are riskier than benzodiazepines.", "Clindamycin binds 50S and risks C. difficile."]},
+    "final_review": ["Vd links amount in body to plasma concentration.", "Only free drug is active.", "Benzodiazepines increase GABA-A frequency; barbiturates prolong duration.", "Clindamycin: 50S, anaerobes/Gram-positive, C. difficile."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 6,
+    "title": "G-Protein Coupled Receptors / Alpha-Sympatholytics / Antifungals",
+    "short_title": "GPCRs / Alpha Blockers / Antifungals",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "autonomic", "antimicrobial"],
+    "learning_goal": "Master Gs/Gi/Gq signaling, alpha-blocker clinical logic, and antifungal drug targets.",
+    "why_it_matters": "GPCR signaling is a shared language for autonomic, cardiovascular, endocrine, and CNS pharmacology.",
+    "oral_exam_goals": ["Map Gs, Gi, and Gq to second messengers.", "Explain alpha1 blockade in vessels and prostate.", "Connect antifungal classes to ergosterol, cell wall, or nucleic acid targets."],
+    "topics": [
+      {
+        "topic_id": "6A",
+        "label": "Topic A",
+        "title": "G-Protein Coupled Receptors",
+        "category": "General Pharmacology",
+        "theory_short": "GPCRs are seven-transmembrane receptors. Gs increases cAMP, Gi decreases cAMP, and Gq activates PLC with IP3/DAG and calcium.",
+        "definition": "GPCRs are membrane receptors coupled to heterotrimeric G-proteins.",
+        "mechanism_steps": ["Ligand binds seven-transmembrane receptor.", "GDP is exchanged for GTP on alpha subunit.", "Alpha and beta-gamma subunits regulate enzymes or ion channels.", "Second messengers amplify the signal."],
+        "classification": [{"name": "Gs", "detail": "Adenylyl cyclase activation -> increased cAMP -> PKA; beta1, beta2, D1, H2, V2."}, {"name": "Gi", "detail": "Adenylyl cyclase inhibition -> decreased cAMP; alpha2, M2, D2, opioid."}, {"name": "Gq", "detail": "PLC -> IP3 + DAG -> Ca2+ and PKC; alpha1, M1, M3, H1, V1, AT1."}],
+        "clinical_uses": ["Receptor signaling logic for autonomic, cardiovascular, CNS, and endocrine drugs."],
+        "adverse_effects": ["Desensitization and downregulation with chronic receptor stimulation."],
+        "contraindications": [],
+        "exam_traps": ["Gs up, Gi down, Gq calcium.", "Beta-arrestin participates in desensitization.", "GPCRs are slower than ligand-gated ion channels but faster than nuclear receptors."],
+        "oral_exam_answer": "GPCRs are seven-transmembrane receptors coupled to G-proteins. Gs increases cAMP, Gi decreases cAMP, and Gq activates PLC, producing IP3, DAG, and calcium signaling. They are major targets for autonomic, cardiovascular, endocrine, and CNS drugs.",
+        "diagram_ids": ["gpcr_gs_gi_gq"],
+        "resource_ids": ["merck_pd"]
+      },
+      {
+        "topic_id": "6B",
+        "label": "Topic B",
+        "title": "Alpha-Sympatholytics",
+        "category": "Autonomic Pharmacology",
+        "theory_short": "Alpha blockers reduce alpha-adrenergic effects. Alpha1 blockade vasodilates and relaxes prostate/bladder neck smooth muscle.",
+        "definition": "Alpha-sympatholytics block alpha-adrenergic receptors.",
+        "mechanism_steps": ["Alpha1 blockade lowers peripheral vascular resistance.", "Alpha1A blockade improves urine flow in BPH.", "Alpha2 blockade removes presynaptic negative feedback and can increase noradrenaline release."],
+        "classification": [{"name": "Non-selective alpha blockers", "detail": "Phenoxybenzamine, phentolamine; pheochromocytoma/catecholamine excess."}, {"name": "Selective alpha1 blockers", "detail": "Prazosin, doxazosin, terazosin; hypertension and BPH."}, {"name": "Uroselective alpha1A blockers", "detail": "Tamsulosin, silodosin, alfuzosin; BPH."}],
+        "clinical_uses": ["Hypertension, BPH, pheochromocytoma, catecholamine-mediated hypertensive crisis."],
+        "adverse_effects": ["Orthostatic hypotension, first-dose syncope, dizziness, reflex tachycardia, ejaculatory dysfunction, intraoperative floppy iris syndrome."],
+        "contraindications": ["Caution with hypotension, falls, PDE5 inhibitors, and cataract surgery planning."],
+        "exam_traps": ["Non-selective alpha blockade can cause more tachycardia due to alpha2 blockade.", "Tamsulosin is uroselective.", "First-dose syncope is classic for alpha1 blockers."],
+        "oral_exam_answer": "Alpha-sympatholytics block alpha receptors. Alpha1 blockers reduce vascular tone and improve BPH symptoms; uroselective alpha1A blockers mainly target prostate and bladder neck. Non-selective alpha blockers are important in pheochromocytoma. Main adverse effects are orthostatic hypotension, dizziness, first-dose syncope, and reflex tachycardia."
+      },
+      {
+        "topic_id": "6C",
+        "label": "Topic C",
+        "title": "Antifungals",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "Antifungals target ergosterol, ergosterol synthesis, beta-1,3-glucan cell wall synthesis, nucleic acid synthesis, or microtubules.",
+        "definition": "Antifungals treat fungal infections by exploiting fungal membrane, wall, and metabolism targets.",
+        "mechanism_steps": ["Polyenes bind ergosterol and form pores.", "Azoles inhibit 14-alpha-demethylase and reduce ergosterol synthesis.", "Echinocandins inhibit beta-1,3-glucan synthesis.", "Flucytosine becomes 5-FU-like metabolites inside fungi.", "Terbinafine inhibits squalene epoxidase."],
+        "classification": [{"name": "Polyenes", "detail": "Amphotericin B, nystatin."}, {"name": "Azoles", "detail": "Fluconazole, itraconazole, voriconazole, posaconazole."}, {"name": "Echinocandins", "detail": "Caspofungin, micafungin, anidulafungin."}, {"name": "Allylamines", "detail": "Terbinafine."}, {"name": "Antimetabolite", "detail": "Flucytosine."}, {"name": "Mitotic inhibitor", "detail": "Griseofulvin."}],
+        "clinical_uses": ["Candidiasis, aspergillosis, cryptococcosis, dermatophytes, severe systemic mycoses depending on agent."],
+        "adverse_effects": ["Amphotericin nephrotoxicity and infusion reactions, azole hepatotoxicity and CYP interactions, flucytosine marrow suppression, terbinafine hepatotoxicity and taste disturbance."],
+        "contraindications": ["Check pregnancy, liver disease, renal disease, and CYP interaction context by drug."],
+        "exam_traps": ["Echinocandins are cell-wall drugs and mostly IV.", "Fluconazole penetrates CSF but does not reliably cover Aspergillus.", "Voriconazole is important for Aspergillus and can cause visual disturbances."],
+        "oral_exam_answer": "Antifungals target fungal ergosterol or cell wall synthesis. Amphotericin B binds ergosterol but is nephrotoxic. Azoles inhibit ergosterol synthesis and have CYP interactions. Echinocandins inhibit beta-1,3-glucan synthesis and are useful for Candida and Aspergillus contexts. Terbinafine treats dermatophytes; flucytosine is an antimetabolite used in selected combinations.",
+        "resource_ids": ["ninja_antibiotics_playlist"]
+      }
+    ],
+    "clinical_cases": [{"id": "case6_antifungal", "topic_id": "6C", "title": "Invasive Aspergillus", "case_text": "A neutropenic patient has suspected invasive aspergillosis.", "question": "Which antifungal class or agent is high yield?", "expected_answer": "Voriconazole is a key azole for Aspergillus; echinocandins can be used in selected salvage or combination settings."}],
+    "podcast": {"audio_file": "", "script": "Explain Gs/Gi/Gq, then alpha blockade in vessels and prostate, then antifungal target classes.", "summary_points": ["Gs increases cAMP.", "Gi decreases cAMP.", "Gq raises IP3/DAG/Ca2+.", "Alpha1 blockers help BPH.", "Echinocandins inhibit beta-glucan."]},
+    "final_review": ["Gs up, Gi down, Gq calcium.", "Alpha1 blockade lowers BP and relaxes prostate.", "Amphotericin binds ergosterol.", "Azoles inhibit 14-alpha-demethylase.", "Echinocandins inhibit beta-1,3-glucan."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 7,
+    "title": "Drug-Receptor Interactions / Tertiary Parasympatholytics / Hypolipidemics",
+    "short_title": "Receptors / Antimuscarinics / Lipids",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "autonomic", "cardiovascular"],
+    "learning_goal": "Differentiate receptor concepts, explain tertiary antimuscarinic drugs, and classify lipid-lowering therapies.",
+    "why_it_matters": "Dose-response language is reused across pharmacology, and lipid drugs are core cardiovascular prevention therapy.",
+    "oral_exam_goals": ["Define affinity, efficacy, potency, full agonist, partial agonist, antagonist, and inverse agonist.", "Explain tertiary antimuscarinic organ effects and CNS entry.", "Classify statins, ezetimibe, PCSK9 inhibitors, fibrates, bile acid sequestrants, omega-3 drugs, and niacin."],
+    "topics": [
+      {
+        "topic_id": "7A",
+        "label": "Topic A",
+        "title": "Drug-Receptor Interactions",
+        "category": "General Pharmacology",
+        "theory_short": "Affinity is binding, efficacy is activation, and potency is concentration needed for effect. Competitive antagonism shifts the curve right; noncompetitive antagonism lowers Emax.",
+        "definition": "Drug-receptor interaction describes drug binding to a receptor and the resulting biological response.",
+        "mechanism_steps": ["Drug binds receptor with a given affinity.", "Agonist efficacy determines receptor activation.", "Dose-response curves describe potency and maximal effect.", "Antagonists reduce receptor activation by competition or noncompetitive mechanisms."],
+        "classification": [{"name": "Full agonist", "detail": "Produces maximal response."}, {"name": "Partial agonist", "detail": "Submaximal response even with full occupancy."}, {"name": "Antagonist", "detail": "Binds without activating."}, {"name": "Inverse agonist", "detail": "Reduces basal receptor activity."}],
+        "clinical_uses": ["Predicting antagonist reversal, partial agonist behavior, and toxicity or therapeutic selectivity."],
+        "adverse_effects": ["Excess agonism, blockade of physiological signaling, partial agonist precipitated withdrawal in dependent states."],
+        "contraindications": [],
+        "exam_traps": ["Potency does not equal efficacy.", "Competitive reversible antagonism can be overcome by more agonist.", "Noncompetitive antagonism lowers maximal response."],
+        "oral_exam_answer": "Drug-receptor interaction is described by affinity, efficacy, and potency. Agonists activate receptors, partial agonists activate them submaximally, antagonists block activation, and inverse agonists reduce constitutive activity. Competitive antagonism shifts the dose-response curve right, while noncompetitive antagonism reduces maximal effect.",
+        "diagram_ids": ["dose_response_curves"],
+        "resource_ids": ["merck_pd"]
+      },
+      {
+        "topic_id": "7B",
+        "label": "Topic B",
+        "title": "Tertiary Parasympatholytics",
+        "category": "Autonomic Pharmacology",
+        "theory_short": "Tertiary antimuscarinics are lipophilic M receptor blockers that can cross the BBB and cause central as well as peripheral anticholinergic effects.",
+        "definition": "Tertiary parasympatholytics are lipophilic antimuscarinic drugs blocking M1-M5 receptors.",
+        "mechanism_steps": ["Block muscarinic receptor effects of acetylcholine.", "Reduce secretions and smooth muscle tone.", "Increase heart rate.", "Cause mydriasis and cycloplegia.", "Can enter CNS and cause sedation, confusion, or hallucinations."],
+        "classification": [{"name": "Atropine", "detail": "Bradycardia, organophosphate poisoning with oximes, premedication historically."}, {"name": "Scopolamine", "detail": "Motion sickness and postoperative nausea."}, {"name": "Ophthalmic agents", "detail": "Tropicamide and cyclopentolate."}, {"name": "Bladder agents", "detail": "Oxybutynin, tolterodine, solifenacin."}, {"name": "Parkinsonism agents", "detail": "Benztropine, biperiden, trihexyphenidyl."}],
+        "clinical_uses": ["Bradycardia, motion sickness, ophthalmic mydriasis, overactive bladder, parkinsonism, organophosphate poisoning adjunct."],
+        "adverse_effects": ["Dry mouth, blurred vision, mydriasis, constipation, urinary retention, tachycardia, hyperthermia, confusion."],
+        "contraindications": ["Glaucoma risk, BPH, urinary retention, paralytic ileus, tachyarrhythmias, elderly cognitive impairment."],
+        "exam_traps": ["Tertiary agents cross the BBB.", "Antimuscarinic toxicity is hot, dry, blind, red, tachycardic, confused, and retaining urine.", "Can precipitate angle-closure glaucoma."],
+        "oral_exam_answer": "Tertiary parasympatholytics are lipophilic antimuscarinic drugs that block M receptors and can enter the CNS. They reduce secretions and smooth muscle tone, increase heart rate, cause mydriasis, and are used in bradycardia, motion sickness, ophthalmology, overactive bladder, and parkinsonism. Main adverse effects are anticholinergic and central confusion."
+      },
+      {
+        "topic_id": "7C",
+        "label": "Topic C",
+        "title": "Hypolipidemics",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Hypolipidemics reduce LDL, triglycerides, or both. Statins are first-line for LDL lowering and cardiovascular risk reduction.",
+        "definition": "Hypolipidemics are drugs that improve lipid profiles and reduce atherosclerotic cardiovascular risk.",
+        "mechanism_steps": ["Statins inhibit HMG-CoA reductase and increase LDL receptor expression.", "Ezetimibe blocks intestinal NPC1L1 cholesterol absorption.", "PCSK9 inhibitors increase LDL receptor recycling.", "Fibrates activate PPAR-alpha and lower triglycerides.", "Bile acid sequestrants bind bile acids in the gut."],
+        "classification": [{"name": "Statins", "detail": "Atorvastatin, rosuvastatin, simvastatin."}, {"name": "Ezetimibe", "detail": "NPC1L1 inhibitor."}, {"name": "PCSK9 pathway", "detail": "Alirocumab, evolocumab, inclisiran."}, {"name": "Fibrates", "detail": "Fenofibrate, gemfibrozil."}, {"name": "Other", "detail": "Bile acid sequestrants, omega-3 fatty acids, niacin."}],
+        "clinical_uses": ["ASCVD prevention, familial hypercholesterolemia, hypertriglyceridemia, pancreatitis risk reduction for very high TG."],
+        "adverse_effects": ["Statin myopathy and liver enzyme rise, fibrate gallstones and myopathy, bile acid constipation and drug binding, niacin flushing and hyperglycemia."],
+        "contraindications": ["Pregnancy for statins in most contexts, active liver disease, severe drug interactions depending on agent."],
+        "exam_traps": ["Statins are first-line for LDL.", "Fibrates are mainly for high triglycerides.", "Gemfibrozil plus statin increases myopathy risk.", "PCSK9 inhibitors strongly reduce LDL."],
+        "oral_exam_answer": "Hypolipidemics lower LDL, triglycerides, or both. Statins inhibit HMG-CoA reductase and are first-line for LDL and cardiovascular prevention. Ezetimibe reduces intestinal cholesterol absorption, PCSK9 inhibitors increase LDL receptor recycling, and fibrates lower triglycerides through PPAR-alpha activation. Key risks are statin myopathy, liver enzyme elevation, fibrate gallstones, and drug interactions."
+      }
+    ],
+    "clinical_cases": [{"id": "case7_lipid", "topic_id": "7C", "title": "High LDL After MI", "case_text": "A patient after myocardial infarction has high LDL cholesterol.", "question": "Which lipid-lowering class is foundational?", "expected_answer": "A statin, usually high-intensity unless contraindicated, because statins reduce LDL and cardiovascular events."}],
+    "podcast": {"audio_file": "", "script": "Review receptor language, tertiary antimuscarinic uses and toxicity, then lipid-lowering drug classes.", "summary_points": ["Potency is not efficacy.", "Noncompetitive antagonism reduces Emax.", "Tertiary antimuscarinics cross BBB.", "Statins are first-line for LDL."]},
+    "final_review": ["Affinity binds; efficacy activates; potency shifts EC50.", "Tertiary antimuscarinics cause central and peripheral anticholinergic effects.", "Statins first-line for LDL.", "Fibrates for high triglycerides."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 8,
+    "title": "Basic Pharmacodynamic Parameters Characterising Efficacy and Toxicity / Drugs with a Positive Inotropic Effect / Atypical Opioid Analgesics",
+    "short_title": "PD Parameters / Inotropes / Atypical Opioids",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cardiovascular", "cns"],
+    "learning_goal": "Understand dose-response safety parameters, classify positive inotropes, and compare atypical opioids.",
+    "why_it_matters": "Therapeutic window thinking prevents toxicity, especially with cardiac and CNS drugs.",
+    "oral_exam_goals": ["Explain Emax, EC50, ED50, TD50, LD50, therapeutic index, and therapeutic window.", "Classify digoxin, beta1 agonists, PDE3 inhibitors, levosimendan, and glucagon.", "Compare tramadol, tapentadol, buprenorphine, and mixed agonist-antagonists."],
+    "topics": [
+      {
+        "topic_id": "8A",
+        "label": "Topic A",
+        "title": "Basic Pharmacodynamic Parameters Characterising Efficacy and Toxicity",
+        "category": "General Pharmacology",
+        "theory_short": "Emax reflects efficacy, EC50 reflects potency, and therapeutic index compares toxic to effective doses.",
+        "definition": "Pharmacodynamic parameters quantify drug effect, potency, efficacy, toxicity, and safety margin.",
+        "mechanism_steps": ["Plot dose or concentration against effect.", "Identify maximal effect as Emax.", "Identify EC50 or ED50 for potency.", "Compare ED50 with TD50 or LD50 for safety.", "Use therapeutic window for monitoring narrow-index drugs."],
+        "classification": [{"name": "Emax", "detail": "Maximum effect; efficacy."}, {"name": "EC50/ED50", "detail": "Concentration or dose producing 50% effect; potency."}, {"name": "TD50/LD50", "detail": "Toxic or lethal dose in 50% of population/animals."}, {"name": "Therapeutic index", "detail": "TD50/ED50 or LD50/ED50."}],
+        "clinical_uses": ["Drug comparison, dose titration, therapeutic drug monitoring."],
+        "adverse_effects": ["Narrow therapeutic window increases toxicity risk."],
+        "contraindications": [],
+        "exam_traps": ["More potent does not mean more effective.", "A wider therapeutic index is safer.", "Partial agonists may antagonize full agonists."],
+        "oral_exam_answer": "Emax is maximal effect and reflects efficacy. EC50 or ED50 reflects potency. TD50 and LD50 describe toxicity and lethality. The therapeutic index compares toxic to effective dose, and the therapeutic window is the useful concentration range between minimum effective and toxic levels.",
+        "diagram_ids": ["therapeutic_index_graph"],
+        "resource_ids": ["merck_pd"]
+      },
+      {
+        "topic_id": "8B",
+        "label": "Topic B",
+        "title": "Drugs with a Positive Inotropic Effect",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Positive inotropes increase myocardial contractility but can provoke arrhythmia and worsen outcomes if misused.",
+        "definition": "Positive inotropes increase the force of myocardial contraction.",
+        "mechanism_steps": ["Increase intracellular calcium availability or calcium sensitivity.", "Improve contractility acutely.", "Often increase oxygen demand and arrhythmia risk.", "Use depends on acute versus chronic context."],
+        "classification": [{"name": "Cardiac glycosides", "detail": "Digoxin inhibits Na+/K+ ATPase and increases intracellular Ca2+."}, {"name": "Beta1 agonists", "detail": "Dobutamine and dopamine increase cAMP."}, {"name": "PDE3 inhibitors", "detail": "Milrinone increases cAMP and vasodilates."}, {"name": "Calcium sensitizer", "detail": "Levosimendan sensitizes troponin C."}, {"name": "Glucagon", "detail": "Raises cAMP independent of beta receptors; beta-blocker overdose."}],
+        "clinical_uses": ["Acute heart failure, cardiogenic shock, selected chronic HF with AF for digoxin, beta-blocker overdose for glucagon."],
+        "adverse_effects": ["Arrhythmias, hypotension with vasodilating inotropes, digoxin GI/CNS/visual toxicity."],
+        "contraindications": ["Correct hypokalemia and renal dosing issues with digoxin; caution with arrhythmias."],
+        "exam_traps": ["Digoxin toxicity risk rises with hypokalemia and renal impairment.", "Milrinone is an inodilator.", "Glucagon is used in beta-blocker overdose."],
+        "oral_exam_answer": "Positive inotropes increase myocardial contractility. Main groups are digoxin, beta1 agonists such as dobutamine, PDE3 inhibitors such as milrinone, levosimendan, and glucagon. They are useful in acute heart failure or shock but increase arrhythmia risk. Digoxin has a narrow therapeutic index and toxicity is promoted by hypokalemia and renal impairment."
+      },
+      {
+        "topic_id": "8C",
+        "label": "Topic C",
+        "title": "Atypical Opioid Analgesics",
+        "category": "CNS Pharmacology",
+        "theory_short": "Atypical opioids combine opioid receptor effects with monoaminergic or mixed receptor actions, so they retain opioid risks plus drug-specific traps.",
+        "definition": "Atypical opioids are analgesics with opioid activity plus additional mechanisms or partial/mixed receptor behavior.",
+        "mechanism_steps": ["Tramadol is a weak mu agonist and inhibits serotonin/noradrenaline reuptake.", "Tapentadol is a mu agonist and noradrenaline reuptake inhibitor.", "Buprenorphine is a partial mu agonist with high receptor affinity.", "Nalbuphine and butorphanol are kappa agonists with mu antagonist or partial agonist behavior."],
+        "classification": [{"name": "Tramadol", "detail": "Seizure and serotonin syndrome risk."}, {"name": "Tapentadol", "detail": "Less serotonergic than tramadol but opioid risks remain."}, {"name": "Buprenorphine", "detail": "Pain and opioid substitution; can precipitate withdrawal."}, {"name": "Mixed agonist-antagonists", "detail": "Nalbuphine, butorphanol; dysphoria and withdrawal risk."}],
+        "clinical_uses": ["Moderate pain, neuropathic component in selected cases, opioid substitution therapy for buprenorphine."],
+        "adverse_effects": ["Nausea, dizziness, sedation, dependence, respiratory depression, seizures and serotonin syndrome with tramadol."],
+        "contraindications": ["Avoid tramadol with MAOIs or high-risk serotonergic combinations; caution in seizure risk."],
+        "exam_traps": ["Tramadol can cause serotonin syndrome and seizures.", "Buprenorphine can precipitate withdrawal because of high receptor affinity.", "Partial agonists have ceiling effects but are not risk-free."],
+        "oral_exam_answer": "Atypical opioids include tramadol, tapentadol, buprenorphine, and mixed agonist-antagonists. Tramadol is a weak mu agonist and serotonin/noradrenaline reuptake inhibitor, so it can cause seizures and serotonin syndrome. Buprenorphine is a high-affinity partial mu agonist used for pain and substitution therapy but may precipitate withdrawal."
+      }
+    ],
+    "clinical_cases": [{"id": "case8_tramadol", "topic_id": "8C", "title": "Pain Drug With SSRI", "case_text": "A patient on sertraline is prescribed tramadol for pain.", "question": "Which interaction risk is high yield?", "expected_answer": "Serotonin syndrome and seizure risk are increased with tramadol in serotonergic combinations."}],
+    "podcast": {"audio_file": "", "script": "Define pharmacodynamic safety parameters, then inotropes and atypical opioids with toxicity traps.", "summary_points": ["Emax is efficacy.", "EC50 is potency.", "Digoxin toxicity is worse with hypokalemia.", "Tramadol can cause serotonin syndrome."]},
+    "final_review": ["Potency is EC50, efficacy is Emax.", "Therapeutic index estimates safety margin.", "Digoxin has narrow TI and hypokalemia risk.", "Tramadol: seizures and serotonin syndrome."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 9,
+    "title": "Excretion of Drugs / Antituberculotics / Angiotensin Receptor Antagonists",
+    "short_title": "Excretion / TB Drugs / ARBs",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "antimicrobial", "cardiovascular"],
+    "learning_goal": "Explain renal drug elimination, standard tuberculosis treatment, and ARB mechanism and risks.",
+    "why_it_matters": "This module connects elimination, antimicrobial resistance prevention, and RAAS blockade safety.",
+    "oral_exam_goals": ["Explain filtration, secretion, reabsorption, urine pH, and renal dose adjustment.", "Describe RIPE therapy and key toxicities.", "Explain AT1 blockade, indications, hyperkalemia, renal warnings, and pregnancy contraindication."],
+    "topics": [
+      {
+        "topic_id": "9A",
+        "label": "Topic A",
+        "title": "Excretion of Drugs",
+        "category": "General Pharmacology",
+        "theory_short": "Drug excretion removes parent drug or metabolites. The kidney uses filtration, active secretion, and reabsorption.",
+        "definition": "Excretion is elimination of drug or metabolites from the body.",
+        "mechanism_steps": ["Free unbound drug is filtered at glomerulus.", "Organic acids and bases can be actively secreted in proximal tubule.", "Lipophilic non-ionized drug can be reabsorbed.", "Urine pH can trap weak acids or bases.", "Renal impairment often requires dose adjustment."],
+        "classification": [{"name": "Glomerular filtration", "detail": "Free drug only."}, {"name": "Tubular secretion", "detail": "Carrier-mediated; probenecid can inhibit some organic acid secretion."}, {"name": "Tubular reabsorption", "detail": "Depends on lipophilicity and ionization."}],
+        "clinical_uses": ["Renal dose adjustment, poisoning management, dialysis prediction."],
+        "adverse_effects": ["Accumulation and toxicity in renal impairment."],
+        "contraindications": [],
+        "exam_traps": ["Protein-bound drug is not filtered.", "Alkaline urine increases excretion of weak acids.", "Dialysis works best for small, water-soluble, low protein-bound, low Vd drugs."],
+        "oral_exam_answer": "Drug excretion occurs mainly by the kidney through glomerular filtration of free drug, active tubular secretion, and tubular reabsorption. Ionization and urine pH affect reabsorption. Renal impairment requires dose adjustment, and dialysis removes small, water-soluble, low protein-bound, low Vd drugs best.",
+        "diagram_ids": ["renal_excretion_flow"],
+        "resource_ids": ["merck_pk"]
+      },
+      {
+        "topic_id": "9B",
+        "label": "Topic B",
+        "title": "Antituberculotics",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "TB therapy uses combination treatment to prevent resistance. Standard initial therapy is RIPE: rifampicin, isoniazid, pyrazinamide, ethambutol.",
+        "definition": "Antituberculotics are drugs used in combination to treat Mycobacterium tuberculosis.",
+        "mechanism_steps": ["Use multiple drugs to prevent resistance.", "Initial phase commonly uses isoniazid, rifampicin, pyrazinamide, and ethambutol.", "Continuation phase usually uses isoniazid and rifampicin in drug-susceptible TB.", "Adjust regimen to susceptibility, site, and national guidance."],
+        "classification": [{"name": "Isoniazid", "detail": "Mycolic acid synthesis; hepatotoxicity and neuropathy, give pyridoxine."}, {"name": "Rifampicin", "detail": "RNA polymerase inhibitor; orange fluids, CYP induction."}, {"name": "Pyrazinamide", "detail": "Hepatotoxicity and hyperuricemia."}, {"name": "Ethambutol", "detail": "Optic neuritis and red-green color blindness."}, {"name": "Streptomycin", "detail": "Aminoglycoside; oto- and nephrotoxicity."}],
+        "clinical_uses": ["Active tuberculosis and selected latent TB regimens depending on guidelines."],
+        "adverse_effects": ["Hepatotoxicity, neuropathy, optic neuritis, hyperuricemia, CYP interactions, orange body fluids."],
+        "contraindications": ["Avoid monotherapy for active TB; tailor to resistance and organ function."],
+        "exam_traps": ["RIPE regimen.", "Give pyridoxine with isoniazid.", "Rifampicin strongly induces CYP enzymes.", "Ethambutol causes optic neuritis."],
+        "oral_exam_answer": "Tuberculosis is treated with combinations to prevent resistance. Standard initial treatment is isoniazid, rifampicin, pyrazinamide, and ethambutol, followed by isoniazid and rifampicin in drug-susceptible disease. Key toxicities are isoniazid neuropathy/hepatotoxicity, rifampicin CYP induction and orange fluids, pyrazinamide hepatotoxicity/hyperuricemia, and ethambutol optic neuritis.",
+        "resource_ids": ["ninja_antibiotics_playlist"]
+      },
+      {
+        "topic_id": "9C",
+        "label": "Topic C",
+        "title": "Angiotensin Receptor Antagonists",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "ARBs block angiotensin II AT1 receptors, reducing vasoconstriction, aldosterone, sympathetic facilitation, and remodeling.",
+        "definition": "ARBs are angiotensin II AT1 receptor blockers.",
+        "mechanism_steps": ["Block AT1 receptor effects of angiotensin II.", "Decrease vasoconstriction.", "Decrease aldosterone release.", "Reduce remodeling and proteinuric kidney damage in selected patients.", "Can reduce glomerular pressure and raise potassium."],
+        "classification": [{"name": "ARBs", "detail": "Losartan, valsartan, candesartan, irbesartan, telmisartan, olmesartan."}],
+        "clinical_uses": ["Hypertension, heart failure, diabetic nephropathy/proteinuria, post-MI alternatives when ACE inhibitors are not tolerated."],
+        "adverse_effects": ["Hyperkalemia, hypotension, renal function worsening in renal artery stenosis, rare angioedema."],
+        "contraindications": ["Pregnancy, bilateral renal artery stenosis, severe hyperkalemia."],
+        "exam_traps": ["Less cough than ACE inhibitors because bradykinin breakdown is not blocked.", "Still contraindicated in pregnancy.", "Avoid routine ACE inhibitor plus ARB combination."],
+        "oral_exam_answer": "ARBs such as losartan and valsartan block AT1 receptors, reducing vasoconstriction, aldosterone release, sympathetic effects, and remodeling. They are used in hypertension, heart failure, and proteinuric kidney disease. Compared with ACE inhibitors they cause less cough, but still risk hyperkalemia, renal function worsening, and fetal toxicity."
+      }
+    ],
+    "clinical_cases": [{"id": "case9_arb_pregnancy", "topic_id": "9C", "title": "ARB In Pregnancy", "case_text": "A patient taking losartan becomes pregnant.", "question": "What is the key safety issue?", "expected_answer": "ARBs are contraindicated in pregnancy because they can cause fetal renal injury, oligohydramnios, and related developmental toxicity."}],
+    "podcast": {"audio_file": "", "script": "Review renal excretion, RIPE tuberculosis therapy, and AT1 receptor blockade.", "summary_points": ["Only free drug is filtered.", "Alkaline urine traps weak acids.", "RIPE is initial TB therapy.", "ARBs cause hyperkalemia and are contraindicated in pregnancy."]},
+    "final_review": ["Filtration handles free drug.", "Urine alkalinization enhances weak acid elimination.", "TB: isoniazid, rifampicin, pyrazinamide, ethambutol.", "ARBs block AT1, cause hyperkalemia, and are pregnancy contraindicated."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 10,
+    "title": "Drug Metabolism / Treatment of Non-Specific Inflammatory Bowel Diseases / Class III Antiarrhythmics",
+    "short_title": "Metabolism / IBD / Class III Antiarrhythmics",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "gastrointestinal", "cardiovascular"],
+    "learning_goal": "Explain phase I/II metabolism, pharmacological IBD treatment, and potassium-channel antiarrhythmics.",
+    "why_it_matters": "Metabolic interactions and QT toxicity are common sources of preventable harm.",
+    "oral_exam_goals": ["Separate phase I and phase II metabolism and induction versus inhibition.", "Outline IBD treatment escalation.", "Explain class III action potential effects and torsades risk."],
+    "topics": [
+      {
+        "topic_id": "10A",
+        "label": "Topic A",
+        "title": "Drug Metabolism",
+        "category": "General Pharmacology",
+        "theory_short": "Metabolism chemically modifies drugs to facilitate elimination or activate prodrugs. Phase I often uses CYP; phase II conjugates.",
+        "definition": "Drug metabolism, or biotransformation, chemically changes drugs or prodrugs.",
+        "mechanism_steps": ["Phase I oxidation, reduction, or hydrolysis introduces or unmasks functional groups.", "Phase II conjugation usually increases polarity.", "CYP inhibition rapidly increases substrate levels.", "CYP induction takes days to weeks and lowers substrate levels.", "Genetic polymorphisms affect selected enzymes."],
+        "classification": [{"name": "Phase I", "detail": "Oxidation, reduction, hydrolysis; mainly CYP450."}, {"name": "Phase II", "detail": "Glucuronidation, sulfation, acetylation, methylation, glutathione conjugation."}, {"name": "Inducers", "detail": "Rifampicin, carbamazepine, phenytoin, phenobarbital, St John's wort."}, {"name": "Inhibitors", "detail": "Macrolides, azoles, amiodarone, grapefruit juice, ritonavir."}],
+        "clinical_uses": ["Dose adjustment, interaction prevention, prodrug activation prediction."],
+        "adverse_effects": ["Toxicity from inhibition, treatment failure from induction, reactive metabolite toxicity."],
+        "contraindications": [],
+        "exam_traps": ["CYP1A2 is induced by smoking.", "Inhibition is usually rapid; induction is delayed.", "Codeine activation depends partly on CYP2D6."],
+        "oral_exam_answer": "Drug metabolism modifies drugs to facilitate elimination or activate prodrugs. Phase I reactions include oxidation, reduction, and hydrolysis, often by CYP enzymes. Phase II reactions conjugate drugs and usually increase polarity. Enzyme inhibition raises substrate levels quickly; enzyme induction takes days to weeks and can cause therapeutic failure.",
+        "diagram_ids": ["metabolism_phase_chart"],
+        "resource_ids": ["merck_pk"]
+      },
+      {
+        "topic_id": "10B",
+        "label": "Topic B",
+        "title": "Treatment of Non-Specific Inflammatory Bowel Diseases",
+        "category": "Gastrointestinal Pharmacology",
+        "theory_short": "IBD therapy induces and maintains remission with 5-ASA, corticosteroids, immunomodulators, biologics, JAK inhibitors, S1P modulators, and supportive care.",
+        "definition": "IBD pharmacotherapy treats ulcerative colitis and Crohn disease by suppressing gut inflammation and maintaining remission.",
+        "mechanism_steps": ["Mild UC often uses topical or oral 5-ASA.", "Corticosteroids induce remission but are not maintenance drugs.", "Thiopurines or methotrexate can maintain remission in selected disease.", "Biologics target TNF, integrins, IL-12/23 or IL-23.", "Before advanced therapy, screen infections and vaccination status."],
+        "classification": [{"name": "5-ASA", "detail": "Mesalazine, sulfasalazine."}, {"name": "Glucocorticoids", "detail": "Prednisone, methylprednisolone, budesonide."}, {"name": "Immunomodulators", "detail": "Azathioprine, 6-MP, methotrexate."}, {"name": "Biologics", "detail": "Infliximab, adalimumab, vedolizumab, ustekinumab."}, {"name": "Targeted oral drugs", "detail": "Tofacitinib, upadacitinib, ozanimod."}],
+        "clinical_uses": ["Induction and maintenance of remission in UC and Crohn disease."],
+        "adverse_effects": ["Steroid toxicity, infection risk, myelosuppression, hepatotoxicity, TB/reactivation risk, thrombosis warnings for JAK inhibitors."],
+        "contraindications": ["Avoid steroids as maintenance; screen TB/hepatitis before biologics or JAK inhibitors."],
+        "exam_traps": ["Steroids induce remission but are not maintenance.", "5-ASA is strongest in ulcerative colitis logic.", "Biologics require infection screening."],
+        "oral_exam_answer": "IBD treatment aims to induce and maintain remission. 5-ASA is important especially in ulcerative colitis. Corticosteroids treat flares but are not maintenance therapy. Immunomodulators and biologics are used for steroid-dependent or moderate-severe disease, and advanced therapies require infection screening and vaccination review."
+      },
+      {
+        "topic_id": "10C",
+        "label": "Topic C",
+        "title": "Class III Antiarrhythmics",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Class III antiarrhythmics mainly block potassium channels, prolonging repolarization, action potential duration, refractory period, and QT interval.",
+        "definition": "Class III antiarrhythmics are repolarization-prolonging drugs, mainly potassium channel blockers.",
+        "mechanism_steps": ["Block repolarizing potassium currents.", "Prolong phase 3 repolarization.", "Increase effective refractory period.", "Prolong QT interval.", "Excess QT prolongation can trigger torsades de pointes."],
+        "classification": [{"name": "Amiodarone", "detail": "K+, Na+, Ca2+, and beta-blocking effects; pulmonary, thyroid, liver, ocular, skin toxicity."}, {"name": "Sotalol", "detail": "Class III plus nonselective beta-blockade; torsades risk."}, {"name": "Dofetilide", "detail": "Pure IKr blocker; renal dosing and monitoring."}, {"name": "Ibutilide", "detail": "IV conversion of AF/flutter; monitor ECG."}, {"name": "Dronedarone", "detail": "Amiodarone analogue; avoid severe HF/permanent AF."}],
+        "clinical_uses": ["Atrial fibrillation rhythm control, atrial flutter conversion, ventricular arrhythmias depending on agent."],
+        "adverse_effects": ["QT prolongation, torsades, bradycardia, organ toxicity with amiodarone."],
+        "contraindications": ["Long QT, low K+/Mg2+, interacting QT drugs, severe HF for dronedarone."],
+        "exam_traps": ["Class III drugs prolong QT.", "Sotalol, dofetilide, and ibutilide are torsades-heavy.", "Amiodarone has many extracardiac toxicities and long half-life."],
+        "oral_exam_answer": "Class III antiarrhythmics mainly block potassium channels, prolong phase 3 repolarization, action potential duration, effective refractory period, and QT interval. They are used in atrial and ventricular arrhythmias. Major risks are QT prolongation and torsades, while amiodarone also causes pulmonary, thyroid, hepatic, ocular, and skin toxicity."
+      }
+    ],
+    "clinical_cases": [{"id": "case10_torsades", "topic_id": "10C", "title": "QT Risk", "case_text": "A patient on sotalol has hypokalemia and syncope.", "question": "Which arrhythmia is the exam concern?", "expected_answer": "Torsades de pointes due to QT prolongation, worsened by hypokalemia."}],
+    "podcast": {"audio_file": "", "script": "Review drug metabolism and interactions, IBD escalation, and class III QT/torsades toxicity.", "summary_points": ["Phase I often CYP.", "Induction lowers levels slowly.", "Steroids are not IBD maintenance.", "Class III drugs prolong QT."]},
+    "final_review": ["Phase I CYP; Phase II conjugation.", "Inhibitors increase levels; inducers decrease levels.", "IBD steroids induce but do not maintain remission.", "Class III drugs prolong repolarization and QT."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 11,
+    "title": "Drug Interactions / Antidepressants: MAOIs and TCAs / Laxatives, Obstipants and Treatment of Diarrhea",
+    "short_title": "Interactions / MAOIs-TCAs / Bowel Drugs",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cns", "gastrointestinal"],
+    "learning_goal": "Classify interactions, know high-risk older antidepressants, and manage constipation and diarrhea pharmacologically.",
+    "why_it_matters": "This module centers on avoiding harm from interactions, overdose, and inappropriate symptomatic treatment.",
+    "oral_exam_goals": ["Classify pharmaceutical, PK, and PD interactions.", "Explain MAOI and TCA mechanisms, toxicities, and TCA overdose treatment.", "Choose laxatives and antidiarrheals safely."],
+    "topics": [
+      {
+        "topic_id": "11A",
+        "label": "Topic A",
+        "title": "Drug Interactions",
+        "category": "General Pharmacology",
+        "theory_short": "Drug interactions may be pharmaceutical, pharmacokinetic, or pharmacodynamic and can reduce efficacy or increase toxicity.",
+        "definition": "A drug interaction occurs when a drug, food, disease, alcohol, smoking, or herb changes the effect of another drug.",
+        "mechanism_steps": ["Pharmaceutical incompatibility occurs before administration.", "PK interactions alter absorption, distribution, metabolism, or excretion.", "PD interactions alter effect at target or physiology.", "Narrow therapeutic index drugs are highest risk."],
+        "classification": [{"name": "Absorption", "detail": "pH, chelation, adsorption, motility."}, {"name": "Distribution", "detail": "Protein binding displacement."}, {"name": "Metabolism", "detail": "CYP inhibition or induction."}, {"name": "Excretion", "detail": "Renal transport or urine pH."}, {"name": "Pharmacodynamic", "detail": "Additive or opposing effects."}],
+        "clinical_uses": ["Medication review, anticoagulant safety, CNS depressant safety, transplant drug monitoring."],
+        "adverse_effects": ["Toxicity or treatment failure."],
+        "contraindications": ["Avoid dangerous combinations such as PDE5 inhibitors with nitrates or major QT-prolonging stacking."],
+        "exam_traps": ["Macrolides/azoles can increase statin toxicity.", "NSAID plus anticoagulant increases bleeding.", "Beta-blocker plus verapamil can cause bradycardia or AV block."],
+        "oral_exam_answer": "Drug interactions can be pharmaceutical, pharmacokinetic, or pharmacodynamic. Pharmacokinetic interactions alter absorption, distribution, metabolism, or excretion; pharmacodynamic interactions occur at the level of effect. The most dangerous interactions involve narrow therapeutic index drugs, anticoagulants, CNS depressants, antiarrhythmics, and cardiovascular combinations.",
+        "diagram_ids": ["drug_interaction_types"]
+      },
+      {
+        "topic_id": "11B",
+        "label": "Topic B",
+        "title": "Antidepressants: MAOIs and TCAs",
+        "category": "CNS Pharmacology",
+        "theory_short": "MAOIs and TCAs are effective older antidepressants with high interaction and overdose risk.",
+        "definition": "MAOIs inhibit monoamine degradation; TCAs block serotonin and noradrenaline reuptake and several off-target receptors.",
+        "mechanism_steps": ["MAOIs increase serotonin, noradrenaline, and dopamine.", "TCAs inhibit NA and 5-HT reuptake.", "TCAs also block muscarinic, H1, alpha1, and cardiac sodium channels.", "TCA overdose causes coma, seizures, arrhythmias, and wide QRS."],
+        "classification": [{"name": "MAOIs", "detail": "Phenelzine, tranylcypromine; moclobemide reversible MAO-A inhibitor."}, {"name": "TCAs", "detail": "Amitriptyline, imipramine, clomipramine, nortriptyline."}],
+        "clinical_uses": ["Resistant depression, neuropathic pain, migraine prophylaxis, OCD for clomipramine."],
+        "adverse_effects": ["MAOI hypertensive crisis, serotonin syndrome, orthostatic hypotension; TCA anticholinergic effects, sedation, weight gain, hypotension, seizures, lethal arrhythmia."],
+        "contraindications": ["MAOI with tyramine/sympathomimetics/serotonergic drugs; TCA overdose risk and cardiac conduction disease require caution."],
+        "exam_traps": ["TCA overdose with wide QRS is treated with sodium bicarbonate.", "MAOIs can cause tyramine hypertensive crisis.", "TCAs are dangerous in overdose due to sodium channel blockade."],
+        "oral_exam_answer": "MAOIs increase monoamines by inhibiting degradation but risk tyramine hypertensive crisis and serotonin syndrome. TCAs inhibit serotonin and noradrenaline reuptake and also block muscarinic, H1, alpha1, and cardiac sodium channels. TCA overdose causes coma, seizures, hypotension, arrhythmias, and wide QRS; treatment includes ABCs, charcoal if safe, sodium bicarbonate, and benzodiazepines for seizures."
+      },
+      {
+        "topic_id": "11C",
+        "label": "Topic C",
+        "title": "Laxatives, Obstipants and Treatment of Diarrhea",
+        "category": "Gastrointestinal Pharmacology",
+        "theory_short": "Constipation drugs increase stool bulk, water, motility, or softness. Diarrhea treatment prioritizes rehydration; loperamide is avoided in invasive or C. difficile diarrhea.",
+        "definition": "Laxatives treat constipation; antidiarrheals and rehydration treat diarrhea depending on cause.",
+        "mechanism_steps": ["Bulk agents increase stool mass.", "Osmotic agents retain water.", "Stimulants increase enteric nerve activity and secretion.", "Stool softeners/lubricants ease passage.", "Antidiarrheals reduce motility or secretion after dangerous causes are excluded."],
+        "classification": [{"name": "Bulk-forming", "detail": "Psyllium, methylcellulose."}, {"name": "Osmotic", "detail": "Lactulose, PEG, magnesium salts."}, {"name": "Stimulant", "detail": "Senna, bisacodyl, sodium picosulfate."}, {"name": "Antimotility", "detail": "Loperamide, diphenoxylate."}, {"name": "Antisecretory", "detail": "Racecadotril."}],
+        "clinical_uses": ["Chronic constipation, rescue constipation therapy, hepatic encephalopathy with lactulose, non-invasive diarrhea symptom control."],
+        "adverse_effects": ["Bloating, cramps, electrolyte disturbance, dehydration, constipation, toxic megacolon risk if antimotility used incorrectly."],
+        "contraindications": ["Avoid loperamide in bloody diarrhea, high fever, suspected invasive infection, or C. difficile."],
+        "exam_traps": ["Rehydration is the most important diarrhea treatment.", "Loperamide is not for bloody feverish diarrhea.", "Stimulant laxative abuse can cause cramps and electrolyte problems."],
+        "oral_exam_answer": "Laxatives include bulk-forming, osmotic, stimulant, stool-softening, and prokinetic or secretagogue drugs. Diarrhea treatment begins with rehydration. Loperamide can help non-invasive diarrhea but must be avoided with bloody diarrhea, high fever, suspected invasive infection, or C. difficile."
+      }
+    ],
+    "clinical_cases": [{"id": "case11_tca", "topic_id": "11B", "title": "Wide QRS Overdose", "case_text": "A patient presents after amitriptyline overdose with coma, seizures, and a wide QRS.", "question": "Which treatment is high yield?", "expected_answer": "Sodium bicarbonate for wide QRS or serious arrhythmia, plus ABC support and benzodiazepines for seizures."}],
+    "podcast": {"audio_file": "", "script": "Classify interactions, high-risk MAOI/TCA pharmacology, and safe constipation/diarrhea treatment.", "summary_points": ["Interactions can be PK or PD.", "TCAs block cardiac sodium channels in overdose.", "MAOIs risk tyramine crisis.", "Rehydration comes first in diarrhea."]},
+    "final_review": ["Narrow therapeutic index drugs make interactions dangerous.", "MAOI: tyramine and serotonin syndrome.", "TCA overdose: wide QRS and sodium bicarbonate.", "Avoid loperamide in fever, blood, or suspected C. difficile."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 12,
+    "title": "Routes of Administration of Medicines / Cephalosporin Antibiotics / Nitrates",
+    "short_title": "Routes / Cephalosporins / Nitrates",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "antimicrobial", "cardiovascular"],
+    "learning_goal": "Compare routes, classify cephalosporins by generation, and explain nitrate antianginal action.",
+    "why_it_matters": "This triplet combines foundational administration logic with two very common therapeutic classes.",
+    "oral_exam_goals": ["Compare enteral, parenteral, inhalational, topical, and transdermal routes.", "Classify cephalosporins by generation and key coverage.", "Explain nitrate NO-cGMP venodilation and contraindications."],
+    "topics": [
+      {
+        "topic_id": "12A",
+        "label": "Topic A",
+        "title": "Routes of Administration of Medicines",
+        "category": "General Pharmacology",
+        "theory_short": "Route determines bioavailability, onset, duration, safety, invasiveness, convenience, and first-pass exposure.",
+        "definition": "Route of administration is the path by which a medicine enters or contacts the body.",
+        "mechanism_steps": ["Enteral routes pass through GI tract or mucosa.", "Parenteral routes bypass GI tract.", "Inhalational routes deliver rapid pulmonary or local airway effect.", "Transdermal routes deliver steady systemic levels.", "Topical routes aim for local effect."],
+        "classification": [{"name": "Enteral", "detail": "Oral, sublingual, buccal, rectal."}, {"name": "Parenteral", "detail": "IV, IM, SC, intrathecal, epidural."}, {"name": "Other", "detail": "Inhalation, transdermal, topical/local."}],
+        "clinical_uses": ["Emergency treatment, chronic therapy, local therapy, first-pass avoidance."],
+        "adverse_effects": ["Route-specific irritation, infection, poor adherence, variable absorption."],
+        "contraindications": ["Avoid oral route in vomiting/unconscious patients; avoid parenteral route without sterile technique."],
+        "exam_traps": ["IV is immediate and 100% bioavailable.", "Transdermal route is slow onset and needs potent lipophilic drugs.", "Sublingual avoids first pass."],
+        "oral_exam_answer": "Routes of administration include enteral, parenteral, inhalational, topical, and transdermal routes. They differ in bioavailability, onset, first-pass metabolism, invasiveness, safety, and suitability for emergency or chronic use."
+      },
+      {
+        "topic_id": "12B",
+        "label": "Topic B",
+        "title": "Cephalosporin Antibiotics",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "Cephalosporins are beta-lactams that inhibit PBPs and peptidoglycan cross-linking. Generations generally expand Gram-negative coverage.",
+        "definition": "Cephalosporins are bactericidal beta-lactam antibiotics.",
+        "mechanism_steps": ["Bind penicillin-binding proteins.", "Inhibit transpeptidation and peptidoglycan cross-linking.", "Weaken bacterial cell wall.", "Cause lysis in growing bacteria."],
+        "classification": [{"name": "1st generation", "detail": "Cefazolin, cephalexin; strong Gram-positive; surgical prophylaxis."}, {"name": "2nd generation", "detail": "Cefuroxime; cephamycins cover anaerobes."}, {"name": "3rd generation", "detail": "Ceftriaxone, cefotaxime, ceftazidime; serious Gram-negative, meningitis, gonorrhea; ceftazidime covers Pseudomonas."}, {"name": "4th generation", "detail": "Cefepime; broad with Pseudomonas."}, {"name": "5th/advanced", "detail": "Ceftaroline, ceftobiprole; MRSA activity."}],
+        "clinical_uses": ["Surgical prophylaxis, skin infections, respiratory infections, meningitis, sepsis, gonorrhea, hospital infections depending on generation."],
+        "adverse_effects": ["Hypersensitivity, GI upset, C. difficile risk, rare nephrotoxicity, ceftriaxone biliary sludging, NMTT bleeding/disulfiram-like reactions for selected agents."],
+        "contraindications": ["Severe immediate beta-lactam allergy requires caution and alternative selection."],
+        "exam_traps": ["Cefazolin surgical prophylaxis.", "Ceftriaxone/cefotaxime meningitis.", "Ceftazidime/cefepime Pseudomonas.", "Ceftaroline MRSA.", "Cephalosporins do not cover enterococci well."],
+        "oral_exam_answer": "Cephalosporins are beta-lactam bactericidal antibiotics that inhibit PBPs and cell wall synthesis. Higher generations generally increase Gram-negative coverage. Cefazolin is used for surgical prophylaxis, ceftriaxone/cefotaxime for serious infections and meningitis, cefepime covers Pseudomonas, and ceftaroline covers MRSA.",
+        "diagram_ids": ["cephalosporin_ladder"],
+        "resource_ids": ["ninja_antibiotics_playlist"]
+      },
+      {
+        "topic_id": "12C",
+        "label": "Topic C",
+        "title": "Nitrates",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Nitrates donate NO, increase cGMP, relax vascular smooth muscle, mainly venodilate, and reduce myocardial oxygen demand.",
+        "definition": "Nitrates are nitric oxide donors used mainly for angina and acute cardiovascular settings.",
+        "mechanism_steps": ["Nitrate releases NO.", "NO activates guanylyl cyclase.", "cGMP rises.", "Smooth muscle relaxes.", "Venodilation reduces preload and myocardial oxygen demand."],
+        "classification": [{"name": "Nitroglycerin", "detail": "Sublingual acute angina; IV for ACS/pulmonary edema/hypertensive emergencies; patches for prophylaxis."}, {"name": "Isosorbide dinitrate", "detail": "Acute or prophylactic forms."}, {"name": "Isosorbide mononitrate", "detail": "Longer oral prophylaxis."}],
+        "clinical_uses": ["Acute angina relief, angina prophylaxis, ACS support, acute pulmonary edema or hypertensive emergencies in selected cases."],
+        "adverse_effects": ["Headache, flushing, hypotension, reflex tachycardia, dizziness, syncope, tolerance."],
+        "contraindications": ["PDE5 inhibitors, severe hypotension, right ventricular infarction, severe aortic stenosis, raised intracranial pressure caution."],
+        "exam_traps": ["Nitrates are contraindicated with sildenafil/tadalafil.", "Need nitrate-free interval to reduce tolerance.", "Main antianginal effect is decreased preload."],
+        "oral_exam_answer": "Nitrates release NO, increase cGMP, and relax vascular smooth muscle. They mainly dilate veins, reducing preload and myocardial oxygen demand, and also dilate large coronary vessels. They are used for angina and selected acute cardiac situations. Key adverse effects are headache and hypotension; PDE5 inhibitors are contraindicated."
+      }
+    ],
+    "clinical_cases": [{"id": "case12_pde5", "topic_id": "12C", "title": "Nitrate Contraindication", "case_text": "A patient with chest pain took sildenafil earlier the same day.", "question": "Why are nitrates dangerous?", "expected_answer": "PDE5 inhibitors plus nitrates can cause excessive cGMP-mediated vasodilation and severe hypotension."}],
+    "podcast": {"audio_file": "", "script": "Compare administration routes, climb the cephalosporin generation ladder, and explain nitrate NO-cGMP venodilation.", "summary_points": ["Route determines onset and bioavailability.", "Cephalosporins inhibit PBPs.", "Ceftaroline covers MRSA.", "Nitrates are contraindicated with PDE5 inhibitors."]},
+    "final_review": ["IV route is 100%.", "Cephalosporins are beta-lactams.", "Cefazolin prophylaxis, cefepime Pseudomonas, ceftaroline MRSA.", "Nitrates reduce preload and cannot combine with PDE5 inhibitors."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 13,
+    "title": "Pharmacovigilance / L-Type Calcium Channel Blockers / Contraceptives",
+    "short_title": "Safety Monitoring / CCBs / Contraceptives",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cardiovascular", "endocrine"],
+    "learning_goal": "Understand drug safety monitoring, compare CCB subclasses, and classify contraception pharmacology.",
+    "why_it_matters": "Post-marketing safety, cardiac conduction, and estrogen risk are common oral-exam checkpoints.",
+    "oral_exam_goals": ["Define pharmacovigilance terms and purpose.", "Compare dihydropyridine and non-dihydropyridine CCBs.", "Classify combined, progestin-only, emergency, and non-hormonal contraceptives."],
+    "topics": [
+      {
+        "topic_id": "13A",
+        "label": "Topic A",
+        "title": "Pharmacovigilance",
+        "category": "General Pharmacology",
+        "theory_short": "Pharmacovigilance detects, assesses, understands, and prevents adverse drug effects and other drug-related problems.",
+        "definition": "Pharmacovigilance is the science and activities of drug safety monitoring.",
+        "mechanism_steps": ["Collect adverse event reports.", "Detect safety signals.", "Assess causality and risk.", "Implement risk minimization.", "Update warnings, restrictions, or withdraw drugs when needed."],
+        "classification": [{"name": "ADR", "detail": "Harmful and unintended response at normal doses."}, {"name": "AE", "detail": "Any undesirable event during treatment, not necessarily causal."}, {"name": "Signal", "detail": "Information suggesting a new causal association or new aspect of known risk."}, {"name": "RMP/PSUR", "detail": "Risk management and periodic safety reporting tools."}],
+        "clinical_uses": ["Post-marketing surveillance, regulatory decisions, safer prescribing."],
+        "adverse_effects": [],
+        "contraindications": [],
+        "exam_traps": ["ADR implies suspected causal drug response; AE does not necessarily.", "Rare and delayed harms may appear only after approval."],
+        "oral_exam_answer": "Pharmacovigilance monitors drug safety during clinical use. It detects adverse reactions, evaluates causality, identifies safety signals, and supports risk minimization or regulatory action such as warnings, restrictions, or withdrawal.",
+        "diagram_ids": ["pharmacovigilance_signal_flow"]
+      },
+      {
+        "topic_id": "13B",
+        "label": "Topic B",
+        "title": "L-Type Calcium Channel Blockers",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "L-type calcium channel blockers reduce calcium influx in vascular smooth muscle and/or myocardium.",
+        "definition": "CCBs inhibit voltage-gated L-type calcium channels.",
+        "mechanism_steps": ["Dihydropyridines mainly relax vascular smooth muscle.", "Verapamil and diltiazem depress AV conduction and contractility.", "Reduced calcium influx decreases vasoconstriction or cardiac nodal activity."],
+        "classification": [{"name": "Dihydropyridines", "detail": "Amlodipine, nifedipine; vessels > heart."}, {"name": "Phenylalkylamine", "detail": "Verapamil; heart > vessels."}, {"name": "Benzothiazepine", "detail": "Diltiazem; heart and vessels."}],
+        "clinical_uses": ["Hypertension, angina, Raynaud, SVT rate control for non-DHPs."],
+        "adverse_effects": ["DHP edema, flushing, headache, reflex tachycardia; verapamil/diltiazem bradycardia, AV block, constipation, HF worsening."],
+        "contraindications": ["Avoid verapamil/diltiazem in AV block, bradycardia, HFrEF, and risky combination with beta-blockers."],
+        "exam_traps": ["Verapamil causes constipation and AV block.", "Dihydropyridines cause peripheral edema.", "Non-DHP plus beta-blocker can be dangerous."],
+        "oral_exam_answer": "Calcium channel blockers inhibit L-type calcium channels. Dihydropyridines mainly vasodilate and treat hypertension and angina. Verapamil and diltiazem also depress AV conduction and are useful for rate control but may cause bradycardia, AV block, constipation, and worsen heart failure."
+      },
+      {
+        "topic_id": "13C",
+        "label": "Topic C",
+        "title": "Contraceptives",
+        "category": "Endocrine Pharmacology",
+        "theory_short": "Hormonal contraceptives prevent pregnancy mainly by suppressing ovulation, thickening cervical mucus, and altering endometrium.",
+        "definition": "Contraceptives are drugs or devices used to prevent pregnancy.",
+        "mechanism_steps": ["Combined estrogen-progestin methods suppress FSH/LH and ovulation.", "Progestin thickens cervical mucus and causes endometrial atrophy.", "Emergency contraception delays or inhibits ovulation.", "Copper IUD impairs fertilization through local inflammatory effects."],
+        "classification": [{"name": "Combined hormonal", "detail": "Ethinylestradiol plus progestin pills, patch, ring."}, {"name": "Progestin-only", "detail": "Mini-pill, depot medroxyprogesterone, implant, levonorgestrel IUD."}, {"name": "Emergency contraception", "detail": "Levonorgestrel, ulipristal, copper IUD."}, {"name": "Non-hormonal", "detail": "Copper IUD and barrier methods."}],
+        "clinical_uses": ["Pregnancy prevention, cycle control, dysmenorrhea, acne, reduced ovarian/endometrial cancer risk with combined methods."],
+        "adverse_effects": ["VTE, hypertension, nausea, breast tenderness, irregular bleeding, weight gain with depot, bone density concern with depot, heavier bleeding with copper IUD."],
+        "contraindications": ["Estrogen methods: thromboembolism, migraine with aura, estrogen-dependent cancer, severe liver disease, pregnancy."],
+        "exam_traps": ["Progestin-only methods are useful when estrogen is contraindicated.", "Combined contraception increases VTE risk.", "Emergency contraception is not regular contraception."],
+        "oral_exam_answer": "Contraceptives include combined hormonal, progestin-only, emergency, and non-hormonal methods. Hormonal methods prevent pregnancy by suppressing ovulation, thickening cervical mucus, and altering endometrium. Combined methods contain estrogen and progestin but increase thromboembolic risk; progestin-only options are useful when estrogen is contraindicated."
+      }
+    ],
+    "clinical_cases": [{"id": "case13_ccb", "topic_id": "13B", "title": "Rate Control Combination", "case_text": "A patient on metoprolol is started on verapamil and develops marked bradycardia.", "question": "What interaction explains this?", "expected_answer": "Additive AV nodal depression from beta-blocker plus non-DHP calcium channel blocker."}],
+    "podcast": {"audio_file": "", "script": "Define pharmacovigilance, compare calcium channel blocker subclasses, then classify contraceptives and estrogen risks.", "summary_points": ["ADR is causal harm at normal doses.", "DHPs act mostly on vessels.", "Verapamil/diltiazem slow AV node.", "Combined contraception increases VTE risk."]},
+    "final_review": ["Pharmacovigilance finds post-marketing safety signals.", "DHP CCBs: edema/reflex tachycardia.", "Non-DHP CCBs: bradycardia/AV block.", "Combined contraceptives carry estrogen VTE risk."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 14,
+    "title": "Types of Doses / Treatment of Peptic Ulcer Disease / Nootropic Substances and Cognitive Medications",
+    "short_title": "Dose Types / Ulcer Therapy / Cognitive Drugs",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "gastrointestinal", "cns"],
+    "learning_goal": "Differentiate dose types, explain ulcer pharmacotherapy, and classify dementia/cognitive drugs.",
+    "why_it_matters": "Dose terminology supports safe prescribing while ulcer and dementia drugs are common mechanism-and-toxicity questions.",
+    "oral_exam_goals": ["Define single, daily, therapeutic, toxic, lethal, loading, maintenance, and cumulative doses.", "Explain PPI, H2 blocker, antacid, mucosal protectant, misoprostol, and H. pylori therapy.", "Classify acetylcholinesterase inhibitors, memantine, and nootropics."],
+    "topics": [
+      {
+        "topic_id": "14A",
+        "label": "Topic A",
+        "title": "Types of Doses",
+        "category": "General Pharmacology",
+        "theory_short": "Dose terminology includes single, daily, therapeutic, maximum, toxic, lethal, loading, maintenance, and cumulative dose.",
+        "definition": "A dose is the amount of medicine administered in a specified way or time.",
+        "mechanism_steps": ["Therapeutic dose produces desired effect.", "Maximum dose is highest recommended safe dose.", "Toxic and lethal doses produce harm or death.", "Loading dose rapidly reaches target concentration and depends on Vd.", "Maintenance dose maintains steady state and depends mainly on clearance."],
+        "classification": [{"name": "Single/daily dose", "detail": "Amount at one time or per day."}, {"name": "Therapeutic/minimal effective/maximum", "detail": "Clinical dose range terms."}, {"name": "Toxic/lethal", "detail": "Dose causing toxicity or death."}, {"name": "Loading/maintenance", "detail": "PK dosing concepts."}, {"name": "Cumulative", "detail": "Total exposure over time, important for some toxicities."}],
+        "clinical_uses": ["Prescribing, loading dose calculation, therapeutic monitoring, cumulative toxicity prevention."],
+        "adverse_effects": ["Dose-related toxicity if maximum or cumulative dose is exceeded."],
+        "contraindications": [],
+        "exam_traps": ["Loading dose depends mainly on Vd.", "Maintenance dose depends mainly on clearance.", "Cumulative dose matters for some cytostatics and organ toxicity."],
+        "oral_exam_answer": "Dose types include single, daily, therapeutic, maximum, toxic, and lethal doses. Important pharmacokinetic doses are loading dose, determined mainly by volume of distribution, and maintenance dose, determined mainly by clearance. Cumulative dose is total exposure over time and can predict toxicity.",
+        "diagram_ids": ["dose_type_map"]
+      },
+      {
+        "topic_id": "14B",
+        "label": "Topic B",
+        "title": "Treatment of Peptic Ulcer Disease",
+        "category": "Gastrointestinal Pharmacology",
+        "theory_short": "Peptic ulcer therapy reduces acid, protects mucosa, removes NSAID triggers, and eradicates H. pylori when present.",
+        "definition": "Peptic ulcer disease is mucosal injury driven mainly by H. pylori, NSAIDs, and acid/pepsin imbalance.",
+        "mechanism_steps": ["PPIs irreversibly block H+/K+ ATPase.", "H2 blockers reduce histamine-mediated acid secretion.", "Antacids neutralize existing acid.", "Sucralfate and bismuth protect mucosa.", "H. pylori eradication uses combination antibiotics plus acid suppression."],
+        "classification": [{"name": "PPIs", "detail": "Omeprazole, pantoprazole, esomeprazole."}, {"name": "H2 blockers", "detail": "Famotidine; ranitidine historically."}, {"name": "Antacids", "detail": "Mg/Al hydroxide, CaCO3."}, {"name": "Protectants", "detail": "Sucralfate, bismuth."}, {"name": "Misoprostol", "detail": "Prostaglandin analogue for NSAID ulcer prevention; pregnancy contraindication."}, {"name": "Antibiotics", "detail": "Amoxicillin, clarithromycin, metronidazole, tetracycline with bismuth regimens."}],
+        "clinical_uses": ["Ulcer healing, GERD, H. pylori eradication, NSAID ulcer prevention."],
+        "adverse_effects": ["PPI infection/mineral concerns with long-term use, H2 tolerance, antacid constipation/diarrhea, misoprostol diarrhea and uterine contraction."],
+        "contraindications": ["Misoprostol is contraindicated in pregnancy."],
+        "exam_traps": ["PPIs are strongest acid suppressants.", "H. pylori needs combination therapy.", "Bismuth quadruple therapy is useful with resistance concerns or penicillin allergy contexts."],
+        "oral_exam_answer": "Peptic ulcer treatment reduces acid, protects mucosa, removes NSAID injury when possible, and eradicates H. pylori. PPIs are the strongest acid suppressants. H. pylori requires combination antibiotic therapy, such as PPI-based triple therapy where suitable or bismuth quadruple therapy in resistance or allergy contexts."
+      },
+      {
+        "topic_id": "14C",
+        "label": "Topic C",
+        "title": "Nootropic Substances and Cognitive Medications",
+        "category": "CNS Pharmacology",
+        "theory_short": "Cognitive medications are mainly symptomatic dementia drugs: acetylcholinesterase inhibitors and memantine. Evidence for many nootropics is variable.",
+        "definition": "Cognitive medications aim to improve or stabilize cognition, mainly in dementia.",
+        "mechanism_steps": ["Acetylcholinesterase inhibitors increase CNS acetylcholine.", "Memantine blocks pathological NMDA glutamate activity.", "Nootropics/vasoactive agents have variable proposed mechanisms and evidence."],
+        "classification": [{"name": "Acetylcholinesterase inhibitors", "detail": "Donepezil, rivastigmine, galantamine."}, {"name": "NMDA antagonist", "detail": "Memantine."}, {"name": "Nootropics/vasoactive agents", "detail": "Piracetam, vinpocetine, ginkgo with variable evidence."}],
+        "clinical_uses": ["Alzheimer disease, Lewy body/Parkinson dementia for selected agents, moderate-severe Alzheimer disease for memantine."],
+        "adverse_effects": ["Nausea, diarrhea, bradycardia, syncope with cholinesterase inhibitors; dizziness, confusion, constipation with memantine; bleeding interaction concern with ginkgo."],
+        "contraindications": ["Caution in bradycardia, conduction disease, syncope risk, and drug interactions."],
+        "exam_traps": ["Cognitive drugs are symptomatic and do not cure neurodegeneration.", "Cholinesterase inhibitors can cause bradycardia and GI symptoms.", "Memantine is for moderate-severe Alzheimer disease contexts."],
+        "oral_exam_answer": "Cognitive medications include acetylcholinesterase inhibitors such as donepezil, rivastigmine, and galantamine, and the NMDA antagonist memantine. They provide symptomatic benefit in dementia but do not cure neurodegeneration. Monitor cholinergic adverse effects, especially nausea, diarrhea, bradycardia, and syncope."
+      }
+    ],
+    "clinical_cases": [{"id": "case14_bradycardia", "topic_id": "14C", "title": "Syncope On Donepezil", "case_text": "An older patient on donepezil develops dizziness and bradycardia.", "question": "Which adverse effect explains this?", "expected_answer": "Cholinergic enhancement can cause bradycardia and syncope with acetylcholinesterase inhibitors."}],
+    "podcast": {"audio_file": "", "script": "Review dose terminology, ulcer treatment logic, and symptomatic cognitive medications.", "summary_points": ["Loading dose depends on Vd.", "Maintenance dose depends on clearance.", "PPIs are strongest acid suppressants.", "Donepezil can cause bradycardia."]},
+    "final_review": ["Loading dose: Vd. Maintenance dose: clearance.", "PUD: PPI plus H. pylori eradication when present.", "Misoprostol is contraindicated in pregnancy.", "Cholinesterase inhibitors cause GI effects and bradycardia."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 15,
+    "title": "Drug Allergies / Adrenergic Alpha Receptor Agonists / Classical Anticancer Drugs: Mitotic Poisons and Cytotoxic Antibiotics",
+    "short_title": "Allergy / Alpha Agonists / Cytostatics I",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["immunology", "autonomic", "oncology"],
+    "learning_goal": "Classify immune drug reactions, explain alpha agonists, and know key classical cytostatic mechanisms and toxicities.",
+    "why_it_matters": "This triplet connects emergency anaphylaxis management, adrenergic receptor logic, and high-risk chemotherapy toxicity.",
+    "oral_exam_goals": ["Classify Gell-Coombs drug allergy types and management.", "Compare alpha1 and alpha2 agonists.", "Separate mitotic poisons from cytotoxic antibiotics and name key toxicities."],
+    "topics": [
+      {
+        "topic_id": "15A",
+        "label": "Topic A",
+        "title": "Drug Allergies",
+        "category": "Immunology",
+        "theory_short": "Drug allergy is immune-mediated and must be separated from predictable toxicity and non-immune intolerance.",
+        "definition": "Drug allergy is an immune-mediated adverse drug reaction.",
+        "mechanism_steps": ["Type I is IgE-mediated mast cell degranulation.", "Type II is IgG/IgM cytotoxic reaction.", "Type III is immune complex deposition.", "Type IV is delayed T-cell-mediated reaction.", "Management begins with stopping the suspected drug and assessing severity."],
+        "classification": [{"name": "Type I", "detail": "Urticaria, angioedema, bronchospasm, anaphylaxis."}, {"name": "Type II", "detail": "Hemolytic anemia, thrombocytopenia."}, {"name": "Type III", "detail": "Serum sickness, vasculitis."}, {"name": "Type IV", "detail": "Maculopapular rash, contact dermatitis, SJS/TEN, DRESS."}],
+        "clinical_uses": ["Allergy documentation, avoidance, desensitization decisions, anaphylaxis treatment."],
+        "adverse_effects": ["Anaphylaxis, severe cutaneous adverse reactions, cytopenias."],
+        "contraindications": ["Do not re-challenge severe reactions such as SJS/TEN, DRESS, or anaphylaxis unless specialist desensitization is essential."],
+        "exam_traps": ["Anaphylaxis treatment is IM adrenaline first.", "Allergy is immune-mediated; intolerance is not.", "Document reaction clearly, not just 'allergy'."],
+        "oral_exam_answer": "Drug allergy is immune-mediated and classified as immediate IgE type I, cytotoxic type II, immune-complex type III, and delayed T-cell type IV reactions. Management is stopping the suspected drug, documenting the reaction, symptomatic care, and emergency anaphylaxis treatment with intramuscular adrenaline.",
+        "diagram_ids": ["drug_allergy_gell_coombs"]
+      },
+      {
+        "topic_id": "15B",
+        "label": "Topic B",
+        "title": "Adrenergic Alpha Receptor Agonists",
+        "category": "Autonomic Pharmacology",
+        "theory_short": "Alpha agonists stimulate alpha1 vasoconstriction and/or alpha2 reduction of sympathetic outflow or transmitter release.",
+        "definition": "Alpha agonists activate adrenergic alpha receptors.",
+        "mechanism_steps": ["Alpha1 activation causes vasoconstriction and mydriasis.", "Central alpha2 activation reduces sympathetic outflow.", "Presynaptic alpha2 activation reduces noradrenaline release.", "Abrupt alpha2 agonist withdrawal can cause rebound sympathetic activity."],
+        "classification": [{"name": "Alpha1 agonists", "detail": "Phenylephrine, midodrine, oxymetazoline/xylometazoline."}, {"name": "Alpha2 central agonists", "detail": "Clonidine, methyldopa, guanfacine, dexmedetomidine."}],
+        "clinical_uses": ["Hypotension, nasal decongestion, mydriasis, hypertension, withdrawal states, ADHD, sedation."],
+        "adverse_effects": ["Hypertension, reflex bradycardia, ischemia, rebound congestion, sedation, dry mouth, bradycardia, rebound hypertension."],
+        "contraindications": ["Caution in severe hypertension, ischemic disease, bradycardia, and abrupt clonidine withdrawal."],
+        "exam_traps": ["Phenylephrine is pure alpha1 and can cause reflex bradycardia.", "Clonidine withdrawal causes rebound hypertension.", "Methyldopa is historically important in pregnancy hypertension."],
+        "oral_exam_answer": "Alpha agonists activate alpha receptors. Alpha1 agonists such as phenylephrine cause vasoconstriction and are used for hypotension, decongestion, and mydriasis. Alpha2 agonists such as clonidine and methyldopa reduce sympathetic outflow and are used in hypertension and selected CNS/autonomic indications. Important risks are rebound hypertension with clonidine withdrawal and rebound congestion with nasal alpha agonists."
+      },
+      {
+        "topic_id": "15C",
+        "label": "Topic C",
+        "title": "Classical Anticancer Drugs: Mitotic Poisons and Cytotoxic Antibiotics",
+        "category": "Oncology Pharmacology",
+        "theory_short": "Mitotic poisons disrupt microtubules; cytotoxic antibiotics damage DNA by intercalation, topoisomerase inhibition, or free radicals.",
+        "definition": "Classical cytostatics target rapidly dividing cells and have predictable proliferating-tissue toxicity.",
+        "mechanism_steps": ["Vinca alkaloids inhibit microtubule polymerization.", "Taxanes stabilize microtubules and prevent depolymerization.", "Etoposide inhibits topoisomerase II.", "Anthracyclines intercalate DNA, inhibit topoisomerase II, and generate free radicals.", "Bleomycin causes free radical DNA breaks."],
+        "classification": [{"name": "Vinca alkaloids", "detail": "Vincristine, vinblastine, vinorelbine."}, {"name": "Taxanes", "detail": "Paclitaxel, docetaxel."}, {"name": "Epipodophyllotoxins", "detail": "Etoposide, teniposide."}, {"name": "Cytotoxic antibiotics", "detail": "Doxorubicin, daunorubicin, bleomycin, dactinomycin, mitomycin C."}],
+        "clinical_uses": ["Cancer chemotherapy by tumor protocol."],
+        "adverse_effects": ["Myelosuppression, mucositis, nausea/vomiting, alopecia, infertility, teratogenicity, secondary malignancy; anthracycline cardiotoxicity; bleomycin pulmonary fibrosis; vincristine neuropathy."],
+        "contraindications": ["Organ function and cumulative dose limits vary by drug."],
+        "exam_traps": ["Vinca prevents microtubule polymerization; taxanes prevent depolymerization.", "Anthracyclines cause cardiotoxicity.", "Bleomycin causes pulmonary fibrosis with little myelosuppression."],
+        "oral_exam_answer": "Mitotic poisons interfere with microtubules: vinca alkaloids prevent polymerization, while taxanes stabilize microtubules. Cytotoxic antibiotics damage DNA through intercalation, topoisomerase inhibition, or free radicals. Common toxicities are myelosuppression, mucositis, nausea, alopecia, infertility, and teratogenicity, with key specific toxicities such as anthracycline cardiotoxicity and bleomycin pulmonary fibrosis."
+      }
+    ],
+    "clinical_cases": [{"id": "case15_anaphylaxis", "topic_id": "15A", "title": "Immediate Drug Reaction", "case_text": "A patient develops wheeze, hypotension, and urticaria minutes after a beta-lactam injection.", "question": "What is first-line emergency treatment?", "expected_answer": "Intramuscular adrenaline, plus airway, oxygen, fluids, and adjuncts as needed."}],
+    "podcast": {"audio_file": "", "script": "Classify drug allergy, alpha agonists, and classical anticancer drug mechanisms with signature toxicities.", "summary_points": ["Type I allergy is IgE-mediated.", "Anaphylaxis needs IM adrenaline.", "Clonidine withdrawal causes rebound hypertension.", "Anthracyclines cause cardiotoxicity."]},
+    "final_review": ["Drug allergy is immune-mediated.", "IM adrenaline treats anaphylaxis.", "Alpha1 agonists vasoconstrict.", "Vinca blocks microtubule polymerization; taxanes stabilize microtubules.", "Doxorubicin cardiotoxicity; bleomycin pulmonary fibrosis."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 16,
+    "title": "Effects of Drugs on the Fetus / First-Generation Antipsychotics / Androgens",
+    "short_title": "Fetal Effects / Typical Antipsychotics / Androgens",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cns", "endocrine"],
+    "learning_goal": "Explain timing-dependent fetal drug toxicity, D2-blocking typical antipsychotics, and androgen pharmacology.",
+    "why_it_matters": "Pregnancy safety and dopamine pathway adverse effects are high-yield oral exam themes.",
+    "oral_exam_goals": ["Explain pregnancy timing risks and key teratogens.", "Map D2 blockade to antipsychotic effects and adverse effects.", "Describe androgen receptor action, uses, adverse effects, and contraindications."],
+    "topics": [
+      {
+        "topic_id": "16A",
+        "label": "Topic A",
+        "title": "Effects of Drugs on the Fetus",
+        "category": "General Pharmacology",
+        "theory_short": "Fetal drug effects depend on gestational age, dose, duration, placental transfer, maternal metabolism, and fetal elimination.",
+        "definition": "Fetal drug toxicity is drug-induced harm to embryo, fetus, or neonate.",
+        "mechanism_steps": ["Preimplantation exposure can cause all-or-none death or survival.", "Organogenesis has highest malformation risk.", "Fetal period causes growth and functional toxicity.", "Peripartum exposure can cause neonatal toxicity or withdrawal."],
+        "classification": [{"name": "0-2 weeks", "detail": "All-or-none effect."}, {"name": "Weeks 3-8", "detail": "Major congenital malformations."}, {"name": "Week 9-birth", "detail": "Growth and functional toxicity."}, {"name": "Peripartum", "detail": "Neonatal toxicity or withdrawal."}],
+        "clinical_uses": ["Pregnancy prescribing, teratogen avoidance, risk counseling."],
+        "adverse_effects": ["Malformations, fetal renal injury, CNS toxicity, teeth/bone toxicity, bleeding, neonatal withdrawal."],
+        "contraindications": ["Known teratogens such as isotretinoin, thalidomide, valproate, methotrexate; ACE inhibitors/ARBs; warfarin; tetracyclines; late NSAID use."],
+        "exam_traps": ["Organogenesis is highest malformation risk.", "ACE inhibitors and ARBs cause fetal renal injury.", "Tetracyclines affect teeth and bone."],
+        "oral_exam_answer": "Drug toxicity in pregnancy depends mainly on timing. Preimplantation exposure may cause all-or-none effects, organogenesis carries major malformation risk, and later exposure causes growth, functional, or neonatal toxicity. Important fetal-risk drugs include isotretinoin, thalidomide, valproate, methotrexate, ACE inhibitors/ARBs, warfarin, tetracyclines, aminoglycosides, and late NSAIDs.",
+        "diagram_ids": ["pregnancy_toxicity_timeline"]
+      },
+      {
+        "topic_id": "16B",
+        "label": "Topic B",
+        "title": "First-Generation Antipsychotics",
+        "category": "CNS Pharmacology",
+        "theory_short": "Typical antipsychotics mainly block D2 receptors. High-potency drugs cause more EPS; low-potency drugs cause more sedation, alpha1, and anticholinergic effects.",
+        "definition": "First-generation antipsychotics are dopamine D2 receptor antagonists used mainly for psychotic disorders and agitation.",
+        "mechanism_steps": ["D2 blockade in mesolimbic pathway reduces positive symptoms.", "D2 blockade in nigrostriatal pathway causes EPS.", "D2 blockade in tuberoinfundibular pathway raises prolactin.", "H1, alpha1, and M blockade cause sedation, hypotension, and anticholinergic effects."],
+        "classification": [{"name": "High potency", "detail": "Haloperidol, fluphenazine; more EPS."}, {"name": "Medium potency", "detail": "Perphenazine, zuclopenthixol."}, {"name": "Low potency", "detail": "Chlorpromazine, levomepromazine; more sedation and anticholinergic/alpha1 effects."}],
+        "clinical_uses": ["Schizophrenia, acute psychosis, mania/agitation, antiemesis for selected agents."],
+        "adverse_effects": ["EPS, tardive dyskinesia, hyperprolactinemia, sedation, orthostatic hypotension, anticholinergic effects, neuroleptic malignant syndrome."],
+        "contraindications": ["Caution in Parkinson disease, dementia-related psychosis, severe QT risk, NMS history."],
+        "exam_traps": ["Nigrostriatal D2 blockade causes EPS.", "Tuberoinfundibular D2 blockade causes hyperprolactinemia.", "NMS presents with rigidity, fever, autonomic instability, and increased CK."],
+        "oral_exam_answer": "First-generation antipsychotics are D2 antagonists. Mesolimbic D2 blockade reduces positive psychotic symptoms; nigrostriatal blockade causes EPS; tuberoinfundibular blockade causes hyperprolactinemia. High-potency drugs such as haloperidol cause more EPS, while low-potency drugs cause more sedation, hypotension, and anticholinergic effects. Serious toxicity includes neuroleptic malignant syndrome."
+      },
+      {
+        "topic_id": "16C",
+        "label": "Topic C",
+        "title": "Androgens",
+        "category": "Endocrine Pharmacology",
+        "theory_short": "Androgens are steroid hormones acting through nuclear androgen receptors, used mainly for androgen deficiency.",
+        "definition": "Androgens are steroid hormones that regulate male sexual development, anabolic effects, and erythropoiesis.",
+        "mechanism_steps": ["Androgen enters cell.", "Binds intracellular androgen receptor.", "Receptor complex regulates gene transcription.", "Effects include virilization, anabolic protein synthesis, and erythropoiesis."],
+        "classification": [{"name": "Testosterone preparations", "detail": "Esters, gels, patches."}, {"name": "Anabolic steroids", "detail": "Rare medical use, common abuse."}, {"name": "Danazol", "detail": "Historical endometriosis use and hereditary angioedema."}],
+        "clinical_uses": ["Male hypogonadism, delayed puberty in selected cases, rare catabolic states, hereditary angioedema for danazol."],
+        "adverse_effects": ["Acne, edema, erythrocytosis, infertility, prostate growth, sleep apnea worsening, hepatotoxicity, dyslipidemia, aggression, virilization in women."],
+        "contraindications": ["Prostate or male breast cancer, pregnancy, severe liver disease, uncontrolled heart failure, high hematocrit, severe BPH symptoms."],
+        "exam_traps": ["Exogenous androgens can suppress spermatogenesis and cause infertility.", "Anabolic steroids can damage liver and lipid profile.", "Monitor hematocrit and prostate context."],
+        "oral_exam_answer": "Androgens act through nuclear androgen receptors and are used mainly for androgen deficiency. They promote male sexual development, anabolic effects, and erythropoiesis. Adverse effects include virilization, acne, edema, infertility, erythrocytosis, hepatic toxicity, dyslipidemia, and prostate-related problems."
+      }
+    ],
+    "clinical_cases": [{"id": "case16_antipsychotic", "topic_id": "16B", "title": "Rigidity And Fever", "case_text": "A patient on haloperidol develops fever, rigidity, autonomic instability, and high CK.", "question": "What syndrome is this?", "expected_answer": "Neuroleptic malignant syndrome; stop the antipsychotic and provide urgent supportive treatment, cooling, and agents such as dantrolene or bromocriptine when indicated."}],
+    "podcast": {"audio_file": "", "script": "Explain fetal risk by pregnancy timing, D2 pathway adverse effects, and androgen receptor pharmacology.", "summary_points": ["Weeks 3-8 carry malformation risk.", "Typical antipsychotics block D2.", "EPS comes from nigrostriatal blockade.", "Androgens can cause infertility and erythrocytosis."]},
+    "final_review": ["Pregnancy timing determines toxicity pattern.", "Organogenesis: malformations.", "Typical antipsychotics: D2 blockade.", "NMS is rigidity, fever, autonomic instability, high CK.", "Androgens are nuclear receptor drugs."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 17,
+    "title": "Classification of Adverse Drug Reactions / Anxiolytics / Classical Anticancer Drugs: Alkylating Drugs and Antimetabolites",
+    "short_title": "ADRs / Anxiolytics / Cytostatics II",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cns", "oncology"],
+    "learning_goal": "Classify ADRs, compare anxiolytic groups, and distinguish DNA-damaging from DNA-synthesis-inhibiting anticancer drugs.",
+    "why_it_matters": "This triplet links adverse reaction classification with dependence-forming anxiolytics and cytotoxic mechanisms.",
+    "oral_exam_goals": ["Classify ADRs A-F.", "Compare benzodiazepines, buspirone, SSRIs/SNRIs, hydroxyzine, and beta-blockers.", "Separate alkylating agents from antimetabolites and name rescue/toxicity traps."],
+    "topics": [
+      {
+        "topic_id": "17A",
+        "label": "Topic A",
+        "title": "Classification of Adverse Drug Reactions",
+        "category": "General Pharmacology",
+        "theory_short": "ADRs can be classified as A augmented, B bizarre, C chronic, D delayed, E end-of-use, and F failure.",
+        "definition": "Adverse drug reactions are unwanted harmful reactions during normal drug use.",
+        "mechanism_steps": ["Type A is dose-related and predictable.", "Type B is unpredictable or idiosyncratic/allergic.", "Type C occurs with chronic use.", "Type D is delayed.", "Type E is withdrawal or rebound.", "Type F is therapeutic failure."],
+        "classification": [{"name": "A - Augmented", "detail": "Bleeding with anticoagulants, hypoglycemia with insulin."}, {"name": "B - Bizarre", "detail": "Anaphylaxis, SJS/TEN."}, {"name": "C - Chronic", "detail": "Adrenal suppression with glucocorticoids."}, {"name": "D - Delayed", "detail": "Teratogenesis, carcinogenesis."}, {"name": "E - End-of-use", "detail": "Withdrawal or rebound."}, {"name": "F - Failure", "detail": "Resistance or interaction reducing drug level."}],
+        "clinical_uses": ["ADR reporting, risk prediction, prevention, patient counseling."],
+        "adverse_effects": [],
+        "contraindications": [],
+        "exam_traps": ["Type A is common, dose-dependent, and predictable.", "Type B is uncommon and unpredictable.", "Withdrawal reactions are Type E."],
+        "oral_exam_answer": "ADRs are unwanted harmful reactions during normal drug use. Type A reactions are common, dose-dependent, and predictable. Type B reactions are uncommon and unpredictable. Other categories include chronic, delayed, end-of-use withdrawal or rebound, and therapeutic failure reactions.",
+        "diagram_ids": ["adr_classification_abcdef"]
+      },
+      {
+        "topic_id": "17B",
+        "label": "Topic B",
+        "title": "Anxiolytics",
+        "category": "CNS Pharmacology",
+        "theory_short": "Anxiolytics include rapid benzodiazepines, slower chronic antidepressants, buspirone, hydroxyzine, and beta-blockers for performance symptoms.",
+        "definition": "Anxiolytics reduce pathological anxiety.",
+        "mechanism_steps": ["Benzodiazepines potentiate GABA-A and increase chloride opening frequency.", "SSRIs/SNRIs are first-line chronic anxiety drugs.", "Buspirone is a partial 5-HT1A agonist with slow onset.", "Hydroxyzine blocks H1.", "Propranolol reduces peripheral performance anxiety symptoms."],
+        "classification": [{"name": "Benzodiazepines", "detail": "Diazepam, alprazolam, lorazepam, oxazepam."}, {"name": "Buspirone", "detail": "Non-sedating, slow onset."}, {"name": "SSRIs/SNRIs", "detail": "Sertraline, escitalopram, venlafaxine."}, {"name": "Hydroxyzine", "detail": "Sedating H1 blocker."}, {"name": "Beta-blockers", "detail": "Propranolol for tremor/tachycardia in performance anxiety."}],
+        "clinical_uses": ["Acute anxiety, panic, generalized anxiety disorder, performance anxiety, chronic anxiety disorders."],
+        "adverse_effects": ["Benzodiazepine sedation, falls, tolerance, dependence, withdrawal, respiratory depression with alcohol/opioids; SSRI initial anxiety; hydroxyzine anticholinergic sedation."],
+        "contraindications": ["Avoid benzodiazepine combinations with alcohol/opioids and caution in substance use disorder or elderly patients."],
+        "exam_traps": ["Benzodiazepines act fast but form dependence.", "Buspirone does not work immediately.", "Beta-blockers treat somatic performance symptoms, not core psychic anxiety."],
+        "oral_exam_answer": "Anxiolytics include benzodiazepines, buspirone, SSRIs/SNRIs, hydroxyzine, and beta-blockers for performance symptoms. Benzodiazepines are rapid GABA-A positive modulators but cause sedation, tolerance, dependence, withdrawal, and dangerous interactions with alcohol or opioids. SSRIs/SNRIs are preferred for long-term anxiety; buspirone is non-sedating but slow."
+      },
+      {
+        "topic_id": "17C",
+        "label": "Topic C",
+        "title": "Classical Anticancer Drugs: Alkylating Drugs and Antimetabolites",
+        "category": "Oncology Pharmacology",
+        "theory_short": "Alkylating agents damage DNA directly and are cell-cycle nonspecific; antimetabolites mimic normal metabolites and inhibit DNA synthesis mainly in S phase.",
+        "definition": "These classical cytostatics kill dividing cells by DNA damage or DNA synthesis blockade.",
+        "mechanism_steps": ["Alkylating drugs crosslink or alkylate DNA.", "Platinum compounds form DNA crosslinks.", "Folate antagonists inhibit DHFR or thymidylate synthesis.", "Pyrimidine and purine analogues disrupt DNA/RNA synthesis.", "Normal proliferating tissues are damaged too."],
+        "classification": [{"name": "Nitrogen mustards", "detail": "Cyclophosphamide, ifosfamide, melphalan."}, {"name": "Platinum compounds", "detail": "Cisplatin, carboplatin, oxaliplatin."}, {"name": "Nitrosoureas", "detail": "Carmustine, lomustine."}, {"name": "Folate antagonists", "detail": "Methotrexate, pemetrexed."}, {"name": "Pyrimidine analogues", "detail": "5-FU/capecitabine, cytarabine, gemcitabine."}, {"name": "Purine analogues", "detail": "6-MP, fludarabine, cladribine."}],
+        "clinical_uses": ["Cancer chemotherapy by protocol."],
+        "adverse_effects": ["Myelosuppression, mucositis, alopecia, infertility, teratogenicity, hemorrhagic cystitis with cyclophosphamide/ifosfamide, cisplatin nephro/oto/neurotoxicity."],
+        "contraindications": ["Pregnancy and organ dysfunction cautions by drug."],
+        "exam_traps": ["Cyclophosphamide/ifosfamide hemorrhagic cystitis is prevented with mesna.", "Methotrexate can require leucovorin rescue.", "Cisplatin causes nephrotoxicity, ototoxicity, and severe nausea."],
+        "oral_exam_answer": "Alkylating agents damage DNA by alkylation and crosslinking and are cell-cycle nonspecific. Antimetabolites mimic normal metabolites and inhibit DNA synthesis mainly in S phase. Common toxicities are myelosuppression, mucositis, alopecia, infertility, and teratogenicity; key traps include mesna for cyclophosphamide/ifosfamide cystitis and leucovorin rescue for methotrexate."
+      }
+    ],
+    "clinical_cases": [{"id": "case17_bzd", "topic_id": "17B", "title": "Alcohol Plus Benzodiazepine", "case_text": "A patient takes alprazolam with alcohol and becomes very somnolent.", "question": "What is the pharmacodynamic risk?", "expected_answer": "Additive CNS and respiratory depression from combining benzodiazepines with alcohol."}],
+    "podcast": {"audio_file": "", "script": "Classify ADRs, compare anxiolytics, and separate alkylating agents from antimetabolites.", "summary_points": ["Type A ADR is dose-related.", "Benzodiazepines are fast but dependence-forming.", "Buspirone is slow and non-sedating.", "Methotrexate can need leucovorin rescue."]},
+    "final_review": ["ADR A: predictable and dose-related.", "ADR B: unpredictable.", "BZD: rapid but dependence and respiratory depression with alcohol/opioids.", "Alkylators damage DNA; antimetabolites block DNA synthesis."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 18,
+    "title": "Gastrointestinal Side Effects of Drugs / Drugs Affecting Mucociliary Clearance / Basic Classical Penicillin Antibiotics",
+    "short_title": "GI Toxicity / Mucus Drugs / Penicillins",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["gastrointestinal", "respiratory", "antimicrobial"],
+    "learning_goal": "Recognize common GI drug toxicities, classify cough and mucus drugs, and understand penicillin subclasses and mechanism.",
+    "why_it_matters": "GI toxicity and antibiotic allergy are common clinical safety issues, while mucociliary drugs require careful symptom matching.",
+    "oral_exam_goals": ["Name drug causes of nausea, diarrhea, constipation, ulcers, hepatotoxicity, and pancreatitis.", "Compare expectorants, mucolytics, mucokinetics, hydration/aerosols, and antitussives.", "Classify penicillins and explain PBP/transpeptidase inhibition."],
+    "topics": [
+      {
+        "topic_id": "18A",
+        "label": "Topic A",
+        "title": "Gastrointestinal Side Effects of Drugs",
+        "category": "Gastrointestinal Pharmacology",
+        "theory_short": "Common GI adverse effects include nausea, vomiting, diarrhea, constipation, ulceration, bleeding, hepatotoxicity, and pancreatitis.",
+        "definition": "GI drug adverse effects are drug-induced disturbances of the digestive tract, liver, or pancreas.",
+        "mechanism_steps": ["Drugs can stimulate CTZ or irritate GI mucosa.", "Antibiotics can disturb microbiome and cause C. difficile.", "Opioids and anticholinergics reduce motility.", "NSAIDs reduce prostaglandin mucosal protection.", "Some drugs cause hepatocellular injury or pancreatitis."],
+        "classification": [{"name": "Nausea/vomiting", "detail": "Opioids, cytostatics, digoxin, antibiotics, levodopa."}, {"name": "Diarrhea", "detail": "Antibiotics, metformin, magnesium antacids, laxatives."}, {"name": "Constipation", "detail": "Opioids, anticholinergics, iron, calcium channel blockers."}, {"name": "Ulcers/bleeding", "detail": "NSAIDs, anticoagulants, NSAID plus glucocorticoid."}, {"name": "Hepatotoxicity", "detail": "Paracetamol overdose, isoniazid, valproate, methotrexate."}],
+        "clinical_uses": ["ADR recognition, medication review, prevention with gastroprotection or dose change."],
+        "adverse_effects": ["Dehydration, bleeding, liver failure, pancreatitis."],
+        "contraindications": [],
+        "exam_traps": ["NSAIDs cause ulcers by COX-1 prostaglandin loss.", "Antibiotic diarrhea includes C. difficile.", "Paracetamol overdose causes liver necrosis."],
+        "oral_exam_answer": "GI adverse effects include nausea, vomiting, diarrhea, constipation, ulceration, bleeding, hepatotoxicity, and pancreatitis. Key examples are NSAID ulcers, opioid constipation, antibiotic-associated diarrhea including C. difficile, metformin diarrhea, and paracetamol liver necrosis in overdose."
+      },
+      {
+        "topic_id": "18B",
+        "label": "Topic B",
+        "title": "Drugs Affecting Mucociliary Clearance",
+        "category": "Respiratory Pharmacology",
+        "theory_short": "Mucociliary clearance depends on mucus viscosity, hydration, ciliary function, and cough. Drugs either help remove mucus or suppress dry cough.",
+        "definition": "These drugs modify airway secretions or cough reflex to improve respiratory symptom control.",
+        "mechanism_steps": ["Expectorants increase bronchial secretion.", "Mucolytics reduce mucus viscosity.", "Mucokinetics/secretolytics improve transport.", "Saline hydration can loosen secretions.", "Antitussives suppress dry nonproductive cough."],
+        "classification": [{"name": "Expectorants", "detail": "Guaifenesin."}, {"name": "Mucolytics", "detail": "Acetylcysteine, carbocisteine, erdosteine."}, {"name": "Mucokinetics/secretolytics", "detail": "Ambroxol, bromhexine."}, {"name": "Hydration/aerosols", "detail": "Saline inhalation."}, {"name": "Antitussives", "detail": "Codeine, dextromethorphan, butamirate."}],
+        "clinical_uses": ["Productive cough with thick secretions, dry irritating cough, airway clearance support."],
+        "adverse_effects": ["GI upset, bronchospasm with inhaled mucolytics, sedation/constipation with codeine."],
+        "contraindications": ["Avoid antitussives when mucus must be cleared; caution with codeine and CNS depressants."],
+        "exam_traps": ["N-acetylcysteine is also the antidote for paracetamol toxicity.", "Antitussives are for dry cough, not productive mucus retention.", "Codeine has opioid adverse effects."],
+        "oral_exam_answer": "Drugs improving mucociliary clearance include expectorants, mucolytics, mucokinetics, and hydration/aerosols, which make secretions easier to remove. Antitussives suppress dry nonproductive cough but should not be used when mucus needs to be cleared."
+      },
+      {
+        "topic_id": "18C",
+        "label": "Topic C",
+        "title": "Basic Classical Penicillin Antibiotics",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "Penicillins are beta-lactam bactericidal antibiotics that bind PBPs and inhibit peptidoglycan cross-linking.",
+        "definition": "Penicillins are beta-lactam antibiotics targeting bacterial cell wall synthesis.",
+        "mechanism_steps": ["Bind PBPs/transpeptidases.", "Prevent peptidoglycan crosslinking.", "Weaken cell wall.", "Cause lysis of growing bacteria."],
+        "classification": [{"name": "Natural penicillins", "detail": "Penicillin G, penicillin V."}, {"name": "Depot forms", "detail": "Benzathine penicillin G, procaine penicillin G."}, {"name": "Penicillinase-resistant", "detail": "Oxacillin, cloxacillin, nafcillin; MSSA not MRSA."}, {"name": "Aminopenicillins", "detail": "Ampicillin, amoxicillin; often with beta-lactamase inhibitor."}, {"name": "Antipseudomonal", "detail": "Piperacillin, ticarcillin; often piperacillin/tazobactam."}],
+        "clinical_uses": ["Streptococci, pneumococci if susceptible, syphilis, MSSA with antistaphylococcal agents, enterococci/Listeria with aminopenicillins, Pseudomonas with antipseudomonal agents."],
+        "adverse_effects": ["Hypersensitivity, rash, diarrhea, C. difficile, candidiasis, seizures at high dose/renal failure, interstitial nephritis."],
+        "contraindications": ["Severe beta-lactam allergy; adjust dose in renal impairment for many agents."],
+        "exam_traps": ["Ampicillin/amoxicillin rash is common in EBV infection.", "Oxacillin/cloxacillin treat MSSA, not MRSA.", "Penicillins are time-dependent bactericidal drugs."],
+        "oral_exam_answer": "Penicillins inhibit PBPs and transpeptidation, blocking peptidoglycan cross-linking and causing bacterial lysis. Main groups are natural penicillins, depot forms, penicillinase-resistant penicillins, aminopenicillins, and antipseudomonal penicillins. The main risk is allergy.",
+        "diagram_ids": ["penicillin_subclass_map"],
+        "resource_ids": ["ninja_antibiotics_playlist"]
+      }
+    ],
+    "clinical_cases": [{"id": "case18_productive_cough", "topic_id": "18B", "title": "Productive Cough", "case_text": "A patient with thick sputum asks for codeine to stop coughing.", "question": "Why might this be inappropriate?", "expected_answer": "Antitussives should be avoided when mucus needs to be cleared; mucolytic or expectorant support is more logical depending on context."}],
+    "podcast": {"audio_file": "", "script": "Review GI adverse effect patterns, mucus clearance drugs, and penicillin subclass logic.", "summary_points": ["NSAIDs cause ulcers.", "Opioids cause constipation.", "Antitussives are for dry cough.", "Penicillins bind PBPs."]},
+    "final_review": ["Antibiotics can cause C. difficile diarrhea.", "NSAIDs cause ulcer/bleeding risk.", "NAC is mucolytic and paracetamol antidote.", "Penicillins inhibit PBPs; allergy is key risk."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 19,
+    "title": "Bioavailability of Drugs / Opioid Analgesics: Opioid Receptor Agonists / Antacids",
+    "short_title": "Bioavailability / Opioids / Antacids",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["general_pharmacology", "cns", "gastrointestinal"],
+    "learning_goal": "Understand bioavailability parameters, opioid agonist effects and toxicity, and antacid mechanisms and interactions.",
+    "why_it_matters": "This triplet links route conversion, life-threatening respiratory depression, and everyday absorption interactions.",
+    "oral_exam_goals": ["Define F, AUC, Cmax, Tmax, first-pass effect, and bioequivalence.", "Explain mu receptor opioid effects, uses, adverse effects, and naloxone.", "Compare aluminium, magnesium, calcium, bicarbonate, and alginate antacid issues."],
+    "topics": [
+      {
+        "topic_id": "19A",
+        "label": "Topic A",
+        "title": "Bioavailability of Drugs",
+        "category": "General Pharmacology",
+        "theory_short": "Bioavailability is the fraction of administered dose reaching systemic circulation unchanged. IV bioavailability is 100%.",
+        "definition": "Bioavailability, F, is the extent of unchanged drug reaching systemic circulation.",
+        "mechanism_steps": ["Drug is administered by a route.", "Absorption may be incomplete.", "Gut wall or liver first-pass metabolism may remove drug.", "Systemic exposure is reflected by AUC.", "Cmax and Tmax describe peak and time to peak."],
+        "classification": [{"name": "F", "detail": "Fraction reaching systemic circulation unchanged."}, {"name": "AUC", "detail": "Total systemic exposure."}, {"name": "Cmax", "detail": "Peak plasma concentration."}, {"name": "Tmax", "detail": "Time to peak concentration."}, {"name": "Bioequivalence", "detail": "Comparable AUC and Cmax between formulations."}],
+        "clinical_uses": ["Dose conversion between routes, formulation comparison, first-pass avoidance."],
+        "adverse_effects": ["Low bioavailability can cause therapeutic failure; unexpectedly high bioavailability can cause toxicity."],
+        "contraindications": [],
+        "exam_traps": ["Absorption and bioavailability are not identical.", "IV is 100%.", "First-pass metabolism lowers oral bioavailability."],
+        "oral_exam_answer": "Bioavailability is the proportion of unchanged drug reaching systemic circulation. It is complete after IV administration but often reduced after oral dosing by incomplete absorption and first-pass metabolism. AUC reflects total exposure, Cmax peak concentration, and Tmax time to peak. Bioavailability determines dose conversion between routes.",
+        "diagram_ids": ["bioavailability_auc"],
+        "resource_ids": ["merck_pk", "khan_bioavailability"]
+      },
+      {
+        "topic_id": "19B",
+        "label": "Topic B",
+        "title": "Opioid Analgesics: Opioid Receptor Agonists",
+        "category": "CNS Pharmacology",
+        "theory_short": "Opioid agonists mainly stimulate mu receptors, inhibiting transmitter release and hyperpolarizing neurons. Respiratory depression is the key lethal toxicity.",
+        "definition": "Opioid agonists activate mu, kappa, and delta opioid receptors; mu is most clinically important.",
+        "mechanism_steps": ["Presynaptic calcium influx decreases.", "Neurotransmitter release decreases.", "Postsynaptic potassium efflux increases.", "Neurons hyperpolarize.", "Brainstem CO2 sensitivity falls, causing respiratory depression."],
+        "classification": [{"name": "Strong agonists", "detail": "Morphine, fentanyl, sufentanil, oxycodone, hydromorphone, methadone."}, {"name": "Weak agonists/prodrugs", "detail": "Codeine, dihydrocodeine."}, {"name": "Atypical opioid-like", "detail": "Tramadol, tapentadol."}, {"name": "Peripheral opioid agonist", "detail": "Loperamide for diarrhea."}],
+        "clinical_uses": ["Severe acute/chronic/cancer pain, anaesthesia, MI pain, palliative dyspnea, diarrhea for loperamide."],
+        "adverse_effects": ["Respiratory depression, miosis, constipation, nausea/vomiting, sedation, euphoria, dependence, tolerance, withdrawal, histamine release."],
+        "contraindications": ["Avoid dangerous combination with benzodiazepines, alcohol, and severe respiratory depression context unless carefully managed."],
+        "exam_traps": ["Miosis and constipation develop little tolerance.", "Naloxone reverses acute opioid intoxication.", "Codeine depends on CYP2D6 activation."],
+        "oral_exam_answer": "Opioid agonists mainly stimulate mu receptors, inhibit neurotransmitter release, and hyperpolarize neurons, producing strong analgesia. Main adverse effects are respiratory depression, miosis, constipation, nausea, sedation, tolerance, dependence, and withdrawal. Naloxone reverses acute opioid intoxication."
+      },
+      {
+        "topic_id": "19C",
+        "label": "Topic C",
+        "title": "Antacids",
+        "category": "Gastrointestinal Pharmacology",
+        "theory_short": "Antacids are weak bases that neutralize existing gastric acid and provide quick symptom relief but do not strongly suppress acid production.",
+        "definition": "Antacids neutralize gastric acid already present in the stomach.",
+        "mechanism_steps": ["Weak base reacts with gastric acid.", "Intragastric pH rises briefly.", "Symptoms may improve quickly.", "Chelation or pH change can reduce absorption of other drugs."],
+        "classification": [{"name": "Aluminium hydroxide", "detail": "Constipation, hypophosphatemia, chelation."}, {"name": "Magnesium hydroxide", "detail": "Diarrhea, hypermagnesemia in renal failure."}, {"name": "Calcium carbonate", "detail": "Constipation, hypercalcemia, acid rebound, milk-alkali syndrome."}, {"name": "Sodium bicarbonate", "detail": "Metabolic alkalosis, sodium load, belching."}, {"name": "Alginate combinations", "detail": "Reflux raft/barrier."}],
+        "clinical_uses": ["Short-term dyspepsia or reflux symptom relief."],
+        "adverse_effects": ["Constipation, diarrhea, hypercalcemia, alkalosis, electrolyte issues, drug absorption interactions."],
+        "contraindications": ["Renal failure caution for magnesium/aluminium; sodium load caution for bicarbonate."],
+        "exam_traps": ["Antacids reduce absorption of tetracyclines, fluoroquinolones, iron, and levothyroxine.", "Separate interacting drugs by several hours.", "Magnesium causes diarrhea; aluminium causes constipation."],
+        "oral_exam_answer": "Antacids neutralize gastric acid and are used for short-term dyspepsia or reflux symptoms. Aluminium causes constipation, magnesium causes diarrhea, calcium may cause hypercalcemia, and sodium bicarbonate can cause alkalosis and sodium load. Antacids commonly impair absorption of other drugs by chelation or pH effects."
+      }
+    ],
+    "clinical_cases": [{"id": "case19_opioid", "topic_id": "19B", "title": "Pinpoint Pupils And Slow Breathing", "case_text": "A patient has coma, miosis, and respiratory depression after suspected opioid use.", "question": "Which antidote is used?", "expected_answer": "Naloxone, with airway and ventilation support as needed."}],
+    "podcast": {"audio_file": "", "script": "Explain bioavailability curves, opioid agonist toxicity, and antacid interactions.", "summary_points": ["F is unchanged drug reaching systemic circulation.", "AUC is total exposure.", "Opioids cause respiratory depression.", "Antacids chelate tetracyclines and fluoroquinolones."]},
+    "final_review": ["Bioavailability: F and AUC.", "IV F is 100%.", "Opioids: mu agonism, respiratory depression, miosis, constipation.", "Naloxone reverses overdose.", "Antacids chelate and alter absorption."],
+    "module_test_ids": []
+  },
+  {
+    "triplet_id": 20,
+    "title": "The Medical Prescription and Its Structure / Treatment of Angina Pectoris / Tetracycline Antibiotics",
+    "short_title": "Prescription / Angina / Tetracyclines",
+    "difficulty": "core",
+    "estimated_time_min": 35,
+    "tags": ["prescription", "cardiovascular", "antimicrobial"],
+    "learning_goal": "Know prescription structure, explain angina treatment, and classify tetracycline mechanism, uses, and risks.",
+    "why_it_matters": "This final early module tests legal prescribing basics, ischemia logic, and one of the most exam-friendly antibiotic classes.",
+    "oral_exam_goals": ["Name patient, prescriber, Rp., subscription, signatura, date, and authentication fields.", "Explain acute and preventive angina therapy.", "Explain tetracycline 30S mechanism, uses, chelation, teeth/bone toxicity, and contraindications."],
+    "topics": [
+      {
+        "topic_id": "20A",
+        "label": "Topic A",
+        "title": "The Medical Prescription and Its Structure",
+        "category": "Prescription",
+        "theory_short": "A prescription is a legal medical document identifying patient, prescriber, medicine, dosage instructions, date, and authentication.",
+        "definition": "A medical prescription is a legal order for preparation or dispensing of a medicinal product.",
+        "mechanism_steps": ["Identify patient.", "Identify prescriber.", "Write drug name, strength, dosage form, package size, and amount.", "Add dispensing or compounding instructions when needed.", "Write signatura: dose, route, frequency, and duration for the patient.", "Date and authenticate."],
+        "classification": [{"name": "Patient data", "detail": "Name, date of birth/personal ID, address/insurance data as required."}, {"name": "Prescriber data", "detail": "Name, workplace, code/registration, signature/stamp/e-authentication."}, {"name": "Rp./inscription", "detail": "Drug name, strength, dosage form, package size, amount."}, {"name": "Subscription", "detail": "Instruction to pharmacist for prepared medicine."}, {"name": "Signatura", "detail": "Patient instructions."}],
+        "clinical_uses": ["Safe, legal medication dispensing and patient instruction."],
+        "adverse_effects": ["Prescription errors can cause wrong drug, dose, route, frequency, or duration."],
+        "contraindications": [],
+        "exam_traps": ["Signatura is the patient instruction part.", "Prescription is both therapeutic and legal.", "Dose, route, frequency, and duration must be clear."],
+        "oral_exam_answer": "A prescription contains identification of patient and prescriber, the prescribed drug with strength, dosage form and quantity, instructions for dispensing and patient use, date, and authentication. It is both a therapeutic and legal document.",
+        "diagram_ids": ["prescription_structure_map"]
+      },
+      {
+        "topic_id": "20B",
+        "label": "Topic B",
+        "title": "Treatment of Angina Pectoris",
+        "category": "Cardiovascular Pharmacology",
+        "theory_short": "Angina therapy reduces oxygen demand, improves supply, relieves acute pain, and prevents thrombosis and progression.",
+        "definition": "Angina pectoris is ischemic chest pain from myocardial oxygen supply-demand imbalance.",
+        "mechanism_steps": ["Nitrates venodilate and reduce preload.", "Beta-blockers reduce heart rate and contractility.", "Calcium channel blockers vasodilate and/or reduce cardiac work.", "Antiplatelets and statins reduce ischemic events and plaque progression.", "Other antianginals target late sodium current, heart rate, or metabolism."],
+        "classification": [{"name": "Nitrates", "detail": "Nitroglycerin and isosorbide; acute relief and prophylaxis."}, {"name": "Beta-blockers", "detail": "Metoprolol, bisoprolol, atenolol; first-line stable exertional angina."}, {"name": "Calcium channel blockers", "detail": "Verapamil/diltiazem and amlodipine; vasospasm and demand reduction."}, {"name": "Prevention", "detail": "ASA/clopidogrel, statins, risk factor control."}, {"name": "Other antianginals", "detail": "Ranolazine, ivabradine, trimetazidine."}],
+        "clinical_uses": ["Acute angina attacks, stable angina prophylaxis, vasospastic angina, secondary prevention."],
+        "adverse_effects": ["Nitrate headache/hypotension, beta-blocker bradycardia/bronchospasm/fatigue, CCB edema or AV block, antiplatelet bleeding, statin myopathy."],
+        "contraindications": ["Nitrates with PDE5 inhibitors; beta-blockers alone in vasospastic angina; non-DHP CCBs in AV block/HFrEF."],
+        "exam_traps": ["Acute attack: stop activity, sit, sublingual nitroglycerin; persistent pain needs emergency evaluation.", "Nitrates cannot combine with PDE5 inhibitors.", "Beta-blockers reduce demand in stable exertional angina."],
+        "oral_exam_answer": "Angina treatment includes nitrates for acute relief, beta-blockers and calcium channel blockers to reduce oxygen demand or vasospasm, and prognostic therapy with antiplatelets, statins, and risk-factor control. Nitrates reduce preload and myocardial oxygen demand but must not be combined with PDE5 inhibitors."
+      },
+      {
+        "topic_id": "20C",
+        "label": "Topic C",
+        "title": "Tetracycline Antibiotics",
+        "category": "Antimicrobial Pharmacology",
+        "theory_short": "Tetracyclines bind reversibly to the 30S ribosomal subunit and block aminoacyl-tRNA attachment. Chelation and teeth/bone toxicity are key exam traps.",
+        "definition": "Tetracyclines are broad-spectrum bacteriostatic protein synthesis inhibitors.",
+        "mechanism_steps": ["Bind reversibly to the 30S ribosomal subunit.", "Block aminoacyl-tRNA attachment.", "Inhibit bacterial protein synthesis.", "Chelate divalent/trivalent cations, reducing absorption.", "Accumulate in developing teeth and bone."],
+        "classification": [{"name": "Tetracycline", "detail": "Older, shorter acting, affected by food and cations."}, {"name": "Doxycycline", "detail": "Long acting, better absorption, less affected by food; atypicals, chlamydia, rickettsia, borrelia, acne, malaria prophylaxis."}, {"name": "Minocycline", "detail": "Lipophilic; vestibular adverse effects."}, {"name": "Tigecycline", "detail": "IV glycylcycline, broad but no Pseudomonas."}],
+        "clinical_uses": ["Atypical pneumonia, chlamydia, rickettsiae, borrelia, acne, malaria prophylaxis, selected MRSA or complicated infections depending on drug."],
+        "adverse_effects": ["GI irritation, esophagitis, photosensitivity, chelation interactions, teeth discoloration, bone growth inhibition, hepatotoxicity, superinfection, Fanconi-like syndrome with expired tetracycline."],
+        "contraindications": ["Pregnancy and young children; avoid taking with milk, antacids, iron, calcium, magnesium, aluminium around dosing."],
+        "exam_traps": ["Do not take with milk or antacids because of chelation.", "Avoid in pregnancy and young children due to teeth/bone toxicity.", "Doxycycline is useful for atypicals, rickettsiae, chlamydiae, borrelia, and acne."],
+        "oral_exam_answer": "Tetracyclines bind the 30S ribosomal subunit and prevent aminoacyl-tRNA binding, inhibiting protein synthesis. They cover atypicals, rickettsiae, chlamydiae, borrelia, and many Gram-positive/negative organisms. Main adverse effects are GI irritation, photosensitivity, chelation interactions, teeth discoloration and bone growth inhibition, so they are avoided in pregnancy and children.",
+        "resource_ids": ["ninja_antibiotics_playlist"]
+      }
+    ],
+    "clinical_cases": [{"id": "case20_tetracycline", "topic_id": "20C", "title": "Doxycycline With Milk", "case_text": "A patient takes doxycycline with milk and antacids and does not improve.", "question": "What pharmacokinetic interaction explains this?", "expected_answer": "Chelation with calcium, magnesium, aluminium, or iron reduces tetracycline absorption."}],
+    "podcast": {"audio_file": "", "script": "Name prescription parts, explain angina therapy, then summarize tetracycline 30S mechanism, uses, chelation, photosensitivity, and pregnancy/child contraindications.", "summary_points": ["Signatura contains patient instructions.", "Angina therapy reduces oxygen demand and prevents thrombosis.", "Nitrates cannot combine with PDE5 inhibitors.", "Tetracyclines bind 30S and chelate cations.", "Avoid tetracyclines in pregnancy and young children."]},
+    "final_review": ["Prescription: patient, prescriber, Rp., subscription, signatura, date, authentication.", "Angina: nitrates, beta-blockers, CCBs, antiplatelets, statins.", "Tetracyclines: 30S, atypicals/rickettsiae/chlamydiae/borrelia/acne.", "Avoid milk/antacids, pregnancy, and young children."],
+    "module_test_ids": []
+  }
+]

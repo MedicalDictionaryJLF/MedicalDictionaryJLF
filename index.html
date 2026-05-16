@@ -198,7 +198,7 @@
           <button type="button" id="to-flashcards" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v10h-2V6H5zm-2 4h12a2 2 0 0 1 2 2v10H5a2 2 0 0 1-2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="flashcards">Flashcards</span><span class="menu-desc" data-i18n="submenu_desc_flashcards">Build sessions and review with spaced repetition.</span></span></button>
           <button type="button" id="to-anamnesis" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 1.5V8h3.5L14 4.5zM9 11h6v1.8H9V11zm0 4h6v1.8H9V15z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="anamnesis">Anamnesis</span><span class="menu-desc" data-i18n="submenu_desc_anamnesis">Structured intake forms for internal, psychiatry, and pediatrics.</span></span></button>
           <button type="button" id="to-lab-parameters" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 640 640"><path d="M384 64L224 64C206.3 64 192 78.3 192 96C192 113.7 206.3 128 224 128L224 279.5L103.5 490.3C98.6 499 96 508.7 96 518.7C96 550.4 121.6 576 153.3 576L486.7 576C518.3 576 544 550.4 544 518.7C544 508.7 541.4 498.9 536.5 490.3L416 279.5L416 128C433.7 128 448 113.7 448 96C448 78.3 433.7 64 416 64L384 64zM288 279.5L288 128L352 128L352 279.5C352 290.6 354.9 301.6 360.4 311.3L402 384L238 384L279.6 311.3C285.1 301.6 288 290.7 288 279.5z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="laboratory_parameters">Laboratory parameters</span><span class="menu-desc" data-i18n="submenu_desc_lab">Filter analytes by tag and compare reference ranges.</span></span></button>
-          <button type="button" id="to-pharmacology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 4h7A2.5 2.5 0 0 1 18 6.5V8h.5A2.5 2.5 0 0 1 21 10.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-7A2.5 2.5 0 0 1 5.5 8H6V6.5A2.5 2.5 0 0 1 8.5 4zm0 2A.5.5 0 0 0 8 6.5V8h8V6.5a.5.5 0 0 0-.5-.5h-7zm-3 4a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13zm2 2h9v2h-9v-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="pharmacology">Pharmacology</span><span class="menu-desc" data-i18n="submenu_desc_pharmacology">Search drugs, ATC classes, and core pharmacology details.</span></span></button>
+          <button type="button" id="to-pharmacology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 4h7A2.5 2.5 0 0 1 18 6.5V8h.5A2.5 2.5 0 0 1 21 10.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-7A2.5 2.5 0 0 1 5.5 8H6V6.5A2.5 2.5 0 0 1 8.5 4zm0 2A.5.5 0 0 0 8 6.5V8h8V6.5a.5.5 0 0 0-.5-.5h-7zm-3 4a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-13zm2 2h9v2h-9v-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="pharmacology">Pharmacology</span><span class="menu-desc" data-i18n="submenu_desc_pharmacology">Study oral-exam triplets with quizzes, clinical cases, and rapid review.</span></span></button>
         </div>
         </div>
       </section>
@@ -294,45 +294,49 @@
         </div>
       </section>
 
-      <section id="screen-pharmacology" class="screen hidden">
-        <div class="dataset-shell">
-          <aside class="card dataset-sidebar">
-            <div class="dataset-head">
+      <section id="screen-pharmacology" class="screen hidden pharmacology-course-screen">
+        <div class="pharm-course-shell">
+          <div class="pharm-course-head">
+            <div class="pharm-course-title-block">
+              <p class="course-kicker" data-i18n="pharm_course_kicker">Final Exam Course</p>
+              <h3 id="pharm-course-title" data-i18n="pharm_course_title">Pharmacology Triplets</h3>
+              <p data-i18n="pharm_course_intro">Structured oral-exam modules with theory, diagrams, flashcards, quizzes, clinical cases, and rapid review.</p>
+            </div>
+            <div class="pharm-course-stats" aria-label="Course progress" data-i18n-aria-label="pharm_course_progress">
               <div>
-                <p class="dataset-kicker" data-i18n="pharmacology_medicines">Medicines</p>
-                <h3 class="dataset-title" data-i18n="pharmacology_lookup_title">Drug lookup</h3>
+                <span data-i18n="pharm_course_modules">Modules</span>
+                <strong id="pharm-course-count">0</strong>
               </div>
-              <p class="dataset-copy" data-i18n="pharmacology_lookup_copy">Search by drug name or ATC code and narrow the catalog using the category tree when needed.</p>
-            </div>
-            <div class="search-controls dataset-controls">
-              <label for="pharmacology-search-input" class="search-label" data-i18n="search">Search</label>
-              <input id="pharmacology-search-input" placeholder="Search drug name or ATC code (min 2 chars)" />
-            </div>
-            <div class="lab-filters pharmacology-filters lab-filter-block dataset-filter-stack">
-              <div class="lab-filter-head pharmacology-filter-head-row">
-                <div class="pharmacology-filter-toggle-copy">
-                  <strong id="pharmacology-atc-filter-label">Narrow search with tags</strong>
-                  <span class="small muted" id="pharmacology-filter-summary">ATC categories</span>
-                </div>
-              </div>
-              <div class="lab-filter-head">
-                <strong id="pharmacology-atc-subtitle">ATC categories</strong>
-                <button type="button" id="pharmacology-clear-filter" class="lab-clear-btn">Clear filter</button>
-              </div>
-              <div id="pharmacology-selected-filter" class="lab-chip-list pharmacology-selected-filter" aria-label="Selected ATC category" data-i18n-aria-label="pharmacology_selected_atc_category"></div>
-              <div id="pharmacology-atc-tree" class="pharmacology-atc-tree" aria-label="ATC category tree" data-i18n-aria-label="pharmacology_atc_tree"></div>
-            </div>
-          </aside>
-          <div class="card dataset-stage">
-            <div class="dataset-head dataset-head-inline">
               <div>
-                <p class="dataset-kicker" data-i18n="results">Results</p>
-                <h3 class="dataset-title" data-i18n="pharmacology_results_title">Pharmacology matches</h3>
+                <span data-i18n="pharm_course_completed">Completed</span>
+                <strong id="pharm-course-completed">0</strong>
               </div>
-              <p class="dataset-stage-note" data-i18n="pharmacology_results_live">The result list refreshes instantly as the search scope changes.</p>
+              <div>
+                <span data-i18n="pharm_course_wrong_answers">Wrong Answers</span>
+                <strong id="pharm-course-wrong-count">0</strong>
+              </div>
             </div>
-            <div id="pharmacology-results" class="dataset-results"></div>
           </div>
+
+          <div id="pharm-course-overview" class="pharm-course-overview">
+            <div class="pharm-course-toolbar">
+              <div class="pharm-course-search">
+                <label for="pharm-course-search" data-i18n="search">Search</label>
+                <input id="pharm-course-search" type="search" placeholder="Search triplet, drug, topic, or tag" data-i18n-placeholder="pharm_course_search_placeholder" />
+              </div>
+              <div class="pharm-course-filter">
+                <label for="pharm-course-tag-filter" data-i18n="category">Category</label>
+                <select id="pharm-course-tag-filter" aria-label="Filter pharmacology modules" data-i18n-aria-label="pharm_course_filter_modules">
+                  <option value="all" data-i18n="pharm_course_all_categories">All categories</option>
+                </select>
+              </div>
+              <button type="button" id="pharm-course-review-wrong" class="secondary" data-i18n="pharm_course_review_wrong">Review wrong answers</button>
+              <button type="button" id="pharm-course-reset-progress" class="course-reset-btn" data-i18n="pharm_course_reset">Reset progress</button>
+            </div>
+            <div id="pharm-course-grid" class="pharm-course-grid" aria-live="polite"></div>
+          </div>
+
+          <div id="pharm-course-detail" class="pharm-course-detail hidden" aria-live="polite"></div>
         </div>
       </section>
 
@@ -1907,7 +1911,7 @@
     <footer class="app-copyright" aria-label="Copyright">&copy; 2026 Daniel Marcok. All Rights Reserved.</footer>
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="assets/js/app.js?v=22"></script>
+<script type="module" src="assets/js/app.js?v=23"></script>
 </body>
 </html>
 

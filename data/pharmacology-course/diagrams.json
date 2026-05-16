@@ -1,0 +1,200 @@
+[
+  {
+    "id": "absorption_first_pass",
+    "triplet_id": 1,
+    "title": "Absorption And First-Pass Flow",
+    "type": "flowchart",
+    "description": "Dose form -> dissolution -> membrane crossing -> portal blood -> gut wall/liver metabolism -> systemic circulation.",
+    "labels": ["Dose", "Dissolution", "Absorption", "Portal vein", "First pass", "Systemic circulation"],
+    "interaction": "Click each step to reveal the factor that can slow or reduce exposure."
+  },
+  {
+    "id": "insulin_receptor_pathway",
+    "triplet_id": 1,
+    "title": "Insulin Receptor Signaling",
+    "type": "pathway_map",
+    "description": "Insulin receptor tyrosine kinase activation leading to PI3K/Akt, GLUT4 translocation, glycogen synthesis, and potassium shift into cells.",
+    "labels": ["Insulin", "RTK", "PI3K/Akt", "GLUT4", "Glucose uptake", "K+ shift"],
+    "interaction": "Reveal metabolic effects by tissue: liver, muscle, adipose."
+  },
+  {
+    "id": "iv_anaesthetic_grid",
+    "triplet_id": 1,
+    "title": "IV Anaesthetic Comparison",
+    "type": "comparison_grid",
+    "description": "Propofol, thiopental, etomidate, and ketamine compared by mechanism, hemodynamic effect, analgesia, and major cautions.",
+    "labels": ["Propofol", "Thiopental", "Etomidate", "Ketamine"],
+    "interaction": "Filter by clinical situation such as unstable patient, bronchospasm, or outpatient procedure."
+  },
+  {
+    "id": "enteral_route_comparison",
+    "triplet_id": 2,
+    "title": "Enteral Route Comparison",
+    "type": "route_map",
+    "description": "Oral, sublingual, buccal, and rectal routes compared by first-pass effect, onset, and reliability.",
+    "labels": ["Oral", "Sublingual", "Buccal", "Rectal"],
+    "interaction": "Select a route to show its exam advantages and limitations."
+  },
+  {
+    "id": "adrenergic_receptor_effects",
+    "triplet_id": 3,
+    "title": "Adrenergic Receptor Effect Table",
+    "type": "comparison_grid",
+    "description": "Adrenaline, noradrenaline, dopamine, and isoprenaline mapped to alpha and beta receptor effects.",
+    "labels": ["alpha1", "alpha2", "beta1", "beta2", "D1"],
+    "interaction": "Highlight receptor effects relevant to anaphylaxis and shock."
+  },
+  {
+    "id": "dependence_reward_pathway",
+    "triplet_id": 4,
+    "title": "Dependence Reward Pathway",
+    "type": "pathway_map",
+    "description": "VTA -> nucleus accumbens -> prefrontal cortex reward pathway with tolerance, dependence, addiction, and withdrawal terms.",
+    "labels": ["VTA", "Dopamine", "Nucleus accumbens", "Craving", "Withdrawal"],
+    "interaction": "Toggle terms to compare dependence, tolerance, and addiction."
+  },
+  {
+    "id": "volume_distribution_model",
+    "triplet_id": 5,
+    "title": "Volume Of Distribution Model",
+    "type": "concept_model",
+    "description": "Low and high Vd examples showing plasma binding, tissue binding, barriers, and loading dose logic.",
+    "labels": ["Plasma", "Tissue", "Free drug", "Protein bound", "Vd"],
+    "interaction": "Change protein binding or tissue binding to see how apparent Vd changes."
+  },
+  {
+    "id": "gpcr_gs_gi_gq",
+    "triplet_id": 6,
+    "title": "G-Protein Coupled Receptor Pathways",
+    "type": "pathway_map",
+    "description": "Gs, Gi, and Gq signaling with receptor examples and second messengers.",
+    "labels": ["Gs", "Gi", "Gq", "cAMP", "IP3", "DAG", "Ca2+"],
+    "interaction": "Click each G-protein to reveal receptor examples and clinical drug links."
+  },
+  {
+    "id": "dose_response_curves",
+    "triplet_id": 7,
+    "title": "Dose-Response Curves",
+    "type": "graph",
+    "description": "Potency, efficacy, competitive antagonism, and noncompetitive antagonism on dose-response curves.",
+    "labels": ["EC50", "Emax", "Potency", "Efficacy"],
+    "interaction": "Overlay agonist, partial agonist, and antagonist curves."
+  },
+  {
+    "id": "therapeutic_index_graph",
+    "triplet_id": 8,
+    "title": "Therapeutic Index Graph",
+    "type": "graph",
+    "description": "ED50, TD50, LD50, therapeutic index, and therapeutic window.",
+    "labels": ["ED50", "TD50", "LD50", "Therapeutic index"],
+    "interaction": "Compare a wide-window drug with a narrow-window drug."
+  },
+  {
+    "id": "renal_excretion_flow",
+    "triplet_id": 9,
+    "title": "Renal Drug Excretion",
+    "type": "flowchart",
+    "description": "Glomerular filtration, tubular secretion, and tubular reabsorption with urine pH effects.",
+    "labels": ["Filtration", "Secretion", "Reabsorption", "Urine pH"],
+    "interaction": "Toggle weak acid or weak base to predict ion trapping."
+  },
+  {
+    "id": "metabolism_phase_chart",
+    "triplet_id": 10,
+    "title": "Phase I And Phase II Metabolism",
+    "type": "classification_chart",
+    "description": "CYP-mediated oxidation/reduction/hydrolysis and conjugation reactions with induction and inhibition notes.",
+    "labels": ["Phase I", "Phase II", "CYP", "Induction", "Inhibition"],
+    "interaction": "Match common inducers and inhibitors to expected drug level changes."
+  },
+  {
+    "id": "drug_interaction_types",
+    "triplet_id": 11,
+    "title": "Drug Interaction Types",
+    "type": "classification_chart",
+    "description": "Pharmaceutical, pharmacokinetic, and pharmacodynamic interactions with high-risk examples.",
+    "labels": ["Absorption", "Distribution", "Metabolism", "Excretion", "Pharmacodynamic"],
+    "interaction": "Classify examples by interaction type."
+  },
+  {
+    "id": "cephalosporin_ladder",
+    "triplet_id": 12,
+    "title": "Cephalosporin Generation Ladder",
+    "type": "drug_class_ladder",
+    "description": "Cephalosporin generations with Gram-negative expansion, Pseudomonas, MRSA, and key exam examples.",
+    "labels": ["1st", "2nd", "3rd", "4th", "5th"],
+    "interaction": "Select a generation to reveal coverage and high-yield uses."
+  },
+  {
+    "id": "pharmacovigilance_signal_flow",
+    "triplet_id": 13,
+    "title": "Pharmacovigilance Signal Flow",
+    "type": "flowchart",
+    "description": "Adverse event report -> signal detection -> assessment -> risk minimization -> regulatory action.",
+    "labels": ["Report", "Signal", "Assessment", "Action"],
+    "interaction": "Open terms: ADR, AE, signal, PSUR, risk management plan."
+  },
+  {
+    "id": "dose_type_map",
+    "triplet_id": 14,
+    "title": "Dose Types Map",
+    "type": "concept_map",
+    "description": "Single, daily, therapeutic, toxic, loading, maintenance, and cumulative dose relationships.",
+    "labels": ["Loading dose", "Maintenance dose", "Vd", "Clearance"],
+    "interaction": "Connect dose type to the pharmacokinetic parameter that determines it."
+  },
+  {
+    "id": "drug_allergy_gell_coombs",
+    "triplet_id": 15,
+    "title": "Drug Allergy Types",
+    "type": "classification_chart",
+    "description": "Gell-Coombs type I-IV drug allergy mechanisms and clinical examples.",
+    "labels": ["Type I", "Type II", "Type III", "Type IV"],
+    "interaction": "Match clinical reactions to immune mechanism."
+  },
+  {
+    "id": "pregnancy_toxicity_timeline",
+    "triplet_id": 16,
+    "title": "Pregnancy Toxicity Timeline",
+    "type": "timeline",
+    "description": "Preimplantation, organogenesis, fetal period, and peripartum toxicity risks.",
+    "labels": ["0-2 weeks", "3-8 weeks", "Week 9-birth", "Neonate"],
+    "interaction": "Place example drugs on the pregnancy risk timeline."
+  },
+  {
+    "id": "adr_classification_abcdef",
+    "triplet_id": 17,
+    "title": "ADR ABCDEF Classification",
+    "type": "classification_chart",
+    "description": "Type A augmented, B bizarre, C chronic, D delayed, E end-of-use, and F failure reactions.",
+    "labels": ["A", "B", "C", "D", "E", "F"],
+    "interaction": "Classify an adverse reaction by predictability and dose relation."
+  },
+  {
+    "id": "penicillin_subclass_map",
+    "triplet_id": 18,
+    "title": "Penicillin Subclass Map",
+    "type": "drug_class_ladder",
+    "description": "Natural, depot, penicillinase-resistant, aminopenicillin, and antipseudomonal penicillin groups.",
+    "labels": ["PBP", "Natural", "Depot", "MSSA", "Aminopenicillin", "Pseudomonas"],
+    "interaction": "Reveal spectrum and classic exam traps by subclass."
+  },
+  {
+    "id": "bioavailability_auc",
+    "triplet_id": 19,
+    "title": "Bioavailability Curve",
+    "type": "graph",
+    "description": "AUC, Cmax, Tmax, and first-pass metabolism on plasma concentration-time curves.",
+    "labels": ["AUC", "Cmax", "Tmax", "F"],
+    "interaction": "Compare oral and IV curves."
+  },
+  {
+    "id": "prescription_structure_map",
+    "triplet_id": 20,
+    "title": "Prescription Structure",
+    "type": "document_map",
+    "description": "Patient data, prescriber data, Rp., subscription, signatura, date, and authentication.",
+    "labels": ["Patient", "Prescriber", "Rp.", "Signatura", "Date"],
+    "interaction": "Click a prescription field to see what belongs there."
+  }
+]

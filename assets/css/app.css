@@ -1,4 +1,4 @@
-﻿:root{
+:root{
   /* GREEN THEME */
   --brand:#15803d;        /* emerald/green */
   --brand-2:#166534;      /* darker green */
@@ -8610,5 +8610,574 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   }
   body[data-theme="dark"] #screen-submenu .submenu-shell{
     background:linear-gradient(180deg, rgba(17,26,22,.94), rgba(12,28,20,.96)) !important;
+  }
+}
+
+/* pharmacology final exam course */
+.pharmacology-course-screen{
+  max-width:1280px;
+  width:100%;
+  align-items:stretch;
+  justify-content:flex-start;
+}
+.pharm-course-shell{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.pharm-course-head,
+.pharm-course-toolbar,
+.pharm-detail-head,
+.pharm-overview-panel,
+.pharm-callout,
+.pharm-diagram-card,
+.pharm-case-card,
+.pharm-oral-card,
+.pharm-podcast-panel,
+.pharm-final-review,
+.pharm-review-question{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.94);
+  box-shadow:var(--shadow);
+  border-radius:8px;
+}
+.pharm-course-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(300px,360px);
+  gap:16px;
+  padding:18px;
+  align-items:stretch;
+}
+.pharm-course-title-block h3,
+.pharm-detail-head h3,
+.pharm-topic-detail h4,
+.pharm-final-review h4{
+  margin:0;
+}
+.pharm-course-title-block p:last-child{
+  margin:8px 0 0 0;
+  color:var(--muted);
+  max-width:76ch;
+}
+.pharm-course-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.pharm-course-stats div{
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px;
+  background:#f8fbfa;
+}
+.pharm-course-stats span{
+  display:block;
+  color:var(--muted);
+  font-size:.82rem;
+}
+.pharm-course-stats strong{
+  display:block;
+  margin-top:4px;
+  font-size:1.35rem;
+}
+.pharm-course-toolbar{
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) minmax(180px,240px) auto auto;
+  gap:10px;
+  padding:12px;
+  align-items:end;
+}
+.pharm-course-search,
+.pharm-course-filter{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+.pharm-course-search label,
+.pharm-course-filter label{
+  font-weight:700;
+  font-size:.86rem;
+}
+.pharm-course-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:14px;
+}
+.pharm-triplet-card,
+.pharm-topic-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:300px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:rgba(255,255,255,.95);
+  box-shadow:var(--shadow);
+}
+.pharm-triplet-card.is-complete{
+  border-color:rgba(16,185,129,.42);
+  background:linear-gradient(180deg, rgba(16,185,129,.08), rgba(255,255,255,.96) 42%);
+}
+.pharm-triplet-topline,
+.pharm-meta-row,
+.pharm-card-tags,
+.pharm-quiz-meta,
+.pharm-detail-head,
+.pharm-topic-detail-head,
+.pharm-oral-head,
+.pharm-audio-slot{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.pharm-triplet-topline,
+.pharm-quiz-meta{
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:.82rem;
+}
+.pharm-triplet-card h4,
+.pharm-topic-card strong,
+.pharm-diagram-card h4,
+.pharm-case-card h4,
+.pharm-oral-card h4,
+.pharm-review-question strong{
+  margin:0;
+  line-height:1.22;
+}
+.pharm-triplet-card p,
+.pharm-topic-card p,
+.pharm-diagram-card p,
+.pharm-case-card p,
+.pharm-review-question p{
+  margin:0;
+  color:var(--muted);
+}
+.pharm-topic-mini-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:auto;
+}
+.pharm-topic-mini-list span,
+.pharm-card-tags span,
+.pharm-meta-row span,
+.pharm-topic-card span,
+.pharm-diagram-card span,
+.pharm-case-card span,
+.pharm-oral-card span,
+.pharm-course-stats span{
+  border-radius:999px;
+}
+.pharm-topic-mini-list span{
+  padding:6px 8px;
+  background:#f3f7f5;
+  border:1px solid var(--border);
+  font-size:.86rem;
+}
+.pharm-card-tags{
+  flex-wrap:wrap;
+}
+.pharm-card-tags span,
+.pharm-meta-row span{
+  padding:5px 8px;
+  background:#eef6ff;
+  color:#1d4ed8;
+  font-size:.78rem;
+  border:1px solid rgba(59,130,246,.18);
+}
+.pharm-card-progress{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  color:var(--muted);
+  font-size:.82rem;
+}
+.pharm-progress-track{
+  height:8px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e5e7eb;
+}
+.pharm-progress-track i{
+  display:block;
+  height:100%;
+  background:#16a34a;
+}
+.pharm-detail-head{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  padding:14px;
+  align-items:center;
+}
+.pharm-back-btn{
+  align-self:start;
+}
+.pharm-tabs{
+  display:flex;
+  gap:6px;
+  overflow:auto;
+  padding:4px 0 2px;
+}
+.pharm-tabs button{
+  flex:0 0 auto;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.95);
+  border-radius:999px;
+  padding:8px 11px;
+  color:var(--text);
+}
+.pharm-tabs button.is-active{
+  background:var(--brand);
+  color:#fff;
+  border-color:var(--brand);
+}
+.pharm-detail-body{
+  min-height:420px;
+}
+.pharm-overview-panel{
+  padding:16px;
+}
+.pharm-overview-copy h4,
+.pharm-checklist-block h4{
+  margin:0 0 8px 0;
+}
+.pharm-overview-copy p{
+  margin:0 0 14px 0;
+  color:var(--muted);
+}
+.pharm-topic-card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.pharm-topic-card{
+  min-height:220px;
+  box-shadow:none;
+}
+.pharm-topic-card span,
+.pharm-diagram-card span,
+.pharm-case-card span,
+.pharm-oral-card span,
+.pharm-quiz-meta span,
+.pharm-review-question span{
+  color:var(--muted);
+  font-size:.78rem;
+}
+.pharm-checklist-block{
+  margin-top:14px;
+  border-top:1px solid var(--border);
+  padding-top:14px;
+}
+.pharm-checklist-block ul,
+.pharm-callout ul,
+.pharm-oral-card ul,
+.pharm-podcast-panel ul,
+.pharm-final-review ol{
+  margin:8px 0 0 0;
+  padding-left:20px;
+}
+.pharm-topic-detail{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.pharm-topic-detail-head{
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:16px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.94);
+  border-radius:8px;
+}
+.pharm-topic-detail-head p{
+  margin:8px 0 0 0;
+  color:var(--muted);
+}
+.pharm-topic-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.pharm-topic-actions .is-active{
+  border-color:#f59e0b;
+  background:#fffbeb;
+  color:#92400e;
+}
+.pharm-topic-section-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.pharm-callout{
+  box-shadow:none;
+  padding:14px;
+  border-left-width:5px;
+}
+.pharm-callout h4{
+  margin:0 0 8px 0;
+  font-size:1rem;
+}
+.pharm-callout p{
+  margin:0;
+}
+.pharm-callout-theory{border-left-color:#3b82f6}
+.pharm-callout-clinical{border-left-color:#10b981}
+.pharm-callout-trap{border-left-color:#f59e0b}
+.pharm-callout-danger{border-left-color:#ef4444}
+.pharm-callout-mechanism{border-left-color:#8b5cf6}
+.pharm-callout-oral{border-left-color:#6b7280}
+.pharm-classification-grid{
+  display:grid;
+  gap:8px;
+}
+.pharm-classification-grid div{
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px;
+  background:#fbfcfd;
+}
+.pharm-classification-grid p{
+  margin:4px 0 0 0;
+  color:var(--muted);
+}
+.pharm-diagram-grid,
+.pharm-case-list,
+.pharm-oral-list,
+.pharm-resource-list,
+.pharm-quiz-list,
+.pharm-flashcard-grid,
+.pharm-wrong-review{
+  display:grid;
+  gap:12px;
+}
+.pharm-diagram-grid,
+.pharm-flashcard-grid,
+.pharm-resource-list,
+.pharm-wrong-review{
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+.pharm-diagram-card,
+.pharm-case-card,
+.pharm-oral-card,
+.pharm-podcast-panel,
+.pharm-final-review,
+.pharm-review-question{
+  padding:14px;
+  box-shadow:none;
+}
+.pharm-diagram-flow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:12px 0;
+}
+.pharm-diagram-flow b{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:7px 10px;
+  border-radius:8px;
+  background:#eef2ff;
+  color:#3730a3;
+  border:1px solid rgba(99,102,241,.22);
+  font-size:.86rem;
+}
+.pharm-flashcard{
+  min-height:190px;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  box-shadow:var(--shadow);
+}
+.pharm-flashcard span{
+  color:var(--muted);
+  font-size:.78rem;
+}
+.pharm-flashcard p{
+  display:none;
+  margin:auto 0 0 0;
+  color:var(--muted);
+}
+.pharm-flashcard.is-flipped{
+  border-color:rgba(16,185,129,.42);
+  background:#f0fdf4;
+}
+.pharm-flashcard.is-flipped p{
+  display:block;
+}
+.pharm-quiz-card{
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px;
+  background:#fff;
+}
+.pharm-quiz-card h4{
+  margin:8px 0 12px 0;
+}
+.pharm-quiz-options{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:8px;
+}
+.pharm-quiz-feedback{
+  min-height:22px;
+  margin:10px 0 0 0;
+  color:var(--muted);
+}
+.pharm-case-question,
+.pharm-answer-line{
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  background:#fffbeb;
+  border:1px solid rgba(245,158,11,.28);
+  color:#78350f;
+}
+.pharm-case-card details,
+.pharm-oral-card details{
+  margin-top:10px;
+}
+.pharm-case-card summary,
+.pharm-oral-card summary{
+  cursor:pointer;
+  font-weight:700;
+}
+.pharm-oral-head{
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.pharm-oral-time{
+  display:inline-grid;
+  place-items:center;
+  width:54px;
+  height:54px;
+  margin:8px 0;
+  border-radius:50%;
+  border:2px solid #8b5cf6;
+  color:#5b21b6;
+  font-weight:800;
+}
+.pharm-resource-card{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-height:140px;
+  padding:14px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  text-decoration:none;
+  box-shadow:var(--shadow);
+}
+.pharm-resource-card span,
+.pharm-resource-card small{
+  color:var(--muted);
+}
+.pharm-audio-slot{
+  justify-content:flex-start;
+  flex-wrap:wrap;
+}
+.pharm-audio-slot span{
+  color:var(--muted);
+}
+body[data-theme="dark"] .pharm-course-head,
+body[data-theme="dark"] .pharm-course-toolbar,
+body[data-theme="dark"] .pharm-detail-head,
+body[data-theme="dark"] .pharm-overview-panel,
+body[data-theme="dark"] .pharm-callout,
+body[data-theme="dark"] .pharm-diagram-card,
+body[data-theme="dark"] .pharm-case-card,
+body[data-theme="dark"] .pharm-oral-card,
+body[data-theme="dark"] .pharm-podcast-panel,
+body[data-theme="dark"] .pharm-final-review,
+body[data-theme="dark"] .pharm-review-question,
+body[data-theme="dark"] .pharm-triplet-card,
+body[data-theme="dark"] .pharm-topic-card,
+body[data-theme="dark"] .pharm-quiz-card,
+body[data-theme="dark"] .pharm-flashcard,
+body[data-theme="dark"] .pharm-resource-card{
+  background:rgba(17,26,22,.95);
+}
+body[data-theme="dark"] .pharm-course-stats div,
+body[data-theme="dark"] .pharm-topic-mini-list span,
+body[data-theme="dark"] .pharm-classification-grid div{
+  background:#14231d;
+}
+body[data-theme="dark"] .pharm-tabs button{
+  background:#14231d;
+  color:var(--text);
+}
+body[data-theme="dark"] .pharm-tabs button.is-active{
+  background:var(--brand);
+  color:#fff;
+}
+body[data-theme="dark"] .pharm-card-tags span,
+body[data-theme="dark"] .pharm-meta-row span{
+  background:rgba(59,130,246,.14);
+  color:#bfdbfe;
+}
+body[data-theme="dark"] .pharm-diagram-flow b{
+  background:rgba(139,92,246,.15);
+  color:#ddd6fe;
+}
+body[data-theme="dark"] .pharm-case-question,
+body[data-theme="dark"] .pharm-answer-line{
+  background:rgba(245,158,11,.12);
+  color:#fde68a;
+}
+body[data-theme="dark"] .pharm-flashcard.is-flipped{
+  background:rgba(16,185,129,.13);
+}
+@media (max-width:900px){
+  .pharm-course-head,
+  .pharm-course-toolbar,
+  .pharm-detail-head,
+  .pharm-topic-detail-head{
+    grid-template-columns:1fr;
+  }
+  .pharm-course-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .pharm-topic-card-grid,
+  .pharm-topic-section-grid{
+    grid-template-columns:1fr;
+  }
+  .pharm-detail-head{
+    display:grid;
+  }
+  .pharm-topic-actions{
+    justify-content:flex-start;
+  }
+}
+@media (max-width:620px){
+  .pharm-course-stats{
+    grid-template-columns:1fr;
+  }
+  .pharm-course-toolbar{
+    align-items:stretch;
+  }
+  .pharm-course-toolbar button,
+  .pharm-triplet-card button,
+  .pharm-topic-card button{
+    width:100%;
+  }
+  .pharm-quiz-options{
+    grid-template-columns:1fr;
+  }
+  .pharm-detail-head{
+    gap:10px;
   }
 }
