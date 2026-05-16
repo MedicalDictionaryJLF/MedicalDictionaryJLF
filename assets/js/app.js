@@ -2165,9 +2165,11 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Latin units",
     dataset_muscles: "Muscles",
     courses: "Courses",
-    submenu_desc_courses: "Unlock medical Latin lessons with translation drills and drag charts.",
-    courses_kicker: "Latin course",
-    courses_intro: "Medical Latin training built from repository terminology. Choose one language track.",
+    submenu_desc_courses: "Open Latin lessons and the Pharmacology final exam course.",
+    courses_kicker: "Course library",
+    courses_intro: "Choose medical Latin lessons or the Pharmacology final exam course.",
+    pharmacology_course_catalog_title: "Pharmacology final exam",
+    pharmacology_course_catalog_subtitle: "Study 20 oral-exam triplets with quizzes, cases, flashcards, and rapid review.",
     courses_choose_track: "Choose a language track",
     courses_open_track: "Open course",
     courses_current_lesson: "Current lesson",
@@ -2221,9 +2223,11 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Lateinische Lektionen",
     dataset_muscles: "Muskeln",
     courses: "Kurse",
-    submenu_desc_courses: "Schalten Sie medizinische Lateinlektionen mit Uebersetzungsuebungen und Zieh-Tabellen frei.",
-    courses_kicker: "Lateinkurs",
-    courses_intro: "Medizinisches Lateintraining aus der Terminologie dieses Repositories. Waehlen Sie eine Sprachstrecke.",
+    submenu_desc_courses: "Oeffnen Sie Lateinlektionen und den Pharmakologie-Abschlusskurs.",
+    courses_kicker: "Kursbibliothek",
+    courses_intro: "Waehlen Sie medizinische Lateinlektionen oder den Pharmakologie-Abschlusskurs.",
+    pharmacology_course_catalog_title: "Pharmakologie Abschlusspruefung",
+    pharmacology_course_catalog_subtitle: "Lernen Sie 20 muendliche Pruefungstriplets mit Quiz, Faellen, Karteikarten und Schnellwiederholung.",
     courses_choose_track: "Sprachstrecke waehlen",
     courses_open_track: "Kurs oeffnen",
     courses_current_lesson: "Aktuelle Lektion",
@@ -2277,9 +2281,11 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Latinske lekcie",
     dataset_muscles: "Svaly",
     courses: "Kurzy",
-    submenu_desc_courses: "Odomykajte lekcie medicinskej latinciny s prekladovymi ulohami a tahacimi tabulkami.",
-    courses_kicker: "Latinsky kurz",
-    courses_intro: "Trening medicinskej latinciny z terminologie repozitara. Vyberte si jazykovy kurz.",
+    submenu_desc_courses: "Otvorte lekcie latinciny a kurz na zaverecnu skusku z farmakologie.",
+    courses_kicker: "Kniznica kurzov",
+    courses_intro: "Vyberte si lekcie medicinskej latinciny alebo kurz na zaverecnu skusku z farmakologie.",
+    pharmacology_course_catalog_title: "Farmakologia zaverecna skuska",
+    pharmacology_course_catalog_subtitle: "Studujte 20 ustnych skuskovych trojic s kvizmi, kazuistikami, kartickami a rychlym opakovanim.",
     courses_choose_track: "Vyberte si kurz",
     courses_open_track: "Otvori\u0165 kurz",
     courses_current_lesson: "Aktu\u00e1lna lekcia",
@@ -7702,13 +7708,21 @@ function renderLatinCourseLessonList(){
 function renderLatinCourseCatalog(){
   const list = document.getElementById("course-catalog-list");
   if(!list) return;
-  list.innerHTML = LATIN_COURSE_DEFINITIONS.map(course => `
+  const pharmacologyCourseCard = `
+    <button type="button" class="course-track-card course-track-card-pharmacology" data-course-open="pharmacology-final">
+      <span class="course-kicker">${escapeHTML(tOr("pharmacology", "Pharmacology"))}</span>
+      <strong>${escapeHTML(tOr("pharmacology_course_catalog_title", "Pharmacology final exam"))}</strong>
+      <small>${escapeHTML(tOr("pharmacology_course_catalog_subtitle", "Study 20 oral-exam triplets with quizzes, cases, flashcards, and rapid review."))}</small>
+    </button>
+  `;
+  const latinCourseCards = LATIN_COURSE_DEFINITIONS.map(course => `
     <button type="button" class="course-track-card" data-course-open="${escapeHTML(course.id)}">
       <span class="course-kicker">${escapeHTML(course.targetLabel)}</span>
       <strong>${escapeHTML(courseText(course.title))}</strong>
       <small>${escapeHTML(courseText(course.subtitle))}</small>
     </button>
   `).join("");
+  list.innerHTML = `${pharmacologyCourseCard}${latinCourseCards}`;
 }
 
 function showLatinCourseCatalog(){
@@ -8371,13 +8385,16 @@ async function openLatinCourseScreen(){
   const catalogList = document.getElementById("course-catalog-list");
   document.getElementById("course-catalog")?.classList.remove("hidden");
   document.getElementById("course-shell")?.classList.add("hidden");
-  if(catalogList) catalogList.innerHTML = `<p class="feature-status" data-status-tone="loading">${escapeHTML(tOr("loading", "Loading..."))}</p>`;
+  renderLatinCourseCatalog();
   try{
     await ensureLatinCourseLoaded();
     showLatinCourseCatalog();
   }catch(e){
     console.warn("Latin course failed:", e);
-    if(catalogList) catalogList.innerHTML = `<p class="feature-status" data-status-tone="error">${escapeHTML(tOr("feature_load_failed", "Failed to load this section."))}</p>`;
+    renderLatinCourseCatalog();
+    if(catalogList){
+      catalogList.insertAdjacentHTML("beforeend", `<p class="feature-status" data-status-tone="error">${escapeHTML(tOr("feature_load_failed", "Failed to load the Latin course."))}</p>`);
+    }
   }
 }
 
@@ -12608,10 +12625,15 @@ async function init(){
   });
   const courseCatalogList = document.getElementById('course-catalog-list');
   if(courseCatalogList){
-    courseCatalogList.addEventListener('click', event => {
+    courseCatalogList.addEventListener('click', async event => {
       const btn = event.target && event.target.closest ? event.target.closest('[data-course-open]') : null;
       if(!btn) return;
-      selectLatinCourse(btn.getAttribute('data-course-open') || '');
+      const courseId = btn.getAttribute('data-course-open') || '';
+      if(courseId === 'pharmacology-final'){
+        await openPharmacologyCourseScreen();
+        return;
+      }
+      selectLatinCourse(courseId);
     });
   }
   const courseLessonList = document.getElementById('course-lesson-list');
