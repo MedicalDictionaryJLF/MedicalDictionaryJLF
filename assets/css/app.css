@@ -8926,6 +8926,12 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
 .pharm-callout p{
   margin:0;
 }
+.pharm-callout p + p{
+  margin-top:10px;
+}
+.pharm-callout-wide{
+  grid-column:1 / -1;
+}
 .pharm-callout-theory{border-left-color:#3b82f6}
 .pharm-callout-clinical{border-left-color:#10b981}
 .pharm-callout-trap{border-left-color:#f59e0b}
