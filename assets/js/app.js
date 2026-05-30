@@ -32,6 +32,12 @@ import {
 } from "./services/data-repository.js";
 import { createSearchService } from "./services/search-service.js";
 import { createQuizEngine } from "./services/quiz-service.js";
+import {
+  getPharmacologyReviewProgress,
+  mergePharmacologyReviewProgress,
+  preparePharmacologyReview,
+  setPharmacologyReviewProgress
+} from "./pharmacology-review.js";
 
 // ================================
 // Google Drive Authentication
@@ -997,6 +1003,7 @@ async function syncDriveProfileAndAttachmentsFromSettings(){
     }
 
     syncLatinCourseProgressWithProfile();
+    syncPharmacologyReviewProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(profileDirty){
       await saveUserProfileNow("manual_sync");
@@ -1226,7 +1233,8 @@ function defaultProfile(){
       custom_quizzes: { items: [] }
     },
     courses: {
-      latin_progress: {}
+      latin_progress: {},
+      pharmacology_flashcards: {}
     },
     anamnesis: {
       records: [],
@@ -1274,6 +1282,7 @@ function ensureProfileShape(rawProfile){
     ...(merged.courses && typeof merged.courses === "object" ? merged.courses : {})
   };
   merged.courses.latin_progress = merged.courses.latin_progress && typeof merged.courses.latin_progress === "object" ? merged.courses.latin_progress : {};
+  merged.courses.pharmacology_flashcards = merged.courses.pharmacology_flashcards && typeof merged.courses.pharmacology_flashcards === "object" ? merged.courses.pharmacology_flashcards : {};
   merged.anamnesis = merged.anamnesis && typeof merged.anamnesis === "object" ? merged.anamnesis : { records: [], active_patient_id: "" };
   if(!Array.isArray(merged.anamnesis.records)) merged.anamnesis.records = [];
   merged.anamnesis.active_patient_id = String(
@@ -1686,6 +1695,10 @@ function mergeProfiles(localProfileDoc, remoteProfileDoc){
   merged.flashcards.v2_progress = { ...(remote.flashcards.v2_progress || {}), ...(local.flashcards.v2_progress || {}) };
   merged.flashcards.stats = { ...(remote.flashcards.stats || {}), ...(local.flashcards.stats || {}) };
   merged.courses.latin_progress = mergeObjectMap(remote.courses.latin_progress, local.courses.latin_progress);
+  merged.courses.pharmacology_flashcards = mergePharmacologyReviewProgress(
+    local.courses.pharmacology_flashcards,
+    remote.courses.pharmacology_flashcards
+  );
 
   merged.learning.review_list = [...(remote.learning.review_list || [])];
   for(const row of (local.learning.review_list || [])){
@@ -2022,6 +2035,7 @@ async function handleGoogleTokenResponse(resp){
     console.log("[AUTH] got access token, loading Drive profile...");
     await loadOrCreateDriveProfile();
     syncLatinCourseProgressWithProfile();
+    syncPharmacologyReviewProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(getAttachmentSyncMode() !== STORAGE_MODE_DRIVE){
       await applyAttachmentSyncMode(STORAGE_MODE_DRIVE);
@@ -2187,8 +2201,8 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     submenu_desc_courses: "Open Latin lessons and the Pharmacology final exam course.",
     courses_kicker: "Course library",
     courses_intro: "Choose medical Latin lessons or the Pharmacology final exam course.",
-    pharmacology_course_catalog_title: "Pharmacology final exam",
-    pharmacology_course_catalog_subtitle: "Study 20 oral-exam triplets with quizzes, cases, flashcards, and rapid review.",
+    pharmacology_course_catalog_title: "Pharmacology flashcard review",
+    pharmacology_course_catalog_subtitle: "Review the pharmacology deck by day and track correct or wrong answers.",
     courses_choose_track: "Choose a language track",
     courses_open_track: "Open course",
     courses_current_lesson: "Current lesson",
@@ -2245,8 +2259,8 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     submenu_desc_courses: "Oeffnen Sie Lateinlektionen und den Pharmakologie-Abschlusskurs.",
     courses_kicker: "Kursbibliothek",
     courses_intro: "Waehlen Sie medizinische Lateinlektionen oder den Pharmakologie-Abschlusskurs.",
-    pharmacology_course_catalog_title: "Pharmakologie Abschlusspruefung",
-    pharmacology_course_catalog_subtitle: "Lernen Sie 20 muendliche Pruefungstriplets mit Quiz, Faellen, Karteikarten und Schnellwiederholung.",
+    pharmacology_course_catalog_title: "Pharmakologie Karteikarten",
+    pharmacology_course_catalog_subtitle: "Lernen Sie den Pharmakologie-Karteikartenstapel nach Tagen und speichern Sie richtige oder falsche Antworten.",
     courses_choose_track: "Sprachstrecke waehlen",
     courses_open_track: "Kurs oeffnen",
     courses_current_lesson: "Aktuelle Lektion",
@@ -2303,8 +2317,8 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     submenu_desc_courses: "Otvorte lekcie latinciny a kurz na zaverecnu skusku z farmakologie.",
     courses_kicker: "Kniznica kurzov",
     courses_intro: "Vyberte si lekcie medicinskej latinciny alebo kurz na zaverecnu skusku z farmakologie.",
-    pharmacology_course_catalog_title: "Farmakologia zaverecna skuska",
-    pharmacology_course_catalog_subtitle: "Studujte 20 ustnych skuskovych trojic s kvizmi, kazuistikami, kartickami a rychlym opakovanim.",
+    pharmacology_course_catalog_title: "Farmakologicke karticky",
+    pharmacology_course_catalog_subtitle: "Opakujte farmakologicke karticky podla dni a ukladajte spravne alebo nespravne odpovede.",
     courses_choose_track: "Vyberte si kurz",
     courses_open_track: "Otvori\u0165 kurz",
     courses_current_lesson: "Aktu\u00e1lna lekcia",
@@ -2981,16 +2995,35 @@ async function ensurePharmacologyCourseLoaded(){
 
 async function openPharmacologyCourseScreen(){
   showScreen("screen-pharmacology");
-  const grid = document.getElementById("pharm-course-grid");
-  const detail = document.getElementById("pharm-course-detail");
-  if(grid) grid.innerHTML = `<div class="course-finished"><strong>${escapeHTML(tOr("loading", "Loading..."))}</strong></div>`;
-  if(detail) detail.classList.add("hidden");
   try{
-    await ensurePharmacologyCourseLoaded();
-    renderPharmacologyCourse();
+    await preparePharmacologyReview({ onProgressChange: savePharmacologyReviewProgressToProfile });
+    syncPharmacologyReviewProgressWithProfile();
   }catch(error){
-    if(grid) grid.innerHTML = `<div class="course-finished"><strong>${escapeHTML(tOr("feature_load_failed", "Failed to load this section."))}</strong><p>${escapeHTML(error && error.message ? error.message : "")}</p></div>`;
+    const content = document.getElementById("pharm-review-content");
+    if(content) content.textContent = error && error.message ? error.message : "Failed to load this section.";
   }
+}
+
+function savePharmacologyReviewProgressToProfile(progress){
+  if(!isProfileSessionActive()) return;
+  userProfile = ensureProfileShape(userProfile);
+  userProfile.courses.pharmacology_flashcards = mergePharmacologyReviewProgress(
+    progress,
+    userProfile.courses.pharmacology_flashcards
+  );
+  markProfileDirty();
+}
+
+function syncPharmacologyReviewProgressWithProfile(){
+  if(!isProfileSessionActive()) return;
+  userProfile = ensureProfileShape(userProfile);
+  const merged = mergePharmacologyReviewProgress(
+    getPharmacologyReviewProgress(),
+    userProfile.courses.pharmacology_flashcards
+  );
+  userProfile.courses.pharmacology_flashcards = merged;
+  setPharmacologyReviewProgress(merged);
+  markProfileDirty();
 }
 
 function populatePharmCourseFilters(){
@@ -7850,8 +7883,8 @@ function renderLatinCourseCatalog(){
   const pharmacologyCourseCard = `
     <button type="button" class="course-track-card course-track-card-pharmacology" data-course-open="pharmacology-final">
       <span class="course-kicker">${escapeHTML(tOr("pharmacology", "Pharmacology"))}</span>
-      <strong>${escapeHTML(tOr("pharmacology_course_catalog_title", "Pharmacology final exam"))}</strong>
-      <small>${escapeHTML(tOr("pharmacology_course_catalog_subtitle", "Study 20 oral-exam triplets with quizzes, cases, flashcards, and rapid review."))}</small>
+      <strong>${escapeHTML(tOr("pharmacology_course_catalog_title", "Pharmacology flashcard review"))}</strong>
+      <small>${escapeHTML(tOr("pharmacology_course_catalog_subtitle", "Review the pharmacology deck by day and track correct or wrong answers."))}</small>
     </button>
   `;
   const latinCourseCards = LATIN_COURSE_DEFINITIONS.map(course => `
@@ -12183,8 +12216,8 @@ async function prepareScreenAfterNavigation(screenId){
     return;
   }
   if(id === "screen-pharmacology"){
-    await ensurePharmacologyCourseLoaded();
-    renderPharmacologyCourse();
+    await preparePharmacologyReview({ onProgressChange: savePharmacologyReviewProgressToProfile });
+    syncPharmacologyReviewProgressWithProfile();
     return;
   }
   if(id === "screen-latin-terminology"){

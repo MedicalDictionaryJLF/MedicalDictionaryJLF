@@ -1,4 +1,4 @@
-import { resolveAppModuleUrl, resolveAppShellUrl } from "./core/app-paths.js?v=25";
+import { resolveAppModuleUrl, resolveAppShellUrl } from "./core/app-paths.js?v=27";
 
 async function bootstrapRoutedPage(){
   const indexUrl = resolveAppShellUrl();

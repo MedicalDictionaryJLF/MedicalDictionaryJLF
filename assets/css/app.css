@@ -8620,6 +8620,196 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   align-items:stretch;
   justify-content:flex-start;
 }
+
+/* simple pharmacology flashcard review */
+.pharmacology-review-screen{
+  width:100%;
+  max-width:1120px;
+  align-items:stretch;
+  justify-content:flex-start;
+}
+.pharm-review-shell{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+}
+.pharm-review-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(300px,390px);
+  gap:18px;
+  align-items:center;
+}
+.pharm-review-head h2{
+  margin:0;
+}
+.pharm-review-head p:last-child{
+  margin:7px 0 0;
+  color:var(--muted);
+}
+.pharm-review-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.pharm-review-stats div{
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:rgba(21,128,61,.05);
+}
+.pharm-review-stats span,
+.pharm-review-stats strong{
+  display:block;
+}
+.pharm-review-stats span{
+  color:var(--muted);
+  font-size:.78rem;
+}
+.pharm-review-stats strong{
+  margin-top:3px;
+  font-size:1.35rem;
+}
+.pharm-review-options{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.pharm-review-workspace{
+  display:grid;
+  grid-template-columns:minmax(235px,285px) minmax(0,1fr);
+  gap:14px;
+  align-items:stretch;
+}
+.pharm-review-study{
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  gap:14px;
+}
+.pharm-review-option-head,
+.pharm-review-toggles,
+.pharm-review-days,
+.pharm-review-controls,
+.pharm-review-nav,
+.pharm-review-grade{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.pharm-review-option-head{
+  justify-content:space-between;
+}
+.pharm-review-days{
+  flex-direction:column;
+  align-items:stretch;
+}
+.pharm-review-days label,
+.pharm-review-toggles label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.pharm-review-days label{
+  min-height:44px;
+  padding:9px 10px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:rgba(21,128,61,.04);
+}
+.pharm-review-toggles{
+  flex-direction:column;
+  align-items:flex-start;
+  padding-top:2px;
+}
+.pharm-review-options > .danger{
+  margin-top:auto;
+}
+.pharm-review-card{
+  display:flex;
+  min-height:310px;
+  flex-direction:column;
+  cursor:pointer;
+  outline:none;
+}
+.pharm-review-card:focus-visible{
+  box-shadow:0 0 0 3px rgba(21,128,61,.28), var(--shadow);
+}
+.pharm-review-card-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:.84rem;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.pharm-review-progress{
+  height:6px;
+  margin-top:12px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(107,114,128,.16);
+}
+.pharm-review-progress i{
+  display:block;
+  height:100%;
+  border-radius:inherit;
+  background:var(--brand);
+  transition:width .18s ease;
+}
+.pharm-review-content{
+  display:flex;
+  flex:1;
+  align-items:center;
+  justify-content:center;
+  padding:28px 16px;
+  color:var(--text);
+  font-size:clamp(1.15rem,2.2vw,1.55rem);
+  line-height:1.55;
+  text-align:center;
+  white-space:pre-line;
+}
+.pharm-review-controls{
+  flex-wrap:wrap;
+  justify-content:space-between;
+}
+.pharm-review-controls small{
+  width:100%;
+  color:var(--muted);
+}
+.pharm-review-study:fullscreen{
+  padding:22px;
+  background:var(--bg);
+}
+.pharm-review-study:fullscreen .pharm-review-card{
+  flex:1;
+}
+.pharm-review-study:fullscreen .pharm-review-content{
+  font-size:clamp(1.45rem,3.2vw,2.35rem);
+}
+body[data-theme="dark"] .pharm-review-stats div,
+body[data-theme="dark"] .pharm-review-days label{
+  background:rgba(31,154,84,.08);
+}
+@media (max-width:760px){
+  .pharm-review-head{
+    grid-template-columns:1fr;
+  }
+  .pharm-review-workspace{
+    grid-template-columns:1fr;
+  }
+  .pharm-review-controls,
+  .pharm-review-nav,
+  .pharm-review-grade{
+    width:100%;
+  }
+  .pharm-review-nav button,
+  .pharm-review-grade button{
+    flex:1;
+  }
+}
 .pharm-course-shell{
   width:100%;
   display:flex;

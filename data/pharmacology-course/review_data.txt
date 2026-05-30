@@ -1,0 +1,589 @@
+Front	Back
+Adrenaline (epinephrine)	Adrenergic agonist; non-selective α1/α2/β1/β2 agonist
+Key parameters: catecholamine; direct-acting sympathomimetic; first-line in anaphylaxis; increases HR/contractility and bronchodilates; short acting.
+Noradrenaline (norepinephrine)	Adrenergic agonist; mainly α1/α2 + β1 agonist
+Key parameters: catecholamine; direct-acting sympathomimetic; strong vasoconstrictor; used in shock/hypotension; little β2 effect.
+Salbutamol (albuterol)	β2-adrenergic agonist; short-acting β2 agonist (SABA)
+Key parameters: bronchodilator; used as asthma/COPD reliever; adverse effects: tremor, tachycardia, hypokalemia.
+Dobutamine	β1-adrenergic agonist; positive inotrope
+Key parameters: direct sympathomimetic; β1 > β2/α1; used in acute heart failure/cardiogenic shock; increases contractility.
+Prazosin	α1-adrenergic blocker
+Key parameters: selective α1 antagonist; vasodilator; used in hypertension/BPH; adverse effect: first-dose orthostatic hypotension.
+Propranolol	β-blocker; non-selective β1/β2 antagonist
+Key parameters: lipophilic; no β1 selectivity; avoid in asthma/COPD; uses include hypertension, angina, tremor, migraine prophylaxis.
+Metoprolol	β-blocker; β1-selective antagonist
+Key parameters: cardioselective at usual doses; used in hypertension, angina, chronic heart failure, arrhythmias; may lose selectivity at high doses.
+Bisoprolol	β-blocker; β1-selective antagonist
+Key parameters: cardioselective; commonly used in chronic heart failure and hypertension; reduces HR, contractility, renin.
+Carvedilol	β-blocker; non-selective β + α1 antagonist
+Key parameters: vasodilating beta-blocker; useful in chronic heart failure; blocks β1/β2 and α1.
+Nebivolol	β-blocker; β1-selective with NO-mediated vasodilation
+Key parameters: cardioselective; vasodilating; used in hypertension/heart failure in some settings.
+Atropine	Parasympatholytic/antimuscarinic; tertiary amine
+Key parameters: crosses CNS/BBB; non-selective muscarinic antagonist; used in bradycardia and organophosphate poisoning; causes dry mouth, mydriasis, tachycardia, urinary retention.
+Scopolamine (hyoscine)	Parasympatholytic/antimuscarinic; tertiary amine
+Key parameters: crosses BBB; prominent CNS effects; used for motion sickness; sedating/amnesic.
+Ipratropium	Parasympatholytic/antimuscarinic; quaternary ammonium compound
+Key parameters: poor CNS penetration; inhaled bronchodilator; short-acting muscarinic antagonist (SAMA); used in COPD/asthma.
+Tiotropium	Parasympatholytic/antimuscarinic; quaternary ammonium compound
+Key parameters: inhaled long-acting muscarinic antagonist (LAMA); COPD maintenance; poor CNS penetration.
+Neostigmine	Indirect parasympathomimetic; reversible acetylcholinesterase inhibitor; quaternary ammonium
+Key parameters: poor CNS penetration; used in myasthenia gravis, reversal of nondepolarizing neuromuscular blockade, ileus/urinary retention.
+Physostigmine	Indirect parasympathomimetic; reversible acetylcholinesterase inhibitor; tertiary amine
+Key parameters: crosses BBB; used for severe antimuscarinic toxicity; more CNS activity than neostigmine.
+Pralidoxime	Acetylcholinesterase reactivator/antidote
+Key parameters: used with atropine in organophosphate poisoning; works best before enzyme aging; restores nicotinic and muscarinic transmission.
+Enalapril	ACE inhibitor; antihypertensive/heart failure drug
+Key parameters: blocks angiotensin II formation and bradykinin breakdown; adverse effects: cough, hyperkalemia, angioedema; contraindicated in pregnancy.
+Ramipril	ACE inhibitor; antihypertensive/heart failure drug
+Key parameters: similar to enalapril; renal/cardioprotective in appropriate patients; cough/hyperkalemia/angioedema risk.
+Losartan	Angiotensin II receptor blocker (ARB)
+Key parameters: AT1 receptor antagonist; no bradykinin cough usually; adverse effect: hyperkalemia; contraindicated in pregnancy.
+Valsartan	Angiotensin II receptor blocker (ARB)
+Key parameters: AT1 blocker; used in hypertension/heart failure; hyperkalemia risk; pregnancy contraindication.
+Amlodipine	Calcium channel blocker; dihydropyridine CCB
+Key parameters: vascular selective; antihypertensive/antianginal; adverse effects: ankle edema, flushing, headache.
+Verapamil	Calcium channel blocker; non-dihydropyridine CCB
+Key parameters: cardiac selective; decreases AV conduction and contractility; used for rate control/angina; adverse effects: constipation, bradycardia, AV block.
+Diltiazem	Calcium channel blocker; non-dihydropyridine CCB
+Key parameters: cardiac and vascular effects; slows AV node; used for angina/rate control; less constipation than verapamil.
+Furosemide	Loop diuretic
+Key parameters: inhibits Na+/K+/2Cl− cotransporter in thick ascending limb; strong diuresis; adverse effects: hypokalemia, ototoxicity, dehydration.
+Hydrochlorothiazide	Thiazide diuretic
+Key parameters: inhibits Na+/Cl− cotransporter in distal convoluted tubule; hypertension; adverse effects: hypokalemia, hyperuricemia, hyperglycemia.
+Spironolactone	Potassium-sparing diuretic; aldosterone receptor antagonist
+Key parameters: used in heart failure/hyperaldosteronism; adverse effects: hyperkalemia, gynecomastia, menstrual effects.
+Nitroglycerin	Organic nitrate; antianginal vasodilator
+Key parameters: releases NO; venodilation reduces preload; acute angina relief; adverse effects: headache, hypotension, tolerance; contraindicated with PDE5 inhibitors.
+Digoxin	Cardiac glycoside; positive inotrope
+Key parameters: inhibits Na+/K+ ATPase; increases vagal tone and contractility; narrow therapeutic index; toxicity includes arrhythmias, GI symptoms, visual disturbances.
+Amiodarone	Antiarrhythmic; class III potassium-channel blocker mainly
+Key parameters: broad antiarrhythmic actions; used for AF and ventricular arrhythmias; toxicities: thyroid, pulmonary fibrosis, liver, corneal deposits, photosensitivity.
+Lidocaine	Antiarrhythmic class Ib; local anesthetic
+Key parameters: sodium-channel blocker; ventricular arrhythmias especially ischemia-related; also local anesthetic; CNS toxicity possible.
+Heparin	Parenteral anticoagulant; indirect thrombin/Xa inhibitor via antithrombin
+Key parameters: rapid onset; monitored by aPTT for unfractionated heparin; antidote: protamine; risk HIT and bleeding.
+Warfarin	Oral anticoagulant; vitamin K antagonist
+Key parameters: inhibits factors II, VII, IX, X and proteins C/S; monitored by INR; many interactions; teratogenic; antidote: vitamin K/PCC.
+Rivaroxaban	Direct oral anticoagulant (DOAC); factor Xa inhibitor
+Key parameters: oral; fixed dosing in many uses; no routine INR; bleeding risk; reversal may use andexanet alfa where available.
+Apixaban	Direct oral anticoagulant (DOAC); factor Xa inhibitor
+Key parameters: oral factor Xa inhibitor; used for AF/VTE; no routine INR; bleeding risk.
+Dabigatran	Direct oral anticoagulant (DOAC); direct thrombin inhibitor
+Key parameters: oral; antidote: idarucizumab; bleeding and dyspepsia risk; renal elimination important.
+Aspirin (acetylsalicylic acid)	Antiplatelet NSAID; irreversible COX inhibitor
+Key parameters: inhibits TXA2 in platelets; antiaggregant at low dose; adverse effects: GI bleeding, bronchospasm, Reye risk in children.
+Clopidogrel	Antiplatelet drug; P2Y12 ADP receptor antagonist
+Key parameters: prodrug; prevents platelet aggregation; used after ACS/stents; bleeding risk.
+Alteplase	Fibrinolytic/thrombolytic; recombinant tPA
+Key parameters: converts plasminogen to plasmin; used in selected ischemic stroke/MI/PE; major risk: bleeding/intracranial hemorrhage.
+Atorvastatin	Hypolipidemic; HMG-CoA reductase inhibitor/statin
+Key parameters: lowers LDL; plaque stabilization; adverse effects: myopathy, ↑ liver enzymes; avoid in pregnancy.
+Simvastatin	Hypolipidemic; HMG-CoA reductase inhibitor/statin
+Key parameters: LDL-lowering statin; CYP interactions important; myopathy risk.
+Diazepam	Benzodiazepine; positive allosteric modulator of GABA-A
+Key parameters: long acting; anxiolytic, anticonvulsant, muscle relaxant; overdose antidote: flumazenil; respiratory depression risk with alcohol/opioids.
+Lorazepam	Benzodiazepine; GABA-A positive allosteric modulator
+Key parameters: intermediate acting; useful in status epilepticus and severe anxiety; no active oxidative metabolites; flumazenil reverses overdose.
+Midazolam	Benzodiazepine; GABA-A positive allosteric modulator
+Key parameters: short acting; procedural sedation/anesthesia induction; anterograde amnesia; respiratory depression risk.
+Phenobarbital	Barbiturate; GABA-A enhancer
+Key parameters: anticonvulsant; longer duration; overdose causes CNS/respiratory depression; no specific antagonist.
+Zolpidem	Non-benzodiazepine hypnotic; Z-drug
+Key parameters: acts at GABA-A benzodiazepine site, relatively BZ1 selective; insomnia; less anticonvulsant/muscle relaxant effect.
+Flumazenil	Benzodiazepine receptor antagonist; antidote
+Key parameters: reverses benzodiazepines/Z-drugs; can trigger seizures in dependence or mixed overdose.
+Fluoxetine	Antidepressant; SSRI
+Key parameters: increases serotonin by reuptake inhibition; long half-life; adverse effects: sexual dysfunction, GI upset, serotonin syndrome risk.
+Sertraline	Antidepressant; SSRI
+Key parameters: first-line depression/anxiety; serotonergic adverse effects; fewer dangerous overdoses than TCAs.
+Amitriptyline	Antidepressant; tricyclic antidepressant (TCA), tertiary amine
+Key parameters: inhibits 5-HT/NE reuptake; strong anticholinergic, sedating; overdose causes arrhythmias/seizures; used also for neuropathic pain.
+Imipramine	Antidepressant; tricyclic antidepressant (TCA), tertiary amine
+Key parameters: 5-HT/NE reuptake inhibition; anticholinergic/cardiotoxic in overdose.
+Haloperidol	Antipsychotic; typical high-potency D2 antagonist
+Key parameters: strong extrapyramidal symptom risk; low anticholinergic/sedative burden; used in acute psychosis/agitation.
+Chlorpromazine	Antipsychotic; typical low-potency D2 antagonist
+Key parameters: more sedation, anticholinergic effects, hypotension; lower EPS than high-potency typicals.
+Clozapine	Antipsychotic; atypical
+Key parameters: treatment-resistant schizophrenia; adverse effects: agranulocytosis, myocarditis, seizures, weight gain; requires blood monitoring.
+Risperidone	Antipsychotic; atypical D2/5-HT2 antagonist
+Key parameters: can raise prolactin; EPS at higher doses; used in schizophrenia/bipolar/irritability.
+Lithium	Mood stabilizer
+Key parameters: bipolar disorder; narrow therapeutic index; toxicity: tremor, nephrogenic DI, hypothyroidism; renal monitoring; teratogenic risk.
+Valproate	Antiepileptic/mood stabilizer
+Key parameters: increases GABA and blocks Na+ channels; broad-spectrum; adverse effects: hepatotoxicity, pancreatitis, weight gain, neural tube defects.
+Carbamazepine	Antiepileptic; sodium-channel blocker
+Key parameters: focal seizures, trigeminal neuralgia, bipolar; adverse effects: agranulocytosis, hyponatremia, CYP induction, teratogenicity.
+Lamotrigine	Antiepileptic/mood stabilizer; sodium-channel blocker
+Key parameters: focal/generalized seizures, bipolar depression; serious rash/Stevens-Johnson syndrome risk.
+Levetiracetam	Antiepileptic; SV2A modulator
+Key parameters: broad use; few interactions; adverse effects: irritability, mood changes.
+Phenytoin	Antiepileptic; sodium-channel blocker
+Key parameters: focal/tonic-clonic seizures; nonlinear kinetics; adverse effects: gingival hyperplasia, hirsutism, ataxia, teratogenicity.
+Morphine	Opioid analgesic; full μ-opioid receptor agonist
+Key parameters: strong analgesic; adverse effects: respiratory depression, constipation, miosis, dependence; overdose antidote: naloxone.
+Fentanyl	Opioid analgesic; full μ-opioid receptor agonist
+Key parameters: very potent, lipophilic; anesthesia/severe pain; respiratory depression; naloxone reverses.
+Codeine	Opioid analgesic/antitussive; weak μ agonist prodrug
+Key parameters: converted by CYP2D6 to morphine; variable response; constipation/sedation; avoid in some children.
+Tramadol	Opioid-like analgesic; weak μ agonist + 5-HT/NE reuptake inhibition
+Key parameters: seizure and serotonin syndrome risk; dependence possible.
+Naloxone	Opioid receptor antagonist; antidote
+Key parameters: reverses opioid overdose/respiratory depression; short duration; may precipitate withdrawal.
+Ibuprofen	NSAID; reversible non-selective COX inhibitor
+Key parameters: analgesic/antipyretic/anti-inflammatory; adverse effects: GI bleeding, renal injury, bronchospasm risk.
+Diclofenac	NSAID; COX inhibitor
+Key parameters: potent anti-inflammatory/analgesic; higher cardiovascular risk than some NSAIDs; GI/renal toxicity.
+Paracetamol (acetaminophen)	Analgesic/antipyretic; weak peripheral anti-inflammatory effect
+Key parameters: overdose causes hepatic necrosis; antidote: N-acetylcysteine; generally no platelet/GI COX effects like NSAIDs.
+N-acetylcysteine	Antidote/mucolytic
+Key parameters: replenishes glutathione; used in paracetamol poisoning; also breaks mucus disulfide bonds.
+Propofol	Intravenous general anesthetic
+Key parameters: rapid induction/recovery; GABA-A potentiation; adverse effects: hypotension, respiratory depression; antiemetic.
+Ketamine	Intravenous anesthetic; NMDA receptor antagonist
+Key parameters: dissociative anesthesia; preserves airway reflexes more than many anesthetics; increases BP/HR; emergence reactions.
+Sevoflurane	Inhaled general anesthetic
+Key parameters: volatile anesthetic; rapid induction/recovery; relatively non-irritating; malignant hyperthermia risk with susceptible patients.
+Lidocaine (local anesthetic)	Local anesthetic; amide type sodium-channel blocker
+Key parameters: amide local anesthetic; also class Ib antiarrhythmic; systemic toxicity: CNS symptoms, seizures, arrhythmias.
+Bupivacaine	Local anesthetic; amide type sodium-channel blocker
+Key parameters: long acting; more cardiotoxic than lidocaine; used in regional anesthesia.
+Fomepizole	Antidote; alcohol dehydrogenase inhibitor
+Key parameters: used for methanol or ethylene glycol poisoning; prevents toxic metabolite formation.
+Ethanol	Competitive substrate for alcohol dehydrogenase; antidote alternative
+Key parameters: can be used in methanol/ethylene glycol poisoning where fomepizole unavailable; requires monitoring.
+Penicillin G	β-lactam antibiotic; natural penicillin
+Key parameters: cell wall synthesis inhibitor; mainly Gram-positive and spirochetes; β-lactamase sensitive; allergy risk.
+Amoxicillin	β-lactam antibiotic; aminopenicillin/broad-spectrum penicillin
+Key parameters: oral; Gram-positive plus some Gram-negative; often combined with clavulanate; rash risk in EBV.
+Piperacillin	β-lactam antibiotic; antipseudomonal ureidopenicillin
+Key parameters: broad spectrum incl. Pseudomonas; often combined with tazobactam; IV severe infections.
+Cefazolin	β-lactam antibiotic; 1st-generation cephalosporin
+Key parameters: Gram-positive coverage, surgical prophylaxis; some Gram-negative; renal elimination.
+Cefuroxime	β-lactam antibiotic; 2nd-generation cephalosporin
+Key parameters: more Gram-negative than 1st gen; respiratory infections; β-lactam allergy consideration.
+Ceftriaxone	β-lactam antibiotic; 3rd-generation cephalosporin
+Key parameters: good Gram-negative and CNS penetration; long half-life; used in meningitis/gonorrhea/sepsis.
+Cefepime	β-lactam antibiotic; 4th-generation cephalosporin
+Key parameters: broad Gram-negative incl. Pseudomonas plus Gram-positive; severe hospital infections.
+Azithromycin	Macrolide antibiotic
+Key parameters: 50S ribosomal inhibitor; atypical respiratory pathogens; long half-life; QT prolongation risk.
+Clarithromycin	Macrolide antibiotic
+Key parameters: 50S inhibitor; CYP3A4 inhibitor; used in respiratory infections and H. pylori regimens; QT risk.
+Clindamycin	Lincosamide antibiotic
+Key parameters: 50S inhibitor; anaerobes and Gram-positive cocci; adverse effect: C. difficile colitis.
+Doxycycline	Tetracycline antibiotic
+Key parameters: 30S inhibitor; atypicals, acne, Lyme, rickettsiae; photosensitivity; avoid in pregnancy/young children.
+Gentamicin	Aminoglycoside antibiotic
+Key parameters: 30S inhibitor; concentration-dependent killing; Gram-negative aerobes; nephrotoxicity and ototoxicity; requires monitoring.
+Ciprofloxacin	Fluoroquinolone antibiotic; DNA gyrase/topoisomerase inhibitor
+Key parameters: Gram-negative incl. Pseudomonas; adverse effects: tendinopathy, QT prolongation, CNS effects; avoid pregnancy/children if possible.
+Metronidazole	Antibiotic/antiprotozoal; DNA-damaging nitroimidazole
+Key parameters: anaerobes and protozoa; disulfiram-like reaction with alcohol; metallic taste.
+Isoniazid	Antituberculosis drug; mycolic acid synthesis inhibitor
+Key parameters: first-line TB; adverse effects: hepatotoxicity, peripheral neuropathy; give pyridoxine/B6.
+Rifampicin (rifampin)	Antituberculosis drug; RNA polymerase inhibitor
+Key parameters: first-line TB; strong CYP inducer; orange body fluids; hepatotoxicity.
+Pyrazinamide	Antituberculosis drug
+Key parameters: first-line TB; active in acidic phagosomes; adverse effects: hepatotoxicity, hyperuricemia.
+Ethambutol	Antituberculosis drug; arabinosyl transferase inhibitor
+Key parameters: first-line TB; adverse effect: optic neuritis/red-green color vision impairment.
+Acyclovir	Antiviral; guanosine analogue DNA polymerase inhibitor
+Key parameters: HSV/VZV; activated by viral thymidine kinase; adverse effect: crystalluria/nephrotoxicity.
+Oseltamivir	Antiviral; neuraminidase inhibitor
+Key parameters: influenza A/B; best early; adverse effects: nausea, neuropsychiatric events rarely.
+Fluconazole	Antifungal; azole, ergosterol synthesis inhibitor
+Key parameters: inhibits 14α-demethylase; Candida/Cryptococcus; CYP interactions; hepatotoxicity.
+Amphotericin B	Antifungal; polyene
+Key parameters: binds ergosterol and forms pores; severe systemic fungal infections; adverse effects: nephrotoxicity, infusion reactions.
+Albendazole	Anthelmintic; microtubule inhibitor
+Key parameters: broad helminth coverage; inhibits glucose uptake; adverse effects: GI upset, hepatotoxicity rare.
+Praziquantel	Anthelmintic; increases parasite membrane Ca2+ permeability
+Key parameters: trematodes/cestodes including schistosomiasis; causes spastic paralysis of worms.
+Cetirizine	H1 antihistamine; second generation
+Key parameters: less sedating than first-generation H1 blockers; allergic rhinitis/urticaria; minimal anticholinergic effect.
+Diphenhydramine	H1 antihistamine; first generation
+Key parameters: sedating; anticholinergic; motion sickness/allergy/insomnia; crosses BBB.
+Cromolyn	Mast cell stabilizer
+Key parameters: prevents mediator release; prophylaxis in allergic disease/asthma; not for acute attack.
+Omeprazole	Proton pump inhibitor (PPI)
+Key parameters: irreversible H+/K+ ATPase inhibitor; peptic ulcer/GERD; CYP interactions; long-term risks include ↓Mg/B12, infections.
+Pantoprazole	Proton pump inhibitor (PPI)
+Key parameters: acid suppression; fewer CYP interactions than omeprazole; ulcer/GERD prophylaxis/treatment.
+Ondansetron	Antiemetic; 5-HT3 receptor antagonist
+Key parameters: chemotherapy/postoperative nausea; adverse effects: constipation, QT prolongation.
+Metoclopramide	Antiemetic/prokinetic; D2 antagonist
+Key parameters: increases GI motility; adverse effects: extrapyramidal symptoms, hyperprolactinemia.
+Loperamide	Antidiarrheal; peripheral μ-opioid receptor agonist
+Key parameters: reduces intestinal motility; does not significantly cross BBB at normal doses; avoid in bloody diarrhea/high fever.
+Lactulose	Osmotic laxative
+Key parameters: constipation and hepatic encephalopathy; traps ammonia in gut; adverse effects: bloating, diarrhea.
+Mesalazine (5-ASA)	IBD anti-inflammatory drug
+Key parameters: ulcerative colitis mainly; local anti-inflammatory action in bowel; renal monitoring sometimes needed.
+Regular insulin	Insulin; short-acting
+Key parameters: onset slower than rapid analogues; can be IV in emergencies; hypoglycemia and weight gain risk.
+Insulin lispro	Insulin analogue; rapid-acting
+Key parameters: mealtime insulin; fast onset/short duration; hypoglycemia risk.
+Insulin glargine	Insulin analogue; long-acting basal insulin
+Key parameters: once daily basal coverage; relatively peakless; hypoglycemia/weight gain risk.
+NPH insulin	Insulin; intermediate-acting
+Key parameters: basal insulin with peak; cloudy suspension; hypoglycemia risk.
+Metformin	Oral antidiabetic; biguanide
+Key parameters: decreases hepatic gluconeogenesis, improves insulin sensitivity; weight neutral/loss; GI effects; rare lactic acidosis; avoid severe renal failure.
+Glibenclamide (glyburide)	Oral antidiabetic; sulfonylurea
+Key parameters: closes β-cell KATP channels to increase insulin; hypoglycemia and weight gain risk.
+Gliclazide	Oral antidiabetic; sulfonylurea
+Key parameters: insulin secretagogue; lower hypoglycemia risk than some older agents but still possible; weight gain.
+Repaglinide	Oral antidiabetic; meglitinide/glinide
+Key parameters: short-acting insulin secretagogue; taken with meals; hypoglycemia/weight gain possible.
+Pioglitazone	Oral antidiabetic; thiazolidinedione (TZD)
+Key parameters: PPARγ agonist; improves insulin sensitivity; adverse effects: edema, weight gain, heart failure worsening, fractures.
+Acarbose	Oral antidiabetic; α-glucosidase inhibitor
+Key parameters: delays carbohydrate absorption; lowers postprandial glucose; GI adverse effects: flatulence/diarrhea.
+Semaglutide	Antidiabetic/weight-loss drug; GLP-1 receptor agonist
+Key parameters: increases glucose-dependent insulin, slows gastric emptying, reduces appetite; weight loss; GI effects; pancreatitis warning.
+Sitagliptin	Oral antidiabetic; DPP-4 inhibitor
+Key parameters: increases endogenous incretins; weight neutral; low hypoglycemia alone; pancreatitis warning.
+Empagliflozin	Oral antidiabetic; SGLT2 inhibitor
+Key parameters: glucosuria; cardiovascular/renal benefits in selected patients; adverse effects: genital infections, dehydration, euglycemic ketoacidosis.
+Levothyroxine	Thyroid hormone replacement; synthetic T4
+Key parameters: hypothyroidism; long half-life; overdose causes hyperthyroid symptoms; absorption affected by calcium/iron.
+Methimazole (thiamazole)	Antithyroid drug; thionamide
+Key parameters: inhibits thyroid peroxidase; hyperthyroidism; adverse effects: agranulocytosis, rash, hepatotoxicity; avoid early pregnancy if possible.
+Propylthiouracil (PTU)	Antithyroid drug; thionamide
+Key parameters: inhibits thyroid peroxidase and peripheral T4→T3 conversion; preferred in thyroid storm/early pregnancy; hepatotoxicity risk.
+Prednisone	Glucocorticoid
+Key parameters: anti-inflammatory/immunosuppressive; adverse effects: Cushingoid features, hyperglycemia, osteoporosis, adrenal suppression, infection risk.
+Hydrocortisone	Glucocorticoid with mineralocorticoid activity
+Key parameters: adrenal insufficiency replacement; stress dosing; shorter acting.
+Dexamethasone	Potent long-acting glucocorticoid
+Key parameters: minimal mineralocorticoid activity; cerebral edema, antiemetic, inflammation; adrenal suppression risk.
+Fludrocortisone	Mineralocorticoid
+Key parameters: aldosterone-like; used in adrenal insufficiency/orthostatic hypotension; adverse effects: hypertension, edema, hypokalemia.
+Allopurinol	Gout drug; xanthine oxidase inhibitor
+Key parameters: lowers uric acid production; chronic gout prophylaxis; hypersensitivity risk; interacts with azathioprine/6-MP.
+Colchicine	Gout drug; microtubule inhibitor
+Key parameters: acute gout/prophylaxis; inhibits neutrophil migration; adverse effects: diarrhea, myopathy, marrow suppression.
+Alendronate	Osteoporosis drug; bisphosphonate
+Key parameters: inhibits osteoclasts; take upright with water; adverse effects: esophagitis, osteonecrosis of jaw rare.
+Cholecalciferol (vitamin D3)	Vitamin D supplement
+Key parameters: calcium/phosphate homeostasis; deficiency/osteoporosis support; toxicity causes hypercalcemia.
+Estradiol	Estrogen hormone
+Key parameters: contraception/HRT components; adverse effects: thromboembolism risk, breast/endometrial stimulation depending context.
+Tamoxifen	Antiestrogen/SERM
+Key parameters: estrogen antagonist in breast, partial agonist in bone/endometrium; breast cancer; risks: VTE, endometrial cancer.
+Cyclosporine	Immunosuppressant; calcineurin inhibitor
+Key parameters: inhibits IL-2 transcription; transplant/autoimmune disease; adverse effects: nephrotoxicity, hypertension, gingival hyperplasia.
+Tacrolimus	Immunosuppressant; calcineurin inhibitor
+Key parameters: inhibits IL-2; transplant; nephrotoxicity, neurotoxicity, diabetes risk.
+Methotrexate	Antimetabolite anticancer/immunosuppressant; folate antagonist
+Key parameters: inhibits dihydrofolate reductase; cancer, RA, psoriasis; adverse effects: myelosuppression, mucositis, hepatotoxicity; rescue: folinic acid.
+Azathioprine	Immunosuppressant; purine analogue prodrug
+Key parameters: metabolized to 6-MP; transplant/autoimmune disease; myelosuppression; interaction with allopurinol.
+Infliximab	Biologic immunosuppressant; anti-TNF monoclonal antibody
+Key parameters: chimeric mAb; RA/IBD/psoriasis; infection/TB reactivation risk; infusion reactions.
+Etanercept	Biologic immunosuppressant; TNF receptor fusion protein
+Key parameters: binds TNF; RA/psoriasis; infection/TB risk.
+Interferon alfa	Immunomodulator/cytokine
+Key parameters: antiviral/anticancer uses; flu-like symptoms, depression, myelosuppression.
+Cyclophosphamide	Anticancer alkylating agent; nitrogen mustard
+Key parameters: crosslinks DNA; adverse effects: myelosuppression, hemorrhagic cystitis; prevent cystitis with mesna/hydration.
+Cisplatin	Anticancer platinum compound
+Key parameters: DNA crosslinking; adverse effects: nephrotoxicity, ototoxicity, neuropathy, severe nausea.
+5-Fluorouracil (5-FU)	Anticancer antimetabolite; pyrimidine analogue
+Key parameters: inhibits thymidylate synthase; adverse effects: myelosuppression, mucositis, diarrhea, hand-foot syndrome.
+Doxorubicin	Anticancer cytotoxic antibiotic; anthracycline
+Key parameters: intercalates DNA, topoisomerase II inhibition, free radicals; cardiotoxicity; dexrazoxane may protect heart.
+Vincristine	Anticancer mitotic poison; vinca alkaloid
+Key parameters: inhibits microtubule polymerization; M phase; adverse effect: peripheral neuropathy, constipation; little myelosuppression.
+Paclitaxel	Anticancer mitotic poison; taxane
+Key parameters: stabilizes microtubules; M phase; adverse effects: neuropathy, myelosuppression, hypersensitivity.
+Rituximab	Targeted anticancer/immunologic drug; anti-CD20 monoclonal antibody
+Key parameters: B-cell malignancies/autoimmune disease; infusion reactions, hepatitis B reactivation, PML rare.
+Trastuzumab	Targeted anticancer drug; anti-HER2 monoclonal antibody
+Key parameters: HER2-positive breast/gastric cancer; cardiotoxicity risk; monitor cardiac function.
+Imatinib	Targeted anticancer drug; tyrosine kinase inhibitor
+Key parameters: BCR-ABL, c-KIT, PDGFR inhibitor; CML/GIST; adverse effects: edema, nausea, myelosuppression.
+Pembrolizumab	Cancer immunotherapy; immune checkpoint inhibitor, anti-PD-1 mAb
+Key parameters: enhances T-cell response; immune-related adverse effects: colitis, hepatitis, pneumonitis, endocrinopathies.
+Antiarrhythmic drugs - Class 0	Antiarrhythmic classification; Class 0 = automaticity/HCN channel blockers
+Key parameters: target pacemaker funny current (If) in SA node; prototype: ivabradine; lowers sinus rate without strong negative inotropy; useful for inappropriate sinus tachycardia/selected heart failure patients, but not for acute arrhythmia conversion.
+Ivabradine	Antiarrhythmic/heart-rate lowering drug; Class 0 HCN/If channel blocker
+Key parameters: blocks funny current in SA node; reduces heart rate; requires sinus rhythm; adverse effects: bradycardia, luminous visual phenomena/phosphenes, atrial fibrillation risk.
+Antiarrhythmic drugs - Class I	Antiarrhythmic classification; Class I = fast sodium-channel blockers
+Key parameters: mainly act on phase 0 depolarization in atrial/ventricular myocardium and Purkinje fibers; subdivided into IA, IB, IC; main danger is proarrhythmia and worsening conduction/contractility.
+Antiarrhythmic drugs - Class IA	Antiarrhythmic classification; Class IA sodium-channel blockers
+Key parameters: moderate Na+ block plus K+ block; prolong action potential duration and QT interval; examples: quinidine, procainamide, disopyramide; risks: torsades de pointes, hypotension, anticholinergic effects depending drug.
+Quinidine	Antiarrhythmic class IA; sodium-channel blocker with potassium-channel blocking effect
+Key parameters: prolongs action potential and QT; can treat atrial and ventricular arrhythmias but limited by toxicity; adverse effects: cinchonism, diarrhea, thrombocytopenia, torsades de pointes.
+Procainamide	Antiarrhythmic class IA; sodium-channel blocker
+Key parameters: prolongs action potential and QT; used for selected supraventricular and ventricular arrhythmias; adverse effects: drug-induced lupus, hypotension, torsades de pointes.
+Disopyramide	Antiarrhythmic class IA; sodium-channel blocker
+Key parameters: prolongs action potential and QT; strong anticholinergic and negative inotropic effects; avoid/warn in heart failure, glaucoma, urinary retention.
+Antiarrhythmic drugs - Class IB	Antiarrhythmic classification; Class IB sodium-channel blockers
+Key parameters: weak Na+ block; shorten action potential duration; prefer ischemic/depolarized ventricular tissue; examples: lidocaine, mexiletine, phenytoin; used mainly for ventricular arrhythmias.
+Mexiletine	Antiarrhythmic class IB; oral sodium-channel blocker
+Key parameters: oral lidocaine-like drug; used for ventricular arrhythmias and some channelopathies; adverse effects: GI upset, tremor, dizziness.
+Phenytoin as antiarrhythmic	Antiarrhythmic class IB sodium-channel blocker; also antiepileptic
+Key parameters: may be used for digoxin-induced ventricular arrhythmias in selected settings; adverse effects include ataxia, nystagmus, gingival hyperplasia, hirsutism, teratogenicity.
+Antiarrhythmic drugs - Class IC	Antiarrhythmic classification; Class IC sodium-channel blockers
+Key parameters: strong Na+ block; markedly slow conduction; little effect on action potential duration; examples: flecainide, propafenone; avoid in structural heart disease or post-MI because of proarrhythmia risk.
+Flecainide	Antiarrhythmic class IC; strong sodium-channel blocker
+Key parameters: rhythm control in selected atrial arrhythmias without structural heart disease; can widen QRS; risk of dangerous proarrhythmia, especially in ischemic/structural heart disease.
+Propafenone	Antiarrhythmic class IC; strong sodium-channel blocker with beta-blocking activity
+Key parameters: rhythm control in selected atrial arrhythmias without structural heart disease; avoid in significant structural heart disease; adverse effects: metallic taste, dizziness, QRS widening, proarrhythmia.
+Antiarrhythmic drugs - Class II	Antiarrhythmic classification; Class II = beta-blockers / anti-sympathetic drugs
+Key parameters: reduce β1-mediated cAMP effects; slow SA node automaticity and AV node conduction; useful in rate control, SVT prevention, post-MI protection; adverse effects: bradycardia, AV block, bronchospasm with non-selective agents.
+Esmolol	Antiarrhythmic class II; ultra-short-acting β1-selective beta-blocker
+Key parameters: IV; rapid onset and very short half-life; useful for acute rate control and perioperative tachyarrhythmias; adverse effects: bradycardia, hypotension, AV block.
+Antiarrhythmic drugs - Class III	Antiarrhythmic classification; Class III = potassium-channel blockers
+Key parameters: prolong repolarization and effective refractory period; prolong QT interval; examples: amiodarone, sotalol, dofetilide, ibutilide, dronedarone; main danger: torsades de pointes, except amiodarone has lower torsades risk but many organ toxicities.
+Sotalol	Antiarrhythmic class III with class II beta-blocking activity
+Key parameters: blocks K+ channels and β receptors; used for selected atrial and ventricular arrhythmias; adverse effects: QT prolongation, torsades de pointes, bradycardia, bronchospasm risk.
+Dofetilide	Antiarrhythmic class III; potassium-channel blocker
+Key parameters: rhythm control in atrial fibrillation/flutter in selected patients; requires QT and renal monitoring; major risk: torsades de pointes.
+Ibutilide	Antiarrhythmic class III; potassium-channel blocker
+Key parameters: IV conversion of atrial flutter/fibrillation in selected settings; major risk: QT prolongation and torsades de pointes.
+Dronedarone	Antiarrhythmic class III; amiodarone analogue
+Key parameters: rhythm control in selected atrial fibrillation patients; less iodine-related toxicity than amiodarone but less effective; contraindicated in severe/decompensated heart failure and permanent AF.
+Antiarrhythmic drugs - Class IV	Antiarrhythmic classification; Class IV = non-dihydropyridine calcium-channel blockers
+Key parameters: verapamil and diltiazem; slow AV node conduction and reduce heart rate; useful for SVT and AF rate control; adverse effects: bradycardia, AV block, hypotension, constipation especially verapamil.
+Antiarrhythmic drugs - Class V	Antiarrhythmic classification; Class V = miscellaneous antiarrhythmics
+Key parameters: drugs that do not fit cleanly into Classes I-IV; examples: adenosine, digoxin, magnesium sulfate, atropine; mechanisms vary, because apparently one tidy classification was too merciful.
+Adenosine	Antiarrhythmic class V; endogenous nucleoside
+Key parameters: transiently blocks AV nodal conduction via A1 receptors; first-line acute termination of many regular narrow-complex SVTs; very short half-life; adverse effects: flushing, chest discomfort, dyspnea, brief asystole feeling.
+Magnesium sulfate	Antiarrhythmic class V; electrolyte therapy
+Key parameters: treatment of torsades de pointes and arrhythmias related to hypomagnesemia; also used in eclampsia; adverse effects: hypotension, flushing, loss of reflexes/respiratory depression in toxicity.
+Atropine as antiarrhythmic	Antiarrhythmic class V use; antimuscarinic vagolytic
+Key parameters: blocks muscarinic receptors and increases SA/AV node activity; used for symptomatic bradycardia; adverse effects: tachycardia, dry mouth, urinary retention, confusion.
+Digoxin as antiarrhythmic	Antiarrhythmic class V use; cardiac glycoside with vagotonic AV-node effect
+Key parameters: slows AV nodal conduction and helps rate control in atrial fibrillation, especially with heart failure; narrow therapeutic index; toxicity causes arrhythmias, GI symptoms, visual disturbances.
+Antiarrhythmic drugs - Class VI	Antiarrhythmic classification; Class VI = connexin/gap-junction modifiers
+Key parameters: target cell-to-cell electrical coupling through connexins; mostly experimental or not routine clinical antiarrhythmics; example concept: gap-junction enhancers such as rotigaptide; exam note: know the target more than a standard drug list.
+Rotigaptide	Experimental antiarrhythmic concept; Class VI connexin/gap-junction enhancer
+Key parameters: investigational gap-junction modifier; aims to improve intercellular conduction and reduce re-entry substrate; not a routine clinical antiarrhythmic.
+Antiarrhythmic drugs - Class VII	Antiarrhythmic classification; Class VII = upstream/remodeling-target drugs
+Key parameters: target long-term arrhythmogenic remodeling rather than acute ion-channel blockade; examples often include ACE inhibitors, ARBs, mineralocorticoid receptor antagonists, statins, and anti-inflammatory/antifibrotic approaches; clinically relevant as prevention/support, not acute conversion.
+Upstream antiarrhythmic therapy	Antiarrhythmic concept; Class VII remodeling prevention
+Key parameters: reduces atrial/ventricular remodeling drivers such as fibrosis, stretch, inflammation, and neurohormonal activation; examples: ACE inhibitors/ARBs, aldosterone antagonists, statins in selected contexts; supportive rather than classic acute antiarrhythmic therapy.
+ARNI (angiotensin receptor-neprilysin inhibitor)	Heart failure drug class; ARB + neprilysin inhibitor combination
+Key parameters: combines RAAS blockade with increased natriuretic peptides; prototype is sacubitril/valsartan; used especially in chronic HFrEF; adverse effects: hypotension, hyperkalemia, renal function worsening, angioedema risk.
+Sacubitril/valsartan	ARNI; angiotensin receptor-neprilysin inhibitor
+Key parameters: sacubitril inhibits neprilysin and valsartan blocks AT1 receptors; used in chronic HFrEF to reduce morbidity/mortality; do not combine with ACE inhibitors; requires ACE inhibitor washout because of angioedema risk.
+Sacubitril	Neprilysin inhibitor component of ARNI
+Key parameters: increases natriuretic peptides by inhibiting their breakdown; promotes natriuresis, vasodilation, and reduced remodeling signals; clinically used only in fixed combination with valsartan.
+ARNI contraindications and cautions	Heart failure safety card
+Key parameters: contraindicated with ACE inhibitors, pregnancy, history of angioedema related to ACEi/ARB/ARNI, and significant hyperkalemia; caution in renal impairment, hypotension, and bilateral renal artery stenosis.
+SGLT2 inhibitors in chronic heart failure	Heart failure drug class; sodium-glucose cotransporter 2 inhibitors
+Key parameters: reduce heart failure hospitalization and improve outcomes in HFrEF and many HFpEF patients; mechanisms include osmotic diuresis, natriuresis, renal/metabolic benefits; adverse effects: genital infections, volume depletion, euglycemic ketoacidosis risk.
+Dapagliflozin	SGLT2 inhibitor; heart failure and antidiabetic drug
+Key parameters: promotes glucosuria and natriuresis; used in diabetes, chronic kidney disease, and chronic heart failure; adverse effects: genital mycotic infections, dehydration, hypotension, euglycemic ketoacidosis.
+Empagliflozin in heart failure	SGLT2 inhibitor; heart failure disease-modifying drug
+Key parameters: useful in chronic heart failure even without diabetes; causes glucosuria/natriuresis; adverse effects: genital infections, volume depletion, rare euglycemic ketoacidosis.
+Mineralocorticoid receptor antagonists in heart failure	Heart failure drug class; aldosterone receptor blockers
+Key parameters: reduce aldosterone-mediated sodium retention, potassium loss, fibrosis, and remodeling; examples: spironolactone, eplerenone; adverse effect: hyperkalemia; monitor renal function and potassium.
+Eplerenone	Potassium-sparing diuretic; selective mineralocorticoid receptor antagonist
+Key parameters: used in HFrEF and post-MI LV dysfunction; less gynecomastia than spironolactone; adverse effects: hyperkalemia, renal function worsening.
+Hydralazine-isosorbide dinitrate combination	Heart failure vasodilator combination
+Key parameters: hydralazine reduces afterload and isosorbide dinitrate reduces preload; option in HFrEF when ACEi/ARB/ARNI not tolerated or as add-on in selected patients; adverse effects: headache, hypotension, reflex tachycardia.
+Isosorbide dinitrate	Organic nitrate; antianginal and heart failure preload reducer
+Key parameters: releases NO and increases cGMP; venodilation reduces preload; used in angina and with hydralazine in selected HFrEF; adverse effects: headache, hypotension, tolerance; contraindicated with PDE5 inhibitors.
+Hydralazine	Direct arterial vasodilator; antihypertensive/heart failure add-on
+Key parameters: relaxes arteriolar smooth muscle and lowers afterload; used in pregnancy hypertension, hypertensive urgency/emergency in selected cases, and with nitrates in HFrEF; adverse effects: reflex tachycardia, fluid retention, headache, drug-induced lupus.
+Central alpha-2 agonists and imidazoline agonists	Centrally acting antihypertensive class
+Key parameters: reduce sympathetic outflow from the CNS; examples: clonidine, methyldopa, moxonidine; adverse effects: sedation, dry mouth, bradycardia; clonidine withdrawal can cause rebound hypertension.
+Clonidine	Central α2-adrenergic agonist; antihypertensive
+Key parameters: decreases sympathetic outflow; used in resistant hypertension and some withdrawal syndromes; adverse effects: sedation, dry mouth, bradycardia, rebound hypertension if stopped abruptly.
+Methyldopa	Central α2-adrenergic agonist; antihypertensive
+Key parameters: classic antihypertensive in pregnancy; converted to α-methylnoradrenaline; adverse effects: sedation, hyperprolactinemia, hemolytic anemia, hepatotoxicity.
+Moxonidine	Imidazoline I1 receptor agonist; centrally acting antihypertensive
+Key parameters: reduces sympathetic tone; used in hypertension in some settings; adverse effects: dry mouth, dizziness, fatigue, bradycardia.
+Direct arterial vasodilators	Antihypertensive class; vascular smooth muscle relaxants
+Key parameters: reduce systemic vascular resistance by arteriolar dilation; examples: hydralazine and minoxidil; adverse effects: reflex tachycardia and fluid retention, so often combined with beta-blocker/diuretic when appropriate.
+Minoxidil	Direct arterial vasodilator; K+ channel opener
+Key parameters: potent antihypertensive for resistant hypertension; also used topically for alopecia; adverse effects: fluid retention, reflex tachycardia, hypertrichosis, pericardial effusion rarely.
+Hypertensive emergency drugs	Acute blood pressure control class; mainly IV agents
+Key parameters: used for severe hypertension with acute target-organ damage; reduce BP in a controlled way; examples: labetalol, esmolol, nicardipine, nitroglycerin, urapidil; choice depends on clinical scenario.
+Labetalol	Beta-blocker with α1-blocking activity; IV/oral antihypertensive
+Key parameters: blocks β1/β2 and α1 receptors; useful in hypertensive emergency and pregnancy-related severe hypertension; adverse effects: hypotension, bradycardia, bronchospasm risk.
+Nicardipine	Dihydropyridine calcium channel blocker; IV antihypertensive
+Key parameters: arterial vasodilator used in hypertensive emergency and neurologic BP control; adverse effects: headache, flushing, reflex tachycardia, edema.
+Urapidil	Antihypertensive; α1 antagonist with central serotonergic sympatholytic effect
+Key parameters: IV option for hypertensive crisis in some countries; lowers peripheral resistance with less reflex tachycardia; adverse effects: dizziness, headache, hypotension.
+P2Y12 inhibitors	Antiplatelet class; ADP receptor antagonists
+Key parameters: inhibit platelet activation through P2Y12 blockade; examples: clopidogrel, prasugrel, ticagrelor; used in ACS and after stenting; major adverse effect: bleeding.
+Prasugrel	Antiplatelet drug; irreversible P2Y12 ADP receptor antagonist
+Key parameters: prodrug; stronger platelet inhibition than clopidogrel; used in ACS/PCI; adverse effect: bleeding; avoid in prior stroke/TIA.
+Ticagrelor	Antiplatelet drug; reversible P2Y12 ADP receptor antagonist
+Key parameters: not a prodrug; used in ACS and after stenting; adverse effects: bleeding, dyspnea, bradyarrhythmias; interacts with strong CYP3A modifiers.
+GPIIb/IIIa inhibitors	Antiplatelet class; final common pathway platelet aggregation blockers
+Key parameters: block fibrinogen-mediated platelet cross-linking; examples: abciximab, eptifibatide, tirofiban; mainly IV use in selected ACS/PCI settings; major risks: bleeding and thrombocytopenia.
+Abciximab	GPIIb/IIIa inhibitor; monoclonal antibody fragment antiplatelet
+Key parameters: blocks platelet GPIIb/IIIa receptors; IV use in selected PCI/ACS settings; adverse effects: bleeding, thrombocytopenia.
+Eptifibatide	GPIIb/IIIa inhibitor; cyclic peptide antiplatelet
+Key parameters: IV reversible platelet aggregation inhibitor; used in selected ACS/PCI settings; adverse effects: bleeding, thrombocytopenia; renal dosing matters.
+Tirofiban	GPIIb/IIIa inhibitor; non-peptide antiplatelet
+Key parameters: IV reversible GPIIb/IIIa blocker; selected ACS/PCI use; adverse effects: bleeding, thrombocytopenia; adjust in renal impairment.
+Anticoagulant reversal agents	Hemostasis/antidote category
+Key parameters: reverse or bypass anticoagulant effect in major bleeding or urgent procedures; examples: protamine for heparin, vitamin K/PCC for warfarin, idarucizumab for dabigatran, andexanet alfa for factor Xa inhibitors where available.
+Protamine sulfate	Antidote; heparin reversal agent
+Key parameters: positively charged protein that binds negatively charged heparin; reverses unfractionated heparin best and partially reverses LMWH; adverse effects: hypotension, anaphylactoid reactions.
+Vitamin K (phytomenadione)	Antidote; warfarin reversal support
+Key parameters: restores hepatic synthesis of vitamin K-dependent clotting factors; used for warfarin over-anticoagulation/bleeding; slow compared with PCC; effect depends on liver synthetic function.
+Prothrombin complex concentrate (PCC)	Anticoagulant reversal product; clotting factor concentrate
+Key parameters: rapidly replaces vitamin K-dependent factors, especially for serious warfarin-associated bleeding; often combined with vitamin K; major risk: thrombosis.
+Idarucizumab	Antidote; dabigatran reversal monoclonal antibody fragment
+Key parameters: binds dabigatran and rapidly reverses direct thrombin inhibition; used for life-threatening bleeding or urgent surgery; thrombosis risk after reversal if anticoagulation not restarted when appropriate.
+Andexanet alfa	Antidote; factor Xa inhibitor reversal agent
+Key parameters: recombinant modified factor Xa decoy; reverses apixaban/rivaroxaban in selected severe bleeding settings where available; adverse effects: thrombosis risk, infusion reactions.
+Ezetimibe	Hypolipidemic drug; cholesterol absorption inhibitor
+Key parameters: inhibits NPC1L1 cholesterol uptake in the intestine; lowers LDL; used alone or with statins; adverse effects: GI upset, liver enzyme elevation especially with statins.
+PCSK9 inhibitors	Hypolipidemic biologic class; LDL receptor recycling enhancers
+Key parameters: monoclonal antibodies against PCSK9 increase hepatic LDL receptor recycling and markedly lower LDL; examples: evolocumab, alirocumab; adverse effects: injection-site reactions, flu-like symptoms.
+Evolocumab	PCSK9 inhibitor; monoclonal antibody hypolipidemic
+Key parameters: greatly lowers LDL by increasing LDL receptor recycling; used in familial hypercholesterolemia or high-risk ASCVD when LDL remains high; adverse effects: injection-site reactions.
+Alirocumab	PCSK9 inhibitor; monoclonal antibody hypolipidemic
+Key parameters: lowers LDL by inhibiting PCSK9; used in high-risk dyslipidemia and familial hypercholesterolemia; adverse effects: injection-site reactions, nasopharyngitis.
+Fibrates	Hypolipidemic class; PPAR-α agonists
+Key parameters: mainly lower triglycerides and raise HDL modestly; examples: fenofibrate, gemfibrozil; adverse effects: myopathy risk especially with statins, gallstones, liver enzyme elevation.
+Fenofibrate	Fibrate hypolipidemic; PPAR-α agonist
+Key parameters: lowers triglycerides by increasing lipoprotein lipase activity; used in hypertriglyceridemia; adverse effects: myopathy, gallstones, liver enzyme elevation.
+Bile acid sequestrants	Hypolipidemic class; intestinal bile acid binders
+Key parameters: bind bile acids in gut and increase hepatic LDL receptor expression; examples: cholestyramine, colestipol, colesevelam; adverse effects: constipation, bloating, reduced absorption of other drugs/vitamins.
+Cholestyramine	Bile acid sequestrant; hypolipidemic resin
+Key parameters: lowers LDL by binding bile acids; also useful for some bile acid diarrhea and pruritus from cholestasis; adverse effects: constipation, bloating, drug binding interactions.
+PDE5 inhibitors in pulmonary arterial hypertension	Pulmonary hypertension vasodilator class
+Key parameters: inhibit PDE5 and increase cGMP-mediated pulmonary vasodilation; example: sildenafil; adverse effects: headache, flushing, hypotension; contraindicated with nitrates because of severe hypotension risk.
+Sildenafil	PDE5 inhibitor; pulmonary arterial hypertension and erectile dysfunction drug
+Key parameters: increases cGMP by inhibiting PDE5; causes pulmonary and systemic vasodilation; adverse effects: headache, flushing, hypotension, visual disturbance; contraindicated with nitrates.
+ADME	Absorption, distribution, metabolism, and excretion; the core pharmacokinetic sequence determining drug concentration over time.
+Absorption	Movement of drug from administration site into blood; affected by route, solubility, pH, blood flow, formulation, food, and transporters.
+Bioavailability	Fraction of administered dose reaching systemic circulation unchanged; IV is 100%; oral drugs may lose bioavailability through incomplete absorption and first-pass metabolism.
+First-pass metabolism	Presystemic metabolism mainly in gut wall and liver before drug reaches systemic circulation; lowers oral bioavailability.
+Routes of administration	Enteral: oral, sublingual, rectal. Parenteral: IV, IM, SC, inhaled, transdermal. Route affects onset, bioavailability, and safety.
+Distribution	Movement of drug from blood into tissues; influenced by perfusion, plasma protein binding, lipid solubility, barriers, and volume of distribution.
+Volume of distribution (Vd)	Apparent volume relating amount of drug in body to plasma concentration; high Vd suggests tissue binding/distribution, low Vd suggests blood/plasma confinement.
+Plasma protein binding	Only free drug is pharmacologically active and filtered; displacement interactions matter most for highly bound narrow-therapeutic-index drugs.
+Clearance	Volume of plasma cleared of drug per unit time; mainly renal and hepatic; determines maintenance dose.
+Half-life	Time for plasma drug concentration to fall by 50%; determines dosing interval and time to steady state.
+Steady state	Drug input equals elimination; usually reached after about 4-5 half-lives with repeated dosing.
+Loading dose	Initial larger dose used to rapidly reach target concentration; depends mainly on volume of distribution and target concentration.
+Maintenance dose	Dose needed to maintain steady-state concentration; depends mainly on clearance, target concentration, dosing interval, and bioavailability.
+Therapeutic index	Safety margin between effective and toxic doses; narrow therapeutic index drugs require monitoring, e.g. warfarin, digoxin, lithium.
+Potency vs efficacy	Potency = dose needed for effect; efficacy = maximal effect. More potent does not necessarily mean more effective.
+Full agonist	Binds receptor and produces maximal response when enough receptors are occupied.
+Partial agonist	Activates receptor but produces lower maximal response than full agonist; can antagonize a full agonist in the same system.
+Competitive antagonist	Reversibly competes with agonist at receptor; effect can be overcome by increasing agonist concentration; shifts dose-response curve right.
+Noncompetitive antagonist	Reduces maximal response; effect cannot be fully overcome by increasing agonist concentration.
+Type A adverse drug reaction	Augmented, dose-related, predictable from pharmacology; common example: bleeding from anticoagulants.
+Type B adverse drug reaction	Bizarre/idiosyncratic or immune-mediated, not clearly dose-related; example: drug allergy or anaphylaxis.
+Pharmacovigilance	Detection, assessment, understanding, and prevention of adverse drug effects after drugs are marketed.
+Pharmacokinetic interactions	Interactions affecting absorption, distribution, metabolism, or excretion; examples: enzyme inhibition/induction, altered renal clearance.
+Pharmacodynamic interactions	Interactions at effect level without changing concentration; examples: additive CNS depression, additive bleeding risk, antagonistic receptor effects.
+Drug use in elderly patients	Higher risk from reduced renal/hepatic function, polypharmacy, altered body composition, and sensitivity to CNS/anticholinergic drugs; start low, go slow.
+Drug effects on fetus	Drugs can cause teratogenicity, fetal toxicity, or neonatal toxicity; risk depends on drug, dose, timing, and placental transfer.
+Prescription basics	A prescription should clearly state patient, drug name, strength, dosage form, route, dose, frequency, duration, quantity, instructions, date, and prescriber.
+Benzodiazepines - class	Positive allosteric modulators of GABA-A receptors; increase frequency of chloride channel opening; anxiolytic, hypnotic, anticonvulsant, muscle relaxant.
+Barbiturates - class	GABA-A enhancers that prolong chloride channel opening; anticonvulsant/anesthetic uses; dangerous overdose with CNS and respiratory depression.
+Z-drugs - class	Hypnotics acting at benzodiazepine site on GABA-A, relatively sleep-selective; examples: zolpidem, zopiclone; used for insomnia.
+SSRIs - class	Selective serotonin reuptake inhibitors; first-line for depression/anxiety; adverse effects include GI upset, sexual dysfunction, serotonin syndrome risk.
+SNRIs - class	Serotonin-norepinephrine reuptake inhibitors; examples: venlafaxine, duloxetine; used in depression, anxiety, neuropathic pain.
+Tricyclic antidepressants - class	Inhibit serotonin/noradrenaline reuptake; anticholinergic, sedating, and cardiotoxic in overdose; examples: amitriptyline, imipramine.
+MAO inhibitors - class	Increase monoamines by inhibiting monoamine oxidase; risk of hypertensive crisis with tyramine and serotonin syndrome with serotonergic drugs.
+Typical antipsychotics - class	Mainly D2 antagonists; useful in psychosis/agitation; adverse effects: extrapyramidal symptoms, hyperprolactinemia, QT prolongation, neuroleptic malignant syndrome.
+Atypical antipsychotics - class	D2 and 5-HT2A antagonism/partial agonism patterns; lower EPS generally, but more metabolic effects; examples: clozapine, risperidone, olanzapine, quetiapine.
+Antiepileptic sodium-channel blockers	Stabilize inactive Na+ channels and reduce high-frequency neuronal firing; examples: phenytoin, carbamazepine, lamotrigine.
+GABA-enhancing antiepileptics	Increase inhibitory neurotransmission; examples include benzodiazepines, phenobarbital, valproate, tiagabine, vigabatrin.
+SV2A modulators	Antiepileptics acting on synaptic vesicle protein SV2A; prototype: levetiracetam; few interactions but mood/irritability possible.
+Status epilepticus treatment	Emergency treatment: benzodiazepine first, then loading antiepileptic such as levetiracetam/phenytoin/valproate; refractory cases may need anesthetic coma.
+Opioid agonists - class	Mu-opioid receptor agonists causing analgesia, sedation, miosis, respiratory depression, constipation, tolerance, and dependence; overdose antidote: naloxone.
+Opioid antagonists - class	Block opioid receptors; naloxone reverses overdose acutely, naltrexone is longer acting and used in dependence treatment.
+NSAIDs - class	Inhibit cyclooxygenase and reduce prostaglandins; analgesic, antipyretic, anti-inflammatory; adverse effects: GI bleeding, renal injury, bronchospasm, CV risk.
+Paracetamol poisoning	Toxic metabolite depletes glutathione and causes hepatic necrosis; antidote is N-acetylcysteine, best early but useful later too.
+General anesthetics - class	Produce reversible unconsciousness/amnesia/immobility; examples: propofol, ketamine, sevoflurane; risks include hypotension, respiratory depression, malignant hyperthermia with volatile agents.
+Local anesthetics - class	Block voltage-gated sodium channels; prevent nerve impulse conduction; toxicity includes CNS symptoms, seizures, arrhythmias; severe toxicity treated with lipid emulsion.
+Beta-blocker overdose	Causes bradycardia, hypotension, AV block, bronchospasm, hypoglycemia; treatment may include atropine, glucagon, vasopressors, high-dose insulin therapy.
+Calcium-channel blocker overdose	Causes hypotension, bradycardia/AV block especially verapamil/diltiazem, hyperglycemia; treatment includes calcium, vasopressors, high-dose insulin-glucose therapy.
+Digoxin toxicity	Symptoms: GI upset, confusion, visual changes, arrhythmias, hyperkalemia in acute poisoning; severe toxicity treated with digoxin immune Fab.
+Local anesthetic systemic toxicity	CNS excitation/seizures followed by cardiovascular collapse; treat with airway support, benzodiazepines for seizures, and IV lipid emulsion.
+Cyanide poisoning	Blocks mitochondrial cytochrome oxidase causing cellular hypoxia and lactic acidosis; antidote: hydroxocobalamin.
+Methemoglobinemia	Oxidized hemoglobin cannot carry oxygen effectively; cyanosis with low pulse oximetry; antidote: methylene blue.
+Iron poisoning	Causes GI corrosion, shock, metabolic acidosis, hepatic failure; antidote/chelator: deferoxamine.
+Beta-lactam antibiotics - class	Inhibit bacterial cell wall synthesis by binding PBPs; bactericidal; main groups: penicillins, cephalosporins, carbapenems, monobactams.
+Natural penicillins	Penicillin G/V; good for many Gram-positive organisms and spirochetes; beta-lactamase sensitive; allergy risk.
+Aminopenicillins	Amoxicillin/ampicillin; broader Gram-negative coverage than penicillin G; often combined with beta-lactamase inhibitor.
+Antistaphylococcal penicillins	Oxacillin/flucloxacillin/nafcillin; beta-lactamase-resistant; used for MSSA, not MRSA.
+Antipseudomonal penicillins	Piperacillin/ticarcillin; cover Pseudomonas; usually combined with tazobactam/clavulanate in severe infections.
+Beta-lactamase inhibitors	Clavulanate, sulbactam, tazobactam; inhibit many beta-lactamases and expand beta-lactam spectrum; little antibacterial activity alone.
+Cephalosporin generations	1st gen mainly Gram-positive; later generations add Gram-negative/CNS coverage; cefepime covers Pseudomonas; ceftaroline covers MRSA.
+Carbapenems	Very broad beta-lactams; examples: meropenem, imipenem; severe resistant infections; seizure risk especially imipenem.
+Monobactams	Aztreonam; active against aerobic Gram-negative rods including Pseudomonas; minimal cross-allergy with penicillins.
+Vancomycin	Glycopeptide inhibiting cell wall synthesis; used for MRSA and severe Gram-positive infections; adverse effects: nephrotoxicity, red man syndrome.
+Linezolid	Oxazolidinone inhibiting 50S initiation complex; active against MRSA/VRE; adverse effects: thrombocytopenia, serotonin syndrome risk.
+Cotrimoxazole	Trimethoprim-sulfamethoxazole; blocks folate synthesis sequentially; uses include UTI, Pneumocystis jirovecii, some MRSA; adverse effects include rash, marrow suppression, hyperkalemia.
+Nitrofurantoin	Urinary antiseptic for uncomplicated lower UTI; not for pyelonephritis; adverse effects include GI upset, pulmonary toxicity rarely, hemolysis in G6PD deficiency.
+Macrolides - class	50S protein synthesis inhibitors; cover atypical respiratory pathogens; examples: azithromycin, clarithromycin; adverse effects: QT prolongation, GI upset.
+Tetracyclines - class	30S inhibitors; examples: doxycycline; cover atypicals, rickettsiae, chlamydia, acne; adverse effects: photosensitivity, teeth/bone effects; avoid pregnancy/children.
+Aminoglycosides - class	30S inhibitors with concentration-dependent killing; Gram-negative aerobes; adverse effects: nephrotoxicity, ototoxicity, neuromuscular blockade.
+Fluoroquinolones - class	Inhibit DNA gyrase/topoisomerase; adverse effects: tendinopathy, QT prolongation, CNS effects, dysglycemia; avoid pregnancy/children if possible.
+Anti-herpes antivirals	Acyclovir/valacyclovir; guanosine analogues activated by viral thymidine kinase; inhibit viral DNA polymerase; HSV/VZV; nephrotoxicity risk.
+HIV drug classes overview	Main classes: NRTIs, NNRTIs, protease inhibitors, integrase inhibitors, entry/fusion inhibitors; usually combined to prevent resistance.
+NRTIs	Nucleoside/nucleotide reverse transcriptase inhibitors; backbone of many HIV regimens; examples: tenofovir, emtricitabine, lamivudine, abacavir.
+NNRTIs	Non-nucleoside reverse transcriptase inhibitors; examples: efavirenz, nevirapine, rilpivirine; rash and CYP interactions are important.
+HIV protease inhibitors	Prevent viral protein processing; examples: ritonavir, darunavir; adverse effects: metabolic syndrome, lipodystrophy, many CYP interactions.
+Integrase inhibitors	Block HIV integration into host genome; examples: dolutegravir, raltegravir, bictegravir; generally well tolerated.
+Hepatitis antivirals overview	HBV: tenofovir, entecavir. HCV: direct-acting antivirals such as sofosbuvir-based regimens.
+Azole antifungals - class	Inhibit ergosterol synthesis via 14-alpha-demethylase; examples: fluconazole, voriconazole; adverse effects: hepatotoxicity, CYP interactions.
+Echinocandins	Inhibit fungal beta-glucan cell wall synthesis; examples: caspofungin, micafungin; useful for Candida including invasive disease.
+Antimalarials overview	Chloroquine for sensitive malaria, artemisinin combinations for many falciparum cases, primaquine for hypnozoites; resistance and region matter.
+Chloroquine	Antimalarial active against sensitive Plasmodium; also rheumatologic use; adverse effects: retinopathy, QT prolongation, pruritus.
+Artemisinin combinations	Rapidly acting antimalarials used in combination therapy for falciparum malaria; adverse effects include GI symptoms and rare QT issues depending partner drug.
+Primaquine	Kills dormant liver hypnozoites of P. vivax/ovale; can cause hemolysis in G6PD deficiency; test G6PD before use.
+Asthma relievers	Rapid bronchodilators for symptoms; main prototype is salbutamol; formoterol can be used as reliever in ICS-formoterol regimens.
+Asthma controller drugs	Reduce airway inflammation and exacerbations; inhaled corticosteroids are the core controllers; LABA/LAMA/leukotriene antagonists are add-ons.
+LABA drugs	Long-acting beta2 agonists such as salmeterol and formoterol; maintenance therapy in asthma/COPD; in asthma should be used with inhaled corticosteroid.
+Inhaled corticosteroids	Budesonide/fluticasone; first-line anti-inflammatory controllers in persistent asthma; adverse effects: oral candidiasis, dysphonia.
+Montelukast	Leukotriene receptor antagonist; used in asthma/allergic rhinitis; less effective than inhaled corticosteroids; neuropsychiatric adverse effects possible.
+Omalizumab	Anti-IgE monoclonal antibody for severe allergic asthma/urticaria; reduces allergic inflammation; injection reactions/anaphylaxis rare.
+Antitussives	Suppress cough; examples: codeine, dextromethorphan; use mainly for dry irritating cough; avoid suppressing productive dangerous cough unnecessarily.
+Mucolytics/expectorants	Reduce mucus viscosity or aid clearance; examples: acetylcysteine, ambroxol, guaifenesin.
+H2 receptor antagonists	Block gastric H2 receptors and reduce acid secretion; example: famotidine; useful in GERD/ulcer disease though PPIs are stronger.
+Famotidine	H2 receptor antagonist; reduces gastric acid secretion; fewer CYP interactions than cimetidine.
+Sucralfate	Mucosal protectant forming a protective barrier over ulcers; requires acidic pH; can reduce absorption of other drugs.
+H. pylori eradication therapy	Usually PPI plus antibiotics such as amoxicillin/clarithromycin/metronidazole depending local resistance; improves peptic ulcer cure and recurrence.
+Laxative classes	Bulk-forming, osmotic, stimulant, and stool-softening agents; examples: psyllium, lactulose/macrogol, senna/bisacodyl, docusate.
+IBD treatment overview	5-ASA for mild ulcerative colitis, corticosteroids for flares, immunosuppressants/biologics for maintenance or severe disease.
+Insulin types classification	Rapid: lispro/aspart; short: regular; intermediate: NPH; long: glargine/detemir/degludec. Main risks: hypoglycemia and weight gain.
+Oral antidiabetic classes	Main groups: metformin, sulfonylureas, meglitinides, TZDs, alpha-glucosidase inhibitors, DPP-4 inhibitors, SGLT2 inhibitors, GLP-1 agonists.
+Sulfonylureas - class	Close beta-cell KATP channels and increase insulin release; examples: gliclazide, glibenclamide; adverse effects: hypoglycemia, weight gain.
+Meglitinides - class	Short-acting insulin secretagogues taken with meals; example: repaglinide; risk of hypoglycemia and weight gain.
+Thiazolidinediones - class	PPAR-gamma agonists improving insulin sensitivity; example: pioglitazone; adverse effects: edema, weight gain, heart failure worsening, fractures.
+Alpha-glucosidase inhibitors	Delay carbohydrate absorption in intestine; example: acarbose; adverse effects: flatulence, diarrhea, abdominal discomfort.
+GLP-1 receptor agonists	Increase glucose-dependent insulin, slow gastric emptying, reduce appetite; examples: semaglutide, liraglutide; weight loss and GI effects.
+DPP-4 inhibitors	Increase endogenous incretins; examples: sitagliptin, linagliptin; weight neutral, low hypoglycemia alone, pancreatitis warning.
+SGLT2 inhibitors in diabetes	Increase urinary glucose excretion; examples: empagliflozin, dapagliflozin; benefits in selected CV/renal/HF patients; risks: genital infections, dehydration, euglycemic ketoacidosis.
+Thyroid hormones	Levothyroxine is synthetic T4 for hypothyroidism; long half-life; absorption reduced by iron/calcium; overdose causes hyperthyroid symptoms.
+Thionamides	Methimazole and propylthiouracil inhibit thyroid hormone synthesis; adverse effects: agranulocytosis, rash, hepatotoxicity.
+Thyroid storm treatment	Emergency: beta-blocker, thionamide, iodine after thionamide, glucocorticoid, supportive care; PTU also reduces peripheral T4 to T3 conversion.
+Combined oral contraceptives	Estrogen + progestin suppress ovulation; adverse effects: nausea, breast tenderness, VTE risk; contraindicated in high-risk thrombotic states.
+Progestin-only contraception	Thickens cervical mucus and may suppress ovulation; useful when estrogen is contraindicated; irregular bleeding common.
+Clomiphene	SERM that blocks estrogen feedback at hypothalamus, increasing GnRH/FSH/LH; used for ovulation induction.
+Glucocorticoids - class	Anti-inflammatory and immunosuppressive drugs; adverse effects: Cushingoid features, hyperglycemia, osteoporosis, infection risk, adrenal suppression.
+Bisphosphonates - class	Inhibit osteoclast-mediated bone resorption; examples: alendronate, zoledronate; adverse effects: esophagitis, osteonecrosis of jaw rare.
+Denosumab	Monoclonal antibody against RANKL; reduces osteoclast formation; osteoporosis treatment; risks: hypocalcemia, infections, rebound fractures if stopped abruptly.
+Acute gout treatment	NSAIDs, colchicine, or corticosteroids; choice depends on renal function, GI risk, interactions, and contraindications.
+Chronic gout prophylaxis	Urate-lowering therapy such as allopurinol/febuxostat; start with flare prophylaxis; allopurinol inhibits xanthine oxidase.
+Classical anticancer drug groups	Main cytotoxic groups: alkylating agents, platinum compounds, antimetabolites, mitotic inhibitors, cytotoxic antibiotics/topoisomerase inhibitors.
+Alkylating anticancer drugs	Crosslink DNA; example: cyclophosphamide; adverse effects: myelosuppression, infertility, hemorrhagic cystitis prevented by mesna/hydration.
+Platinum anticancer drugs	Cisplatin/carboplatin/oxaliplatin crosslink DNA; toxicities include nephrotoxicity, ototoxicity, neuropathy, severe nausea, myelosuppression depending drug.
+Antimetabolite anticancer drugs	Interfere with DNA/RNA synthesis; examples: methotrexate, 5-FU, cytarabine; adverse effects: myelosuppression, mucositis.
+Mitotic inhibitors	Vinca alkaloids inhibit microtubule polymerization; taxanes stabilize microtubules; main toxicities: neuropathy and myelosuppression depending drug.
+Anthracyclines	Doxorubicin/daunorubicin intercalate DNA and inhibit topoisomerase II; major dose-limiting toxicity: cardiomyopathy; dexrazoxane may protect.
+Calcineurin inhibitors	Cyclosporine and tacrolimus inhibit IL-2 transcription; transplant/autoimmune use; adverse effects: nephrotoxicity, hypertension, neurotoxicity.
+Mycophenolate mofetil	Immunosuppressant inhibiting inosine monophosphate dehydrogenase and lymphocyte purine synthesis; adverse effects: GI upset, myelosuppression, teratogenicity.
+Monoclonal antibodies - naming clue	-mab drugs are monoclonal antibodies; target selection determines use/toxicity, e.g. rituximab anti-CD20, trastuzumab anti-HER2, infliximab anti-TNF.
+Immune checkpoint inhibitors	Anti-PD-1/PD-L1/CTLA-4 drugs enhance antitumor immunity; adverse effects are immune-related: colitis, hepatitis, pneumonitis, endocrinopathies.
+Anti-TNF drugs	Biologic immunosuppressants for RA/IBD/psoriasis; examples: infliximab, adalimumab, etanercept; screen for TB; infection risk.
+IVIG	Pooled immunoglobulin used for immune deficiencies and autoimmune diseases; adverse effects: infusion reactions, thrombosis, renal dysfunction rarely.
+Interferons - class	Cytokine immunomodulators used in some viral/malignant/immune diseases; adverse effects: flu-like symptoms, depression, myelosuppression.
