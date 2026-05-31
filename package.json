@@ -1,0 +1,7 @@
+{
+  "name": "medical-dictionary-jlf",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js"
+  }
+}
