@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Anamnesis Avatar Trainer</title>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <section id="setupScreen" class="setup-screen">
+        <div class="setup-card">
+          <p class="eyebrow">Medical Education Simulator</p>
+          <h1>Anamnesis Avatar Trainer</h1>
+          <p class="hero-text">
+            Choose a case, difficulty, and regime before entering the station. The interview starts with an empty chat, because the student is supposed to assess the patient, not receive a spoiler trailer.
+          </p>
+          <div class="setup-grid">
+            <label>
+              <span>Case</span>
+              <select id="caseSelect"></select>
+            </label>
+            <button id="randomCaseBtn" type="button" class="secondary random-case-btn">Random case</button>
+            <label>
+              <span>Difficulty</span>
+              <select id="difficultySelect">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate" selected>Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </label>
+            <label>
+              <span>Regime</span>
+              <select id="modeSelect">
+                <option value="practice" selected>Practice</option>
+                <option value="teaching">Teaching</option>
+                <option value="exam">Exam</option>
+              </select>
+            </label>
+          </div>
+          <div id="setupPreview" class="setup-preview"></div>
+          <button id="startTrainingBtn" type="button" class="start-training-btn">Enter station</button>
+        </div>
+      </section>
+
+      <section id="trainingScreen" class="training-screen" hidden>
+        <header class="station-panel">
+          <div>
+            <p class="eyebrow">Clinical Station</p>
+            <h1>Patient Interview</h1>
+            <p id="stationBrief" class="station-brief"></p>
+          </div>
+          <div class="station-actions">
+            <span id="stationModeBadge" class="badge"></span>
+            <span id="stationDifficultyBadge" class="badge subtle"></span>
+            <button id="restartBtn" type="button" class="secondary">New scenario</button>
+          </div>
+        </header>
+
+        <main class="training-layout">
+          <aside class="avatar-card">
+            <div class="avatar-stage">
+              <div id="avatarMount" class="avatar-mount" aria-label="Animated patient avatar"></div>
+              <div id="avatarFallback" class="avatar-fallback">Pt</div>
+            </div>
+            <section id="patientMeta" class="patient-meta"></section>
+            <section class="engine-card">
+              <h3>Adaptive Engine</h3>
+              <div id="engineDebug" class="engine-debug">Waiting for first question.</div>
+            </section>
+          </aside>
+
+          <section class="chat-card">
+            <div id="chatLog" class="chat-log empty-chat" aria-live="polite">
+              <div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>
+            </div>
+            <div id="terminologyHint" class="terminology-hint" aria-live="polite"></div>
+            <div id="suggestions" class="suggestions"></div>
+            <form id="questionForm" class="question-form">
+              <input id="questionInput" type="text" autocomplete="off" placeholder="Ask the patient a free-text anamnesis question..." />
+              <button type="submit">Ask</button>
+            </form>
+            <div class="interview-actions">
+              <button id="hintBtn" type="button" class="secondary">Give me a hint</button>
+              <button id="finishBtn" type="button" class="secondary">Finish interview</button>
+              <button id="copySummaryBtn" type="button" class="secondary">Copy summary</button>
+              <button id="exportDebugBtn" type="button" class="secondary">Export debug session</button>
+              <button id="runSimulationBtn" type="button" class="secondary">Run simulation tests</button>
+              <button id="openVitalsBtn" type="button" class="secondary monitor-btn">Monitor</button>
+              <button id="openEcgBtn" type="button" class="secondary monitor-btn">12 Lead ECG</button>
+              <label class="voice-toggle"><input id="voiceToggle" type="checkbox" /> Speak replies</label>
+            </div>
+          </section>
+
+          <aside class="feedback-card">
+            <nav class="tabs" aria-label="Feedback panels">
+              <button type="button" class="tab active" data-tab="coverage">Coverage</button>
+              <button type="button" class="tab" data-tab="summary">Summary</button>
+              <button type="button" class="tab" data-tab="missed">Feedback</button>
+            </nav>
+            <section id="coveragePanel" class="tab-panel active"></section>
+            <section id="summaryPanel" class="tab-panel"></section>
+            <section id="missedPanel" class="tab-panel"></section>
+          </aside>
+        </main>
+      </section>
+    </div>
+
+    <div id="vitalsMonitorModal" class="clinical-modal" aria-hidden="true">
+      <div class="clinical-modal-backdrop" data-close="vitals"></div>
+      <section class="clinical-modal-card vitals-monitor-card" role="dialog" aria-modal="true" aria-labelledby="vitalsMonitorTitle">
+        <header class="clinical-modal-header">
+          <div>
+            <p class="eyebrow">Objective View</p>
+            <h2 id="vitalsMonitorTitle">Live vitals monitor</h2>
+          </div>
+          <button id="closeVitalsBtn" type="button" class="secondary">Close</button>
+        </header>
+        <div class="monitor-layout monitor-layout-full">
+          <canvas id="vitalsMonitorCanvas" class="vitals-monitor-canvas monitor-pro-canvas" width="1280" height="720"></canvas>
+          <aside class="vitals-side-panel visually-hidden-monitor-panel">
+            <h3>Current Values</h3>
+            <div id="vitalsValues" class="vitals-values"></div>
+            <p id="vitalsClinicalNote" class="clinical-note"></p>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <div id="ecgViewerModal" class="clinical-modal" aria-hidden="true">
+      <div class="clinical-modal-backdrop" data-close="ecg"></div>
+      <section class="clinical-modal-card ecg-card" role="dialog" aria-modal="true" aria-labelledby="ecgViewerTitle">
+        <header class="clinical-modal-header">
+          <div>
+            <p class="eyebrow">Objective View</p>
+            <h2 id="ecgViewerTitle">ECG recording</h2>
+          </div>
+          <button id="closeEcgBtn" type="button" class="secondary">Close</button>
+        </header>
+        <div class="ecg-viewer-frame">
+          <img id="ecgRecordingImage" alt="Attached ECG recording" />
+          <div id="ecgRecordingFallback" class="ecg-fallback" hidden>
+            <h3>No ECG recording file found</h3>
+            <p>For Peter Novak, place the ECG at <code>public/ECGs/peter_novak_ecg.png</code>. Generic fallbacks are also supported: <code>ecg-recording.svg</code>, <code>ecg-recording.png</code>, or <code>ecg-recording.jpg</code>.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

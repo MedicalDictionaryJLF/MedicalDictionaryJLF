@@ -6,9 +6,10 @@ const schema = {
   type: "OBJECT",
   properties: {
     resolvedQuestion: { type: "STRING" },
+    intent: { type: "STRING" },
     confidence: { type: "NUMBER" }
   },
-  required: ["resolvedQuestion", "confidence"]
+  required: ["resolvedQuestion", "intent", "confidence"]
 };
 
 module.exports = async function handler(req, res) {
@@ -23,6 +24,17 @@ module.exports = async function handler(req, res) {
       text: text(item?.text, 1500)
     })).filter(item => item.text)
     : [];
+  const context = {
+    lastMeaningfulIntent: text(body?.context?.lastMeaningfulIntent, 100),
+    lastMeaningfulDomain: text(body?.context?.lastMeaningfulDomain, 100),
+    activeSymptom: text(JSON.stringify(body?.context?.activeSymptom || {}), 500)
+  };
+  const intents = Array.isArray(body?.intents)
+    ? body.intents.slice(0, 150).map(item => ({
+      id: text(item?.id, 100),
+      description: text(item?.description, 500)
+    })).filter(item => item.id)
+    : [];
 
   if (!question) {
     logAi({ aiCallType, success: false });
@@ -31,14 +43,15 @@ module.exports = async function handler(req, res) {
 
   try {
     const result = await callGemini({
-      systemInstruction: "Rewrite the final question as a standalone question by resolving pronouns and references from the supplied conversation. Preserve meaning. Do not answer the question and do not add facts.",
-      prompt: JSON.stringify({ conversation, question }),
+      systemInstruction: "Resolve the final contextual follow-up question. Rewrite it as a standalone question and select only one supplied intent id when a supplied intent clearly fits. Otherwise return intent as an empty string. Preserve meaning. Do not answer the question and do not add facts.",
+      prompt: JSON.stringify({ conversation, context, question, intents }),
       responseSchema: schema
     });
     const resolvedQuestion = text(result.resolvedQuestion);
+    const finalIntent = intents.some(item => item.id === result.intent) ? result.intent : null;
     const aiConfidence = confidence(result.confidence);
-    logAi({ aiCallType, aiConfidence, success: true });
-    return sendJson(res, 200, { success: true, resolvedQuestion: resolvedQuestion || question, confidence: aiConfidence });
+    logAi({ aiCallType, aiConfidence, finalIntent, success: true });
+    return sendJson(res, 200, { success: true, resolvedQuestion: resolvedQuestion || question, intent: finalIntent, confidence: aiConfidence });
   } catch (error) {
     console.error(error);
     logAi({ aiCallType, success: false });

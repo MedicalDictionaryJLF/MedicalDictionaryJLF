@@ -8,7 +8,12 @@ const requiredFiles = [
   "api/intent-rescue.js",
   "api/context-resolve.js",
   "api/patient-phrasing.js",
-  "src/ai/client.js"
+  "src/ai/client.js",
+  "anamnesis-training/index.html",
+  "anamnesis-training/src/main.js",
+  "anamnesis-training/src/aiSupport.js",
+  "anamnesis-training/patient-avatar.svg",
+  "anamnesis-training/ECGs/peter_novak_ecg.png"
 ];
 
 for (const file of requiredFiles) {

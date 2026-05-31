@@ -13,8 +13,8 @@ export function resolveIntentWithAI(question, intents) {
   return postJson("/api/intent-rescue", { question, intents });
 }
 
-export function resolveContextWithAI(question, conversation = []) {
-  return postJson("/api/context-resolve", { question, conversation });
+export function resolveContextWithAI(question, conversation = [], context = {}, intents = []) {
+  return postJson("/api/context-resolve", { question, conversation, context, intents });
 }
 
 export function rewritePatientAnswer(deterministicAnswer, audience = "patient") {
