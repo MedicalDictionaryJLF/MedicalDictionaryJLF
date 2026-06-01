@@ -1,4 +1,3 @@
-import './style.css';
 import { PATIENT_CASES, QUESTION_AREAS, INTENTS } from './patientCase.js';
 import { PatientEngine } from './patientEngine.js';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';

@@ -10,6 +10,7 @@ const requiredFiles = [
   "api/patient-phrasing.js",
   "src/ai/client.js",
   "anamnesis-training/index.html",
+  "anamnesis-training/styles.css",
   "anamnesis-training/src/main.js",
   "anamnesis-training/src/aiSupport.js",
   "anamnesis-training/patient-avatar.svg",
