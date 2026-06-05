@@ -1,0 +1,173 @@
+/* Pharmacology flashcard mobile swipe, fullscreen, and overflow safety layer */
+.pharm-review-card{
+  min-height:clamp(300px, 52dvh, 620px);
+  max-height:min(680px, calc(100dvh - var(--header-h, 74px) - 170px));
+  overflow:hidden;
+  touch-action:pan-y;
+  user-select:none;
+  will-change:transform, opacity;
+}
+
+.pharm-review-card.is-swipe-tracking{
+  transition:none!important;
+}
+
+.pharm-review-card.is-swiping{
+  box-shadow:0 18px 42px rgba(15,23,42,.16);
+}
+
+.pharm-review-card.is-swipe-reset{
+  transition:transform .18s ease, opacity .18s ease;
+}
+
+.pharm-review-card.is-swipe-away{
+  transition:transform .16s ease, opacity .16s ease;
+}
+
+.pharm-review-content{
+  min-height:0;
+  max-height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.pharm-review-study:fullscreen{
+  box-sizing:border-box;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  max-height:100dvh;
+  padding:calc(14px + env(safe-area-inset-top, 0px)) 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  background:var(--bg);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.pharm-review-study:-webkit-full-screen{
+  box-sizing:border-box;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  max-height:100dvh;
+  padding:calc(14px + env(safe-area-inset-top, 0px)) 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  background:var(--bg);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.pharm-review-study:fullscreen .pharm-review-card,
+.pharm-review-study:-webkit-full-screen .pharm-review-card{
+  flex:1 1 auto;
+  min-height:0;
+  max-height:none;
+  height:100%;
+  width:100%;
+  margin:0;
+  padding:clamp(14px, 3vw, 24px);
+}
+
+.pharm-review-study:fullscreen .pharm-review-card-meta,
+.pharm-review-study:fullscreen .pharm-review-progress,
+.pharm-review-study:-webkit-full-screen .pharm-review-card-meta,
+.pharm-review-study:-webkit-full-screen .pharm-review-progress{
+  flex:0 0 auto;
+}
+
+.pharm-review-study:fullscreen .pharm-review-content,
+.pharm-review-study:-webkit-full-screen .pharm-review-content{
+  min-height:0;
+  max-height:none;
+  overflow:auto;
+  font-size:clamp(1.05rem, 5vw, 1.65rem);
+  line-height:1.45;
+  padding:16px 8px;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+@media (max-width:760px){
+  .pharmacology-review-screen{
+    max-width:100%;
+    min-height:auto;
+  }
+
+  .pharm-review-shell{
+    gap:10px;
+  }
+
+  .pharm-review-head{
+    gap:10px;
+  }
+
+  .pharm-review-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .pharm-review-stats div{
+    padding:8px;
+  }
+
+  .pharm-review-workspace{
+    gap:10px;
+  }
+
+  .pharm-review-options{
+    max-height:32dvh;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-right:2px;
+  }
+
+  .pharm-review-card{
+    min-height:clamp(320px, 56dvh, 560px);
+    max-height:calc(100dvh - var(--header-h, 74px) - 190px);
+    padding:14px;
+  }
+
+  .pharm-review-card-meta{
+    font-size:.74rem;
+  }
+
+  .pharm-review-content{
+    padding:18px 8px;
+    font-size:clamp(1rem, 4.3vw, 1.28rem);
+    line-height:1.45;
+    align-items:flex-start;
+    justify-content:center;
+  }
+
+  .pharm-review-controls{
+    gap:8px;
+  }
+
+  .pharm-review-controls small{
+    display:none;
+  }
+
+  .pharm-review-study:fullscreen .pharm-review-controls,
+  .pharm-review-study:-webkit-full-screen .pharm-review-controls{
+    display:none!important;
+  }
+
+  .pharm-review-study:fullscreen .pharm-review-card,
+  .pharm-review-study:-webkit-full-screen .pharm-review-card{
+    border-radius:24px;
+    min-height:0;
+    height:100%;
+    max-height:100%;
+  }
+
+  .pharm-review-study:fullscreen .pharm-review-content,
+  .pharm-review-study:-webkit-full-screen .pharm-review-content{
+    font-size:clamp(.98rem, 4.6vw, 1.38rem);
+    padding:14px 6px 8px;
+  }
+}
