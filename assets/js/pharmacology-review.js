@@ -1,6 +1,9 @@
 import { resolveBundledDataUrl } from "./core/app-paths.js";
 
 const PROGRESS_KEY = "pharmacology_flashcard_progress_v1";
+const MOBILE_REVIEW_STYLE_ID = "pharmacology-review-mobile-style";
+const SWIPE_MIN_DISTANCE = 72;
+const SWIPE_MAX_VERTICAL_DRIFT = 80;
 const DAY_NAMES = {
   1: "Day 1: General pharmacology / ADME",
   2: "Day 2: Autonomic + cardiovascular",
@@ -23,7 +26,9 @@ const state = {
   showingBack: false,
   progress: initialProgress.cards,
   resetAt: initialProgress.resetAt,
-  onProgressChange: null
+  onProgressChange: null,
+  swipe: null,
+  lastSwipeAt: 0
 };
 
 function byId(id) {
@@ -43,6 +48,15 @@ function stableId(front, back) {
 function timeMs(value) {
   const valueMs = new Date(String(value || "")).getTime();
   return Number.isFinite(valueMs) ? valueMs : 0;
+}
+
+function ensureReviewMobileStyles() {
+  if (typeof document === "undefined" || document.getElementById(MOBILE_REVIEW_STYLE_ID)) return;
+  const link = document.createElement("link");
+  link.id = MOBILE_REVIEW_STYLE_ID;
+  link.rel = "stylesheet";
+  link.href = "assets/css/pharmacology-review-mobile.css?v=1";
+  document.head.appendChild(link);
 }
 
 export function normalizePharmacologyReviewProgress(raw) {
@@ -170,6 +184,7 @@ function reloadDeck() {
   state.deck = cards;
   state.index = 0;
   state.showingBack = false;
+  clearSwipeStyles();
   render();
 }
 
@@ -201,6 +216,7 @@ function moveCard(offset) {
   if (!state.deck.length) return;
   state.index = (state.index + offset + state.deck.length) % state.deck.length;
   state.showingBack = false;
+  clearSwipeStyles();
   render();
 }
 
@@ -218,8 +234,108 @@ async function toggleFullscreen() {
   if (!study) return;
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
-    else await study.requestFullscreen();
-  } catch (error) {}
+    else if (study.requestFullscreen) await study.requestFullscreen({ navigationUI: "hide" });
+  } catch (error) {
+    try {
+      if (study.webkitRequestFullscreen) study.webkitRequestFullscreen();
+    } catch (fallbackError) {}
+  }
+}
+
+function clearSwipeStyles() {
+  const card = byId("pharm-review-card");
+  if (!card) return;
+  card.classList.remove("is-swiping", "is-swipe-tracking", "is-swipe-reset", "is-swipe-away");
+  card.style.transform = "";
+  card.style.opacity = "";
+}
+
+function setSwipeTransform(deltaX) {
+  const card = byId("pharm-review-card");
+  if (!card) return;
+  const width = Math.max(1, card.getBoundingClientRect().width);
+  const clamped = Math.max(-width, Math.min(width, deltaX));
+  const rotate = Math.max(-8, Math.min(8, clamped / width * 9));
+  const opacity = Math.max(0.72, 1 - Math.abs(clamped) / width * 0.25);
+  card.style.transform = `translateX(${clamped}px) rotate(${rotate}deg)`;
+  card.style.opacity = String(opacity);
+}
+
+function finishSwipe(direction) {
+  const card = byId("pharm-review-card");
+  if (!card) return;
+  state.lastSwipeAt = Date.now();
+  card.classList.remove("is-swipe-tracking");
+  card.classList.add("is-swipe-away");
+  const width = Math.max(320, card.getBoundingClientRect().width);
+  card.style.transform = `translateX(${direction * width * 1.15}px) rotate(${direction * 9}deg)`;
+  card.style.opacity = "0";
+  window.setTimeout(() => moveCard(direction > 0 ? -1 : 1), 150);
+}
+
+function resetSwipe() {
+  const card = byId("pharm-review-card");
+  if (!card) return;
+  card.classList.remove("is-swipe-tracking");
+  card.classList.add("is-swipe-reset");
+  card.style.transform = "";
+  card.style.opacity = "";
+  window.setTimeout(() => card.classList.remove("is-swiping", "is-swipe-reset"), 180);
+}
+
+function onSwipePointerDown(event) {
+  if (!state.deck.length || event.pointerType === "mouse" && event.button !== 0) return;
+  const card = byId("pharm-review-card");
+  if (!card || event.target?.closest?.("button,input,select,textarea,label")) return;
+  state.swipe = {
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startY: event.clientY,
+    currentX: event.clientX,
+    currentY: event.clientY,
+    active: false,
+    vertical: false
+  };
+  card.setPointerCapture?.(event.pointerId);
+}
+
+function onSwipePointerMove(event) {
+  if (!state.swipe || state.swipe.pointerId !== event.pointerId) return;
+  const swipe = state.swipe;
+  swipe.currentX = event.clientX;
+  swipe.currentY = event.clientY;
+  const deltaX = swipe.currentX - swipe.startX;
+  const deltaY = swipe.currentY - swipe.startY;
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+  if (!swipe.active && !swipe.vertical) {
+    if (absY > 12 && absY > absX * 1.15) {
+      swipe.vertical = true;
+      return;
+    }
+    if (absX > 14 && absX > absY * 1.1) {
+      swipe.active = true;
+      const card = byId("pharm-review-card");
+      card?.classList.add("is-swiping", "is-swipe-tracking");
+    }
+  }
+  if (!swipe.active) return;
+  event.preventDefault();
+  setSwipeTransform(deltaX);
+}
+
+function onSwipePointerEnd(event) {
+  if (!state.swipe || state.swipe.pointerId !== event.pointerId) return;
+  const swipe = state.swipe;
+  state.swipe = null;
+  if (!swipe.active) return;
+  const deltaX = swipe.currentX - swipe.startX;
+  const deltaY = swipe.currentY - swipe.startY;
+  const card = byId("pharm-review-card");
+  card?.releasePointerCapture?.(event.pointerId);
+  const threshold = Math.min(Math.max(SWIPE_MIN_DISTANCE, (card?.getBoundingClientRect().width || 320) * 0.22), 140);
+  if (Math.abs(deltaX) >= threshold && Math.abs(deltaY) <= SWIPE_MAX_VERTICAL_DRIFT) finishSwipe(Math.sign(deltaX));
+  else resetSwipe();
 }
 
 function renderDayFilters() {
@@ -233,6 +349,7 @@ function renderDayFilters() {
 function bind() {
   if (state.bound) return;
   state.bound = true;
+  ensureReviewMobileStyles();
   renderDayFilters();
   byId("pharm-review-days")?.addEventListener("change", reloadDeck);
   ["pharm-review-shuffle", "pharm-review-hide-reviewed", "pharm-review-wrong-only"].forEach(id => byId(id)?.addEventListener("change", reloadDeck));
@@ -240,7 +357,14 @@ function bind() {
   byId("pharm-review-next")?.addEventListener("click", () => moveCard(1));
   byId("pharm-review-flip")?.addEventListener("click", flipCard);
   byId("pharm-review-fullscreen")?.addEventListener("click", toggleFullscreen);
-  byId("pharm-review-card")?.addEventListener("click", flipCard);
+  byId("pharm-review-card")?.addEventListener("click", () => {
+    if (Date.now() - state.lastSwipeAt < 260) return;
+    flipCard();
+  });
+  byId("pharm-review-card")?.addEventListener("pointerdown", onSwipePointerDown);
+  byId("pharm-review-card")?.addEventListener("pointermove", onSwipePointerMove);
+  byId("pharm-review-card")?.addEventListener("pointerup", onSwipePointerEnd);
+  byId("pharm-review-card")?.addEventListener("pointercancel", onSwipePointerEnd);
   byId("pharm-review-correct")?.addEventListener("click", () => markCard("correct"));
   byId("pharm-review-wrong")?.addEventListener("click", () => markCard("wrong"));
   byId("pharm-review-reset")?.addEventListener("click", () => {
@@ -269,6 +393,7 @@ function bind() {
 }
 
 export async function preparePharmacologyReview({ onProgressChange } = {}) {
+  ensureReviewMobileStyles();
   if (typeof onProgressChange === "function") state.onProgressChange = onProgressChange;
   const stored = loadProgress();
   state.progress = stored.cards;
