@@ -5,9 +5,12 @@ const path = require("node:path");
 
 const requiredFiles = [
   "api/_gemini.js",
+  "api/_cors.js",
   "api/intent-rescue.js",
   "api/context-resolve.js",
   "api/patient-phrasing.js",
+  "api/ai-health.js",
+  "api/learning-events.js",
   "src/ai/client.js",
   "anamnesis-training/index.html",
   "anamnesis-training/styles.css",

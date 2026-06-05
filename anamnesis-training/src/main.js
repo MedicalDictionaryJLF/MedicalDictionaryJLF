@@ -5,6 +5,7 @@ import { runSimulationTests } from './simulationRunner.js';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor } from './vitalsMonitor.js';
 import { initAvatarAnimator, reactAvatarToPatientReply, setAvatarEmotion } from './avatarAnimator.js';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
+import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
 
 const els = {
   caseSelect: document.getElementById('caseSelect'),
@@ -48,6 +49,16 @@ let activeCase = PATIENT_CASES[0];
 let currentMode = 'practice';
 let currentDifficulty = 'intermediate';
 let stationStarted = false;
+const aiDiagnostics = {
+  enabled: false,
+  apiBaseUrl: '',
+  healthEndpoint: '',
+  backendReachable: null,
+  geminiConfigured: null,
+  model: '',
+  lastIntentRescueStatus: null,
+  lastAIError: ''
+};
 
 function init() {
   PATIENT_CASES.forEach((patientCase) => {
@@ -104,6 +115,8 @@ async function startCase() {
   renderSuggestions();
   renderTerminologyHint('');
   renderAllPanels();
+  renderDebug(null);
+  await refreshAiHealthDiagnostics();
   renderDebug(null);
   await initAvatarAnimator(activeCase);
   setAvatarEmotion('neutral');
@@ -175,14 +188,15 @@ async function handleQuestion(event) {
   if (!question) return;
   const submit = els.questionForm.querySelector('button[type="submit"]');
   if (submit) submit.disabled = true;
-  addMessage('student', question);
+    addMessage('student', question);
   try {
     const prepared = await prepareQuestionWithAI(engine, question);
     const result = engine.ask(question, prepared.detection);
-    const reply = result.detection.responseScope === 'terminology_not_understood'
-      ? result.reply
-      : await phrasePatientReply(result.reply, prepared.event);
+    const reply = shouldUsePatientPhrasing(result)
+      ? await phrasePatientReply(result.reply, prepared.event)
+      : result.reply;
     engine.replaceLastPatientReply(reply);
+    updateAiDiagnosticsFromEvent(prepared.event);
     addMessage('patient', reply, result.detectedIntent, result.feedbackLabel);
     reactAvatarToPatientReply(reply, result);
     if (els.voiceToggle.checked) speak(reply, activeCase);
@@ -238,8 +252,69 @@ function renderMissed() {
   els.missedPanel.innerHTML = `<h3>Critical misses</h3>${critical.length ? `<ul>${critical.map((item) => `<li>${escapeHtml(labelForIntent(item))}</li>`).join('')}</ul>` : '<p>No critical misses.</p>'}<h3>Adaptive feedback</h3>${missed.length ? missed.map((area) => `<div class="missed-area"><strong>${escapeHtml(area.title)}</strong><p>Model prompt: ${escapeHtml(area.modelQuestion)}</p><small>Missing: ${area.missing.map((item) => escapeHtml(labelForIntent(item))).join(', ')}</small></div>`).join('') : '<p>All required areas are covered.</p>'}`;
 }
 function renderDebug(detection) {
+  if (!detection || currentMode === 'exam') {
+    els.engineDebug.innerHTML = currentMode === 'exam'
+      ? '<p>Debug hidden in Exam Mode.</p>'
+      : `${renderAiDiagnostics()}<p>Ask a free-text anamnesis question. The engine will score possible meanings here.</p>`;
+    return;
+  }
+  els.engineDebug.innerHTML = `${renderAiDiagnostics()}<p><strong>Scope:</strong> ${escapeHtml(detection.responseScope)}</p><p><strong>Best:</strong> ${escapeHtml(detection.primaryIntent ? labelForIntent(detection.primaryIntent.id) : 'uncertain')}</p><p><strong>Confidence:</strong> ${Math.round(detection.confidence * 100)}%</p>${detection.terminologyEvent ? `<p><strong>Terminology:</strong> ${escapeHtml(detection.terminologyEvent.term)} -> ${escapeHtml(detection.terminologyEvent.suggestedPatientFriendlyQuestion)}</p>` : ''}<ol>${detection.candidates.map((candidate) => `<li><span>${escapeHtml(labelForIntent(candidate.id))}</span><small>${candidate.score.toFixed(2)} - ${(candidate.reasons || []).slice(0, 2).join(', ') || 'context'}</small></li>`).join('')}</ol>`;
+  return;
   if (!detection || currentMode === 'exam') { els.engineDebug.innerHTML = currentMode === 'exam' ? '<p>Debug hidden in Exam Mode.</p>' : '<p>Ask a free-text anamnesis question. The engine will score possible meanings here.</p>'; return; }
   els.engineDebug.innerHTML = `<p><strong>Scope:</strong> ${escapeHtml(detection.responseScope)}</p><p><strong>Best:</strong> ${escapeHtml(detection.primaryIntent ? labelForIntent(detection.primaryIntent.id) : 'uncertain')}</p><p><strong>Confidence:</strong> ${Math.round(detection.confidence * 100)}%</p>${detection.terminologyEvent ? `<p><strong>Terminology:</strong> ${escapeHtml(detection.terminologyEvent.term)} → ${escapeHtml(detection.terminologyEvent.suggestedPatientFriendlyQuestion)}</p>` : ''}<ol>${detection.candidates.map((candidate) => `<li><span>${escapeHtml(labelForIntent(candidate.id))}</span><small>${candidate.score.toFixed(2)} · ${(candidate.reasons || []).slice(0, 2).join(', ') || 'context'}</small></li>`).join('')}</ol>`;
+}
+
+async function refreshAiHealthDiagnostics() {
+  aiDiagnostics.enabled = window.ANAMNESIS_AI_ENABLED !== false;
+  aiDiagnostics.apiBaseUrl = getApiBaseUrl() || '(relative)';
+  aiDiagnostics.healthEndpoint = buildApiUrl('/api/ai-health');
+  aiDiagnostics.backendReachable = null;
+  aiDiagnostics.geminiConfigured = null;
+  aiDiagnostics.model = '';
+  aiDiagnostics.lastAIError = '';
+
+  if (currentMode === 'exam') return;
+
+  try {
+    const health = await getAiHealth();
+    aiDiagnostics.backendReachable = true;
+    aiDiagnostics.geminiConfigured = Boolean(health.configured);
+    aiDiagnostics.model = health.model || '';
+  } catch (error) {
+    aiDiagnostics.backendReachable = false;
+    aiDiagnostics.lastAIError = error.message;
+  }
+}
+
+function updateAiDiagnosticsFromEvent(event) {
+  if (!event) return;
+  if (event.aiEndpoint?.includes('/api/intent-rescue')) aiDiagnostics.lastIntentRescueStatus = event.aiHttpStatus;
+  if (event.aiError) aiDiagnostics.lastAIError = event.aiError;
+}
+
+function renderAiDiagnostics() {
+  if (currentMode === 'exam') return '';
+  const boolText = (value) => value === null ? 'unknown' : value ? 'yes' : 'no';
+  return `
+    <section class="ai-diagnostics">
+      <p><strong>AI enabled:</strong> ${escapeHtml(boolText(aiDiagnostics.enabled))}</p>
+      <p><strong>API base URL:</strong> ${escapeHtml(aiDiagnostics.apiBaseUrl || '(relative)')}</p>
+      <p><strong>Health endpoint:</strong> ${escapeHtml(aiDiagnostics.healthEndpoint)}</p>
+      <p><strong>Backend reachable:</strong> ${escapeHtml(boolText(aiDiagnostics.backendReachable))}</p>
+      <p><strong>Gemini configured:</strong> ${escapeHtml(boolText(aiDiagnostics.geminiConfigured))}</p>
+      <p><strong>AI model:</strong> ${escapeHtml(aiDiagnostics.model || 'unknown')}</p>
+      <p><strong>Last intent-rescue status:</strong> ${escapeHtml(aiDiagnostics.lastIntentRescueStatus ?? 'none')}</p>
+      <p><strong>Last AI error:</strong> ${escapeHtml(aiDiagnostics.lastAIError || 'none')}</p>
+    </section>
+  `;
+}
+
+function shouldUsePatientPhrasing(result) {
+  const scope = result?.detection?.responseScope;
+  return scope !== 'clarification' &&
+    scope !== 'terminology_not_understood' &&
+    Boolean(result?.reply?.trim()) &&
+    Boolean(result?.detection?.answerIntents?.length);
 }
 
 function showHint() {

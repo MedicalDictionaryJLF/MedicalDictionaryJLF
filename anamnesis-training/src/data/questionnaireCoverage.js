@@ -2,7 +2,7 @@ export const questionnaireCoverage = [
   {
     id: 'identification',
     label: 'Identification',
-    intents: ['identity_name', 'identity_age', 'identity_dob', 'identity_sex', 'identity_residence', 'identity_address', 'administrative_admission_time', 'administrative_arrival_mode']
+    intents: ['identity_name', 'identity_age', 'identity_dob', 'identity_sex', 'identity_residence', 'identity_address', 'administrative_admission_time', 'administrative_arrival_method', 'administrative_arrival_mode']
   },
   {
     id: 'chiefComplaint',

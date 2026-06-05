@@ -150,8 +150,8 @@ const DIRECT_INTENT_PATTERNS = [
     patterns: [/\bwhen did you come\b/, /\bwhen did you arrive\b/, /\bwhen were you admitted\b/, /\bwhen did they admit you\b/, /\bwhen did you come (here|to (the )?hospital)\b/]
   },
   {
-    id: 'administrative_arrival_mode',
-    patterns: [/\bwho brought you\b/, /\bdid you come alone\b/, /\bcome alone\b/, /\bdid you come by ambulance\b/, /\bambulance\b/]
+    id: 'administrative_arrival_method',
+    patterns: [/\bhow did you get here\b/, /\bhow did you arrive\b/, /\bhow did you get to (the )?hospital\b/, /\bby which mode of transport did you (come|get to (the )?hospital)\b/, /\bwhat transportation brought you here\b/, /\bdid you come by ambulance\b/, /\bdid someone drive you\b/, /\bwho brought you\b/, /\bdid you walk here\b/, /\bwere you brought by emergency services\b/, /\bcome alone\b/, /\bambulance\b/]
   },
   {
     id: 'chief_complaint',

@@ -1,5 +1,6 @@
 "use strict";
 
+const { applyCors, handleOptions } = require("./_cors");
 const { callGemini, logAi, readBody, sendJson, text } = require("./_gemini");
 
 const schema = {
@@ -12,6 +13,8 @@ const schema = {
 
 module.exports = async function handler(req, res) {
   const aiCallType = "patient-phrasing";
+  if (handleOptions(req, res, "POST, OPTIONS")) return;
+  applyCors(req, res, "POST, OPTIONS");
   if (req.method !== "POST") return sendJson(res, 405, { success: false, error: "Method not allowed." });
 
   const body = readBody(req);

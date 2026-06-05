@@ -79,6 +79,8 @@ select:focus, input[type="text"]:focus { border-color: var(--primary); box-shado
 .engine-debug ol { padding-left: 1.1rem; margin: .6rem 0 0; }
 .engine-debug li { margin-bottom: .4rem; }
 .engine-debug small { display: block; color: #748198; }
+.ai-diagnostics { border-bottom: 1px solid var(--line); margin-bottom: .7rem; padding-bottom: .45rem; }
+.ai-diagnostics p { overflow-wrap: anywhere; }
 .chat-card { display: grid; grid-template-rows: 1fr auto auto auto; gap: .8rem; }
 .chat-log { min-height: 42rem; max-height: 62vh; overflow: auto; padding: .75rem; border: 1px solid var(--line); border-radius: 22px; background: #f8fbfd; }
 .message { width: min(82%, 52rem); padding: .85rem 1rem; margin-bottom: .8rem; border-radius: 18px; line-height: 1.5; }

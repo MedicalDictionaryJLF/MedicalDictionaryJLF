@@ -1,41 +1,53 @@
 # AI Learning Events
 
-The anamnesis trainer records local intent and AI-helper events without uploading anything by default.
+The anamnesis trainer records sanitized intent and AI-helper diagnostics and uploads them to the Vercel backend when AI is enabled.
 
-## Local Event Shape
+## Endpoint
 
-The event log prepared by `anamnesis-training/src/aiSupport.js` includes:
+Frontend calls:
+
+```text
+https://medical-dictionary-jlf.vercel.app/api/learning-events
+```
+
+The frontend must use `buildApiUrl("/api/learning-events")`; do not call `fetch("/api/learning-events")` directly from GitHub Pages.
+
+## Event Shape
+
+`anamnesis-training/src/aiSupport.js` sends:
 
 - `studentQuestion`
 - `deterministicIntentGuess`
 - `deterministicConfidence`
+- `aiAvailable`
+- `aiAttempted`
+- `aiSucceeded`
 - `aiRescueUsed`
+- `aiSelectedIntent`
+- `aiConfidence`
+- `aiEndpoint`
+- `aiHttpStatus`
+- `aiContentType`
+- `aiError`
+- `finalResolutionSource`
 - `resolvedIntent`
 - `fallbackUsed`
 - `patientPhrasingUsed`
 - `errors`
 - `recordedAt`
 
-## Upload Configuration
-
-`LEARNING_EVENTS_ENDPOINT` is intentionally an empty string. When it is empty, events are logged locally and no network upload is attempted.
-
-To enable uploads later, configure a backend endpoint that accepts JSON events and set:
-
-```js
-const LEARNING_EVENTS_ENDPOINT = "/api/learning-events";
-```
-
-Do not upload full conversations automatically. At interview end, the trainer asks whether the user wants to anonymously contribute the conversation. If accepted, the prepared payload contains transcript text, score, missed items, and debug intent events.
+`finalResolutionSource` is one of `direct`, `deterministic`, `context-ai`, `intent-rescue-ai`, or `fallback`.
 
 ## Google Drive Flow
 
-The safe future flow is:
+`api/learning-events.js` accepts `POST` and `OPTIONS`. It applies the shared CORS allowlist and, when Google Drive environment variables are configured, uploads the sanitized JSON event from Vercel server-side code.
 
-1. Keep local event logging enabled for every interview.
-2. Ask for explicit anonymous contribution consent at the end.
-3. Send only the consented payload to a backend endpoint.
-4. The backend writes the anonymized payload to a controlled Google Drive app folder or service-owned storage location.
-5. Do not include student name, email, account ID, or other personal identifiers.
+Required Drive variables:
 
-The current implementation stops at local logging and consent-gated payload preparation. No Google Drive upload endpoint is active yet.
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+- `GOOGLE_PRIVATE_KEY`
+- `GOOGLE_DRIVE_FOLDER_ID`
+
+If those values are missing, the endpoint returns JSON with `stored: false` and logs the sanitized event server-side. It does not reveal the folder ID, service-account values, Gemini key, or partial secrets.
+
+Do not upload full conversations automatically. At interview end, the trainer still asks whether the user wants to anonymously contribute the conversation summary payload.

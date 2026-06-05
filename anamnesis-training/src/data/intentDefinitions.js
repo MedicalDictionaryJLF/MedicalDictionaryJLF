@@ -548,6 +548,32 @@ export const intentDefinitions = [
     requiresDirectQuestion: false
   },
   {
+    id: 'administrative_arrival_method',
+    label: 'Arrival method',
+    domain: 'administrative',
+    keywords: [
+      'how did you get here',
+      'how did you arrive',
+      'how did you get to the hospital',
+      'by which mode of transport did you come',
+      'by which mode of transport did you get to the hospital',
+      'what transportation brought you here',
+      'did you come by ambulance',
+      'did someone drive you',
+      'who brought you here',
+      'did you walk here',
+      'were you brought by emergency services'
+    ],
+    synonyms: ['arrival method', 'mode of transport', 'transportation', 'ambulance', 'emergency services'],
+    relatedSymptoms: [],
+    importance: 5,
+    answerPaths: ['administrative.arrivalMethod'],
+    requiredFor: [],
+    sensitive: false,
+    canBeAnsweredSpontaneously: false,
+    requiresDirectQuestion: false
+  },
+  {
     id: 'allergies',
     label: 'Allergies',
     domain: 'allergies',
@@ -838,6 +864,7 @@ const extraIntentDefinitions = [
   { id: 'identity_residence', label: 'Residence', domain: 'identification', keywords: ['where are you from', 'where do you live', 'which town', 'what city', 'residence'], synonyms: ['town', 'city', 'address'], answerPaths: [], requiredFor: ['all'] },
   { id: 'identity_address', label: 'Address', domain: 'identification', keywords: ['address'], synonyms: ['home address'], answerPaths: [], requiredFor: [] },
   { id: 'administrative_admission_time', label: 'Admission time', domain: 'administrative', keywords: ['when did you come', 'when did you arrive', 'when were you admitted'], synonyms: ['admission time'], answerPaths: [], requiredFor: [] },
+  { id: 'administrative_arrival_method', label: 'Arrival method', domain: 'administrative', keywords: ['how did you get here', 'how did you arrive', 'how did you get to the hospital', 'by which mode of transport did you come', 'by which mode of transport did you get to the hospital', 'what transportation brought you here', 'did you come by ambulance', 'did someone drive you', 'who brought you here', 'did you walk here', 'were you brought by emergency services'], synonyms: ['arrival method', 'mode of transport', 'transportation'], answerPaths: ['administrative.arrivalMethod'], requiredFor: [] },
   { id: 'administrative_arrival_mode', label: 'Arrival mode', domain: 'administrative', keywords: ['who brought you', 'did you come alone', 'ambulance'], synonyms: ['arrival'], answerPaths: [], requiredFor: [] },
   { id: 'hpi_site', label: 'Site', domain: 'hpi', keywords: ['where is the pain', 'where does it hurt', 'where exactly'], synonyms: ['site', 'location'], answerPaths: ['hpi.site'], requiredFor: ['all'] },
   { id: 'hpi_onset', label: 'Onset', domain: 'hpi', keywords: ['when did it start', 'since when'], synonyms: ['onset'], answerPaths: ['hpi.onset'], requiredFor: ['all'] },

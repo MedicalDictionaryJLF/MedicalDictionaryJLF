@@ -37,7 +37,7 @@ const DIRECT_RULES = [
   [/\b(male or female|sex|gender)\b/, ['identity_sex'], 'single_intent'],
   [/\b(where are you from|where do you live|which town|what town|what city|address|residence)\b/, ['identity_residence'], 'single_intent'],
   [/\b(when did (they )?admit you|when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
-  [/\b(who brought you|come alone|came alone|ambulance|how did you come)\b/, ['administrative_arrival_mode'], 'single_intent'],
+  [/\b(how did you get here|how did you arrive|how did you get to (the )?hospital|by which mode of transport did you (come|get to (the )?hospital)|what transportation brought you here|did you come by ambulance|did someone drive you|who brought you|did you walk here|were you brought by emergency services|come alone|came alone|ambulance|how did you come)\b/, ['administrative_arrival_method'], 'single_intent'],
   [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|what was the reason|what is the reason|reason for coming|reason for admission|reason you came)\b/, ['chief_complaint'], 'broad_open_history'],
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],

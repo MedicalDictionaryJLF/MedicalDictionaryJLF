@@ -75,6 +75,7 @@ async function callGemini({ systemInstruction, prompt, responseSchema }) {
 module.exports = {
   callGemini,
   confidence,
+  GEMINI_MODEL,
   logAi,
   readBody,
   sendJson,
