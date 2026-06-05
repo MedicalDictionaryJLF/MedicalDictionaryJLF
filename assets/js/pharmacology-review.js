@@ -8,6 +8,10 @@ const DAY_NAMES = {
   4: "Day 4: Anti-infectives + respiratory + GI",
   5: "Day 5: Endocrine + cancer + immunology"
 };
+const CARD_DATA_FILES = [
+  "pharmacology-course/review_cards.json",
+  "pharmacology-course/review_cards_exam_additions.json"
+];
 
 const initialProgress = loadProgress();
 const state = {
@@ -122,6 +126,23 @@ export function normalizeCards(payload) {
       back: String(card.back),
       day: Number(card.day)
     }));
+}
+
+function mergeCards(cardGroups) {
+  const seen = new Set();
+  const cards = [];
+  for (const card of cardGroups.flat()) {
+    if (!card?.id || seen.has(card.id)) continue;
+    seen.add(card.id);
+    cards.push(card);
+  }
+  return cards;
+}
+
+async function loadCardFile(path) {
+  const response = await fetch(resolveBundledDataUrl(path));
+  if (!response.ok) throw new Error(`Failed to load pharmacology flashcards from ${path}: ${response.status}`);
+  return normalizeCards(await response.json());
 }
 
 function shuffle(cards) {
@@ -254,9 +275,7 @@ export async function preparePharmacologyReview({ onProgressChange } = {}) {
   state.resetAt = stored.resetAt;
   bind();
   if (!state.loaded) {
-    const response = await fetch(resolveBundledDataUrl("pharmacology-course/review_cards.json"));
-    if (!response.ok) throw new Error(`Failed to load pharmacology flashcards: ${response.status}`);
-    state.cards = normalizeCards(await response.json());
+    state.cards = mergeCards(await Promise.all(CARD_DATA_FILES.map(loadCardFile)));
     state.loaded = true;
   }
   reloadDeck();
