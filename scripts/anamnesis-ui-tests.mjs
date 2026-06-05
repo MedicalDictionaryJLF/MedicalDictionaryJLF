@@ -6,7 +6,7 @@ import { getChecklistItemsByCategory, getKnownFactsByCategory, getQuestionVarian
 import { showResponseLoading, removeResponseLoading } from '../anamnesis-training/src/ui/loadingIndicator.js';
 import { DETAILS_PASSWORD } from '../anamnesis-training/src/ui/detailsPanel.js';
 import { DEFAULT_RECOGNITION_LANGUAGE, initVoiceInput } from '../anamnesis-training/src/ui/voiceInput.js';
-import { getModeSectionIds, renderKnownSummary } from '../anamnesis-training/src/ui/modeLayout.js';
+import { getModeSectionIds, getModeSectionTitle, renderKnownSummary } from '../anamnesis-training/src/ui/modeLayout.js';
 import { labsForGroup } from '../anamnesis-training/src/ui/actionPanels.js';
 
 const patientCase = PATIENT_CASES[0];
@@ -15,6 +15,7 @@ const engine = new PatientEngine(patientCase, { mode: 'teaching' });
 assert.deepEqual(getModeSectionIds('teaching'), ['checklist', 'questions', 'summary']);
 assert.deepEqual(getModeSectionIds('practice'), ['checklist', 'summary']);
 assert.deepEqual(getModeSectionIds('exam'), ['summary']);
+assert.equal(getModeSectionTitle('questions'), 'Predetermined Questions');
 
 const checklist = getChecklistItemsByCategory(engine, patientCase);
 assert.ok(checklist.some((group) => group.title === 'Identification'));

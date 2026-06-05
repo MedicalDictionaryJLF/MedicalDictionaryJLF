@@ -2,12 +2,18 @@ import { getChecklistItemsByCategory, getKnownFactsByCategory, getQuestionVarian
 
 export function renderModeLayout({ container, mode, engine, patientCase, orderedLabs, onQuestionSelected }) {
   if (!container || !engine) return;
-  const sections = getModeSectionIds(mode).map((sectionId) => {
-    if (sectionId === 'checklist') return renderChecklist(engine, patientCase);
-    if (sectionId === 'questions') return renderQuestionLibrary(engine, patientCase);
-    return renderKnownSummary(engine, patientCase, orderedLabs);
-  });
-  container.innerHTML = sections.join('');
+  const sectionIds = getModeSectionIds(mode);
+  const activeSection = sectionIds.includes(container.dataset.activeModeCard)
+    ? container.dataset.activeModeCard
+    : sectionIds[0];
+  container.dataset.activeModeCard = activeSection;
+  container.innerHTML = sectionIds.map((sectionId) => renderModeCard({
+    id: sectionId,
+    title: getModeSectionTitle(sectionId),
+    content: renderModeSectionContent(sectionId, engine, patientCase, orderedLabs),
+    active: sectionId === activeSection
+  })).join('');
+  bindModeCards(container);
   bindCollapsibles(container);
   container.querySelectorAll('[data-question-variant]').forEach((button) => {
     button.addEventListener('click', () => onQuestionSelected?.(button.dataset.questionVariant ?? ''));
@@ -20,40 +26,78 @@ export function getModeSectionIds(mode) {
   return ['summary'];
 }
 
+export function getModeSectionTitle(sectionId) {
+  const titles = {
+    checklist: 'Checklist',
+    questions: 'Predetermined Questions',
+    summary: 'Summary'
+  };
+  return titles[sectionId] ?? 'Summary';
+}
+
 export function renderChecklist(engine, patientCase) {
-  const groups = getChecklistItemsByCategory(engine, patientCase);
   return `
     <section class="mode-section" id="checklistSection">
       <h2>Checklist</h2>
-      <div class="section-stack">
-        ${groups.map(renderChecklistGroup).join('')}
-      </div>
+      ${renderChecklistContent(engine, patientCase)}
     </section>
   `;
 }
 
 export function renderQuestionLibrary(engine, patientCase) {
-  const groups = getQuestionVariantsByCategory(patientCase, engine);
   return `
     <section class="mode-section" id="questionLibrarySection">
       <h2>Predetermined Questions</h2>
-      <div class="section-stack">
-        ${groups.map(renderQuestionGroup).join('')}
-      </div>
+      ${renderQuestionLibraryContent(engine, patientCase)}
     </section>
   `;
 }
 
 export function renderKnownSummary(engine, patientCase, orderedLabs = {}) {
-  const groups = getKnownFactsByCategory(engine, patientCase, orderedLabs);
   return `
     <section class="mode-section" id="knownSummarySection">
       <h2>Summary</h2>
-      ${groups.length
-        ? `<div class="known-summary">${groups.map(renderSummaryGroup).join('')}</div>`
-        : '<p class="empty-panel-note">No patient facts discovered yet.</p>'}
+      ${renderKnownSummaryContent(engine, patientCase, orderedLabs)}
     </section>
   `;
+}
+
+function renderModeSectionContent(sectionId, engine, patientCase, orderedLabs) {
+  if (sectionId === 'checklist') return renderChecklistContent(engine, patientCase);
+  if (sectionId === 'questions') return renderQuestionLibraryContent(engine, patientCase);
+  return renderKnownSummaryContent(engine, patientCase, orderedLabs);
+}
+
+function renderModeCard({ id, title, content, active }) {
+  const panelId = `mode-card-panel-${id}`;
+  return `
+    <article class="mode-card ${active ? 'active' : ''}" data-mode-card="${escapeHtml(id)}">
+      <button type="button" class="mode-card-trigger" aria-expanded="${active ? 'true' : 'false'}" aria-controls="${panelId}" data-mode-card-trigger="${escapeHtml(id)}">
+        <span>${escapeHtml(title)}</span>
+        <strong>${active ? 'Open' : 'View'}</strong>
+      </button>
+      <div id="${panelId}" class="mode-card-body" ${active ? '' : 'hidden'}>
+        ${content}
+      </div>
+    </article>
+  `;
+}
+
+function renderChecklistContent(engine, patientCase) {
+  const groups = getChecklistItemsByCategory(engine, patientCase);
+  return `<div class="section-stack">${groups.map(renderChecklistGroup).join('')}</div>`;
+}
+
+function renderQuestionLibraryContent(engine, patientCase) {
+  const groups = getQuestionVariantsByCategory(patientCase, engine);
+  return `<div class="section-stack">${groups.map(renderQuestionGroup).join('')}</div>`;
+}
+
+function renderKnownSummaryContent(engine, patientCase, orderedLabs = {}) {
+  const groups = getKnownFactsByCategory(engine, patientCase, orderedLabs);
+  return groups.length
+    ? `<div class="known-summary">${groups.map(renderSummaryGroup).join('')}</div>`
+    : '<p class="empty-panel-note">No patient facts discovered yet.</p>';
 }
 
 function renderChecklistGroup(group) {
@@ -135,6 +179,25 @@ function bindCollapsibles(container) {
       const expanded = button.getAttribute('aria-expanded') === 'true';
       button.setAttribute('aria-expanded', String(!expanded));
       if (panel) panel.hidden = expanded;
+    });
+  });
+}
+
+function bindModeCards(container) {
+  container.querySelectorAll('[data-mode-card-trigger]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const next = button.dataset.modeCardTrigger;
+      container.dataset.activeModeCard = next;
+      container.querySelectorAll('[data-mode-card]').forEach((card) => {
+        const active = card.dataset.modeCard === next;
+        const trigger = card.querySelector('[data-mode-card-trigger]');
+        const body = card.querySelector('.mode-card-body');
+        const state = trigger?.querySelector('strong');
+        card.classList.toggle('active', active);
+        trigger?.setAttribute('aria-expanded', String(active));
+        if (state) state.textContent = active ? 'Open' : 'View';
+        if (body) body.hidden = !active;
+      });
     });
   });
 }
