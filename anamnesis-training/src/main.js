@@ -1,4 +1,4 @@
-import { PATIENT_CASES, QUESTION_AREAS, INTENTS } from './patientCase.js';
+import { PATIENT_CASES, INTENTS } from './patientCase.js';
 import { PatientEngine } from './patientEngine.js';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js';
@@ -6,6 +6,11 @@ import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, r
 import { initAvatarAnimator, reactAvatarToPatientReply, setAvatarEmotion } from './avatarAnimator.js';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
+import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
+import { renderModeLayout } from './ui/modeLayout.js';
+import { renderDetailsPanel } from './ui/detailsPanel.js';
+import { initVoiceInput } from './ui/voiceInput.js';
+import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
 
 const els = {
   caseSelect: document.getElementById('caseSelect'),
@@ -24,22 +29,26 @@ const els = {
   chatLog: document.getElementById('chatLog'),
   questionForm: document.getElementById('questionForm'),
   questionInput: document.getElementById('questionInput'),
-  suggestions: document.getElementById('suggestions'),
+  sendQuestionBtn: document.getElementById('sendQuestionBtn'),
+  voiceInputBtn: document.getElementById('voiceInputBtn'),
+  voiceInputStatus: document.getElementById('voiceInputStatus'),
   terminologyHint: document.getElementById('terminologyHint'),
-  coveragePanel: document.getElementById('coveragePanel'),
-  summaryPanel: document.getElementById('summaryPanel'),
-  missedPanel: document.getElementById('missedPanel'),
-  hintBtn: document.getElementById('hintBtn'),
+  modePanel: document.getElementById('modePanel'),
+  detailsPanel: document.getElementById('detailsPanel'),
   finishBtn: document.getElementById('finishBtn'),
-  copySummaryBtn: document.getElementById('copySummaryBtn'),
-  exportDebugBtn: document.getElementById('exportDebugBtn'),
-  runSimulationBtn: document.getElementById('runSimulationBtn'),
   voiceToggle: document.getElementById('voiceToggle'),
   openVitalsBtn: document.getElementById('openVitalsBtn'),
   closeVitalsBtn: document.getElementById('closeVitalsBtn'),
   openEcgBtn: document.getElementById('openEcgBtn'),
   closeEcgBtn: document.getElementById('closeEcgBtn'),
-  engineDebug: document.getElementById('engineDebug'),
+  orderLabsBtn: document.getElementById('orderLabsBtn'),
+  administerMedicationBtn: document.getElementById('administerMedicationBtn'),
+  labsModal: document.getElementById('labsModal'),
+  closeLabsBtn: document.getElementById('closeLabsBtn'),
+  labsPanel: document.getElementById('labsPanel'),
+  medicationModal: document.getElementById('medicationModal'),
+  closeMedicationBtn: document.getElementById('closeMedicationBtn'),
+  medicationPanel: document.getElementById('medicationPanel'),
   avatarMount: document.getElementById('avatarMount'),
   avatarFallback: document.getElementById('avatarFallback')
 };
@@ -49,6 +58,12 @@ let activeCase = PATIENT_CASES[0];
 let currentMode = 'practice';
 let currentDifficulty = 'intermediate';
 let stationStarted = false;
+let responsePending = false;
+let lastDetection = null;
+let voiceInputController = null;
+let orderedLabs = {};
+let administeredMedications = [];
+let actionHistory = [];
 const aiDiagnostics = {
   enabled: false,
   apiBaseUrl: '',
@@ -57,7 +72,11 @@ const aiDiagnostics = {
   geminiConfigured: null,
   model: '',
   lastIntentRescueStatus: null,
-  lastAIError: ''
+  lastAIError: '',
+  lastAttempted: null,
+  lastSucceeded: null,
+  lastSelectedIntent: '',
+  lastConfidence: ''
 };
 
 function init() {
@@ -74,26 +93,28 @@ function init() {
     renderSetupPreview();
   });
   els.randomCaseBtn?.addEventListener('click', chooseRandomCase);
-  els.modeSelect?.addEventListener('change', () => { currentMode = els.modeSelect.value; renderSetupPreview(); if (stationStarted) { renderAllPanels(); renderSuggestions(); renderTerminologyHint(''); renderStationHeader(); } });
+  els.modeSelect?.addEventListener('change', () => { currentMode = els.modeSelect.value; renderSetupPreview(); if (stationStarted) { renderInterfacePanels(); renderTerminologyHint(''); renderStationHeader(); } });
   els.difficultySelect?.addEventListener('change', () => { currentDifficulty = els.difficultySelect.value; renderSetupPreview(); if (stationStarted) renderStationHeader(); });
   els.startTrainingBtn?.addEventListener('click', startCase);
   els.restartBtn.addEventListener('click', showSetupScreen);
   els.questionForm.addEventListener('submit', handleQuestion);
-  els.hintBtn.addEventListener('click', showHint);
   els.finishBtn.addEventListener('click', finishCase);
-  els.copySummaryBtn.addEventListener('click', copySummary);
-  els.exportDebugBtn?.addEventListener('click', exportDebugSession);
-  els.runSimulationBtn?.addEventListener('click', runSimulationAndShow);
   els.openVitalsBtn?.addEventListener('click', () => openVitalsMonitor(activeCase));
   els.closeVitalsBtn?.addEventListener('click', closeVitalsMonitor);
-  els.openEcgBtn?.addEventListener('click', () => openEcgViewer(activeCase));
+  els.openEcgBtn?.addEventListener('click', () => { if (activeCase.ecg?.available) openEcgViewer(activeCase); });
   els.closeEcgBtn?.addEventListener('click', closeEcgViewer);
+  els.orderLabsBtn?.addEventListener('click', () => { renderLabsOrderPanel(); openModal(els.labsModal); });
+  els.closeLabsBtn?.addEventListener('click', () => closeModal(els.labsModal));
+  els.administerMedicationBtn?.addEventListener('click', () => { renderMedicationActionPanel(); openModal(els.medicationModal); });
+  els.closeMedicationBtn?.addEventListener('click', () => closeModal(els.medicationModal));
   document.querySelector('[data-close="vitals"]')?.addEventListener('click', closeVitalsMonitor);
   document.querySelector('[data-close="ecg"]')?.addEventListener('click', closeEcgViewer);
+  document.querySelector('[data-close="labs"]')?.addEventListener('click', () => closeModal(els.labsModal));
+  document.querySelector('[data-close="medication"]')?.addEventListener('click', () => closeModal(els.medicationModal));
   window.addEventListener('resize', resizeVisibleMonitor);
-  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeVitalsMonitor(); closeEcgViewer(); } });
+  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeVitalsMonitor(); closeEcgViewer(); closeModal(els.labsModal); closeModal(els.medicationModal); } });
 
-  document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => activateTab(tab.dataset.tab)));
+  voiceInputController = initVoiceInput({ button: els.voiceInputBtn, input: els.questionInput, status: els.voiceInputStatus });
   initVoices(() => { if (stationStarted) renderPatientMeta(); });
   renderSetupPreview();
   showSetupScreen();
@@ -105,19 +126,24 @@ async function startCase() {
   currentMode = els.modeSelect?.value || currentMode;
   currentDifficulty = els.difficultySelect?.value || currentDifficulty;
   stationStarted = true;
+  responsePending = false;
+  lastDetection = null;
+  orderedLabs = {};
+  administeredMedications = [];
+  actionHistory = [];
+  voiceInputController?.stop?.();
   els.setupScreen.hidden = true;
   els.trainingScreen.hidden = false;
   engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty });
   els.chatLog.innerHTML = '<div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>';
   els.chatLog.classList.add('empty-chat');
+  setQuestionPending(false);
   renderStationHeader();
   renderPatientMeta();
-  renderSuggestions();
   renderTerminologyHint('');
-  renderAllPanels();
-  renderDebug(null);
+  renderInterfacePanels();
   await refreshAiHealthDiagnostics();
-  renderDebug(null);
+  renderInterfacePanels();
   await initAvatarAnimator(activeCase);
   setAvatarEmotion('neutral');
   els.questionInput.focus();
@@ -127,6 +153,9 @@ function showSetupScreen() {
   stationStarted = false;
   closeVitalsMonitor();
   closeEcgViewer();
+  closeModal(els.labsModal);
+  closeModal(els.medicationModal);
+  voiceInputController?.stop?.();
   els.trainingScreen.hidden = true;
   els.setupScreen.hidden = false;
   renderSetupPreview();
@@ -155,7 +184,12 @@ function renderStationHeader() {
   els.stationBrief.textContent = `${brief.location}. Time: ${brief.time}. Task: ${brief.task}`;
   els.stationModeBadge.textContent = `${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)} regime`;
   els.stationDifficultyBadge.textContent = `${currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1)} difficulty`;
-  if (els.openEcgBtn) els.openEcgBtn.hidden = !activeCase.ecg?.available;
+  if (els.openEcgBtn) {
+    const available = Boolean(activeCase.ecg?.available);
+    els.openEcgBtn.disabled = !available;
+    els.openEcgBtn.title = available ? 'Show ECG for this case' : 'ECG not available for this case';
+    els.openEcgBtn.setAttribute('aria-label', available ? 'Show ECG' : 'Show ECG, ECG not available for this case');
+  }
 }
 
 function renderPatientMeta() {
@@ -184,11 +218,12 @@ function addMessage(role, text, intent = '', feedbackLabel = '') {
 
 async function handleQuestion(event) {
   event.preventDefault();
+  if (responsePending) return;
   const question = els.questionInput.value.trim();
   if (!question) return;
-  const submit = els.questionForm.querySelector('button[type="submit"]');
-  if (submit) submit.disabled = true;
-    addMessage('student', question);
+  setQuestionPending(true);
+  addMessage('student', question);
+  showResponseLoading(els.chatLog);
   try {
     const prepared = await prepareQuestionWithAI(engine, question);
     const result = engine.ask(question, prepared.detection);
@@ -197,20 +232,53 @@ async function handleQuestion(event) {
       : result.reply;
     engine.replaceLastPatientReply(reply);
     updateAiDiagnosticsFromEvent(prepared.event);
+    lastDetection = result.detection;
+    removeResponseLoading(els.chatLog);
     addMessage('patient', reply, result.detectedIntent, result.feedbackLabel);
     reactAvatarToPatientReply(reply, result);
     if (els.voiceToggle.checked) speak(reply, activeCase);
     recordLearningEvent(prepared.event);
     els.questionInput.value = '';
     renderTerminologyHint(result.terminologySuggestion, result.detection?.terminologyEvent?.term);
-    renderAllPanels();
-    renderSuggestions();
+    renderInterfacePanels();
     renderPatientMeta();
-    renderDebug(result.detection);
+  } catch (error) {
+    removeResponseLoading(els.chatLog);
+    recordRuntimeError(error, question);
+    addMessage('patient', 'I am sorry, I could not answer that properly. Please ask me again in another way.', 'error', 'Response error');
+    renderInterfacePanels();
   } finally {
-    if (submit) submit.disabled = false;
+    removeResponseLoading(els.chatLog);
+    setQuestionPending(false);
     els.questionInput.focus();
   }
+}
+
+function setQuestionPending(pending) {
+  responsePending = pending;
+  if (els.sendQuestionBtn) {
+    els.sendQuestionBtn.disabled = pending;
+    els.sendQuestionBtn.textContent = pending ? 'Asking...' : 'Ask';
+    els.sendQuestionBtn.setAttribute('aria-busy', String(pending));
+  }
+  if (els.questionInput) {
+    els.questionInput.readOnly = pending;
+    els.questionInput.setAttribute('aria-busy', String(pending));
+  }
+}
+
+function recordRuntimeError(error, question) {
+  const message = error?.message || String(error);
+  console.error('anamnesis-response-error', error);
+  engine?.debugTurns?.push({
+    turnNumber: engine.turn ?? 0,
+    studentInput: question,
+    error: message,
+    fallbackOccurred: true,
+    fallbackReason: 'Response generation failed in UI orchestration.',
+    at: new Date().toISOString()
+  });
+  aiDiagnostics.lastAIError = message;
 }
 
 function renderTerminologyHint(suggestion, term = '') {
@@ -220,37 +288,31 @@ function renderTerminologyHint(suggestion, term = '') {
   els.terminologyHint.innerHTML = `<strong>Patient-friendly wording:</strong> ${term ? `Medical wording detected: “${escapeHtml(term)}”. ` : ''}Try asking: “${escapeHtml(suggestion)}”`;
 }
 
-function renderSuggestions() {
-  if (currentMode === 'exam') { els.suggestions.innerHTML = ''; return; }
-  const coverage = engine.getCoverage();
-  const nextArea = coverage.find((area) => area.required && area.percent < 100) || coverage.find((area) => area.percent < 100);
-  if (!nextArea) { els.suggestions.innerHTML = '<span class="suggestion done">All areas covered.</span>'; return; }
-  if (currentMode === 'practice') {
-    els.suggestions.innerHTML = `<span class="suggestion passive">General hint: ${escapeHtml(nextArea.title)} is still incomplete.</span>`;
-    return;
-  }
-  const examples = getExamplesForMissing(nextArea.missing.slice(0, 4));
-  els.suggestions.innerHTML = examples.map((example) => `<button type="button" class="suggestion">${escapeHtml(example)}</button>`).join('');
-  els.suggestions.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => { els.questionInput.value = button.textContent; els.questionInput.focus(); }));
+function renderInterfacePanels() {
+  renderModeLayout({
+    container: els.modePanel,
+    mode: currentMode,
+    engine,
+    patientCase: activeCase,
+    orderedLabs,
+    onQuestionSelected: fillQuestionInput
+  });
+  renderDetailsPanel({
+    container: els.detailsPanel,
+    currentMode,
+    lastDetection,
+    aiDiagnostics,
+    engine,
+    onExportDebug: exportDebugSession,
+    onRunSimulation: runSimulationAndShow
+  });
 }
 
-function getExamplesForMissing(missing) {
-  const map = { chief_complaint: 'What brought you to the hospital today?', hpi_site: 'Where exactly do you feel the problem?', hpi_onset: 'When did it start?', hpi_character: 'How would you describe the pain?', hpi_radiation: 'Does the pain spread anywhere?', hpi_relieving: 'What makes it better?', hpi_severity: 'How severe is it from 0 to 10?', pmh_chronic_diseases: 'Do you have any chronic diseases?', allergies: 'Do you have any allergies?', medication_regular: 'What medicines do you take regularly?', family_history: 'Do close relatives have serious diseases?', substance_smoking: 'Do you smoke?', substance_alcohol: 'Do you drink alcohol?' };
-  return missing.map((key) => map[key] || QUESTION_AREAS.find((area) => area.intents.includes(key))?.modelQuestion || `Ask about ${key.replaceAll('_', ' ')}`);
+function fillQuestionInput(question) {
+  els.questionInput.value = question;
+  els.questionInput.focus();
 }
 
-function renderAllPanels() { renderCoverage(); renderSummary(); renderMissed(); }
-function renderCoverage() {
-  const coverage = engine.getCoverage();
-  const score = engine.getScore();
-  els.coveragePanel.innerHTML = `<div class="score-card"><strong>${score}%</strong><span>current training score</span></div><div class="coverage-list">${coverage.map((area) => `<div class="coverage-item ${area.percent === 100 ? 'complete' : ''}"><div class="coverage-title"><span>${escapeHtml(area.title)}</span><strong>${area.asked}/${area.total}</strong></div><div class="progress"><div style="width:${area.percent}%"></div></div></div>`).join('')}</div>`;
-}
-function renderSummary() { els.summaryPanel.innerHTML = `<pre>${escapeHtml(engine.generateSummary())}</pre>`; }
-function renderMissed() {
-  const missed = engine.getMissedFeedback();
-  const critical = engine.getCriticalMisses();
-  els.missedPanel.innerHTML = `<h3>Critical misses</h3>${critical.length ? `<ul>${critical.map((item) => `<li>${escapeHtml(labelForIntent(item))}</li>`).join('')}</ul>` : '<p>No critical misses.</p>'}<h3>Adaptive feedback</h3>${missed.length ? missed.map((area) => `<div class="missed-area"><strong>${escapeHtml(area.title)}</strong><p>Model prompt: ${escapeHtml(area.modelQuestion)}</p><small>Missing: ${area.missing.map((item) => escapeHtml(labelForIntent(item))).join(', ')}</small></div>`).join('') : '<p>All required areas are covered.</p>'}`;
-}
 function renderDebug(detection) {
   if (!detection || currentMode === 'exam') {
     els.engineDebug.innerHTML = currentMode === 'exam'
@@ -288,6 +350,10 @@ async function refreshAiHealthDiagnostics() {
 
 function updateAiDiagnosticsFromEvent(event) {
   if (!event) return;
+  aiDiagnostics.lastAttempted = Boolean(event.aiAttempted || event.aiEndpoint || event.aiSelectedIntent);
+  aiDiagnostics.lastSucceeded = Boolean(event.aiSucceeded || event.aiSelectedIntent);
+  aiDiagnostics.lastSelectedIntent = event.aiSelectedIntent || '';
+  aiDiagnostics.lastConfidence = event.aiConfidence ?? '';
   if (event.aiEndpoint?.includes('/api/intent-rescue')) aiDiagnostics.lastIntentRescueStatus = event.aiHttpStatus;
   if (event.aiError) aiDiagnostics.lastAIError = event.aiError;
 }
@@ -326,15 +392,70 @@ function showHint() {
   addMessage('patient', text, 'hint');
 }
 function finishCase() {
-  activateTab('missed');
-  addMessage('patient', `Interview finished. Your score is ${engine.getScore()}%. Check the feedback panel for missed domains, terminology issues, and red flags.`, 'score');
+  const score = engine.getScore();
+  const missed = engine.getMissedFeedback();
+  const critical = engine.getCriticalMisses();
+  const feedback = `
+Interview finished. Your score is ${score}%.
+
+Critical misses:
+${critical.length ? critical.map((item) => `- ${labelForIntent(item)}`).join('\n') : '- None'}
+
+Incomplete domains:
+${missed.length ? missed.map((area) => `- ${area.title}: ${area.missing.map(labelForIntent).join(', ')}`).join('\n') : '- None'}
+  `.trim();
+  addMessage('patient', feedback, 'score');
   if (window.confirm('Would you like to anonymously contribute this conversation to improve the simulator?')) {
     console.info('anamnesis-anonymous-contribution-ready', prepareAnonymousContribution(engine));
   }
+  renderInterfacePanels();
 }
 async function copySummary() { try { await navigator.clipboard.writeText(engine.generateSummary()); addMessage('patient', 'Summary copied to clipboard.', 'export'); } catch { addMessage('patient', 'Clipboard failed. Select the summary manually.', 'export'); } }
-function exportDebugSession() { downloadJson('anamnesis_debug_session.json', engine.getDebugExport()); }
-function runSimulationAndShow() { const report = runSimulationTests(); activateTab('missed'); els.missedPanel.innerHTML = `<h3>Simulation Test Report</h3><p><strong>${report.passed}/${report.total}</strong> passed (${report.passRate}%).</p><button id="downloadSimulationJson" type="button" class="secondary">Export simulation JSON</button><div class="simulation-results">${report.results.filter((r) => !r.passed).map((r) => `<div class="missed-area"><strong>${escapeHtml(r.id)}</strong><p>${escapeHtml(r.question)}</p><small>${escapeHtml(r.failures.join('; '))}</small><pre>${escapeHtml(r.patientAnswer)}</pre></div>`).join('') || '<p>All simulation tests passed.</p>'}</div>`; document.getElementById('downloadSimulationJson')?.addEventListener('click', () => downloadJson('anamnesis_simulation_report.json', report)); }
+function exportDebugSession() { downloadJson('anamnesis_debug_session.json', getDebugExport()); }
+function getDebugExport() {
+  return {
+    ...engine.getDebugExport(),
+    orderedLabs,
+    administeredMedications,
+    actionHistory,
+    aiDiagnostics: { ...aiDiagnostics, apiBaseUrl: aiDiagnostics.apiBaseUrl ? '[configured]' : '' }
+  };
+}
+function runSimulationAndShow() {
+  const report = runSimulationTests();
+  addMessage('patient', `Simulation test report: ${report.passed}/${report.total} passed (${report.passRate}%).`, 'simulation', 'Simulation tests');
+  downloadJson('anamnesis_simulation_report.json', report);
+}
+
+function renderLabsOrderPanel() {
+  renderLabsPanel({
+    container: els.labsPanel,
+    patientCase: activeCase,
+    orderedLabs,
+    onOrder: (groupId) => {
+      const newlyOrdered = labsForGroup(groupId, activeCase);
+      orderedLabs = { ...orderedLabs, ...newlyOrdered };
+      actionHistory.push({ type: 'lab-order', groupId, resultKeys: Object.keys(newlyOrdered), at: new Date().toISOString() });
+      renderLabsOrderPanel();
+      renderInterfacePanels();
+    }
+  });
+}
+
+function renderMedicationActionPanel() {
+  renderMedicationPanel({
+    container: els.medicationPanel,
+    patientCase: activeCase,
+    administeredActions: administeredMedications,
+    onAdminister: (action) => {
+      administeredMedications = [...new Set([...administeredMedications, action])];
+      actionHistory.push({ type: 'medication-action', action, effectModelled: false, at: new Date().toISOString() });
+      renderMedicationActionPanel();
+      renderInterfacePanels();
+    }
+  });
+}
+
 function downloadJson(filename, data) { const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); }
 function activateTab(name) { document.querySelectorAll('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === name)); document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active')); document.getElementById(`${name}Panel`)?.classList.add('active'); }
 function labelForIntent(intent) { return INTENTS[intent]?.title || String(intent).replaceAll('_', ' '); }

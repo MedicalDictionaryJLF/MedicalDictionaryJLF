@@ -64,10 +64,6 @@
               <div id="avatarFallback" class="avatar-fallback">Pt</div>
             </div>
             <section id="patientMeta" class="patient-meta"></section>
-            <section class="engine-card">
-              <h3>Adaptive Engine</h3>
-              <div id="engineDebug" class="engine-debug">Waiting for first question.</div>
-            </section>
           </aside>
 
           <section class="chat-card">
@@ -75,32 +71,27 @@
               <div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>
             </div>
             <div id="terminologyHint" class="terminology-hint" aria-live="polite"></div>
-            <div id="suggestions" class="suggestions"></div>
-            <form id="questionForm" class="question-form">
-              <input id="questionInput" type="text" autocomplete="off" placeholder="Ask the patient a free-text anamnesis question..." />
-              <button type="submit">Ask</button>
+            <form id="questionForm" class="question-form" aria-label="Ask the patient">
+              <div class="input-wrap">
+                <input id="questionInput" type="text" autocomplete="off" placeholder="Ask the patient a free-text anamnesis question..." />
+                <button id="voiceInputBtn" type="button" class="icon-button mic-button" aria-label="Start voice input" title="Start voice input">Mic</button>
+              </div>
+              <button id="sendQuestionBtn" type="submit">Ask</button>
             </form>
-            <div class="interview-actions">
-              <button id="hintBtn" type="button" class="secondary">Give me a hint</button>
-              <button id="finishBtn" type="button" class="secondary">Finish interview</button>
-              <button id="copySummaryBtn" type="button" class="secondary">Copy summary</button>
-              <button id="exportDebugBtn" type="button" class="secondary">Export debug session</button>
-              <button id="runSimulationBtn" type="button" class="secondary">Run simulation tests</button>
-              <button id="openVitalsBtn" type="button" class="secondary monitor-btn">Monitor</button>
-              <button id="openEcgBtn" type="button" class="secondary monitor-btn">12 Lead ECG</button>
+            <div id="voiceInputStatus" class="voice-input-status" aria-live="polite"></div>
+            <div class="interview-actions" aria-label="Clinical actions">
+              <button id="openVitalsBtn" type="button" class="secondary monitor-btn">Show Monitor</button>
+              <button id="openEcgBtn" type="button" class="secondary monitor-btn">Show ECG</button>
+              <button id="orderLabsBtn" type="button" class="secondary">Order Labs</button>
+              <button id="administerMedicationBtn" type="button" class="secondary">Administer Medication</button>
+              <button id="finishBtn" type="button" class="secondary">Finish Anamnesis</button>
               <label class="voice-toggle"><input id="voiceToggle" type="checkbox" /> Speak replies</label>
             </div>
           </section>
 
-          <aside class="feedback-card">
-            <nav class="tabs" aria-label="Feedback panels">
-              <button type="button" class="tab active" data-tab="coverage">Coverage</button>
-              <button type="button" class="tab" data-tab="summary">Summary</button>
-              <button type="button" class="tab" data-tab="missed">Feedback</button>
-            </nav>
-            <section id="coveragePanel" class="tab-panel active"></section>
-            <section id="summaryPanel" class="tab-panel"></section>
-            <section id="missedPanel" class="tab-panel"></section>
+          <aside class="feedback-card" aria-label="Mode-specific training panel">
+            <div id="modePanel" class="mode-panel"></div>
+            <section id="detailsPanel" class="details-panel"></section>
           </aside>
         </main>
       </section>
@@ -124,6 +115,34 @@
             <p id="vitalsClinicalNote" class="clinical-note"></p>
           </aside>
         </div>
+      </section>
+    </div>
+
+    <div id="labsModal" class="clinical-modal" aria-hidden="true">
+      <div class="clinical-modal-backdrop" data-close="labs"></div>
+      <section class="clinical-modal-card light-modal-card" role="dialog" aria-modal="true" aria-labelledby="labsModalTitle">
+        <header class="clinical-modal-header light-modal-header">
+          <div>
+            <p class="eyebrow">Orders</p>
+            <h2 id="labsModalTitle">Order laboratory tests</h2>
+          </div>
+          <button id="closeLabsBtn" type="button" class="secondary">Close</button>
+        </header>
+        <div id="labsPanel" class="order-panel"></div>
+      </section>
+    </div>
+
+    <div id="medicationModal" class="clinical-modal" aria-hidden="true">
+      <div class="clinical-modal-backdrop" data-close="medication"></div>
+      <section class="clinical-modal-card light-modal-card" role="dialog" aria-modal="true" aria-labelledby="medicationModalTitle">
+        <header class="clinical-modal-header light-modal-header">
+          <div>
+            <p class="eyebrow">Treatment Action</p>
+            <h2 id="medicationModalTitle">Administer medication</h2>
+          </div>
+          <button id="closeMedicationBtn" type="button" class="secondary">Close</button>
+        </header>
+        <div id="medicationPanel" class="order-panel"></div>
       </section>
     </div>
 

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.js",
-    "dev": "vite --host 0.0.0.0"
+    "dev": "vite --host 0.0.0.0",
+    "test:anamnesis-ui": "node scripts/anamnesis-ui-tests.mjs"
   },
   "devDependencies": {
     "vite": "^7.0.0"
