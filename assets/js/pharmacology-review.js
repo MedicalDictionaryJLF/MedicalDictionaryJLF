@@ -69,7 +69,7 @@ function ensureReviewMobileStyles() {
   const link = document.createElement("link");
   link.id = MOBILE_REVIEW_STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/css/pharmacology-review-mobile.css?v=2";
+  link.href = "assets/css/pharmacology-review-mobile.css?v=3";
   document.head.appendChild(link);
 }
 
