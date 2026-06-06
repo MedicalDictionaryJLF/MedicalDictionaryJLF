@@ -8631,44 +8631,16 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
 .pharm-review-shell{
   display:flex;
   flex-direction:column;
-  gap:14px;
   width:100%;
 }
-.pharm-review-head{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(300px,390px);
-  gap:18px;
-  align-items:center;
-}
-.pharm-review-head h2{
+.pharm-review-title h2{
   margin:0;
+  font-size:calc(1.8rem * var(--text-scale, 1));
 }
-.pharm-review-head p:last-child{
+.pharm-review-title p:last-child{
   margin:7px 0 0;
   color:var(--muted);
-}
-.pharm-review-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:8px;
-}
-.pharm-review-stats div{
-  padding:10px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:rgba(21,128,61,.05);
-}
-.pharm-review-stats span,
-.pharm-review-stats strong{
-  display:block;
-}
-.pharm-review-stats span{
-  color:var(--muted);
-  font-size:.78rem;
-}
-.pharm-review-stats strong{
-  margin-top:3px;
-  font-size:1.35rem;
+  font-size:calc(.92rem * var(--text-scale, 1));
 }
 .pharm-review-options{
   display:flex;
@@ -8677,7 +8649,7 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
 }
 .pharm-review-workspace{
   display:grid;
-  grid-template-columns:minmax(235px,285px) minmax(0,1fr);
+  grid-template-columns:minmax(285px,340px) minmax(0,1fr);
   gap:14px;
   align-items:stretch;
 }
@@ -8689,7 +8661,7 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
 }
 .pharm-review-option-head,
 .pharm-review-toggles,
-.pharm-review-days,
+.pharm-review-categories,
 .pharm-review-controls,
 .pharm-review-nav,
 .pharm-review-grade{
@@ -8700,22 +8672,33 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
 .pharm-review-option-head{
   justify-content:space-between;
 }
-.pharm-review-days{
+.pharm-review-categories{
   flex-direction:column;
   align-items:stretch;
+  max-height:min(53vh,560px);
+  overflow-y:auto;
+  padding-right:3px;
 }
-.pharm-review-days label,
+.pharm-review-categories label,
 .pharm-review-toggles label{
   display:flex;
   align-items:center;
   gap:7px;
 }
-.pharm-review-days label{
-  min-height:44px;
-  padding:9px 10px;
+.pharm-review-categories label{
+  min-height:38px;
+  padding:7px 9px;
   border:1px solid var(--border);
   border-radius:12px;
   background:rgba(21,128,61,.04);
+}
+.pharm-review-categories label span{
+  flex:1;
+  min-width:0;
+}
+.pharm-review-categories label small{
+  color:var(--muted);
+  font-size:calc(.74rem * var(--text-scale, 1));
 }
 .pharm-review-toggles{
   flex-direction:column;
@@ -8741,7 +8724,7 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   gap:8px;
   justify-content:space-between;
   color:var(--muted);
-  font-size:.84rem;
+  font-size:calc(.84rem * var(--text-scale, 1));
   text-transform:uppercase;
   letter-spacing:.04em;
 }
@@ -8766,7 +8749,7 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   justify-content:center;
   padding:28px 16px;
   color:var(--text);
-  font-size:clamp(1.15rem,2.2vw,1.55rem);
+  font-size:clamp(calc(1.15rem * var(--text-scale, 1)),calc(2.2vw * var(--text-scale, 1)),calc(1.55rem * var(--text-scale, 1)));
   line-height:1.55;
   text-align:center;
   white-space:pre-line;
@@ -8779,24 +8762,10 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   width:100%;
   color:var(--muted);
 }
-.pharm-review-study:fullscreen{
-  padding:22px;
-  background:var(--bg);
-}
-.pharm-review-study:fullscreen .pharm-review-card{
-  flex:1;
-}
-.pharm-review-study:fullscreen .pharm-review-content{
-  font-size:clamp(1.45rem,3.2vw,2.35rem);
-}
-body[data-theme="dark"] .pharm-review-stats div,
-body[data-theme="dark"] .pharm-review-days label{
+body[data-theme="dark"] .pharm-review-categories label{
   background:rgba(31,154,84,.08);
 }
 @media (max-width:760px){
-  .pharm-review-head{
-    grid-template-columns:1fr;
-  }
   .pharm-review-workspace{
     grid-template-columns:1fr;
   }

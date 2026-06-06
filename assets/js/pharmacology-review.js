@@ -4,13 +4,27 @@ const PROGRESS_KEY = "pharmacology_flashcard_progress_v1";
 const MOBILE_REVIEW_STYLE_ID = "pharmacology-review-mobile-style";
 const SWIPE_MIN_DISTANCE = 72;
 const SWIPE_MAX_VERTICAL_DRIFT = 80;
-const DAY_NAMES = {
-  1: "Day 1: General pharmacology / ADME",
-  2: "Day 2: Autonomic + cardiovascular",
-  3: "Day 3: CNS + pain + poisoning",
-  4: "Day 4: Anti-infectives + respiratory + GI",
-  5: "Day 5: Endocrine + cancer + immunology"
-};
+const CATEGORY_ORDER = [
+  "General Pharmacology & ADME",
+  "Autonomic Nervous System",
+  "Cardiovascular",
+  "Blood, Coagulation & Lipids",
+  "CNS",
+  "Pain & Inflammation",
+  "Anesthetics",
+  "Toxicology & Dependence",
+  "Anti-infectives",
+  "Respiratory & Allergy",
+  "GIT",
+  "Diabetes",
+  "Hormones of Thyroid",
+  "Adrenal Hormones",
+  "Reproductive & Pituitary Hormones",
+  "Bone, Gout, Calcium & Vitamins",
+  "Immunology & Rheumatology",
+  "Cancer Pharmacology",
+  "Fluids & Electrolytes"
+];
 const CARD_DATA_FILES = [
   "pharmacology-course/review_cards.json",
   "pharmacology-course/review_cards_exam_additions.json"
@@ -55,7 +69,7 @@ function ensureReviewMobileStyles() {
   const link = document.createElement("link");
   link.id = MOBILE_REVIEW_STYLE_ID;
   link.rel = "stylesheet";
-  link.href = "assets/css/pharmacology-review-mobile.css?v=1";
+  link.href = "assets/css/pharmacology-review-mobile.css?v=2";
   document.head.appendChild(link);
 }
 
@@ -133,13 +147,93 @@ export function setPharmacologyReviewProgress(progress, { notify = false } = {})
 export function normalizeCards(payload) {
   if (!Array.isArray(payload)) return [];
   return payload
-    .filter(card => card && card.front && card.back && DAY_NAMES[Number(card.day)])
+    .filter(card => card && card.front && card.back && Number(card.day) >= 1 && Number(card.day) <= 5)
     .map(card => ({
       id: stableId(String(card.front), String(card.back)),
       front: String(card.front),
       back: String(card.back),
-      day: Number(card.day)
+      category: categorizeCard(card)
     }));
+}
+
+function matches(text, pattern) {
+  return pattern.test(text);
+}
+
+function categorizeCard(card) {
+  const day = Number(card.day);
+  const front = String(card.front).toLowerCase();
+  const text = `${card.front}\n${card.back}`.toLowerCase();
+
+  if (day === 1) return "General Pharmacology & ADME";
+  if (day === 2 && matches(front, /\b(sglt2|dapagliflozin|empagliflozin)\b/)) {
+    return "Cardiovascular";
+  }
+  if (matches(front, /\b(thyroid|levothyroxine|thionamide|methimazole|thiamazole|propylthiouracil|iodine metabolism)\b/)) {
+    return "Hormones of Thyroid";
+  }
+  if (matches(front, /\b(insulin|antidiabet|diabetes|metformin|glibenclamide|glyburide|gliclazide|repaglinide|pioglitazone|acarbose|semaglutide|sitagliptin|glp-1|dpp-4|sglt2|empagliflozin|dapagliflozin)\b/)) {
+    return "Diabetes";
+  }
+  if (matches(front, /\b(glucocorticoid|mineralocorticoid|prednisone|hydrocortisone|dexamethasone|fludrocortisone|adrenal)\b/)) {
+    return "Adrenal Hormones";
+  }
+  if (matches(front, /\b(contracept|estradiol|estrogen|progestin|clomiphene|tocolytic|prostaglandin|misoprostol|pituitary|hypothalam|desmopressin|oxytocin|gnrh|antiandrogen|anabolic steroid)\b/)) {
+    return "Reproductive & Pituitary Hormones";
+  }
+  if (day === 2 && matches(front, /\b(vitamin k|protamine|prothrombin complex|idarucizumab|andexanet)\b/)) {
+    return "Blood, Coagulation & Lipids";
+  }
+  if (matches(front, /\b(gout|allopurinol|colchicine|bisphosphonate|alendronate|denosumab|calcium metabolism|vitamin|cholecalciferol|folic acid)\b/)) {
+    return "Bone, Gout, Calcium & Vitamins";
+  }
+  if (matches(front, /\b(asthma|copd|bronchodilat|respiratory|antitussive|mucolytic|expectorant|allerg|cetirizine|diphenhydramine|cromolyn|montelukast|omalizumab|ipratropium|tiotropium|salbutamol|albuterol|laba|inhaled corticosteroid|mast cell)\b/)) {
+    return "Respiratory & Allergy";
+  }
+  if (matches(front, /\b(gastro|intestinal|gastric|ulcer|reflux|antiemetic|emesis|nausea|vomit|laxative|constipation|diarrhea|ibd|bowel|omeprazole|pantoprazole|ondansetron|metoclopramide|loperamide|lactulose|mesalazine|infliximab|h2 receptor|famotidine|sucralfate|h\. pylori|spasmolytic)\b/)) {
+    return "GIT";
+  }
+  if (matches(text, /\b(anticancer|cancer|cytostat|chemotherapy|cyclophosphamide|fluorouracil|5-fu|vincristine|paclitaxel|cisplatin|doxorubicin|trastuzumab|rituximab|imatinib|pembrolizumab|alkylating|platinum|antimetabolite|mitotic inhibitor|anthracycline|checkpoint inhibitor|parp inhibitor|proteasome inhibitor|tumou?r cell|anti-cancer)\b/)) {
+    return "Cancer Pharmacology";
+  }
+  if (matches(text, /\b(immun|rheumatoid|dmard|cyclosporine|tacrolimus|azathioprine|etanercept|infliximab|methotrexate|calcineurin|mycophenolate|anti-tnf|ivig|interferon|hydroxychloroquine|leflunomide|jak inhibitor)\b/)) {
+    return "Immunology & Rheumatology";
+  }
+  if (matches(text, /\b(antibiotic|antimicrobial|anti-infect|penicillin|amoxicillin|piperacillin|cefa|carbapenem|monobactam|vancomycin|linezolid|cotrimoxazole|nitrofurantoin|macrolide|azithromycin|clarithromycin|clindamycin|tetracycline|doxycycline|aminoglycoside|gentamicin|fluoroquinolone|ciprofloxacin|metronidazole|tuberc|isoniazid|rifamp|pyrazinamide|ethambutol|antiviral|acyclovir|oseltamivir|hepatitis|hiv|nrti|nnrti|integrase inhibitor|antifungal|fluconazole|amphotericin|echinocandin|antimalarial|chloroquine|artemisinin|primaquine|anthelmint|albendazole|praziquantel)\b/)) {
+    return "Anti-infectives";
+  }
+  if (matches(text, /\b(anticoagul|antiplatelet|coagulation|thrombo|fibrinol|heparin|warfarin|rivaroxaban|apixaban|dabigatran|clopidogrel|alteplase|p2y12|gpiib|abciximab|eptifibatide|tirofiban|protamine|vitamin k|prothrombin complex|idarucizumab|andexanet|anemia|antianemic|oral iron|erythropoietin|lipid|cholesterol|statin|atorvastatin|simvastatin|ezetimibe|pcsk9|evolocumab|alirocumab|fibrate|fenofibrate|bile acid sequestrant|cholestyramine)\b/)) {
+    return "Blood, Coagulation & Lipids";
+  }
+  if (matches(text, /\b(autonomic|adrenergic|sympath|parasympath|muscarinic|cholinergic|adrenaline|epinephrine|noradrenaline|norepinephrine|prazosin|atropine|scopolamine|neostigmine|physostigmine|pralidoxime|pilocarpine|bethanechol|glycopyr|phenylephrine|midodrine|clonidine|moxonidine|alpha-[12] agonist)\b/)) {
+    return "Autonomic Nervous System";
+  }
+  if (matches(text, /\b(heart|cardiac|cardiovascular|hypertension|hypotension|antiarrhyth\w*|arrhythm\w*|angina|vasodilat\w*|vasoconstrict\w*|ace inhibitor|angiotensin|arb\b|beta-block|calcium.channel blocker|diuretic|amiodarone|dobutamine|enalapril|ramipril|losartan|valsartan|amlodipine|verapamil|diltiazem|hydrochlorothiazide|spironolactone|nitroglycerin|digoxin|ivabradine|adenosine|sacubitril|eplerenone|hydralazine|isosorbide|minoxidil|labetalol|nicardipine|urapidil|sildenafil)\b/)) {
+    return "Cardiovascular";
+  }
+  if (day !== 2 && matches(front, /\b(anesthe|propofol|ketamine|sevoflurane|lidocaine|bupivacaine)\b/)) {
+    return "Anesthetics";
+  }
+  if (matches(front, /\b(pain|analges|opioid|morphine|fentanyl|codeine|tramadol|naloxone|nsaid|ibuprofen|diclofenac|paracetamol|acetaminophen|inflamm)\b/)) {
+    return "Pain & Inflammation";
+  }
+  if (matches(front, /\b(cns|sedative|hypnotic|benzodiazepine|diazepam|lorazepam|midazolam|barbiturate|phenobarbital|zolpidem|antidepress|fluoxetine|sertraline|amitriptyline|imipramine|ssri|snri|tricyclic|mao inhibitor|antipsychotic|haloperidol|chlorpromazine|clozapine|risperidone|bipolar|antiepileptic|seizure|epilep|lithium|valproate|carbamazepine|lamotrigine|levetiracetam|phenytoin|methylphenidate|atomoxetine|nootropic|donepezil|memantine)\b/)) {
+    return "CNS";
+  }
+  if (matches(front, /\b(poison|overdose|toxicity|toxin|antidote|dependence|addiction|withdrawal|hallucinogen|psychostimulant|methanol|ethanol|cyanide|methemoglobin|fomepizole|n-acetylcysteine|flumazenil)\b/)) {
+    return "Toxicology & Dependence";
+  }
+  if (matches(text, /\b(electrolyte|potassium|magnesium|fluid|furosemide)\b/)) {
+    return "Fluids & Electrolytes";
+  }
+
+  return day === 2
+    ? "Cardiovascular"
+    : day === 3
+      ? "CNS"
+      : day === 4
+        ? "Anti-infectives"
+        : "Immunology & Rheumatology";
 }
 
 function mergeCards(cardGroups) {
@@ -168,19 +262,19 @@ function shuffle(cards) {
   return next;
 }
 
-function selectedDays() {
-  return [...document.querySelectorAll("[data-pharm-review-day]:checked")].map(input => Number(input.value));
+function selectedCategories() {
+  return [...document.querySelectorAll("[data-pharm-review-category]:checked")].map(input => input.value);
 }
 
 function reloadDeck() {
-  const days = new Set(selectedDays());
+  const categories = new Set(selectedCategories());
   const hideReviewed = !!byId("pharm-review-hide-reviewed")?.checked;
   const wrongOnly = !!byId("pharm-review-wrong-only")?.checked;
-  let cards = state.cards.filter(card => days.has(card.day));
+  let cards = state.cards.filter(card => categories.has(card.category));
   if (wrongOnly) cards = cards.filter(card => state.progress[card.id]?.lastResult === "wrong");
   else if (hideReviewed) cards = cards.filter(card => !state.progress[card.id]?.reviewed);
   if (byId("pharm-review-shuffle")?.checked) cards = shuffle(cards);
-  else cards.sort((a, b) => a.day - b.day || a.front.localeCompare(b.front));
+  else cards.sort((a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category) || a.front.localeCompare(b.front));
   state.deck = cards;
   state.index = 0;
   state.showingBack = false;
@@ -191,18 +285,14 @@ function reloadDeck() {
 function render() {
   const card = state.deck[state.index];
   const reviewed = Object.values(state.progress).filter(item => item?.reviewed).length;
-  const wrong = Object.values(state.progress).filter(item => item?.lastResult === "wrong").length;
-  if (byId("pharm-review-total")) byId("pharm-review-total").textContent = String(state.cards.length);
-  if (byId("pharm-review-count")) byId("pharm-review-count").textContent = String(state.deck.length);
-  if (byId("pharm-review-wrong-count")) byId("pharm-review-wrong-count").textContent = String(wrong);
   if (byId("pharm-review-position")) byId("pharm-review-position").textContent = card ? `${state.index + 1} / ${state.deck.length}` : "0 / 0";
   if (byId("pharm-review-progress")) byId("pharm-review-progress").style.width = card ? `${((state.index + 1) / state.deck.length) * 100}%` : "0%";
   if (byId("pharm-review-side")) byId("pharm-review-side").textContent = state.showingBack ? "Back" : "Front";
-  if (byId("pharm-review-day")) byId("pharm-review-day").textContent = card ? DAY_NAMES[card.day] : "";
+  if (byId("pharm-review-category")) byId("pharm-review-category").textContent = card ? card.category : "";
   if (byId("pharm-review-content")) {
     byId("pharm-review-content").textContent = card
       ? (state.showingBack ? card.back : card.front)
-      : (reviewed ? "No cards selected. Change the filters or reset progress to review completed cards." : "Select at least one revision day.");
+      : (reviewed ? "No cards selected. Change the filters or reset progress to review completed cards." : "Select at least one category.");
   }
 }
 
@@ -338,11 +428,19 @@ function onSwipePointerEnd(event) {
   else resetSwipe();
 }
 
-function renderDayFilters() {
-  const container = byId("pharm-review-days");
+function renderCategoryFilters() {
+  const container = byId("pharm-review-categories");
   if (!container || container.childElementCount) return;
-  container.innerHTML = Object.entries(DAY_NAMES).map(([day, label]) => `
-    <label><input type="checkbox" value="${day}" data-pharm-review-day checked /> <span>${label}</span></label>
+  const categoryCounts = state.cards.reduce((counts, card) => {
+    counts.set(card.category, (counts.get(card.category) || 0) + 1);
+    return counts;
+  }, new Map());
+  container.innerHTML = CATEGORY_ORDER.filter(category => categoryCounts.has(category)).map(category => `
+    <label>
+      <input type="checkbox" value="${category}" data-pharm-review-category checked />
+      <span>${category}</span>
+      <small>${categoryCounts.get(category)}</small>
+    </label>
   `).join("");
 }
 
@@ -350,8 +448,7 @@ function bind() {
   if (state.bound) return;
   state.bound = true;
   ensureReviewMobileStyles();
-  renderDayFilters();
-  byId("pharm-review-days")?.addEventListener("change", reloadDeck);
+  byId("pharm-review-categories")?.addEventListener("change", reloadDeck);
   ["pharm-review-shuffle", "pharm-review-hide-reviewed", "pharm-review-wrong-only"].forEach(id => byId(id)?.addEventListener("change", reloadDeck));
   byId("pharm-review-previous")?.addEventListener("click", () => moveCard(-1));
   byId("pharm-review-next")?.addEventListener("click", () => moveCard(1));
@@ -403,5 +500,6 @@ export async function preparePharmacologyReview({ onProgressChange } = {}) {
     state.cards = mergeCards(await Promise.all(CARD_DATA_FILES.map(loadCardFile)));
     state.loaded = true;
   }
+  renderCategoryFilters();
   reloadDeck();
 }
