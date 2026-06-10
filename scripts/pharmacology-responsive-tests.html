@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Pharmacology responsive tests</title></head>
+<body>
+  <pre id="results">Running...</pre>
+  <div id="frames"></div>
+  <script type="module">
+    const widths = [375, 768, 1024, 1440];
+    const frames = document.getElementById("frames");
+    const results = document.getElementById("results");
+    const checks = [];
+    for (const width of widths) {
+      const frame = document.createElement("iframe");
+      frame.style.width = `${width}px`;
+      frame.style.height = "900px";
+      frame.src = "./pharmacology-preview.html?query=beta%20blocker&mode=clinical";
+      frames.appendChild(frame);
+      await new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+      for (let attempt = 0; attempt < 100 && !frame.contentDocument.body.dataset.viewport; attempt += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      const [viewport, scrollWidth] = String(frame.contentDocument.body.dataset.viewport || "0x0").split("x").map(Number);
+      checks.push({
+        width,
+        viewport,
+        scrollWidth,
+        noHorizontalOverflow: viewport === width && scrollWidth === width,
+        renderedResults: frame.contentDocument.body.textContent.includes("3 matching records")
+      });
+    }
+    const failed = checks.filter((check) => !check.noHorizontalOverflow || !check.renderedResults);
+    results.dataset.status = failed.length ? "failed" : "passed";
+    results.textContent = JSON.stringify({ status: failed.length ? "failed" : "passed", checks }, null, 2);
+    document.title = failed.length ? "FAIL responsive tests" : "PASS responsive tests";
+  </script>
+</body>
+</html>

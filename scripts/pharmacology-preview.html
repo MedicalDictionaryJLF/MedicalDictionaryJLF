@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pharmacology preview</title>
+  <link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-theme="light">
+  <section id="screen-pharmacology" class="screen pharmacology-module-screen"></section>
+  <script type="module">
+    import { createPharmacologyService } from "../assets/js/pharmacology/pharmacology-service.js";
+    import { createPharmacologyUi } from "../assets/js/pharmacology/pharmacology-ui.js";
+    const service = createPharmacologyService({
+      loadText: async (path) => {
+        const response = await fetch(`../data/${path}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.text();
+      }
+    });
+    const ui = createPharmacologyUi({
+      service,
+      screen: document.getElementById("screen-pharmacology")
+    });
+    ui.open().then(() => {
+      document.body.dataset.viewport = `${window.innerWidth}x${document.documentElement.scrollWidth}`;
+    });
+  </script>
+</body>
+</html>

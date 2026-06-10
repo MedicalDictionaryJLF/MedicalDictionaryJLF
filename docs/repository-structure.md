@@ -10,7 +10,7 @@ This repository is currently a static-first medical study app with Vercel server
 - `assets/js/` contains the main app orchestration modules.
 - `assets/js/core/` contains route and path helpers.
 - `assets/js/services/` contains reusable data, search, quiz, and CSV services.
-- `data/` contains terminology CSV datasets, app-language CSV datasets, and pharmacology JSON/TXT datasets.
+- `data/` contains terminology CSV datasets, app-language CSV datasets, course content, and the single pharmacology database `pharmacology_database_test.json`.
 - `api/` contains Vercel serverless functions for secure Gemini helper calls.
 - `src/ai/` contains frontend API client helpers that call only the serverless `/api/*` routes.
 - `anamnesis-training/` contains the hidden internal avatar anamnesis simulator, deterministic cases, avatar, ECG asset, monitor, and AI support glue.

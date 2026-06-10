@@ -27,17 +27,12 @@ import {
   LAB_DATASET_KEY,
   SEARCH_GROUP_DEFINITIONS,
   SEARCH_GROUP_LABEL_BY_KEY,
-  createMedicalDataRepository,
-  createPharmacologyRepository
+  createMedicalDataRepository
 } from "./services/data-repository.js";
 import { createSearchService } from "./services/search-service.js";
 import { createQuizEngine } from "./services/quiz-service.js";
-import {
-  getPharmacologyReviewProgress,
-  mergePharmacologyReviewProgress,
-  preparePharmacologyReview,
-  setPharmacologyReviewProgress
-} from "./pharmacology-review.js";
+import { createPharmacologyService } from "./pharmacology/pharmacology-service.js?v=2";
+import { createPharmacologyUi } from "./pharmacology/pharmacology-ui.js?v=4";
 
 // ================================
 // Google Drive Authentication
@@ -80,7 +75,7 @@ let appReadyPromise = null;
 const IDB_NAME = "mdict_cache";
 const IDB_STORE = "files";
 const IDB_VERSION = 1;
-const BUNDLED_DATA_CACHE_VERSION = "2026-05-17-pharmacology-course-v25";
+const BUNDLED_DATA_CACHE_VERSION = "2026-06-10-pharmacology-database-v1";
 const ATTACHMENTS_DB_NAME = "medical_dictionary_db";
 const ATTACHMENTS_DB_VERSION = 1;
 const ATTACHMENTS_STORE = "attachments";
@@ -1003,7 +998,6 @@ async function syncDriveProfileAndAttachmentsFromSettings(){
     }
 
     syncLatinCourseProgressWithProfile();
-    syncPharmacologyReviewProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(profileDirty){
       await saveUserProfileNow("manual_sync");
@@ -1233,8 +1227,7 @@ function defaultProfile(){
       custom_quizzes: { items: [] }
     },
     courses: {
-      latin_progress: {},
-      pharmacology_flashcards: {}
+      latin_progress: {}
     },
     anamnesis: {
       records: [],
@@ -1282,7 +1275,6 @@ function ensureProfileShape(rawProfile){
     ...(merged.courses && typeof merged.courses === "object" ? merged.courses : {})
   };
   merged.courses.latin_progress = merged.courses.latin_progress && typeof merged.courses.latin_progress === "object" ? merged.courses.latin_progress : {};
-  merged.courses.pharmacology_flashcards = merged.courses.pharmacology_flashcards && typeof merged.courses.pharmacology_flashcards === "object" ? merged.courses.pharmacology_flashcards : {};
   merged.anamnesis = merged.anamnesis && typeof merged.anamnesis === "object" ? merged.anamnesis : { records: [], active_patient_id: "" };
   if(!Array.isArray(merged.anamnesis.records)) merged.anamnesis.records = [];
   merged.anamnesis.active_patient_id = String(
@@ -1695,10 +1687,6 @@ function mergeProfiles(localProfileDoc, remoteProfileDoc){
   merged.flashcards.v2_progress = { ...(remote.flashcards.v2_progress || {}), ...(local.flashcards.v2_progress || {}) };
   merged.flashcards.stats = { ...(remote.flashcards.stats || {}), ...(local.flashcards.stats || {}) };
   merged.courses.latin_progress = mergeObjectMap(remote.courses.latin_progress, local.courses.latin_progress);
-  merged.courses.pharmacology_flashcards = mergePharmacologyReviewProgress(
-    local.courses.pharmacology_flashcards,
-    remote.courses.pharmacology_flashcards
-  );
 
   merged.learning.review_list = [...(remote.learning.review_list || [])];
   for(const row of (local.learning.review_list || [])){
@@ -2035,7 +2023,6 @@ async function handleGoogleTokenResponse(resp){
     console.log("[AUTH] got access token, loading Drive profile...");
     await loadOrCreateDriveProfile();
     syncLatinCourseProgressWithProfile();
-    syncPharmacologyReviewProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(getAttachmentSyncMode() !== STORAGE_MODE_DRIVE){
       await applyAttachmentSyncMode(STORAGE_MODE_DRIVE);
@@ -2198,11 +2185,9 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Latin units",
     dataset_muscles: "Muscles",
     courses: "Courses",
-    submenu_desc_courses: "Open Latin lessons and the Pharmacology final exam course.",
+    submenu_desc_courses: "Open structured medical Latin lessons.",
     courses_kicker: "Course library",
-    courses_intro: "Choose medical Latin lessons or the Pharmacology final exam course.",
-    pharmacology_course_catalog_title: "Pharmacology flashcard review",
-    pharmacology_course_catalog_subtitle: "Review the pharmacology deck by day and track correct or wrong answers.",
+    courses_intro: "Choose a medical Latin learning track.",
     courses_choose_track: "Choose a language track",
     courses_open_track: "Open course",
     courses_current_lesson: "Current lesson",
@@ -2256,11 +2241,9 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Lateinische Lektionen",
     dataset_muscles: "Muskeln",
     courses: "Kurse",
-    submenu_desc_courses: "Oeffnen Sie Lateinlektionen und den Pharmakologie-Abschlusskurs.",
+    submenu_desc_courses: "Oeffnen Sie strukturierte medizinische Lateinlektionen.",
     courses_kicker: "Kursbibliothek",
-    courses_intro: "Waehlen Sie medizinische Lateinlektionen oder den Pharmakologie-Abschlusskurs.",
-    pharmacology_course_catalog_title: "Pharmakologie Karteikarten",
-    pharmacology_course_catalog_subtitle: "Lernen Sie den Pharmakologie-Karteikartenstapel nach Tagen und speichern Sie richtige oder falsche Antworten.",
+    courses_intro: "Waehlen Sie einen Lernpfad fuer medizinisches Latein.",
     courses_choose_track: "Sprachstrecke waehlen",
     courses_open_track: "Kurs oeffnen",
     courses_current_lesson: "Aktuelle Lektion",
@@ -2314,11 +2297,9 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
     dataset_latin_units: "Latinske lekcie",
     dataset_muscles: "Svaly",
     courses: "Kurzy",
-    submenu_desc_courses: "Otvorte lekcie latinciny a kurz na zaverecnu skusku z farmakologie.",
+    submenu_desc_courses: "Otvorte strukturovane lekcie medicinskej latinciny.",
     courses_kicker: "Kniznica kurzov",
-    courses_intro: "Vyberte si lekcie medicinskej latinciny alebo kurz na zaverecnu skusku z farmakologie.",
-    pharmacology_course_catalog_title: "Farmakologicke karticky",
-    pharmacology_course_catalog_subtitle: "Opakujte farmakologicke karticky podla dni a ukladajte spravne alebo nespravne odpovede.",
+    courses_intro: "Vyberte si studijny program medicinskej latinciny.",
     courses_choose_track: "Vyberte si kurz",
     courses_open_track: "Otvori\u0165 kurz",
     courses_current_lesson: "Aktu\u00e1lna lekcia",
@@ -2656,1012 +2637,44 @@ function normalizeSearchText(value){
   return normalizeSearchLoose(String(value || "").trim().toLowerCase());
 }
 
-function normalizeAtcCode(value){
-  return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-}
-
-let pharmacologyRecords = [];
-const pharmacologyRepository = createPharmacologyRepository({
+const pharmacologyService = createPharmacologyService({
   loadText: loadBaseFile,
-  parseCSVLines,
-  rowsToObjects,
-  normalizeSearchText,
-  toFileSafeName,
-  onLoadError: (...args)=>console.warn(...args)
+  onError: (...args)=>console.warn(...args)
 });
-const pharmacologyState = pharmacologyRepository.state;
-
-function getDrugPharmacologyRecord(drugId){
-  return pharmacologyRepository.getDrugRecord(drugId);
-}
-
-function getAtcChildren(parentCode){
-  return pharmacologyRepository.getAtcChildren(parentCode);
-}
-
-function getAtcHierarchy(atcCode){
-  return pharmacologyRepository.getAtcHierarchy(atcCode);
-}
-
-function getAtcFilterLabel(atcCode){
-  return pharmacologyRepository.getAtcFilterLabel(atcCode);
-}
+const pharmacologyState = pharmacologyService.state;
+let pharmacologyUi = null;
 
 function searchPharmacology(query){
-  pharmacologyRecords = pharmacologyRepository.getRecords();
-  return pharmacologyRepository.search(query);
+  return pharmacologyService.searchDrugs(query, {}, { mode: "drug", limit: SEARCH_MAX_RESULTS }).map(result => ({
+    kind: "pharmacology",
+    row: result.record,
+    score: result.score,
+    matchedFields: result.matchedFields
+  }));
 }
 
 async function ensurePharmacologyIndexLoaded(options = {}){
-  pharmacologyRecords = await pharmacologyRepository.ensureLoaded(options);
-  return pharmacologyRecords;
+  return pharmacologyService.ensureLoaded(options);
 }
 
-// --- Pharmacology final exam course ---
-const PHARM_COURSE_PROGRESS_KEY = "pharmacology_course_progress_v1";
-const PHARM_COURSE_TAB_ORDER = [
-  { key: "overview", label: "Overview" },
-  { key: "topic-a", label: "Topic A" },
-  { key: "topic-b", label: "Topic B" },
-  { key: "topic-c", label: "Topic C" },
-  { key: "diagrams", label: "Diagrams" },
-  { key: "flashcards", label: "Flashcards" },
-  { key: "quiz", label: "Quiz" },
-  { key: "cases", label: "Clinical Cases" },
-  { key: "oral", label: "Oral Exam Mode" },
-  { key: "resources", label: "Resources" },
-  { key: "podcast", label: "Podcast" },
-  { key: "review", label: "Final Review" }
-];
-const PHARM_COURSE_TAG_LABELS = {
-  general_pharmacology: "General Pharmacology",
-  endocrine: "Endocrine",
-  anaesthesia: "Anaesthesia",
-  toxicology: "Toxicology",
-  autonomic: "Autonomic",
-  cardiovascular: "Cardiovascular",
-  cns: "CNS",
-  antimicrobial: "Antimicrobial",
-  allergy: "Allergy",
-  immunology: "Immunology",
-  gastrointestinal: "Gastrointestinal",
-  respiratory: "Respiratory",
-  oncology: "Oncology",
-  prescription: "Prescription"
-};
-const pharmacologyCourseState = {
-  loaded: false,
-  failed: false,
-  loadPromise: null,
-  courseMeta: {},
-  triplets: [],
-  quizBank: [],
-  diagrams: [],
-  resources: [],
-  activeTripletId: 1,
-  activeTab: "overview",
-  query: "",
-  tagFilter: "all",
-  reviewWrong: false,
-  quizOptionOrder: {},
-  oralTimerId: null
-};
-
-function getDefaultPharmCourseProgress(){
-  return {
-    completedTriplets: [],
-    completedTopics: [],
-    wrongQuestionIds: [],
-    markedDifficult: [],
-    lastOpenedTriplet: 1,
-    quizScores: {},
-    updatedAt: nowIso()
-  };
-}
-
-function normalizePharmIdArray(values){
-  return Array.isArray(values)
-    ? [...new Set(values.map(value => String(value || "").trim()).filter(Boolean))]
-    : [];
-}
-
-function normalizePharmCourseProgress(raw){
-  const base = getDefaultPharmCourseProgress();
-  const input = raw && typeof raw === "object" ? raw : {};
-  const progress = {
-    ...base,
-    ...input,
-    completedTriplets: normalizePharmIdArray(input.completedTriplets).map(value => Number(value)).filter(Number.isFinite),
-    completedTopics: normalizePharmIdArray(input.completedTopics),
-    wrongQuestionIds: normalizePharmIdArray(input.wrongQuestionIds),
-    markedDifficult: normalizePharmIdArray(input.markedDifficult),
-    quizScores: input.quizScores && typeof input.quizScores === "object" ? input.quizScores : {},
-    updatedAt: String(input.updatedAt || base.updatedAt)
-  };
-  progress.lastOpenedTriplet = Number(input.lastOpenedTriplet) || 1;
-  return progress;
-}
-
-function loadPharmCourseProgress(){
-  return normalizePharmCourseProgress(readJsonLS(PHARM_COURSE_PROGRESS_KEY, getDefaultPharmCourseProgress()));
-}
-
-function savePharmCourseProgress(progress){
-  const normalized = normalizePharmCourseProgress(progress);
-  normalized.updatedAt = nowIso();
-  writeJsonLS(PHARM_COURSE_PROGRESS_KEY, normalized);
-  updatePharmCourseStats();
-  return normalized;
-}
-
-function setPharmCourseArrayValue(progress, key, value, enabled){
-  const list = normalizePharmIdArray(progress[key]);
-  const text = String(value || "").trim();
-  if(!text) return progress;
-  const next = enabled
-    ? [...new Set([...list, text])]
-    : list.filter(item => item !== text);
-  progress[key] = next;
-  return progress;
-}
-
-function setPharmCourseNumberArrayValue(progress, key, value, enabled){
-  const num = Number(value);
-  if(!Number.isFinite(num)) return progress;
-  const list = Array.isArray(progress[key]) ? progress[key].map(Number).filter(Number.isFinite) : [];
-  progress[key] = enabled
-    ? [...new Set([...list, num])]
-    : list.filter(item => item !== num);
-  return progress;
-}
-
-function pharmCourseText(value){
-  return normalizeWhitespace(value);
-}
-
-function normalizePharmCourseCollection(payload, collectionKeys = []){
-  if(Array.isArray(payload)) return payload;
-  if(!payload || typeof payload !== "object") return [];
-  for(const key of collectionKeys){
-    if(Array.isArray(payload[key])) return payload[key];
-  }
-  if(Array.isArray(payload.items)) return payload.items;
-  return [];
-}
-
-function normalizePharmTripletPayload(payload){
-  const modules = normalizePharmCourseCollection(payload, ["modules", "triplets"]);
-  if(!modules.length){
-    throw new Error("Pharmacology triplets data must be an array or an object with a modules array.");
-  }
-  return modules
-    .filter(item => item && typeof item === "object")
-    .map(item => ({
-      ...item,
-      triplet_id: Number(item.triplet_id),
-      topics: Array.isArray(item.topics) ? item.topics : []
-    }))
-    .filter(item => Number.isFinite(item.triplet_id));
-}
-
-function getPharmTagLabel(tag){
-  const key = String(tag || "").trim();
-  return PHARM_COURSE_TAG_LABELS[key] || key.replace(/_/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
-}
-
-function getPharmTripletById(tripletId){
-  const id = Number(tripletId);
-  return pharmacologyCourseState.triplets.find(item => Number(item.triplet_id) === id) || null;
-}
-
-function getPharmTopicByTab(triplet, tabKey){
-  const topics = Array.isArray(triplet && triplet.topics) ? triplet.topics : [];
-  const tabTopicMap = {
-    "topic-a": { suffix: "A", index: 0 },
-    "topic-b": { suffix: "B", index: 1 },
-    "topic-c": { suffix: "C", index: 2 }
-  };
-  const mapped = tabTopicMap[tabKey];
-  if(mapped){
-    return topics.find(topic => String(topic.topic_id || "").toUpperCase().endsWith(mapped.suffix))
-      || topics[mapped.index]
-      || null;
-  }
-  return topics.find(topic => String(topic.topic_id || "") === String(tabKey || "")) || null;
-}
-
-function getPharmResourceById(resourceId){
-  const id = String(resourceId || "").trim();
-  return pharmacologyCourseState.resources.find(resource => String(resource.id || "") === id) || null;
-}
-
-function getPharmDiagramById(diagramId){
-  const id = String(diagramId || "").trim();
-  return pharmacologyCourseState.diagrams.find(diagram => String(diagram.id || "") === id) || null;
-}
-
-function getPharmTripletQuestions(triplet){
-  const tripletId = Number(triplet && triplet.triplet_id);
-  const explicitIds = new Set(Array.isArray(triplet && triplet.module_test_ids) ? triplet.module_test_ids.map(String) : []);
-  return pharmacologyCourseState.quizBank.filter(question => {
-    if(explicitIds.has(String(question.id || ""))) return true;
-    return Number(question.triplet_id) === tripletId;
+function getPharmacologyUi(){
+  if(pharmacologyUi) return pharmacologyUi;
+  const screen = document.getElementById("screen-pharmacology");
+  if(!screen) return null;
+  pharmacologyUi = createPharmacologyUi({
+    service: pharmacologyService,
+    screen
   });
+  return pharmacologyUi;
 }
 
-function getPharmTripletDiagrams(triplet){
-  const ids = new Set();
-  (Array.isArray(triplet && triplet.topics) ? triplet.topics : []).forEach(topic => {
-    (Array.isArray(topic.diagram_ids) ? topic.diagram_ids : []).forEach(id => ids.add(String(id || "")));
-  });
-  const own = pharmacologyCourseState.diagrams.filter(diagram => Number(diagram.triplet_id) === Number(triplet && triplet.triplet_id));
-  own.forEach(diagram => ids.add(String(diagram.id || "")));
-  return [...ids].map(id => getPharmDiagramById(id)).filter(Boolean);
-}
-
-function getPharmTripletResources(triplet){
-  const ids = new Set();
-  (Array.isArray(triplet && triplet.topics) ? triplet.topics : []).forEach(topic => {
-    (Array.isArray(topic.resource_ids) ? topic.resource_ids : []).forEach(id => ids.add(String(id || "")));
-  });
-  if(ids.size === 0){
-    ["merck_pk", "merck_pd", "ncbi_pkpd", "ninja_pharmacology_playlist"].forEach(id => ids.add(id));
-  }
-  return [...ids].map(id => getPharmResourceById(id)).filter(Boolean);
-}
-
-function getPharmCourseTopicProgress(triplet, progress = loadPharmCourseProgress()){
-  const topics = Array.isArray(triplet && triplet.topics) ? triplet.topics : [];
-  if(!topics.length) return { done: 0, total: 0 };
-  const done = topics.filter(topic => progress.completedTopics.includes(String(topic.topic_id || ""))).length;
-  return { done, total: topics.length };
-}
-
-function buildPharmSearchHaystack(triplet){
-  const parts = [
-    triplet.title,
-    triplet.short_title,
-    triplet.learning_goal,
-    triplet.learning_goal_expanded,
-    triplet.why_it_matters,
-    ...(Array.isArray(triplet.tags) ? triplet.tags : [])
-  ];
-  (Array.isArray(triplet.topics) ? triplet.topics : []).forEach(topic => {
-    parts.push(topic.title, topic.category, topic.theory_short, topic.expanded_theory, topic.definition, topic.oral_exam_answer);
-    (Array.isArray(topic.mechanism_steps) ? topic.mechanism_steps : []).forEach(item => parts.push(item));
-    (Array.isArray(topic.learning_objectives) ? topic.learning_objectives : []).forEach(item => parts.push(item));
-    (Array.isArray(topic.key_terms) ? topic.key_terms : []).forEach(item => parts.push(item));
-    (Array.isArray(topic.exam_traps) ? topic.exam_traps : []).forEach(item => parts.push(item));
-  });
-  return normalizeSearchLoose(parts.join(" "));
-}
-
-function getFilteredPharmTriplets(){
-  const query = normalizeSearchLoose(pharmacologyCourseState.query);
-  const tag = String(pharmacologyCourseState.tagFilter || "all");
-  return pharmacologyCourseState.triplets.filter(triplet => {
-    const tags = Array.isArray(triplet.tags) ? triplet.tags.map(String) : [];
-    if(tag !== "all" && !tags.includes(tag)) return false;
-    if(query && !buildPharmSearchHaystack(triplet).includes(query)) return false;
-    return true;
-  });
-}
-
-async function ensurePharmacologyCourseLoaded(){
-  if(pharmacologyCourseState.loaded) return pharmacologyCourseState.triplets;
-  if(pharmacologyCourseState.loadPromise) return pharmacologyCourseState.loadPromise;
-  pharmacologyCourseState.loadPromise = (async ()=>{
-    try{
-      const [tripletsText, quizText, resourcesText, diagramsText] = await Promise.all([
-        loadBaseFile("pharmacology-course/triplets.json"),
-        loadBaseFile("pharmacology-course/quiz_bank.json"),
-        loadBaseFile("pharmacology-course/resources.json"),
-        loadBaseFile("pharmacology-course/diagrams.json")
-      ]);
-      const tripletsPayload = JSON.parse(tripletsText);
-      if(Array.isArray(tripletsPayload)){
-        pharmacologyCourseState.courseMeta = {};
-      }else{
-        const { modules, triplets, ...courseMeta } = tripletsPayload || {};
-        pharmacologyCourseState.courseMeta = courseMeta;
-      }
-      pharmacologyCourseState.triplets = normalizePharmTripletPayload(tripletsPayload);
-      pharmacologyCourseState.quizBank = normalizePharmCourseCollection(JSON.parse(quizText), ["questions", "quiz_bank"]);
-      pharmacologyCourseState.resources = normalizePharmCourseCollection(JSON.parse(resourcesText), ["resources"]);
-      pharmacologyCourseState.diagrams = normalizePharmCourseCollection(JSON.parse(diagramsText), ["diagrams"]);
-      pharmacologyCourseState.triplets.sort((a, b)=> Number(a.triplet_id) - Number(b.triplet_id));
-      const progress = loadPharmCourseProgress();
-      const lastOpened = Number(progress.lastOpenedTriplet) || 1;
-      const hasLastOpened = pharmacologyCourseState.triplets.some(item => Number(item.triplet_id) === lastOpened);
-      pharmacologyCourseState.activeTripletId = hasLastOpened
-        ? lastOpened
-        : Number(pharmacologyCourseState.triplets[0] && pharmacologyCourseState.triplets[0].triplet_id) || 1;
-      pharmacologyCourseState.loaded = true;
-      pharmacologyCourseState.failed = false;
-      populatePharmCourseFilters();
-      renderPharmacologyCourse();
-      return pharmacologyCourseState.triplets;
-    }catch(error){
-      console.warn("Pharmacology course load failed:", error);
-      pharmacologyCourseState.loaded = false;
-      pharmacologyCourseState.failed = true;
-      throw error;
-    }finally{
-      pharmacologyCourseState.loadPromise = null;
-    }
-  })();
-  return pharmacologyCourseState.loadPromise;
-}
-
-async function openPharmacologyCourseScreen(){
+async function openPharmacologyScreen(){
   showScreen("screen-pharmacology");
   try{
-    await preparePharmacologyReview({ onProgressChange: savePharmacologyReviewProgressToProfile });
-    syncPharmacologyReviewProgressWithProfile();
+    await getPharmacologyUi()?.open();
   }catch(error){
-    const content = document.getElementById("pharm-review-content");
-    if(content) content.textContent = error && error.message ? error.message : "Failed to load this section.";
+    console.warn("Pharmacology module failed to open:", error);
   }
-}
-
-function savePharmacologyReviewProgressToProfile(progress){
-  if(!isProfileSessionActive()) return;
-  userProfile = ensureProfileShape(userProfile);
-  userProfile.courses.pharmacology_flashcards = mergePharmacologyReviewProgress(
-    progress,
-    userProfile.courses.pharmacology_flashcards
-  );
-  markProfileDirty();
-}
-
-function syncPharmacologyReviewProgressWithProfile(){
-  if(!isProfileSessionActive()) return;
-  userProfile = ensureProfileShape(userProfile);
-  const merged = mergePharmacologyReviewProgress(
-    getPharmacologyReviewProgress(),
-    userProfile.courses.pharmacology_flashcards
-  );
-  userProfile.courses.pharmacology_flashcards = merged;
-  setPharmacologyReviewProgress(merged);
-  markProfileDirty();
-}
-
-function populatePharmCourseFilters(){
-  const select = document.getElementById("pharm-course-tag-filter");
-  if(!select || select.dataset.ready === "1") return;
-  const tags = [...new Set(pharmacologyCourseState.triplets.flatMap(triplet => Array.isArray(triplet.tags) ? triplet.tags : []))]
-    .sort((a, b)=> getPharmTagLabel(a).localeCompare(getPharmTagLabel(b)));
-  const current = select.value || "all";
-  select.innerHTML = [
-    `<option value="all">${escapeHTML(tOr("pharm_course_all_categories", "All categories"))}</option>`,
-    ...tags.map(tag => `<option value="${escapeHTML(tag)}">${escapeHTML(getPharmTagLabel(tag))}</option>`)
-  ].join("");
-  select.value = tags.includes(current) ? current : "all";
-  select.dataset.ready = "1";
-}
-
-function updatePharmCourseStats(){
-  const progress = loadPharmCourseProgress();
-  const countEl = document.getElementById("pharm-course-count");
-  const completedEl = document.getElementById("pharm-course-completed");
-  const wrongEl = document.getElementById("pharm-course-wrong-count");
-  if(countEl) countEl.textContent = String(pharmacologyCourseState.triplets.length || 0);
-  if(completedEl) completedEl.textContent = String(progress.completedTriplets.length || 0);
-  if(wrongEl) wrongEl.textContent = String(progress.wrongQuestionIds.length || 0);
-}
-
-function renderPharmacologyCourse(){
-  if(!document.getElementById("screen-pharmacology")) return;
-  updatePharmCourseStats();
-  if(!pharmacologyCourseState.loaded){
-    const grid = document.getElementById("pharm-course-grid");
-    if(grid) grid.innerHTML = `<div class="course-finished"><strong>${escapeHTML(tOr("loading", "Loading..."))}</strong></div>`;
-    return;
-  }
-  populatePharmCourseFilters();
-  const detail = document.getElementById("pharm-course-detail");
-  if(detail && !detail.classList.contains("hidden")){
-    renderPharmCourseDetail();
-  } else {
-    renderPharmCourseOverview();
-  }
-}
-
-function renderPharmCourseOverview(){
-  const overview = document.getElementById("pharm-course-overview");
-  const detail = document.getElementById("pharm-course-detail");
-  const grid = document.getElementById("pharm-course-grid");
-  const reviewBtn = document.getElementById("pharm-course-review-wrong");
-  if(overview) overview.classList.remove("hidden");
-  if(detail) detail.classList.add("hidden");
-  if(!grid) return;
-  updatePharmCourseStats();
-  if(reviewBtn){
-    reviewBtn.textContent = pharmacologyCourseState.reviewWrong
-      ? tOr("pharm_course_back_to_modules", "Back to modules")
-      : tOr("pharm_course_review_wrong", "Review wrong answers");
-  }
-  if(pharmacologyCourseState.reviewWrong){
-    grid.innerHTML = renderPharmWrongAnswerReview();
-    return;
-  }
-  const progress = loadPharmCourseProgress();
-  const triplets = getFilteredPharmTriplets();
-  if(!triplets.length){
-    grid.innerHTML = `<div class="course-finished"><strong>${escapeHTML(tOr("No matching results found.", "No matching results found."))}</strong></div>`;
-    return;
-  }
-  grid.innerHTML = triplets.map(triplet => {
-    const topicProgress = getPharmCourseTopicProgress(triplet, progress);
-    const completed = progress.completedTriplets.includes(Number(triplet.triplet_id));
-    const tags = (Array.isArray(triplet.tags) ? triplet.tags : []).slice(0, 4);
-    const topics = Array.isArray(triplet.topics) ? triplet.topics : [];
-    return `
-      <article class="pharm-triplet-card${completed ? " is-complete" : ""}">
-        <div class="pharm-triplet-topline">
-          <span>${escapeHTML(`Triplet ${triplet.triplet_id}`)}</span>
-          <span>${escapeHTML(`${triplet.estimated_time_min || 35} min`)}</span>
-        </div>
-        <h4>${escapeHTML(triplet.short_title || triplet.title || "")}</h4>
-        <p>${escapeHTML(triplet.learning_goal || "")}</p>
-        <div class="pharm-topic-mini-list">
-          ${topics.map(topic => `<span>${escapeHTML(topic.title || "")}</span>`).join("")}
-        </div>
-        <div class="pharm-card-tags">
-          ${tags.map(tag => `<span>${escapeHTML(getPharmTagLabel(tag))}</span>`).join("")}
-        </div>
-        <div class="pharm-card-progress">
-          <div class="pharm-progress-track"><i style="width:${topicProgress.total ? Math.round((topicProgress.done / topicProgress.total) * 100) : 0}%"></i></div>
-          <span>${escapeHTML(`${topicProgress.done}/${topicProgress.total} topics`)}</span>
-        </div>
-        <button type="button" class="primary" data-pharm-open="${escapeHTML(String(triplet.triplet_id))}">${escapeHTML(completed ? tOr("pharm_course_review_module", "Review Module") : tOr("pharm_course_start_module", "Start Module"))}</button>
-      </article>
-    `;
-  }).join("");
-}
-
-function renderPharmWrongAnswerReview(){
-  const progress = loadPharmCourseProgress();
-  const wrongIds = new Set(progress.wrongQuestionIds.map(String));
-  const questions = pharmacologyCourseState.quizBank.filter(question => wrongIds.has(String(question.id || "")));
-  if(!questions.length){
-    return `<div class="course-finished"><strong>${escapeHTML(tOr("pharm_course_no_wrong", "No wrong answers saved."))}</strong><p>${escapeHTML(tOr("pharm_course_no_wrong_copy", "Wrong answers from module quizzes will appear here for review."))}</p></div>`;
-  }
-  return `
-    <div class="pharm-wrong-review">
-      ${questions.map(question => {
-        const triplet = getPharmTripletById(question.triplet_id);
-        return `
-          <article class="pharm-review-question">
-            <span>${escapeHTML(triplet ? `Triplet ${triplet.triplet_id}` : "Question")}</span>
-            <strong>${escapeHTML(question.question || question.prompt || "")}</strong>
-            <p>${escapeHTML(question.explanation || "")}</p>
-            <div class="pharm-answer-line">${escapeHTML(tOr("correct", "Correct"))}: <b>${escapeHTML(question.correct_answer || "")}</b></div>
-            ${triplet ? `<button type="button" class="secondary" data-pharm-open="${escapeHTML(String(triplet.triplet_id))}" data-pharm-tab="quiz">${escapeHTML(tOr("pharm_course_open_quiz", "Open quiz"))}</button>` : ""}
-          </article>
-        `;
-      }).join("")}
-    </div>
-  `;
-}
-
-function openPharmTriplet(tripletId, tabKey = "overview"){
-  const triplet = getPharmTripletById(tripletId);
-  if(!triplet) return;
-  pharmacologyCourseState.activeTripletId = Number(triplet.triplet_id);
-  pharmacologyCourseState.activeTab = tabKey || "overview";
-  pharmacologyCourseState.reviewWrong = false;
-  pharmacologyCourseState.quizOptionOrder = {};
-  const progress = loadPharmCourseProgress();
-  progress.lastOpenedTriplet = Number(triplet.triplet_id);
-  savePharmCourseProgress(progress);
-  renderPharmCourseDetail();
-  const main = document.querySelector("main");
-  if(main) main.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function closePharmTripletDetail(){
-  stopPharmOralTimer();
-  pharmacologyCourseState.activeTab = "overview";
-  const detail = document.getElementById("pharm-course-detail");
-  const overview = document.getElementById("pharm-course-overview");
-  if(detail) detail.classList.add("hidden");
-  if(overview) overview.classList.remove("hidden");
-  renderPharmCourseOverview();
-}
-
-function renderPharmCourseDetail(){
-  const triplet = getPharmTripletById(pharmacologyCourseState.activeTripletId);
-  const detail = document.getElementById("pharm-course-detail");
-  const overview = document.getElementById("pharm-course-overview");
-  if(!detail || !triplet) return;
-  if(overview) overview.classList.add("hidden");
-  detail.classList.remove("hidden");
-  const progress = loadPharmCourseProgress();
-  const completed = progress.completedTriplets.includes(Number(triplet.triplet_id));
-  const topicProgress = getPharmCourseTopicProgress(triplet, progress);
-  const tabs = PHARM_COURSE_TAB_ORDER.filter(tab => {
-    if(tab.key === "topic-a" || tab.key === "topic-b" || tab.key === "topic-c"){
-      return !!getPharmTopicByTab(triplet, tab.key);
-    }
-    return true;
-  });
-  const activeTab = tabs.some(tab => tab.key === pharmacologyCourseState.activeTab) ? pharmacologyCourseState.activeTab : "overview";
-  pharmacologyCourseState.activeTab = activeTab;
-  detail.innerHTML = `
-    <div class="pharm-detail-head">
-      <button type="button" class="secondary pharm-back-btn" data-pharm-back>${escapeHTML(tOr("back", "Back"))}</button>
-      <div>
-        <p class="course-kicker">${escapeHTML(`Triplet ${triplet.triplet_id}`)}</p>
-        <h3>${escapeHTML(triplet.title || "")}</h3>
-        <div class="pharm-meta-row">
-          <span>${escapeHTML(triplet.difficulty || "core")}</span>
-          <span>${escapeHTML(`${triplet.estimated_time_min || 35} min`)}</span>
-          <span>${escapeHTML(`${topicProgress.done}/${topicProgress.total} topics complete`)}</span>
-        </div>
-      </div>
-      <button type="button" class="primary" data-pharm-complete-module="${escapeHTML(String(triplet.triplet_id))}">${escapeHTML(completed ? tOr("pharm_course_completed", "Completed") : tOr("pharm_course_mark_complete", "Mark Complete"))}</button>
-    </div>
-    <div class="pharm-tabs" role="tablist" aria-label="${escapeHTML(tOr("pharm_course_module_sections", "Module sections"))}">
-      ${tabs.map(tab => `<button type="button" class="${tab.key === activeTab ? "is-active" : ""}" data-pharm-tab="${escapeHTML(tab.key)}">${escapeHTML(tab.label)}</button>`).join("")}
-    </div>
-    <div class="pharm-detail-body">
-      ${renderPharmActiveTab(triplet, activeTab)}
-    </div>
-  `;
-}
-
-function renderPharmActiveTab(triplet, tabKey){
-  const topic = getPharmTopicByTab(triplet, tabKey);
-  if(topic) return renderPharmTopic(topic);
-  if(tabKey === "diagrams") return renderPharmDiagramSection(triplet);
-  if(tabKey === "flashcards") return renderPharmFlashcardsSection(triplet);
-  if(tabKey === "quiz") return renderPharmQuizSection(triplet);
-  if(tabKey === "cases") return renderPharmCasesSection(triplet);
-  if(tabKey === "oral") return renderPharmOralSection(triplet);
-  if(tabKey === "resources") return renderPharmResourcesSection(triplet);
-  if(tabKey === "podcast") return renderPharmPodcastSection(triplet);
-  if(tabKey === "review") return renderPharmFinalReviewSection(triplet);
-  return renderPharmTripletOverview(triplet);
-}
-
-function renderPharmTripletOverview(triplet){
-  const topics = Array.isArray(triplet.topics) ? triplet.topics : [];
-  const metadata = triplet.expanded_module_metadata && typeof triplet.expanded_module_metadata === "object"
-    ? triplet.expanded_module_metadata
-    : {};
-  const moduleFlow = Array.isArray(metadata.module_learning_flow) ? metadata.module_learning_flow : [];
-  const prerequisites = Array.isArray(metadata.prerequisites) ? metadata.prerequisites.slice(0, 12) : [];
-  return `
-    <section class="pharm-overview-panel">
-      <div class="pharm-overview-copy">
-        <h4>${escapeHTML(tOr("overview", "Overview"))}</h4>
-        <p>${escapeHTML(triplet.learning_goal_expanded || triplet.why_it_matters || triplet.learning_goal || "")}</p>
-      </div>
-      <div class="pharm-topic-card-grid">
-        ${topics.map((topic, index) => `
-          <article class="pharm-topic-card">
-            <span>${escapeHTML(topic.label || `Topic ${String.fromCharCode(65 + index)}`)}</span>
-            <strong>${escapeHTML(topic.title || "")}</strong>
-            <p>${escapeHTML(topic.theory_short || "")}</p>
-            <button type="button" class="secondary" data-pharm-tab="${escapeHTML(`topic-${String.fromCharCode(97 + index)}`)}">${escapeHTML(tOr("courses_theory", "Theory"))}</button>
-          </article>
-        `).join("")}
-      </div>
-      ${Array.isArray(triplet.oral_exam_goals) && triplet.oral_exam_goals.length ? `
-        <div class="pharm-checklist-block">
-          <h4>${escapeHTML(tOr("pharm_course_oral_goals", "Oral Exam Goals"))}</h4>
-          <ul>${triplet.oral_exam_goals.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>
-        </div>
-      ` : ""}
-      ${moduleFlow.length ? `
-        <div class="pharm-checklist-block">
-          <h4>${escapeHTML(tOr("pharm_course_study_flow", "Study Flow"))}</h4>
-          <ul>${moduleFlow.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>
-        </div>
-      ` : ""}
-      ${prerequisites.length ? `
-        <div class="pharm-checklist-block">
-          <h4>${escapeHTML(tOr("pharm_course_prerequisites", "Prerequisites"))}</h4>
-          <ul>${prerequisites.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>
-        </div>
-      ` : ""}
-    </section>
-  `;
-}
-
-function renderPharmList(items){
-  const list = Array.isArray(items) ? items.map(pharmCourseText).filter(Boolean) : [];
-  if(!list.length) return "";
-  return `<ul>${list.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
-}
-
-function renderPharmParagraphs(value){
-  const paragraphs = String(value || "")
-    .split(/\n{2,}/)
-    .map(pharmCourseText)
-    .filter(Boolean);
-  if(!paragraphs.length) return "";
-  return paragraphs.map(item => `<p>${escapeHTML(item)}</p>`).join("");
-}
-
-function renderPharmClassification(items){
-  const list = Array.isArray(items) ? items : [];
-  if(!list.length) return "";
-  return `
-    <div class="pharm-classification-grid">
-      ${list.map(item => {
-        if(typeof item === "string") return `<div><strong>${escapeHTML(item)}</strong></div>`;
-        return `<div><strong>${escapeHTML(item.name || "")}</strong><p>${escapeHTML(item.detail || "")}</p></div>`;
-      }).join("")}
-    </div>
-  `;
-}
-
-function renderPharmCallout(title, body, tone = "theory", extraClass = ""){
-  if(!body) return "";
-  const classes = ["pharm-callout", `pharm-callout-${String(tone || "theory").replace(/[^a-z0-9_-]/gi, "")}`];
-  if(extraClass) classes.push(String(extraClass).replace(/[^a-z0-9_-]/gi, ""));
-  return `
-    <section class="${escapeHTML(classes.join(" "))}">
-      <h4>${escapeHTML(title)}</h4>
-      ${body}
-    </section>
-  `;
-}
-
-function renderPharmTopic(topic){
-  const progress = loadPharmCourseProgress();
-  const topicId = String(topic.topic_id || "");
-  const done = progress.completedTopics.includes(topicId);
-  const difficult = progress.markedDifficult.includes(topicId);
-  return `
-    <article class="pharm-topic-detail">
-      <div class="pharm-topic-detail-head">
-        <div>
-          <p class="course-kicker">${escapeHTML(topic.category || "")}</p>
-          <h4>${escapeHTML(topic.title || "")}</h4>
-          <p>${escapeHTML(topic.theory_short || "")}</p>
-        </div>
-        <div class="pharm-topic-actions">
-          <button type="button" class="secondary${difficult ? " is-active" : ""}" data-pharm-difficult="${escapeHTML(topicId)}">${escapeHTML(difficult ? tOr("pharm_course_marked_difficult", "Marked Difficult") : tOr("pharm_course_mark_difficult", "Mark Difficult"))}</button>
-          <button type="button" class="primary" data-pharm-complete-topic="${escapeHTML(topicId)}">${escapeHTML(done ? tOr("pharm_course_topic_done", "Topic Done") : tOr("pharm_course_complete_topic", "Complete Topic"))}</button>
-        </div>
-      </div>
-      <div class="pharm-topic-section-grid">
-        ${renderPharmCallout("Definition", topic.definition ? `<p>${escapeHTML(topic.definition)}</p>` : "", "theory")}
-        ${renderPharmCallout("Expanded Theory", renderPharmParagraphs(topic.expanded_theory), "theory", "pharm-callout-wide")}
-        ${renderPharmCallout("Mechanism", renderPharmList(topic.mechanism_steps), "mechanism")}
-        ${renderPharmCallout("Classification / Main Groups", renderPharmClassification(topic.classification), "theory")}
-        ${renderPharmCallout("Clinical Uses", renderPharmList(topic.clinical_uses), "clinical")}
-        ${renderPharmCallout("Adverse Effects", renderPharmList(topic.adverse_effects), "danger")}
-        ${renderPharmCallout("Contraindications / Cautions", renderPharmList(topic.contraindications), "danger")}
-        ${renderPharmCallout("Exam Traps", renderPharmList(topic.exam_traps), "trap")}
-        ${renderPharmCallout("Oral-Exam Answer", topic.oral_exam_answer ? `<p>${escapeHTML(topic.oral_exam_answer)}</p>` : "", "oral")}
-        ${renderPharmCallout("Learning Objectives", renderPharmList(topic.learning_objectives), "clinical")}
-        ${renderPharmCallout("Memory Hooks", renderPharmList(topic.memory_hooks), "oral")}
-      </div>
-    </article>
-  `;
-}
-
-function renderPharmDiagramSection(triplet){
-  const diagrams = getPharmTripletDiagrams(triplet);
-  if(!diagrams.length){
-    return `<div class="course-finished"><strong>${escapeHTML(tOr("pharm_course_no_diagrams", "No diagrams yet."))}</strong></div>`;
-  }
-  return `
-    <div class="pharm-diagram-grid">
-      ${diagrams.map(diagram => `
-        <article class="pharm-diagram-card">
-          <span>${escapeHTML(diagram.type || "diagram")}</span>
-          <h4>${escapeHTML(diagram.title || "")}</h4>
-          <p>${escapeHTML(diagram.description || "")}</p>
-          <div class="pharm-diagram-flow">
-            ${(Array.isArray(diagram.labels) ? diagram.labels : []).map(label => `<b>${escapeHTML(label)}</b>`).join("")}
-          </div>
-          ${diagram.interaction ? `<small>${escapeHTML(diagram.interaction)}</small>` : ""}
-        </article>
-      `).join("")}
-    </div>
-  `;
-}
-
-function collectPharmFlashcards(triplet){
-  const cards = [];
-  (Array.isArray(triplet.topics) ? triplet.topics : []).forEach(topic => {
-    if(Array.isArray(topic.flashcards) && topic.flashcards.length){
-      topic.flashcards.forEach(card => cards.push({ ...card, topic_title: topic.title }));
-    } else {
-      cards.push({
-        id: `generated_${topic.topic_id}`,
-        topic_title: topic.title,
-        front: `Explain ${topic.title}.`,
-        back: topic.oral_exam_answer || topic.theory_short || ""
-      });
-    }
-  });
-  return cards;
-}
-
-function renderPharmFlashcardsSection(triplet){
-  const cards = collectPharmFlashcards(triplet);
-  return `
-    <div class="pharm-flashcard-grid">
-      ${cards.map(card => `
-        <button type="button" class="pharm-flashcard" data-pharm-flashcard="${escapeHTML(card.id || "")}">
-          <span>${escapeHTML(card.topic_title || "Flashcard")}</span>
-          <strong>${escapeHTML(card.front || "")}</strong>
-          <p>${escapeHTML(card.back || "")}</p>
-        </button>
-      `).join("")}
-    </div>
-  `;
-}
-
-function shuffledPharmOptions(question){
-  const id = String(question.id || "");
-  if(!pharmacologyCourseState.quizOptionOrder[id]){
-    const options = Array.isArray(question.options) ? question.options.slice() : [];
-    for(let i = options.length - 1; i > 0; i -= 1){
-      const j = Math.floor(Math.random() * (i + 1));
-      [options[i], options[j]] = [options[j], options[i]];
-    }
-    pharmacologyCourseState.quizOptionOrder[id] = options;
-  }
-  return pharmacologyCourseState.quizOptionOrder[id];
-}
-
-function collectPharmQuizPrompts(triplet){
-  const prompts = [];
-  (Array.isArray(triplet && triplet.topics) ? triplet.topics : []).forEach(topic => {
-    const blueprint = topic.quiz_generation_blueprint && typeof topic.quiz_generation_blueprint === "object"
-      ? topic.quiz_generation_blueprint
-      : {};
-    const topicTitle = topic.title || topic.topic_id || "";
-    [
-      ...(Array.isArray(blueprint.basic_questions) ? blueprint.basic_questions : []),
-      ...(Array.isArray(blueprint.exam_questions) ? blueprint.exam_questions : []),
-      ...(Array.isArray(blueprint.trap_questions) ? blueprint.trap_questions : [])
-    ].slice(0, 6).forEach((question, index) => {
-      prompts.push({
-        id: `prompt_${topic.topic_id || topicTitle}_${index}`,
-        topic_id: topic.topic_id || "",
-        topic_title: topicTitle,
-        question
-      });
-    });
-  });
-  return prompts.slice(0, 18);
-}
-
-function renderPharmQuizSection(triplet){
-  const questions = getPharmTripletQuestions(triplet);
-  if(!questions.length){
-    const prompts = collectPharmQuizPrompts(triplet);
-    if(prompts.length){
-      return `
-        <div class="pharm-quiz-list">
-          ${prompts.map(prompt => `
-            <article class="pharm-quiz-card">
-              <div class="pharm-quiz-meta">
-                <span>${escapeHTML(prompt.topic_id || "")}</span>
-                <span>${escapeHTML(tOr("pharm_course_review_prompt", "Review prompt"))}</span>
-              </div>
-              <h4>${escapeHTML(prompt.question || "")}</h4>
-              <p class="pharm-quiz-feedback">${escapeHTML(prompt.topic_title || "")}</p>
-            </article>
-          `).join("")}
-        </div>
-      `;
-    }
-    return `<div class="course-finished"><strong>${escapeHTML(tOr("pharm_course_quiz_placeholder", "Quiz questions for this module are not added yet."))}</strong><p>${escapeHTML(tOr("pharm_course_quiz_placeholder_copy", "The shared quiz engine is ready and will load questions from JSON as they are added."))}</p></div>`;
-  }
-  return `
-    <div class="pharm-quiz-list">
-      ${questions.map(question => `
-        <article class="pharm-quiz-card" data-pharm-question="${escapeHTML(question.id || "")}">
-          <div class="pharm-quiz-meta">
-            <span>${escapeHTML(question.difficulty || "basic")}</span>
-            <span>${escapeHTML(question.topic_id || "")}</span>
-          </div>
-          <h4>${escapeHTML(question.question || question.prompt || "")}</h4>
-          <div class="pharm-quiz-options">
-            ${shuffledPharmOptions(question).map(option => `<button type="button" class="course-choice" data-pharm-answer="${escapeHTML(option)}" data-pharm-question-id="${escapeHTML(question.id || "")}">${escapeHTML(option)}</button>`).join("")}
-          </div>
-          <p class="pharm-quiz-feedback" aria-live="polite"></p>
-        </article>
-      `).join("")}
-    </div>
-  `;
-}
-
-function handlePharmQuizAnswer(button){
-  const questionId = String(button.getAttribute("data-pharm-question-id") || "");
-  const selected = String(button.getAttribute("data-pharm-answer") || "");
-  const question = pharmacologyCourseState.quizBank.find(item => String(item.id || "") === questionId);
-  if(!question) return;
-  const card = button.closest(".pharm-quiz-card");
-  const correct = normalizeSearchLoose(selected) === normalizeSearchLoose(question.correct_answer);
-  if(card){
-    card.querySelectorAll("[data-pharm-answer]").forEach(optionBtn => {
-      const value = String(optionBtn.getAttribute("data-pharm-answer") || "");
-      const isCorrectOption = normalizeSearchLoose(value) === normalizeSearchLoose(question.correct_answer);
-      optionBtn.classList.toggle("is-correct", isCorrectOption);
-      optionBtn.classList.toggle("is-wrong", optionBtn === button && !correct);
-    });
-    const feedback = card.querySelector(".pharm-quiz-feedback");
-    if(feedback){
-      feedback.textContent = correct
-        ? `${tOr("courses_correct", "Correct. Keep going.")} ${question.explanation || ""}`
-        : `${tOr("courses_try_again", "Not quite. The highlighted answer shows what to fix.")} ${question.explanation || ""}`;
-    }
-  }
-  const progress = loadPharmCourseProgress();
-  progress.quizScores[questionId] = {
-    correct,
-    selected,
-    correctAnswer: question.correct_answer,
-    updatedAt: nowIso()
-  };
-  setPharmCourseArrayValue(progress, "wrongQuestionIds", questionId, !correct);
-  savePharmCourseProgress(progress);
-}
-
-function renderPharmCasesSection(triplet){
-  const cases = Array.isArray(triplet.clinical_cases) ? triplet.clinical_cases : [];
-  if(!cases.length){
-    return `<div class="course-finished"><strong>${escapeHTML(tOr("pharm_course_cases_placeholder", "Clinical cases will be added here."))}</strong></div>`;
-  }
-  return `
-    <div class="pharm-case-list">
-      ${cases.map(item => `
-        <article class="pharm-case-card">
-          <span>${escapeHTML(item.topic_id || "")}</span>
-          <h4>${escapeHTML(item.title || "")}</h4>
-          <p>${escapeHTML(item.case_text || "")}</p>
-          <div class="pharm-case-question">${escapeHTML(item.question || "")}</div>
-          <details>
-            <summary>${escapeHTML(tOr("pharm_course_model_answer", "Model Answer"))}</summary>
-            <p>${escapeHTML(item.expected_answer || "")}</p>
-          </details>
-        </article>
-      `).join("")}
-    </div>
-  `;
-}
-
-function buildPharmOralChecklist(topic){
-  const items = [];
-  if(topic.definition) items.push(`Define: ${topic.definition}`);
-  (Array.isArray(topic.mechanism_steps) ? topic.mechanism_steps.slice(0, 3) : []).forEach(item => items.push(item));
-  (Array.isArray(topic.clinical_uses) ? topic.clinical_uses.slice(0, 2) : []).forEach(item => items.push(`Use: ${item}`));
-  (Array.isArray(topic.adverse_effects) ? topic.adverse_effects.slice(0, 2) : []).forEach(item => items.push(`Adverse effect: ${item}`));
-  (Array.isArray(topic.exam_traps) ? topic.exam_traps.slice(0, 2) : []).forEach(item => items.push(`Trap: ${item}`));
-  return items.slice(0, 8);
-}
-
-function renderPharmOralSection(triplet){
-  const topics = Array.isArray(triplet.topics) ? triplet.topics : [];
-  return `
-    <div class="pharm-oral-list">
-      ${topics.map(topic => `
-        <article class="pharm-oral-card">
-          <div class="pharm-oral-head">
-            <div>
-              <span>${escapeHTML(topic.topic_id || "")}</span>
-              <h4>${escapeHTML(`Explain ${topic.title || ""}.`)}</h4>
-            </div>
-            <button type="button" class="secondary" data-pharm-oral-timer="90">${escapeHTML(tOr("pharm_course_start_timer", "Start 90s"))}</button>
-          </div>
-          <div class="pharm-oral-time" data-pharm-oral-time>90</div>
-          <ul>${buildPharmOralChecklist(topic).map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ul>
-          <details>
-            <summary>${escapeHTML(tOr("pharm_course_model_answer", "Model Answer"))}</summary>
-            <p>${escapeHTML(topic.oral_exam_answer || "")}</p>
-          </details>
-        </article>
-      `).join("")}
-    </div>
-  `;
-}
-
-function stopPharmOralTimer(){
-  if(pharmacologyCourseState.oralTimerId){
-    clearInterval(pharmacologyCourseState.oralTimerId);
-    pharmacologyCourseState.oralTimerId = null;
-  }
-}
-
-function startPharmOralTimer(button){
-  stopPharmOralTimer();
-  const seconds = Math.max(10, Number(button.getAttribute("data-pharm-oral-timer")) || 90);
-  const card = button.closest(".pharm-oral-card");
-  const output = card ? card.querySelector("[data-pharm-oral-time]") : null;
-  let remaining = seconds;
-  if(output) output.textContent = String(remaining);
-  pharmacologyCourseState.oralTimerId = setInterval(()=>{
-    remaining -= 1;
-    if(output) output.textContent = String(Math.max(0, remaining));
-    if(remaining <= 0) stopPharmOralTimer();
-  }, 1000);
-}
-
-function renderPharmResourcesSection(triplet){
-  const resources = getPharmTripletResources(triplet);
-  return `
-    <div class="pharm-resource-list">
-      ${resources.map(resource => `
-        <a class="pharm-resource-card" href="${escapeHTML(resource.url || "#")}" target="_blank" rel="noopener">
-          <span>${escapeHTML(resource.provider || resource.type || "Resource")}</span>
-          <strong>${escapeHTML(resource.title || "")}</strong>
-          <small>${escapeHTML(Array.isArray(resource.tags) ? resource.tags.map(getPharmTagLabel).join(" | ") : "")}</small>
-        </a>
-      `).join("")}
-    </div>
-  `;
-}
-
-function renderPharmPodcastSection(triplet){
-  const podcast = triplet.podcast && typeof triplet.podcast === "object" ? triplet.podcast : {};
-  const points = Array.isArray(podcast.summary_points) ? podcast.summary_points : [];
-  return `
-    <div class="pharm-podcast-panel">
-      <div class="pharm-audio-slot">
-        <button type="button" class="secondary" disabled>${escapeHTML(tOr("pharm_course_audio_placeholder", "Audio Slot"))}</button>
-        <span>${escapeHTML(podcast.audio_file ? podcast.audio_file : tOr("pharm_course_no_audio_file", "No audio file attached yet"))}</span>
-      </div>
-      ${points.length ? `<ul>${points.map(point => `<li>${escapeHTML(point)}</li>`).join("")}</ul>` : ""}
-      ${podcast.script ? `<section class="pharm-callout pharm-callout-theory"><h4>${escapeHTML(tOr("pharm_course_transcript", "Transcript"))}</h4><p>${escapeHTML(podcast.script)}</p></section>` : ""}
-    </div>
-  `;
-}
-
-function renderPharmFinalReviewSection(triplet){
-  const items = Array.isArray(triplet.final_review) ? triplet.final_review : [];
-  return `
-    <div class="pharm-final-review">
-      <h4>${escapeHTML(tOr("pharm_course_final_review", "Final Rapid Review"))}</h4>
-      ${items.length ? `<ol>${items.map(item => `<li>${escapeHTML(item)}</li>`).join("")}</ol>` : `<p>${escapeHTML(tOr("pharm_course_review_placeholder", "Rapid review points will be added here."))}</p>`}
-      <button type="button" class="primary" data-pharm-complete-module="${escapeHTML(String(triplet.triplet_id))}">${escapeHTML(tOr("pharm_course_mark_complete", "Mark Complete"))}</button>
-    </div>
-  `;
-}
-
-function togglePharmTopicComplete(topicId){
-  const id = String(topicId || "").trim();
-  if(!id) return;
-  const progress = loadPharmCourseProgress();
-  const isDone = progress.completedTopics.includes(id);
-  setPharmCourseArrayValue(progress, "completedTopics", id, !isDone);
-  savePharmCourseProgress(progress);
-  renderPharmCourseDetail();
-}
-
-function togglePharmTopicDifficult(topicId){
-  const id = String(topicId || "").trim();
-  if(!id) return;
-  const progress = loadPharmCourseProgress();
-  const isMarked = progress.markedDifficult.includes(id);
-  setPharmCourseArrayValue(progress, "markedDifficult", id, !isMarked);
-  savePharmCourseProgress(progress);
-  renderPharmCourseDetail();
-}
-
-function togglePharmModuleComplete(tripletId){
-  const id = Number(tripletId);
-  if(!Number.isFinite(id)) return;
-  const progress = loadPharmCourseProgress();
-  const isDone = progress.completedTriplets.includes(id);
-  setPharmCourseNumberArrayValue(progress, "completedTriplets", id, !isDone);
-  savePharmCourseProgress(progress);
-  renderPharmCourseDetail();
-}
-
-function resetPharmCourseProgress(){
-  if(!confirm(tOr("pharm_course_reset_confirm", "Reset all pharmacology course progress?"))) return;
-  savePharmCourseProgress(getDefaultPharmCourseProgress());
-  renderPharmacologyCourse();
 }
 
 // --- Muscles loader ---
@@ -4068,12 +3081,6 @@ let state = {
     query: '',
     selectedTagKeys: new Set(),
     debounceTimer: null
-  },
-  pharmacology: {
-    query: '',
-    debounceTimer: null,
-    selectedAtcCode: '',
-    expandedAtcCodes: new Set()
   }
 };
 
@@ -4084,8 +3091,7 @@ const ENTRY_CATEGORY_DATASETS = {
   disease_and_symptoms: ["disease_and_symptoms"],
   lab_parameters: ["lab_parameters"],
   latin: ["latin_units", "latin_greek", "latin_abbreviations", "latin_remedies"],
-  microorganisms: ["microorganisms"],
-  pharmacology: ["pharmacology"]
+  microorganisms: ["microorganisms"]
 };
 const entryDatasetHeadersCache = new Map();
 const entryDatasetExampleRowCache = new Map();
@@ -4569,34 +3575,29 @@ function renderSearchFallback(value){
 
 function renderPharmacologyResult(result){
   const row = result && result.row ? result.row : result;
-  const hierarchyParts = Array.isArray(row && row.atc_hierarchy)
-    ? row.atc_hierarchy.map(item => [item.atc_code, item.atc_name].filter(Boolean).join(" - ").trim()).filter(Boolean)
-    : [];
-  const otherCodes = (Array.isArray(row && row.atc_all) ? row.atc_all : []).filter(code => code && code !== row.atc_primary);
+  const englishName = String(row && (row.names?.english?.source_value || row.names?.english?.normalized || row.id) || "Unnamed drug");
+  const slovakName = String(row && (row.names?.slovak?.verified_value || row.names?.slovak?.source_value) || "");
+  const mechanism = String(row && (row.pharmacology?.summary || row.pharmacology?.mechanisms_of_action?.[0]?.description) || "");
+  const indications = [
+    ...((row && row.clinical_uses?.approved_indications) || []),
+    ...((row && row.clinical_uses?.common_off_label_uses) || [])
+  ].map(item => String(item && (item.indication || item) || "")).filter(Boolean).slice(0, 3);
+  const classes = ((row && row.pharmacology?.therapeutic_class) || []).map(String).filter(Boolean);
+  const profilePath = `${buildAppPathForRoute("pharmacology", { search: "" })}?drug=${encodeURIComponent(String(row && row.id || ""))}`;
   const detailRows = [
-    ["Primary ATC code", row && row.atc_primary],
-    ["ATC categories", hierarchyParts.length ? hierarchyParts.join(" > ") : ""],
-    ["Other ATC codes", otherCodes.length ? otherCodes.join(", ") : ""],
-    ["Mechanism of action", row && row.mechanism_of_action],
-    ["Indications", row && row.indications],
-    ["Routes of administration", row && row.routes_of_administration],
-    ["Standard dose", row && row.standard_dose],
-    ["Absolute contraindications", row && row.contraindications_absolute],
-    ["Relative contraindications", row && row.contraindications_relative],
-    ["Adverse effects", row && row.adverse_effects],
-    ["Major interactions", row && row.major_interactions],
-    ["Antidote or reversal", row && row.antidote_or_reversal],
-    ["Half-life", row && row.half_life],
-    ["Metabolism", row && row.metabolism],
-    ["Elimination", row && row.elimination]
+    ["Primary ATC code", row && row.atc?.primary_code],
+    ["Therapeutic class", classes.join(", ")],
+    ["Mechanism", mechanism],
+    ["Main uses", indications.join(" · ")]
   ].filter(([, value])=> String(value || "").trim());
   const kv = detailRows.map(([label, value])=>{
     return `<div class="k">${escapeHTML(label)}</div><div class="v pharmacology-value">${escapeHTML(String(value || "").trim())}</div>`;
   }).join("");
   return `<div class="result-head"><span class="result-badge drug">Drug</span></div>
-    <strong>${escapeHTML(row && row.english_name || row && row.drug_id || "Unnamed drug")}</strong>
-    ${row && row.slovak_name ? `<div class="small" style="margin-top:4px">${escapeHTML(row.slovak_name)}</div>` : ""}
-    <div class="kv">${kv}</div>`;
+    <strong>${escapeHTML(englishName)}</strong>
+    ${slovakName ? `<div class="small" style="margin-top:4px">${escapeHTML(slovakName)}</div>` : ""}
+    <div class="kv">${kv}</div>
+    <a class="button primary" href="${escapeHTML(profilePath)}">Open profile</a>`;
 }
 
 const LAB_UI_LABELS = {
@@ -5072,166 +4073,6 @@ function toggleLabTag(tagKey){
 function clearLabFilters(){
   state.labParameters.selectedTagKeys.clear();
   refreshLabParametersUI();
-}
-
-function getPharmacologySearchPlaceholder(){
-  return tOr("pharmacology_search_placeholder", "Search drug name or ATC code (min 2 chars)");
-}
-
-function getPharmacologyActiveFilterCode(){
-  return normalizeAtcCode(state.pharmacology.selectedAtcCode);
-}
-
-function pharmacologyMatchesAtcFilter(record, atcCode){
-  const normalizedCode = normalizeAtcCode(atcCode);
-  if(!normalizedCode) return true;
-  const codes = [record && record.atc_primary, ...((record && record.atc_all) || [])]
-    .map(normalizeAtcCode)
-    .filter(Boolean);
-  return codes.some(code => code.startsWith(normalizedCode));
-}
-
-function isCombinationText(value){
-  return /\bcombination(s)?\b|\bincl\.\s*combination(s)?\b/i.test(String(value || ""));
-}
-
-function isCombinationPharmacologyRecord(record){
-  if(!record) return false;
-  if(isCombinationText(record.english_name) || isCombinationText(record.slovak_name)) return true;
-  const hierarchy = Array.isArray(record.atc_hierarchy) ? record.atc_hierarchy : [];
-  return hierarchy.some(item => isCombinationText(item && item.atc_name));
-}
-
-function getFilteredPharmacologyResults(query, atcCode){
-  const filteredFilterCode = normalizeAtcCode(atcCode);
-  const normalizedQuery = String(query || "").trim().toLowerCase();
-  let results = normalizedQuery ? searchPharmacology(normalizedQuery) : pharmacologyRecords.map(row => ({ kind: "pharmacology", row, score: 0 }));
-  if(filteredFilterCode){
-    results = results.filter(item => pharmacologyMatchesAtcFilter(item.row, filteredFilterCode));
-  }
-  results = results.filter(item => !isCombinationPharmacologyRecord(item.row));
-  if(!normalizedQuery){
-    results.sort((a, b)=> String(a.row && (a.row.english_name || a.row.drug_id) || "").localeCompare(String(b.row && (b.row.english_name || b.row.drug_id) || "")));
-  }
-  return results;
-}
-
-function renderPharmacologyAtcOption(node, activeCode = ""){
-  if(!node || !node.atc_code) return "";
-  const isSelected = normalizeAtcCode(activeCode) === normalizeAtcCode(node.atc_code);
-  const codeLabel = [node.atc_code, node.atc_name].filter(Boolean).join(" - ");
-  return `<button type="button" class="pharmacology-atc-pill${isSelected ? " is-active" : ""}" data-atc-select="${escapeHTML(node.atc_code)}">${escapeHTML(codeLabel)}</button>`;
-}
-
-function renderPharmacologyAtcTree(){
-  const label = document.getElementById("pharmacology-atc-filter-label");
-  const summary = document.getElementById("pharmacology-filter-summary");
-  const subtitle = document.getElementById("pharmacology-atc-subtitle");
-  const clearBtn = document.getElementById("pharmacology-clear-filter");
-  const selectedWrap = document.getElementById("pharmacology-selected-filter");
-  const treeWrap = document.getElementById("pharmacology-atc-tree");
-  if(label) label.textContent = tOr("pharmacology_narrow_tags", "Narrow search with tags");
-  if(subtitle) subtitle.textContent = tOr("pharmacology_atc_categories", "ATC categories");
-  if(clearBtn){
-    clearBtn.textContent = tOr("pharmacology_clear_filter", "Clear filter");
-    clearBtn.disabled = !getPharmacologyActiveFilterCode();
-  }
-  if(!selectedWrap || !treeWrap) return;
-  const selectedCode = getPharmacologyActiveFilterCode();
-  if(summary){
-    if(selectedCode){
-      summary.textContent = getAtcFilterLabel(selectedCode);
-      summary.classList.add("is-active");
-    } else {
-      summary.textContent = tOr("pharmacology_no_filter", "No ATC category selected");
-      summary.classList.remove("is-active");
-    }
-  }
-  const hierarchy = selectedCode ? getAtcHierarchy(selectedCode) : [];
-  if(hierarchy.length){
-    selectedWrap.innerHTML = hierarchy.map((node, index) => {
-      const codeLabel = [node.atc_code, node.atc_name].filter(Boolean).join(" - ");
-      const active = index === hierarchy.length - 1;
-      return `<button type="button" class="lab-chip${active ? " is-active" : ""}" data-atc-select="${escapeHTML(node.atc_code)}">${escapeHTML(codeLabel)}</button>`;
-    }).join("");
-    selectedWrap.hidden = false;
-  } else {
-    selectedWrap.innerHTML = `<span class="lab-chip lab-chip-muted">${escapeHTML(tOr("pharmacology_no_filter", "No ATC category selected"))}</span>`;
-    selectedWrap.hidden = false;
-  }
-
-  let nodesToShow = [];
-  if(!selectedCode){
-    nodesToShow = getAtcChildren("");
-  } else {
-    const selectedChildren = getAtcChildren(selectedCode);
-    nodesToShow = selectedChildren;
-  }
-
-  if(nodesToShow.length === 0){
-    treeWrap.innerHTML = `<div class="muted">${escapeHTML(tOr("pharmacology_no_deeper_categories", "No deeper categories."))}</div>`;
-    return;
-  }
-  treeWrap.innerHTML = nodesToShow.map(node => renderPharmacologyAtcOption(node)).join("");
-}
-
-function renderPharmacologyScreenResults(){
-  const input = document.getElementById("pharmacology-search-input");
-  const resultsDiv = document.getElementById("pharmacology-results");
-  const title = document.getElementById("pharmacology-title");
-  const menuBtn = document.getElementById("to-pharmacology");
-  if(title) title.textContent = tOr("pharmacology", "Pharmacology");
-  if(menuBtn){
-    const label = menuBtn.querySelector(".menu-label");
-    if(label) label.textContent = tOr("pharmacology", "Pharmacology");
-  }
-  if(!input || !resultsDiv) return;
-  input.placeholder = getPharmacologySearchPlaceholder();
-  renderPharmacologyAtcTree();
-  if(input.value !== state.pharmacology.query){
-    input.value = state.pharmacology.query;
-  }
-
-  const query = String(state.pharmacology.query || "").trim().toLowerCase();
-  const selectedCode = getPharmacologyActiveFilterCode();
-  if(query.length < SEARCH_MIN_QUERY_LEN && !selectedCode){
-    resultsDiv.innerHTML = "";
-    return;
-  }
-
-  const results = getFilteredPharmacologyResults(query.length >= SEARCH_MIN_QUERY_LEN ? query : "", selectedCode);
-  if(results.length === 0){
-    resultsDiv.textContent = tOr("No matching results found.", "No matching results found.");
-    return;
-  }
-
-  resultsDiv.innerHTML = results.slice(0, SEARCH_MAX_RESULTS).map(item => {
-    return `<div class="result">${renderPharmacologyResult(item)}</div>`;
-  }).join("");
-}
-
-function handlePharmacologySearchInput(){
-  const input = document.getElementById("pharmacology-search-input");
-  state.pharmacology.query = String(input && input.value || "");
-  clearTimeout(state.pharmacology.debounceTimer);
-  state.pharmacology.debounceTimer = setTimeout(()=>{
-    renderPharmacologyScreenResults();
-  }, SEARCH_DEBOUNCE_MS);
-}
-
-function selectPharmacologyAtcCode(atcCode){
-  const normalizedCode = normalizeAtcCode(atcCode);
-  if(!normalizedCode){
-    state.pharmacology.selectedAtcCode = "";
-  } else {
-    state.pharmacology.selectedAtcCode = normalizedCode;
-  }
-  renderPharmacologyScreenResults();
-}
-
-function clearPharmacologyAtcFilter(){
-  state.pharmacology.selectedAtcCode = "";
-  renderPharmacologyScreenResults();
 }
 
 function mapUserFieldFromBase(baseField){
@@ -7880,13 +6721,6 @@ function renderLatinCourseLessonList(){
 function renderLatinCourseCatalog(){
   const list = document.getElementById("course-catalog-list");
   if(!list) return;
-  const pharmacologyCourseCard = `
-    <button type="button" class="course-track-card course-track-card-pharmacology" data-course-open="pharmacology-final">
-      <span class="course-kicker">${escapeHTML(tOr("pharmacology", "Pharmacology"))}</span>
-      <strong>${escapeHTML(tOr("pharmacology_course_catalog_title", "Pharmacology flashcard review"))}</strong>
-      <small>${escapeHTML(tOr("pharmacology_course_catalog_subtitle", "Review the pharmacology deck by day and track correct or wrong answers."))}</small>
-    </button>
-  `;
   const latinCourseCards = LATIN_COURSE_DEFINITIONS.map(course => `
     <button type="button" class="course-track-card" data-course-open="${escapeHTML(course.id)}">
       <span class="course-kicker">${escapeHTML(course.targetLabel)}</span>
@@ -7894,7 +6728,7 @@ function renderLatinCourseCatalog(){
       <small>${escapeHTML(courseText(course.subtitle))}</small>
     </button>
   `).join("");
-  list.innerHTML = `${pharmacologyCourseCard}${latinCourseCards}`;
+  list.innerHTML = latinCourseCards;
 }
 
 function showLatinCourseCatalog(){
@@ -12216,8 +11050,7 @@ async function prepareScreenAfterNavigation(screenId){
     return;
   }
   if(id === "screen-pharmacology"){
-    await preparePharmacologyReview({ onProgressChange: savePharmacologyReviewProgressToProfile });
-    syncPharmacologyReviewProgressWithProfile();
+    await getPharmacologyUi()?.refreshFromUrl();
     return;
   }
   if(id === "screen-latin-terminology"){
@@ -12484,7 +11317,7 @@ async function init(){
     }
   });
   on('to-pharmacology','click', async ()=> {
-    await openPharmacologyCourseScreen();
+    await openPharmacologyScreen();
   });
   on('to-entry','click', ()=> {
     showScreen('screen-entry');
@@ -12566,136 +11399,12 @@ async function init(){
   const labResultsDiv = document.getElementById('lab-parameters-results');
   const labAvailableTags = document.getElementById('lab-parameters-tags-available');
   const labClearFiltersBtn = document.getElementById('lab-parameters-clear-filters');
-  const pharmacologySearchInput = document.getElementById('pharmacology-search-input');
-  const pharmacologyResultsDiv = document.getElementById('pharmacology-results');
-  const pharmacologyTree = document.getElementById('pharmacology-atc-tree');
-  const pharmacologySelectedFilter = document.getElementById('pharmacology-selected-filter');
-  const pharmacologyClearFilterBtn = document.getElementById('pharmacology-clear-filter');
-
   populateSearchDatasetSelect();
 
   bindStickyResultsOffset('#screen-search', resultsDiv);
   bindStickyResultsOffset('#screen-lab-parameters', labResultsDiv);
-  bindStickyResultsOffset('#screen-pharmacology', pharmacologyResultsDiv);
   if(labSearchInput){
     labSearchInput.addEventListener('input', handleLabSearchInput);
-  }
-  if(pharmacologySearchInput){
-    pharmacologySearchInput.addEventListener('input', handlePharmacologySearchInput);
-  }
-  if(pharmacologyTree){
-    pharmacologyTree.addEventListener('click', (event)=>{
-      const target = event.target instanceof Element ? event.target : null;
-      if(!target) return;
-      const selectBtn = target.closest('[data-atc-select]');
-      if(selectBtn){
-        event.preventDefault();
-        selectPharmacologyAtcCode(selectBtn.getAttribute('data-atc-select') || '');
-      }
-    });
-  }
-  if(pharmacologySelectedFilter){
-    pharmacologySelectedFilter.addEventListener('click', (event)=>{
-      const target = event.target instanceof Element ? event.target.closest('[data-atc-select]') : null;
-      if(!target) return;
-      event.preventDefault();
-      selectPharmacologyAtcCode(target.getAttribute('data-atc-select') || '');
-    });
-  }
-  if(pharmacologyClearFilterBtn){
-    pharmacologyClearFilterBtn.addEventListener('click', clearPharmacologyAtcFilter);
-  }
-  const pharmCourseSearch = document.getElementById('pharm-course-search');
-  const pharmCourseTagFilter = document.getElementById('pharm-course-tag-filter');
-  const pharmCourseGrid = document.getElementById('pharm-course-grid');
-  const pharmCourseDetail = document.getElementById('pharm-course-detail');
-  const pharmCourseReviewWrong = document.getElementById('pharm-course-review-wrong');
-  const pharmCourseReset = document.getElementById('pharm-course-reset-progress');
-  if(pharmCourseSearch){
-    pharmCourseSearch.addEventListener('input', ()=>{
-      pharmacologyCourseState.query = pharmCourseSearch.value || "";
-      pharmacologyCourseState.reviewWrong = false;
-      renderPharmCourseOverview();
-    });
-  }
-  if(pharmCourseTagFilter){
-    pharmCourseTagFilter.addEventListener('change', ()=>{
-      pharmacologyCourseState.tagFilter = pharmCourseTagFilter.value || "all";
-      pharmacologyCourseState.reviewWrong = false;
-      renderPharmCourseOverview();
-    });
-  }
-  if(pharmCourseGrid){
-    pharmCourseGrid.addEventListener('click', (event)=>{
-      const target = event.target instanceof Element ? event.target.closest('[data-pharm-open]') : null;
-      if(!target) return;
-      event.preventDefault();
-      openPharmTriplet(target.getAttribute('data-pharm-open'), target.getAttribute('data-pharm-tab') || 'overview');
-    });
-  }
-  if(pharmCourseDetail){
-    pharmCourseDetail.addEventListener('click', (event)=>{
-      const target = event.target instanceof Element ? event.target : null;
-      if(!target) return;
-      const backBtn = target.closest('[data-pharm-back]');
-      if(backBtn){
-        event.preventDefault();
-        closePharmTripletDetail();
-        return;
-      }
-      const tabBtn = target.closest('[data-pharm-tab]');
-      if(tabBtn){
-        event.preventDefault();
-        stopPharmOralTimer();
-        pharmacologyCourseState.activeTab = tabBtn.getAttribute('data-pharm-tab') || 'overview';
-        renderPharmCourseDetail();
-        return;
-      }
-      const completeTopicBtn = target.closest('[data-pharm-complete-topic]');
-      if(completeTopicBtn){
-        event.preventDefault();
-        togglePharmTopicComplete(completeTopicBtn.getAttribute('data-pharm-complete-topic'));
-        return;
-      }
-      const difficultBtn = target.closest('[data-pharm-difficult]');
-      if(difficultBtn){
-        event.preventDefault();
-        togglePharmTopicDifficult(difficultBtn.getAttribute('data-pharm-difficult'));
-        return;
-      }
-      const completeModuleBtn = target.closest('[data-pharm-complete-module]');
-      if(completeModuleBtn){
-        event.preventDefault();
-        togglePharmModuleComplete(completeModuleBtn.getAttribute('data-pharm-complete-module'));
-        return;
-      }
-      const answerBtn = target.closest('[data-pharm-answer]');
-      if(answerBtn){
-        event.preventDefault();
-        handlePharmQuizAnswer(answerBtn);
-        return;
-      }
-      const flashcardBtn = target.closest('[data-pharm-flashcard]');
-      if(flashcardBtn){
-        event.preventDefault();
-        flashcardBtn.classList.toggle('is-flipped');
-        return;
-      }
-      const timerBtn = target.closest('[data-pharm-oral-timer]');
-      if(timerBtn){
-        event.preventDefault();
-        startPharmOralTimer(timerBtn);
-      }
-    });
-  }
-  if(pharmCourseReviewWrong){
-    pharmCourseReviewWrong.addEventListener('click', ()=>{
-      pharmacologyCourseState.reviewWrong = !pharmacologyCourseState.reviewWrong;
-      renderPharmCourseOverview();
-    });
-  }
-  if(pharmCourseReset){
-    pharmCourseReset.addEventListener('click', resetPharmCourseProgress);
   }
   if(labAvailableTags){
     labAvailableTags.addEventListener('click', (event)=>{
@@ -12801,10 +11510,6 @@ async function init(){
       const btn = event.target && event.target.closest ? event.target.closest('[data-course-open]') : null;
       if(!btn) return;
       const courseId = btn.getAttribute('data-course-open') || '';
-      if(courseId === 'pharmacology-final'){
-        await openPharmacologyCourseScreen();
-        return;
-      }
       selectLatinCourse(courseId);
     });
   }
@@ -16672,24 +15377,6 @@ function getDefaultFieldCatalogForAdapter(adapter){
     add("notes", "Notes", "notes");
     return fields;
   }
-  if(adapter.key === "pharmacology"){
-    add("name_en", "Drug name (EN)", "en");
-    add("name_sk", "Drug name (SK)", "sk");
-    add("drug_class", "Class", "drug_class");
-    add("subclass", "Subclass", "subclass");
-    add("mechanism_of_action", "Mechanism of action", "mechanism");
-    add("indications", "Indications", "indications");
-    add("contraindications", "Contraindications", "contraindications");
-    add("adverse_effects_common", "Adverse effects (common)", "adverse_effects_common");
-    add("adverse_effects_serious", "Adverse effects (serious)", "adverse_effects_serious");
-    add("interactions_key", "Interactions (key)", "interactions_key");
-    add("pregnancy", "Pregnancy", "pregnancy");
-    add("routes", "Routes", "routes");
-    add("onset", "Onset", "onset");
-    add("duration", "Duration", "duration");
-    add("notes", "Notes", "notes");
-    return fields;
-  }
   if(adapter.key === "latin_units"){
     add("unit_name", "Unit", "unit_name");
     add("name_la", "Latin term", "la");
@@ -16993,12 +15680,6 @@ function getFlashcardsSubdivisionConfig(adapter){
     return {
       level1: { key: "unit_name", label: tOr("field_unit_name", "Unit") },
       level2: null
-    };
-  }
-  if(adapter.key === "pharmacology"){
-    return {
-      level1: { key: "drug_class", label: tOr("field_drug_class", "Drug class") },
-      level2: { key: "subclass", label: tOr("field_subclass", "Subclass") }
     };
   }
   if(adapter.key === "muscles"){

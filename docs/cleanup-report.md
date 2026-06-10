@@ -39,4 +39,4 @@ Pre-existing deletion not performed by this cleanup pass:
 
 - Similar logo/image files under `assets/` were preserved because duplicate cleanup requires hash comparison, reference checks, and one canonical retained asset.
 - Large medical datasets were preserved because they are app data, not generated output.
-- Historical text files under `data/terminology/` and `data/pharmacology-course/` were preserved as source data/documentation.
+- Historical terminology source files under `data/terminology/` were preserved as source data/documentation.

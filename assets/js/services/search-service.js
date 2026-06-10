@@ -81,10 +81,10 @@ export function createSearchService({
         if (right.kind === "pharmacology") return 1;
       }
       const leftLabel = left.kind === "pharmacology"
-        ? String(left.row && (left.row.english_name || left.row.drug_id) || "")
+        ? String(left.row && (left.row.names?.english?.source_value || left.row.names?.english?.normalized || left.row.id) || "")
         : String(left.row && (left.row[langField] || left.row[userField] || left.row.english_translation || left.row.english || "") || "");
       const rightLabel = right.kind === "pharmacology"
-        ? String(right.row && (right.row.english_name || right.row.drug_id) || "")
+        ? String(right.row && (right.row.names?.english?.source_value || right.row.names?.english?.normalized || right.row.id) || "")
         : String(right.row && (right.row[langField] || right.row[userField] || right.row.english_translation || right.row.english || "") || "");
       return leftLabel.localeCompare(rightLabel);
     });
