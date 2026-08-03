@@ -11,6 +11,7 @@ import {
   parseCsvStrict,
   validateCsvFile,
 } from "../../scripts/lib/csv-validation.mjs";
+import { TERMINOLOGY_SOURCES } from "../../assets/js/services/data-repository.js";
 
 test("browser CSV helpers parse delimiters, escaped quotes, and objects", () => {
   const rows = parseCSVLines(
@@ -37,7 +38,7 @@ test("strict CSV parser supports quoted newlines and reports malformed quotes", 
   );
 });
 
-test("CSV validator rejects duplicate headers, missing identities, and empty datasets", (t) => {
+test("CSV validator rejects duplicate headers, missing identities, and empty active datasets", (t) => {
   const directory = mkdtempSync(join(tmpdir(), "medical-dictionary-csv-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
 
@@ -61,5 +62,53 @@ test("CSV validator rejects duplicate headers, missing identities, and empty dat
   writeFileSync(empty, "id,english_translation\n", "utf8");
   assert.ok(
     validateCsvFile(empty).errors.includes("file contains no usable records"),
+  );
+});
+
+test("CSV validator warns for empty planned datasets but still rejects malformed files", (t) => {
+  const directory = mkdtempSync(
+    join(tmpdir(), "medical-dictionary-planned-csv-"),
+  );
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const emptyPlanned = join(directory, "empty-planned.csv");
+  writeFileSync(emptyPlanned, "id,english_translation\n", "utf8");
+  const emptyResult = validateCsvFile(emptyPlanned, { status: "planned" });
+  assert.deepEqual(emptyResult.errors, []);
+  assert.ok(
+    emptyResult.warnings.includes("planned dataset contains no usable records"),
+  );
+
+  const malformedPlanned = join(directory, "malformed-planned.csv");
+  writeFileSync(malformedPlanned, 'id,name\n1,"unterminated\n', "utf8");
+  const malformedResult = validateCsvFile(malformedPlanned, {
+    status: "planned",
+  });
+  assert.ok(
+    malformedResult.errors.some((error) =>
+      error.includes("unterminated quoted field"),
+    ),
+  );
+});
+
+test("only the unfinished terminology sources are marked planned", () => {
+  const plannedKeys = TERMINOLOGY_SOURCES.filter(
+    (source) => source.status === "planned",
+  )
+    .map((source) => source.key)
+    .sort();
+
+  assert.deepEqual(plannedKeys, [
+    "anatomy",
+    "diagnostic_methods",
+    "disease_and_symptoms",
+    "microorganisms",
+    "physiology",
+    "procedures",
+  ]);
+  assert.ok(
+    TERMINOLOGY_SOURCES.every(
+      (source) => source.status === undefined || source.status === "planned",
+    ),
   );
 });

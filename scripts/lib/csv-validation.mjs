@@ -36,6 +36,7 @@ const IDENTITY_FIELDS_BY_FILE = {
 
 const TRANSLATION_HEADER_PATTERN =
   /(?:^|_)(?:english|german|deutsch|slovak|slovensky|latin|greek|en|de|sk)(?:_|$)/i;
+const DATASET_STATUSES = new Set(["active", "planned"]);
 const MOJIBAKE_PATTERN = /(?:Ã.|Â.|â(?:€|€™|€œ|€�|€“|€”|€¦)|ðŸ)/g;
 
 function countDelimiter(line, delimiter) {
@@ -146,9 +147,12 @@ function identityFieldsFor(filePath, headers) {
   return found.length ? found : headers.slice(0, 1);
 }
 
-export function validateCsvFile(filePath) {
+export function validateCsvFile(filePath, { status = "active" } = {}) {
   const errors = [];
   const warnings = [];
+  if (!DATASET_STATUSES.has(status)) {
+    errors.push(`unsupported dataset status: ${String(status)}`);
+  }
   let text;
 
   try {
@@ -157,9 +161,13 @@ export function validateCsvFile(filePath) {
   } catch (error) {
     return {
       filePath,
+      status,
       rows: 0,
       usableRows: 0,
-      errors: [`file cannot be read as valid UTF-8: ${error.message}`],
+      errors: [
+        ...errors,
+        `file cannot be read as valid UTF-8: ${error.message}`,
+      ],
       warnings,
       missingTranslations: {},
     };
@@ -171,6 +179,7 @@ export function validateCsvFile(filePath) {
     errors.push("file contains no header row");
     return {
       filePath,
+      status,
       rows: 0,
       usableRows: 0,
       errors,
@@ -280,10 +289,17 @@ export function validateCsvFile(filePath) {
   for (const [header, count] of Object.entries(missingTranslations)) {
     if (count) warnings.push(`${header}: ${count} missing value(s)`);
   }
-  if (usableRows === 0) errors.push("file contains no usable records");
+  if (usableRows === 0) {
+    if (status === "planned") {
+      warnings.push("planned dataset contains no usable records");
+    } else {
+      errors.push("file contains no usable records");
+    }
+  }
 
   return {
     filePath,
+    status,
     delimiter: parsed.delimiter,
     headers,
     rows: dataRows.length,

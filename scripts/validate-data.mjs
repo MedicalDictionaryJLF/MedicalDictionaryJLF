@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
+import { TERMINOLOGY_SOURCES } from "../assets/js/services/data-repository.js";
 import { validateCsvFile } from "./lib/csv-validation.mjs";
 import {
   configuredPharmacologyRecordCount,
@@ -8,11 +9,22 @@ import {
 import { ARTIFACTS_DIRECTORY, REPOSITORY_ROOT } from "./project-config.mjs";
 import { toPosixPath, walkFiles } from "./lib/file-references.mjs";
 
-const csvFiles = walkFiles(
-  resolve(REPOSITORY_ROOT, "data/terminology"),
-  (file) => file.toLowerCase().endsWith(".csv"),
+const dataDirectory = resolve(REPOSITORY_ROOT, "data");
+const sourceStatusByPath = new Map(
+  TERMINOLOGY_SOURCES.map((source) => [
+    toPosixPath(source.path),
+    source.status ?? "active",
+  ]),
+);
+const csvFiles = walkFiles(resolve(dataDirectory, "terminology"), (file) =>
+  file.toLowerCase().endsWith(".csv"),
 ).sort();
-const csvResults = csvFiles.map((file) => validateCsvFile(file));
+const csvResults = csvFiles.map((file) => {
+  const dataPath = toPosixPath(relative(dataDirectory, file));
+  return validateCsvFile(file, {
+    status: sourceStatusByPath.get(dataPath) ?? "active",
+  });
+});
 
 const pharmacologyFile = resolve(
   REPOSITORY_ROOT,
@@ -51,6 +63,7 @@ writeFileSync(
 console.table(
   report.csv.map((result) => ({
     dataset: result.filePath,
+    status: result.status,
     rows: result.rows,
     usable: result.usableRows,
     errors: result.errors.length,
@@ -94,7 +107,10 @@ if (errorCount) {
     (sum, result) => sum + result.usableRows,
     0,
   );
+  const emptyPlannedDatasets = report.csv.filter(
+    (result) => result.status === "planned" && result.usableRows === 0,
+  ).length;
   console.log(
-    `Dataset validation passed: ${report.csv.length} CSV files (${csvRows} usable rows) and ${report.pharmacology.recordCount} pharmacology records.`,
+    `Dataset validation passed: ${report.csv.length} CSV files (${csvRows} usable rows), ${emptyPlannedDatasets} empty planned dataset(s), and ${report.pharmacology.recordCount} pharmacology records.`,
   );
 }

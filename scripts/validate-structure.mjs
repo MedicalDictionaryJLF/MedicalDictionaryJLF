@@ -20,6 +20,7 @@ import {
 
 const failures = [];
 const notes = [];
+const allowedDatasetStatuses = new Set(["active", "planned"]);
 const requiredFiles = [
   "index.html",
   "package.json",
@@ -51,6 +52,14 @@ for (const file of requiredFiles) {
 
 for (const source of TERMINOLOGY_SOURCES) {
   const relativePath = `data/${source.path}`;
+  const status = source.status ?? "active";
+  if (!allowedDatasetStatuses.has(status)) {
+    fail(
+      "declared terminology dataset status",
+      `${source.key}: ${String(status)}`,
+      'status must be "active" or "planned"',
+    );
+  }
   if (!existsSync(resolve(REPOSITORY_ROOT, relativePath))) {
     fail(
       "declared terminology dataset",

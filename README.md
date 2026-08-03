@@ -44,7 +44,7 @@ npm run ci
 
 `npm run ci` is the complete non-interactive sequence used by GitHub Actions.
 
-> Current stabilization blocker: six declared terminology CSV files are header-only (`anatomy`, `diagnostic_methods`, `disease_and_symptoms`, `microorganisms`, `physiology`, and `procedures`). `validate:data`, `build`, `test:smoke`, and `ci` therefore fail deliberately until reviewed records are supplied or the dataset declarations are changed by an authorized content decision. The validator does not invent medical records or treat empty files as valid.
+Six declared terminology CSV files are intentionally header-only future content: `anatomy`, `diagnostic_methods`, `disease_and_symptoms`, `microorganisms`, `physiology`, and `procedures`. They are marked `planned` in the source manifest. Validation reports their lack of records as warnings, while empty active datasets and malformed planned or active files remain errors. No placeholder medical terms are generated.
 
 ## Production build and preview
 

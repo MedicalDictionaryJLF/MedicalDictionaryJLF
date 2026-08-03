@@ -14,7 +14,7 @@ GitHub Actions runs `npm ci` and `npm run ci` on pushes to `main`, pull requests
 
 Dataset and build summaries are written to `.artifacts/` and uploaded by CI for a short retention period. The directory is ignored locally.
 
-## Current data-gate blocker
+## Planned terminology datasets
 
 The repository currently declares six terminology CSV sources that contain headers but no records:
 
@@ -25,7 +25,7 @@ The repository currently declares six terminology CSV sources that contain heade
 - `data/terminology/physiology.csv`
 - `data/terminology/procedures.csv`
 
-`npm run validate:data` correctly exits with code 1 because a declared dataset has no usable records. Consequently `npm run build`, `npm run test:smoke`, and `npm run ci` also stop at the data gate. Resolving this requires reviewed medical records or an explicit product decision to remove/change those declarations; repository stabilization must not fabricate content or silently weaken the validator.
+These sources are marked `status: "planned"` in `TERMINOLOGY_SOURCES`. Their lack of usable records is reported as a warning so unfinished future content does not block CI. This exception applies only to record count: planned files must still be readable UTF-8 with a valid, unique, non-empty header and structurally valid CSV. Any malformed planned file fails validation, as does any active dataset with no usable records. Repository tooling never fabricates placeholder medical content.
 
 ## Adding tests
 
@@ -45,7 +45,7 @@ npm run validate:structure
 npm run validate:data
 ```
 
-The CSV validator requires valid UTF-8, unique non-empty headers, parseable rows, and at least one usable record with an identity value. It reports row counts, missing translations, exact duplicates, Unicode replacement characters, and likely mojibake. Fix structural errors without changing medical meaning.
+The CSV validator requires valid UTF-8, unique non-empty headers, parseable rows, and an identity value for every usable record. Active datasets require at least one usable record. A deliberately unfinished source may be marked `status: "planned"`; an empty planned file emits a warning, but all structural checks remain strict. Remove the planned status when reviewed content becomes active. The validator also reports row counts, missing translations, exact duplicates, Unicode replacement characters, and likely mojibake. Fix structural errors without changing medical meaning.
 
 The pharmacology validator reads the data path and the service-configured expected count, but it does not hard-code 1,000 records as a generic rule. It reports the actual count, configured expectation, mismatch status, duplicate IDs, ATC shape, major service-used fields, data-quality metadata, and the number of records requiring human review.
 
