@@ -1,30 +1,27 @@
-import { resolveAppModuleUrl, resolveAppShellUrl } from "./core/app-paths.js?v=30";
+import { resolveAppShellUrl } from "./core/app-paths.js?v=30";
 
-async function bootstrapRoutedPage(){
+async function bootstrapRoutedPage() {
   const indexUrl = resolveAppShellUrl();
   const res = await fetch(indexUrl);
-  if(!res.ok){
+  if (!res.ok) {
     throw new Error(`Failed to load app shell: ${res.status}`);
   }
 
   const html = await res.text();
   const parsed = new DOMParser().parseFromString(html, "text/html");
   const appShell = parsed.querySelector("#app");
-  if(!appShell){
+  if (!appShell) {
     throw new Error("App shell markup was not found in index.html.");
   }
 
-  if(parsed.title) document.title = parsed.title;
+  if (parsed.title) document.title = parsed.title;
 
   document.body.replaceChildren(document.importNode(appShell, true));
 
-  const script = document.createElement("script");
-  script.type = "module";
-  script.src = resolveAppModuleUrl();
-  document.body.appendChild(script);
+  await import("./app.js");
 }
 
-bootstrapRoutedPage().catch((error)=>{
+bootstrapRoutedPage().catch((error) => {
   console.error("Route bootstrap failed:", error);
   document.body.innerHTML = `
     <main style="padding:24px;font-family:system-ui,sans-serif">

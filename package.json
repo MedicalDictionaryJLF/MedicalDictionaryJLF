@@ -1,12 +1,35 @@
 {
   "name": "medical-dictionary-jlf",
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0 <25"
+  },
   "scripts": {
-    "build": "node scripts/build.js",
     "dev": "vite --host 0.0.0.0",
-    "test:anamnesis-ui": "node scripts/anamnesis-ui-tests.mjs"
+    "build": "npm run validate && vite build && node scripts/copy-static-assets.mjs && node scripts/validate-build.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "lint": "eslint assets/js/**/*.js src/**/*.js anamnesis-training/src/**/*.js api/**/*.js scripts/**/*.js scripts/**/*.mjs test/**/*.mjs vite.config.mjs",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write package.json api/package.json eslint.config.mjs vite.config.mjs .github/workflows/ci.yml scripts test README.md docs/deployment.md docs/development.md assets/js/services/quiz-service.js assets/js/core/app-paths.js assets/js/route-loader.js anamnesis-training/src/simulationRunner.js",
+    "format:check": "prettier --check package.json api/package.json eslint.config.mjs vite.config.mjs .github/workflows/ci.yml scripts test README.md docs/deployment.md docs/development.md assets/js/services/quiz-service.js assets/js/core/app-paths.js assets/js/route-loader.js anamnesis-training/src/simulationRunner.js",
+    "validate": "npm run validate:structure && npm run validate:data",
+    "validate:structure": "node scripts/validate-structure.mjs",
+    "validate:data": "node scripts/validate-data.mjs",
+    "test": "npm run test:unit && npm run test:anamnesis-ui && npm run test:anamnesis-simulation && npm run test:api",
+    "test:unit": "node --test test/unit/*.test.mjs",
+    "test:anamnesis-ui": "node scripts/anamnesis-ui-tests.mjs",
+    "test:anamnesis-simulation": "node scripts/anamnesis-simulation-tests.mjs",
+    "test:api": "node --test test/api/*.test.mjs",
+    "test:smoke": "npm run build && node scripts/smoke-tests.mjs",
+    "ci": "npm run lint && npm run format:check && npm run validate && npm test && npm run test:smoke"
   },
   "devDependencies": {
-    "vite": "^7.0.0"
+    "@eslint/js": "10.0.1",
+    "eslint": "10.8.0",
+    "globals": "17.9.0",
+    "prettier": "3.9.6",
+    "vite": "7.3.6"
   }
 }
