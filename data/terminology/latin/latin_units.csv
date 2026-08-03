@@ -624,7 +624,7 @@ unit_number,unit_name,latin_term,latin_genitive,part_of_speech,gender,english_tr
 10,Latin medical prescription,boricus,,Adjective,,boric,,borhaltig,,boritý,,
 10,Latin medical prescription,capsula,capsulae,Noun,feminine,capsule,"1. tissue sheath (anat.) 2. capsule with powder/liquid drug (pharm.)",die Kapsel,,kapsula,,
 10,Latin medical prescription,dilūtus,,Adjective,,dilute,thinned,verdünnt,,riedený,,
-10,Latin medical prescription,effervēscēns,effervescentis,Adjective,,effervescent,sparkling, fizzy,brausend,,šumivý,,
+10,Latin medical prescription,effervēscēns,effervescentis,Adjective,,effervescent,"sparkling, fizzy",brausend,,šumivý,,
 10,Latin medical prescription,expectorāns,expectorantis,Noun,,expectorant,medicine used to treat coughs,Expektorans,,expektorans,,
 10,Latin medical prescription,expedītiō,expedītiōnis,Noun,feminine,expedition,medicine (remedy) package,die Abgabe,,výdaj,,
 10,Latin medical prescription,expedītiō originālis,,Noun,feminine,original package,,Originalpackung,,originálne balenie,compound term
@@ -767,7 +767,7 @@ unit_number,unit_name,latin_term,latin_genitive,part_of_speech,gender,english_tr
 12,Suffixes,viscerālis,,Adjective,,visceral,relating to internal organs,viszeral,,viscerálny,,
 12,Suffixes,tuberōsus,,Adjective,,tuberous,resembling a tuber,tuberös,,hľuzovitý,,
 12,Suffixes,universālis,,Adjective,,universal,general,universell,,univerzálny,,
-12,Suffixes,vulgāris,,Adjective,,vulgar,current,ordinary,vulgär,,bežný, obyčajný,,
+12,Suffixes,vulgāris,,Adjective,,vulgar,"current,ordinary",vulgär,,"bežný, obyčajný",,
 
 13,Compound words,acromioclavicularis,,Adjective,,acromioclavicular,relating to the acromion and the clavicle,akromioklavikulär,,akromioklavikulárny,,
 13,Compound words,arachnophobia,arachnophobiae,Noun,feminine,arachnophobia,morbid fear of spiders,Arachnophobie,,arachnofóbia,,

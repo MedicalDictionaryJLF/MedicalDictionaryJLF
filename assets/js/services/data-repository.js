@@ -1,15 +1,15 @@
 export const TERMINOLOGY_SOURCES = [
-  { key: "anatomy", label: "Anatomy", path: "terminology/anatomy.csv" },
-  { key: "diagnostic_methods", label: "Diagnostic methods", path: "terminology/diagnostic_methods.csv" },
-  { key: "disease_and_symptoms", label: "Diseases and symptoms", path: "terminology/disease_and_symptoms.csv" },
+  { key: "anatomy", label: "Anatomy", path: "terminology/anatomy.csv", status: "planned" },
+  { key: "diagnostic_methods", label: "Diagnostic methods", path: "terminology/diagnostic_methods.csv", status: "planned" },
+  { key: "disease_and_symptoms", label: "Diseases and symptoms", path: "terminology/disease_and_symptoms.csv", status: "planned" },
   { key: "lab_parameters", label: "Laboratory parameters", path: "terminology/lab_parameters.csv" },
   { key: "latin", label: "Latin", path: "terminology/latin/latin_units.csv", sourceLabel: "Units" },
   { key: "latin", label: "Latin", path: "terminology/latin/latin_greek.csv", sourceLabel: "Latin-Greek synonyms" },
   { key: "latin", label: "Latin", path: "terminology/latin/latin_abbreviations.csv", sourceLabel: "Abbreviations in medicine" },
   { key: "latin", label: "Latin", path: "terminology/latin/latin_remedies.csv", sourceLabel: "Remedies" },
-  { key: "microorganisms", label: "Microorganisms", path: "terminology/microorganisms.csv" },
-  { key: "physiology", label: "Physiology", path: "terminology/physiology.csv" },
-  { key: "procedures", label: "Procedures", path: "terminology/procedures.csv" },
+  { key: "microorganisms", label: "Microorganisms", path: "terminology/microorganisms.csv", status: "planned" },
+  { key: "physiology", label: "Physiology", path: "terminology/physiology.csv", status: "planned" },
+  { key: "procedures", label: "Procedures", path: "terminology/procedures.csv", status: "planned" },
   { key: "muscles", label: "Muscles", path: "terminology/muscles.csv" }
 ];
 
@@ -121,7 +121,6 @@ function normalizeTags(rawTags) {
     .map((tag) => TAG_NORMALIZATION_MAP[tag] || tag);
   return [...new Set(normalized.filter((tag) => ALLOWED_TAGS.includes(tag)))];
 }
-
 function normalizeLabRow(obj) {
   const system = String(obj.system || "").trim() || LAB_DEFAULT_SYSTEM;
   const tagLabels = normalizeTags(obj.tags);

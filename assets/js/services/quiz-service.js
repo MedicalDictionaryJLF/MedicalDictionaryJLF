@@ -1,22 +1,27 @@
-function shuffle(items) {
+function shuffle(items, random = Math.random) {
   for (let index = items.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
+    const swapIndex = Math.floor(random() * (index + 1));
     [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
   }
   return items;
 }
 
-export function weightedSampleWithoutReplacement(items, count, weightFn) {
+export function weightedSampleWithoutReplacement(
+  items,
+  count,
+  weightFn,
+  random = Math.random,
+) {
   const pool = items.slice();
   const selected = [];
   const take = Math.min(count, pool.length);
   for (let index = 0; index < take; index += 1) {
     const weighted = pool.map((item) => ({
       item,
-      weight: Math.max(0.01, Number(weightFn(item)) || 1)
+      weight: Math.max(0.01, Number(weightFn(item)) || 1),
     }));
     const total = weighted.reduce((sum, entry) => sum + entry.weight, 0);
-    let hit = Math.random() * total;
+    let hit = random() * total;
     let picked = weighted[weighted.length - 1].item;
     for (const entry of weighted) {
       hit -= entry.weight;
@@ -34,17 +39,32 @@ export function weightedSampleWithoutReplacement(items, count, weightFn) {
   return selected;
 }
 
-function createQuizQuestions(candidates, questionCount, optionsCount, fromField, toField) {
+function createQuizQuestions(
+  candidates,
+  questionCount,
+  optionsCount,
+  fromField,
+  toField,
+  random,
+) {
   const chosen = candidates.slice(0, questionCount);
-  const allAnswers = [...new Set(candidates.map((candidate) => candidate.toTerm).filter(Boolean))];
+  const allAnswers = [
+    ...new Set(candidates.map((candidate) => candidate.toTerm).filter(Boolean)),
+  ];
   return chosen.map((candidate, index) => {
     const options = [candidate.toTerm];
-    const distractors = allAnswers.filter((value) => value !== candidate.toTerm);
-    shuffle(distractors);
-    for (let distractorIndex = 0; distractorIndex < distractors.length && options.length < optionsCount; distractorIndex += 1) {
+    const distractors = allAnswers.filter(
+      (value) => value !== candidate.toTerm,
+    );
+    shuffle(distractors, random);
+    for (
+      let distractorIndex = 0;
+      distractorIndex < distractors.length && options.length < optionsCount;
+      distractorIndex += 1
+    ) {
       options.push(distractors[distractorIndex]);
     }
-    shuffle(options);
+    shuffle(options, random);
     return {
       id: `q${index + 1}`,
       type: "multiple_choice",
@@ -54,14 +74,17 @@ function createQuizQuestions(candidates, questionCount, optionsCount, fromField,
       termId: candidate.termId,
       fromTerm: candidate.fromTerm,
       correctToTerm: candidate.toTerm,
-      options: options.map((text, optionIndex) => ({ id: `o${optionIndex + 1}`, text })),
+      options: options.map((text, optionIndex) => ({
+        id: `o${optionIndex + 1}`,
+        text,
+      })),
       answered: false,
       selectedOptionId: null,
       isCorrect: null,
       sourceType: candidate.sourceType,
       sourceDataset: candidate.sourceDataset,
       baseTermKey: candidate.baseTermKey,
-      userTermId: candidate.userTermId
+      userTermId: candidate.userTermId,
     };
   });
 }
@@ -83,14 +106,22 @@ function createTypingQuestions(candidates, questionCount, fromField, toField) {
     sourceType: candidate.sourceType,
     sourceDataset: candidate.sourceDataset,
     baseTermKey: candidate.baseTermKey,
-    userTermId: candidate.userTermId
+    userTermId: candidate.userTermId,
   }));
 }
 
-function createMatchingQuestions(candidates, questionCount, fromField, toField) {
+function createMatchingQuestions(
+  candidates,
+  questionCount,
+  fromField,
+  toField,
+  random,
+) {
   const chosen = candidates.slice(0, questionCount);
-  const choices = [...new Set(chosen.map((candidate) => candidate.toTerm).filter(Boolean))];
-  shuffle(choices);
+  const choices = [
+    ...new Set(chosen.map((candidate) => candidate.toTerm).filter(Boolean)),
+  ];
+  shuffle(choices, random);
   const pairs = chosen.map((candidate, index) => ({
     pairId: `p${index + 1}`,
     termId: candidate.termId,
@@ -101,18 +132,20 @@ function createMatchingQuestions(candidates, questionCount, fromField, toField) 
     sourceType: candidate.sourceType,
     sourceDataset: candidate.sourceDataset,
     baseTermKey: candidate.baseTermKey,
-    userTermId: candidate.userTermId
+    userTermId: candidate.userTermId,
   }));
-  return [{
-    id: "m1",
-    type: "matching",
-    fromField,
-    toField,
-    number: 1,
-    pairs,
-    choices,
-    answered: false
-  }];
+  return [
+    {
+      id: "m1",
+      type: "matching",
+      fromField,
+      toField,
+      number: 1,
+      pairs,
+      choices,
+      answered: false,
+    },
+  ];
 }
 
 function buildWrongEntry(item, chosenValue, timestamp) {
@@ -125,17 +158,18 @@ function buildWrongEntry(item, chosenValue, timestamp) {
     sourceType: item.sourceType,
     sourceDataset: item.sourceDataset,
     baseTermKey: item.baseTermKey,
-    userTermId: item.userTermId
+    userTermId: item.userTermId,
   };
 }
 
 export function createQuizEngine({
+  random = Math.random,
   onTick = () => {},
   getTermStats = () => ({ correct: 0, wrong: 0 }),
   recordAttempt = () => {},
   recordSession = () => {},
   appendWrongTermsLog = () => {},
-  persistSession = () => {}
+  persistSession = () => {},
 } = {}) {
   const state = {
     active: false,
@@ -156,7 +190,7 @@ export function createQuizEngine({
     finishedAt: null,
     timerSeconds: 0,
     timeLeftSeconds: null,
-    timerHandle: null
+    timerHandle: null,
   };
 
   function clearTimer() {
@@ -188,7 +222,7 @@ export function createQuizEngine({
       wrongAnswers: state.wrongAnswers,
       startedAt: state.startedAt,
       finishedAt: state.finishedAt,
-      timeLeftSeconds: state.timeLeftSeconds
+      timeLeftSeconds: state.timeLeftSeconds,
     };
   }
 
@@ -201,7 +235,7 @@ export function createQuizEngine({
       toField,
       chosen: wrongEntry.userChosen || "",
       correct: wrongEntry.correctToTerm || "",
-      timestamp: wrongEntry.timestamp
+      timestamp: wrongEntry.timestamp,
     });
     return wrongEntry;
   }
@@ -218,9 +252,12 @@ export function createQuizEngine({
       fromField: state.fromField,
       toField: state.toField,
       score: state.score,
-      total: state.settings && state.settings.questionCount ? state.settings.questionCount : state.questions.length,
+      total:
+        state.settings && state.settings.questionCount
+          ? state.settings.questionCount
+          : state.questions.length,
       wrongAnswers: state.wrongAnswers.slice(),
-      settings: state.settings
+      settings: state.settings,
     };
     recordSession(summary);
     persistSession();
@@ -251,33 +288,53 @@ export function createQuizEngine({
     questionCount,
     optionsCount,
     quizType = "multiple_choice",
-    filters = {}
+    filters = {},
   }) {
-    const normalizedQuizType = ["multiple_choice", "matching", "typing"].includes(String(quizType || ""))
+    const normalizedQuizType = [
+      "multiple_choice",
+      "matching",
+      "typing",
+    ].includes(String(quizType || ""))
       ? String(quizType)
       : "multiple_choice";
     const preferWrong = !!filters.preferWrong;
-    const usableCandidates = (candidates || []).filter((candidate) => candidate && candidate.fromTerm && candidate.toTerm);
+    const usableCandidates = (candidates || []).filter(
+      (candidate) => candidate && candidate.fromTerm && candidate.toTerm,
+    );
     if (usableCandidates.length < 1) {
       return { ok: false, reason: "quiz_err_no_pairs" };
     }
-    if (normalizedQuizType === "multiple_choice" && usableCandidates.length < 2) {
+    if (
+      normalizedQuizType === "multiple_choice" &&
+      usableCandidates.length < 2
+    ) {
       return { ok: false, reason: "quiz_err_need_two_pairs" };
     }
 
-    const maxQuestions = Math.max(1, Math.min(Number(questionCount) || 5, usableCandidates.length));
-    const answersPerQuestion = Math.max(2, Math.min(Number(optionsCount) || 4, 6));
+    const maxQuestions = Math.max(
+      1,
+      Math.min(Number(questionCount) || 5, usableCandidates.length),
+    );
+    const answersPerQuestion = Math.max(
+      2,
+      Math.min(Number(optionsCount) || 4, 6),
+    );
 
     let selected = usableCandidates.slice();
     if (preferWrong) {
-      selected = weightedSampleWithoutReplacement(usableCandidates, maxQuestions, (candidate) => {
-        const stats = getTermStats(candidate.termId, fromField, toField);
-        const wrong = Number(stats.wrong || 0);
-        const correct = Number(stats.correct || 0);
-        return 1 + Math.max(0, wrong - correct) + Math.min(3, wrong);
-      });
+      selected = weightedSampleWithoutReplacement(
+        usableCandidates,
+        maxQuestions,
+        (candidate) => {
+          const stats = getTermStats(candidate.termId, fromField, toField);
+          const wrong = Number(stats.wrong || 0);
+          const correct = Number(stats.correct || 0);
+          return 1 + Math.max(0, wrong - correct) + Math.min(3, wrong);
+        },
+        random,
+      );
     } else {
-      shuffle(selected);
+      shuffle(selected, random);
       selected = selected.slice(0, maxQuestions);
     }
 
@@ -293,18 +350,36 @@ export function createQuizEngine({
       filters: {
         onlyStarred: !!filters.onlyStarred,
         preferWrong,
-        doubleConfirm: !!filters.doubleConfirm
+        doubleConfirm: !!filters.doubleConfirm,
       },
       customFilters: filters.customFilters || null,
-      timer: Number(filters.timerSeconds || 0)
+      timer: Number(filters.timerSeconds || 0),
     };
     state.pool = usableCandidates;
     if (normalizedQuizType === "typing") {
-      state.questions = createTypingQuestions(selected, maxQuestions, fromField, toField);
+      state.questions = createTypingQuestions(
+        selected,
+        maxQuestions,
+        fromField,
+        toField,
+      );
     } else if (normalizedQuizType === "matching") {
-      state.questions = createMatchingQuestions(selected, maxQuestions, fromField, toField);
+      state.questions = createMatchingQuestions(
+        selected,
+        maxQuestions,
+        fromField,
+        toField,
+        random,
+      );
     } else {
-      state.questions = createQuizQuestions(selected, maxQuestions, answersPerQuestion, fromField, toField);
+      state.questions = createQuizQuestions(
+        selected,
+        maxQuestions,
+        answersPerQuestion,
+        fromField,
+        toField,
+        random,
+      );
     }
     state.currentIndex = 0;
     state.score = 0;
@@ -331,7 +406,11 @@ export function createQuizEngine({
       const typed = String(selectedOptionId || "").trim();
       question.answered = true;
       question.typedAnswer = typed;
-      question.isCorrect = typed.toLowerCase() === String(question.correctToTerm || "").trim().toLowerCase();
+      question.isCorrect =
+        typed.toLowerCase() ===
+        String(question.correctToTerm || "")
+          .trim()
+          .toLowerCase();
       state.answered += 1;
       if (question.isCorrect) {
         state.score += 1;
@@ -339,9 +418,20 @@ export function createQuizEngine({
         state.bestStreak = Math.max(state.bestStreak, state.streak);
       } else {
         state.streak = 0;
-        logWrongAnswer(question, question.fromField, question.toField, typed, new Date().toISOString());
+        logWrongAnswer(
+          question,
+          question.fromField,
+          question.toField,
+          typed,
+          new Date().toISOString(),
+        );
       }
-      recordAttempt(question.termId, question.fromField, question.toField, question.isCorrect);
+      recordAttempt(
+        question.termId,
+        question.fromField,
+        question.toField,
+        question.isCorrect,
+      );
       question.pendingOptionId = "";
       return { ok: true, question };
     }
@@ -350,7 +440,9 @@ export function createQuizEngine({
       return { ok: false, reason: "Use matching submit." };
     }
 
-    const selected = question.options.find((option) => option.id === selectedOptionId);
+    const selected = question.options.find(
+      (option) => option.id === selectedOptionId,
+    );
     if (!selected) return { ok: false, reason: "Invalid option." };
 
     question.answered = true;
@@ -363,9 +455,20 @@ export function createQuizEngine({
       state.bestStreak = Math.max(state.bestStreak, state.streak);
     } else {
       state.streak = 0;
-      logWrongAnswer(question, question.fromField, question.toField, selected.text, new Date().toISOString());
+      logWrongAnswer(
+        question,
+        question.fromField,
+        question.toField,
+        selected.text,
+        new Date().toISOString(),
+      );
     }
-    recordAttempt(question.termId, question.fromField, question.toField, question.isCorrect);
+    recordAttempt(
+      question.termId,
+      question.fromField,
+      question.toField,
+      question.isCorrect,
+    );
     question.pendingOptionId = "";
     return { ok: true, question };
   }
@@ -373,25 +476,48 @@ export function createQuizEngine({
   function submitMatching(questionId, answersByPairId) {
     if (!state.active) return { ok: false, reason: "Quiz not active." };
     const question = getCurrentQuestion();
-    if (!question || question.id !== questionId || question.answered || question.type !== "matching") {
+    if (
+      !question ||
+      question.id !== questionId ||
+      question.answered ||
+      question.type !== "matching"
+    ) {
       return { ok: false, reason: "Matching question unavailable." };
     }
-    const answerMap = answersByPairId && typeof answersByPairId === "object" ? answersByPairId : {};
+    const answerMap =
+      answersByPairId && typeof answersByPairId === "object"
+        ? answersByPairId
+        : {};
     let correctCount = 0;
     let wrongCount = 0;
     const timestamp = new Date().toISOString();
     for (const pair of question.pairs) {
       const chosen = String(answerMap[pair.pairId] || "").trim();
       pair.selectedToTerm = chosen;
-      pair.isCorrect = chosen.toLowerCase() === String(pair.correctToTerm || "").trim().toLowerCase();
+      pair.isCorrect =
+        chosen.toLowerCase() ===
+        String(pair.correctToTerm || "")
+          .trim()
+          .toLowerCase();
       state.answered += 1;
       if (pair.isCorrect) {
         correctCount += 1;
       } else {
         wrongCount += 1;
-        logWrongAnswer(pair, question.fromField, question.toField, chosen, timestamp);
+        logWrongAnswer(
+          pair,
+          question.fromField,
+          question.toField,
+          chosen,
+          timestamp,
+        );
       }
-      recordAttempt(pair.termId, question.fromField, question.toField, pair.isCorrect);
+      recordAttempt(
+        pair.termId,
+        question.fromField,
+        question.toField,
+        pair.isCorrect,
+      );
     }
     state.score += correctCount;
     state.streak = wrongCount === 0 ? state.streak + 1 : 0;
@@ -417,6 +543,6 @@ export function createQuizEngine({
     submitMatching,
     getQuizState,
     finishQuiz,
-    nextQuestion
+    nextQuestion,
   };
 }

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.artifacts/
+coverage/
+data/
+index.html
+scripts/pharmacology-*.html
+scripts/pharmacology-tests.js
+anamnesis-training/src/data/
+anamnesis-training/src/patientCase.js

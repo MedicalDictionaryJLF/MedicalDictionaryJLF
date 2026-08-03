@@ -12,11 +12,14 @@ export const SCREEN_ROUTE_MAP = {
   "screen-biophysics-tf": "biophysics",
   "screen-muscle-training": "muscles",
   "screen-latin-terminology": "latin-terminology",
-  "screen-anamnesis": "anamnesis"
+  "screen-anamnesis": "anamnesis",
 };
 
 export const ROUTE_SCREEN_MAP = Object.fromEntries(
-  Object.entries(SCREEN_ROUTE_MAP).map(([screenId, route]) => [route, screenId])
+  Object.entries(SCREEN_ROUTE_MAP).map(([screenId, route]) => [
+    route,
+    screenId,
+  ]),
 );
 
 export const SECTION_ROUTE_KEYS = new Set([
@@ -33,11 +36,14 @@ export const SECTION_ROUTE_KEYS = new Set([
   "entry",
   "courses",
   "biophysics",
-  "latin-terminology"
+  "latin-terminology",
 ]);
 
 export function normalizeRoutePath(value) {
-  const text = String(value || "").trim().replace(/^\/+|\/+$/g, "").toLowerCase();
+  const text = String(value || "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "")
+    .toLowerCase();
   return text || "menu";
 }
 
@@ -92,7 +98,7 @@ export function getAppBasePath(pathname = window.location.pathname) {
 
 export function buildAppPathForRoute(
   route,
-  { pathname = window.location.pathname, search = window.location.search } = {}
+  { pathname = window.location.pathname, search = window.location.search } = {},
 ) {
   const normalized = normalizeRoutePath(route);
   const params = new URLSearchParams(search);
@@ -104,7 +110,7 @@ export function buildAppPathForRoute(
 export function getRouteFromLocation({
   pathname = window.location.pathname,
   search = window.location.search,
-  hash = window.location.hash
+  hash = window.location.hash,
 } = {}) {
   const path = String(pathname || "").replace(/\/+$/g, "");
   if (path) {
@@ -134,15 +140,27 @@ export function getRouteFromLocation({
   return "";
 }
 
-export function resolveBundledDataUrl(path) {
-  const normalized = String(path || "").replace(/^\/+/, "").replace(/^data\//, "");
-  return new URL(`../../../data/${normalized}`, import.meta.url).href;
+export function resolveBundledDataUrl(
+  path,
+  { pathname = window.location.pathname, origin = window.location.origin } = {},
+) {
+  const normalized = String(path || "")
+    .replace(/^\/+/, "")
+    .replace(/^data\//, "");
+  return new URL(`${getAppBasePath(pathname)}data/${normalized}`, origin).href;
 }
 
-export function resolveAppShellUrl() {
-  return new URL("../../../index.html", import.meta.url).href;
+export function resolveAppShellUrl({
+  pathname = window.location.pathname,
+  origin = window.location.origin,
+} = {}) {
+  return new URL(`${getAppBasePath(pathname)}index.html`, origin).href;
 }
 
-export function resolveAppModuleUrl() {
-  return new URL("../app.js?v=30", import.meta.url).href;
+export function resolveAppModuleUrl({
+  pathname = window.location.pathname,
+  origin = window.location.origin,
+} = {}) {
+  return new URL(`${getAppBasePath(pathname)}assets/js/app.js?v=30`, origin)
+    .href;
 }
