@@ -160,9 +160,10 @@ main{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   overflow:visible;
 }
+#screen-menu{justify-content:center;}
 body.ui-motion-ready .screen{
   opacity:0;
   transform:translateY(10px) scale(.995);
@@ -8370,5 +8371,3017 @@ body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-m
   }
   body[data-theme="dark"] #screen-submenu .submenu-shell{
     background:linear-gradient(180deg, rgba(17,26,22,.94), rgba(12,28,20,.96)) !important;
+  }
+}
+
+/* APP SHELL / UI PHASE 1 */
+:root{--shell-sidebar-w:248px;--shell-sidebar-collapsed-w:76px;--surface-page:#f5f7f6;--surface-panel:#fff;--surface-subtle:#eef3f0;--text-primary:#17211c;--text-secondary:#5f6f65;--border-subtle:rgba(24,48,34,.11);--brand-soft:#e3f3e9;--study-accent:#5856b9;--clinical-accent:#147d78;--personal-accent:#667085}
+body[data-theme="dark"]{--surface-page:#0d1511;--surface-panel:#121d17;--surface-subtle:#17251d;--text-primary:#edf7f0;--text-secondary:#a6b8ac;--border-subtle:rgba(190,225,201,.12);--brand-soft:#153425}
+body.app-workspace-active{background:var(--surface-page)!important}body.app-workspace-active::before{opacity:0!important;visibility:hidden}
+.app-nav-toggle{width:40px;height:40px;padding:9px!important;display:none;align-items:center;justify-content:center}.app-nav-toggle svg,.global-search-trigger svg{width:20px;height:20px;fill:currentColor;flex:0 0 auto}body.app-workspace-active .app-nav-toggle{display:inline-flex}body[data-current-screen="screen-submenu"] #header-back{display:none!important}
+.global-search-trigger{min-width:clamp(220px,28vw,420px);height:40px;display:none;align-items:center;justify-content:flex-start;gap:9px;padding:0 10px 0 12px;border:1px solid rgba(255,255,255,.22);border-radius:11px;background:rgba(255,255,255,.1);color:#fff;box-shadow:none;font-size:13px;font-weight:600;text-align:left}body.app-workspace-active .global-search-trigger{display:flex}.global-search-trigger:hover{background:rgba(255,255,255,.16)}.global-search-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.global-search-trigger kbd,.dashboard-search-launch kbd{margin-left:auto;padding:3px 7px;border:1px solid rgba(255,255,255,.22);border-radius:6px;background:rgba(0,0,0,.12);color:inherit;font:600 11px/1.2 ui-sans-serif,system-ui,sans-serif;white-space:nowrap}
+.app-sidebar{position:fixed;z-index:44;top:var(--header-h,64px);bottom:0;left:0;width:var(--shell-sidebar-w);display:flex;flex-direction:column;padding:14px 12px 16px;border-right:1px solid var(--border-subtle);background:var(--surface-panel);color:var(--text-primary);transform:translateX(-102%);transition:transform .18s ease,width .18s ease;overflow-y:auto;overscroll-behavior:contain}body.app-workspace-active .app-sidebar{transform:translateX(0)}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px;margin-bottom:7px;border-bottom:1px solid var(--border-subtle)}.sidebar-brand img{width:36px;height:36px;object-fit:contain;border-radius:9px;background:#fff}.sidebar-brand div{min-width:0;display:flex;flex-direction:column;gap:1px}.sidebar-brand strong{font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sidebar-brand span{font-size:11px;color:var(--text-secondary)}.sidebar-nav{display:flex;flex-direction:column;gap:2px}.sidebar-group{display:flex;flex-direction:column;gap:2px;margin-top:13px}.sidebar-group-label{padding:0 10px 5px;color:var(--text-secondary);font-size:10px;line-height:1.2;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.sidebar-item{width:100%;min-height:40px;display:flex;align-items:center;gap:10px;padding:7px 9px;border:0;border-radius:9px;background:transparent;color:var(--text-secondary);box-shadow:none;text-decoration:none;font-size:13px;font-weight:650;text-align:left;cursor:pointer}.sidebar-item:hover{background:var(--surface-subtle);color:var(--text-primary)}.sidebar-item.is-active,.sidebar-item[aria-current="page"]{background:var(--brand-soft);color:var(--brand-2)}body[data-theme="dark"] .sidebar-item.is-active,body[data-theme="dark"] .sidebar-item[aria-current="page"]{color:#b9efcb}.sidebar-icon{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;border-radius:8px;background:var(--surface-subtle);color:currentColor;font-size:11px;font-weight:800}.sidebar-footer{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:12px;border-top:1px solid var(--border-subtle)}.sidebar-scrim{display:none}
+.app-main{transition:margin-left .18s ease,width .18s ease,background .18s ease}body.app-workspace-active .app-main{margin-left:var(--shell-sidebar-w);width:calc(100% - var(--shell-sidebar-w));background:var(--surface-page)}body.app-workspace-active .app-copyright{margin-left:var(--shell-sidebar-w);background:var(--surface-page)}body.sidebar-collapsed{--shell-sidebar-w:var(--shell-sidebar-collapsed-w)}body.sidebar-collapsed .sidebar-brand div,body.sidebar-collapsed .sidebar-group-label,body.sidebar-collapsed .sidebar-item>span:not(.sidebar-icon){display:none}body.sidebar-collapsed .app-sidebar{padding-left:9px;padding-right:9px}body.sidebar-collapsed .sidebar-brand{justify-content:center;padding-left:0;padding-right:0}body.sidebar-collapsed .sidebar-item{justify-content:center;padding-left:5px;padding-right:5px}
+#screen-submenu.dashboard-screen{width:min(1440px,100%)!important;max-width:1440px!important;min-height:100%;align-items:stretch;justify-content:flex-start!important;padding:28px 30px 44px!important;overflow:visible!important}.dashboard-shell{width:100%;margin:0 auto}.dashboard-welcome{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,520px);align-items:end;gap:26px;margin-bottom:24px}.dashboard-eyebrow{display:block;margin-bottom:6px;color:var(--brand);font-size:11px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.dashboard-welcome h2{width:auto!important;margin:0 0 7px!important;color:var(--text-primary);font-size:clamp(26px,3vw,38px);line-height:1.08;letter-spacing:-.025em}.dashboard-welcome p{max-width:680px;margin:0;color:var(--text-secondary);font-size:14px;line-height:1.55}.dashboard-search-launch{width:100%;min-height:48px;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border:1px solid var(--border-subtle);border-radius:12px;background:var(--surface-panel);color:var(--text-secondary);box-shadow:0 1px 2px rgba(16,24,40,.04);text-align:left;font-size:13px;font-weight:600}.dashboard-search-launch:hover{border-color:var(--brand);background:var(--surface-subtle);transform:none}.dashboard-search-launch svg{width:19px;height:19px;fill:var(--brand);flex:0 0 auto}.dashboard-search-launch kbd{border-color:var(--border-subtle);background:var(--surface-subtle);color:var(--text-secondary)}
+.dashboard-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}.dashboard-group{--group-accent:var(--brand);position:relative;padding:18px;border:1px solid var(--border-subtle);border-radius:14px;background:var(--surface-panel);box-shadow:0 1px 2px rgba(16,24,40,.035);overflow:hidden}.dashboard-group:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--group-accent);opacity:.9}.dashboard-group-study{--group-accent:var(--study-accent)}.dashboard-group-clinical{--group-accent:var(--clinical-accent)}.dashboard-group-personal{--group-accent:var(--personal-accent)}.dashboard-group-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px}.dashboard-group-head>div>span{display:block;margin-bottom:3px;color:var(--group-accent);font-size:10px;font-weight:850;letter-spacing:.11em}.dashboard-group-head h3{margin:0;color:var(--text-primary);font-size:18px;letter-spacing:-.01em}.dashboard-group-head p{max-width:260px;margin:0;color:var(--text-secondary);font-size:12px;line-height:1.45;text-align:right}.dashboard-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.dashboard-tool{width:100%;min-height:70px;display:flex;align-items:center;gap:11px;padding:10px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text-primary);box-shadow:none;text-decoration:none;text-align:left;cursor:pointer}.dashboard-tool:hover{border-color:var(--border-subtle);background:var(--surface-subtle);transform:none;box-shadow:none}.dashboard-tool-icon{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 38px;border-radius:10px;background:var(--surface-subtle);color:var(--group-accent);font-size:13px;font-weight:850}.dashboard-tool>span:last-child{min-width:0;display:flex;flex-direction:column;gap:2px}.dashboard-tool strong{color:var(--text-primary);font-size:13px;line-height:1.25}.dashboard-tool small{color:var(--text-secondary);font-size:11px;line-height:1.35;font-weight:500}body.app-workspace-active main .screen:not(#screen-submenu):not(#screen-menu){max-width:1440px}body.app-workspace-active .card{border-color:var(--border-subtle)}.mobile-bottom-nav{display:none}
+@media(max-width:1180px){.global-search-trigger{min-width:190px}.global-search-trigger kbd{display:none}.dashboard-groups{grid-template-columns:1fr}.dashboard-group-head p{max-width:420px}}
+@media(max-width:899px){:root{--shell-sidebar-w:270px}body.app-workspace-active .app-main,body.app-workspace-active .app-copyright{margin-left:0;width:100%}.app-sidebar{z-index:72;top:0;width:min(300px,86vw);padding-top:calc(14px + env(safe-area-inset-top,0px));box-shadow:20px 0 50px rgba(0,0,0,.18)}body.app-workspace-active .app-sidebar{transform:translateX(-104%)}body.app-workspace-active.sidebar-open .app-sidebar{transform:translateX(0)}.sidebar-scrim{position:fixed;z-index:71;inset:0;display:block;background:rgba(7,16,11,.46);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility .18s ease}body.sidebar-open .sidebar-scrim{opacity:1;visibility:visible;pointer-events:auto}body.sidebar-collapsed .sidebar-brand div,body.sidebar-collapsed .sidebar-group-label,body.sidebar-collapsed .sidebar-item>span:not(.sidebar-icon){display:initial}body.sidebar-collapsed .sidebar-brand{justify-content:flex-start}body.sidebar-collapsed .sidebar-item{justify-content:flex-start}.global-search-trigger{min-width:42px;width:42px;padding:0;justify-content:center}.global-search-trigger span,.global-search-trigger kbd{display:none}.mobile-bottom-nav{position:fixed;z-index:60;left:0;right:0;bottom:0;height:calc(62px + env(safe-area-inset-bottom,0px));display:none;grid-template-columns:repeat(5,1fr);padding:5px 8px env(safe-area-inset-bottom,0px);border-top:1px solid var(--border-subtle);background:var(--surface-panel);backdrop-filter:blur(16px)}body.app-workspace-active .mobile-bottom-nav{display:grid}.mobile-bottom-nav button{min-width:0;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px;border:0;border-radius:9px;background:transparent;color:var(--text-secondary);box-shadow:none}.mobile-bottom-nav button>span{font-size:17px;line-height:1}.mobile-bottom-nav button small{font-size:10px;font-weight:700}.mobile-bottom-nav button.is-active{color:var(--brand);background:var(--brand-soft)}body.app-workspace-active main{padding-bottom:76px!important}#screen-submenu.dashboard-screen{padding:20px 16px 92px!important}.dashboard-welcome{grid-template-columns:1fr;gap:16px}.dashboard-group-head{display:block}.dashboard-group-head p{max-width:none;margin-top:5px;text-align:left}}
+@media(max-width:620px){.brand-kicker{display:none}.header-actions{gap:6px}#screen-submenu.dashboard-screen{padding:16px 10px 90px!important}.dashboard-welcome h2{font-size:28px}.dashboard-groups{gap:11px}.dashboard-group{padding:15px 12px;border-radius:12px}.dashboard-tool-grid{grid-template-columns:1fr;gap:3px}.dashboard-tool{min-height:62px;padding:8px}.dashboard-tool-icon{width:36px;height:36px;flex-basis:36px}.dashboard-tool small{font-size:10.5px}.dashboard-search-launch{min-height:46px}.dashboard-search-launch kbd{display:none}}
+
+/* ==========================================================================
+   APP SHELL / UI PHASE 1.1
+   Screenshot-driven correction: one dashboard, compact shell, deliberate
+   information density, and a quieter clinical workspace.
+   ========================================================================== */
+:root{
+  --shell-sidebar-w:216px;
+  --shell-sidebar-collapsed-w:68px;
+  --shell-header-h:64px;
+  --surface-page:#f4f7f5;
+  --surface-panel:#ffffff;
+  --surface-subtle:#f0f4f1;
+  --surface-hover:#e9f2ec;
+  --text-primary:#17221c;
+  --text-secondary:#66746b;
+  --border-subtle:#dfe7e2;
+  --brand-soft:#e7f4eb;
+  --brand-deep:#17683a;
+  --study-accent:#5957b8;
+  --study-soft:#efeffb;
+  --clinical-accent:#147e78;
+  --clinical-soft:#e9f6f4;
+  --personal-accent:#667085;
+  --personal-soft:#f0f2f5;
+}
+body[data-theme="dark"]{
+  --surface-page:#0c1410;
+  --surface-panel:#111c16;
+  --surface-subtle:#17241c;
+  --surface-hover:#1c3024;
+  --text-primary:#eef7f1;
+  --text-secondary:#9fb0a5;
+  --border-subtle:#26372d;
+  --brand-soft:#153723;
+  --study-soft:#262642;
+  --clinical-soft:#153a35;
+  --personal-soft:#242a2f;
+}
+
+/* The active app shell is flat and aligned. No floating billboard header. */
+body.app-workspace-active{background:var(--surface-page)!important;}
+body.app-workspace-active::before{opacity:0!important;visibility:hidden!important;}
+body.app-workspace-active header{
+  position:fixed!important;
+  top:0!important;
+  left:var(--shell-sidebar-w)!important;
+  right:0!important;
+  width:auto!important;
+  height:var(--shell-header-h)!important;
+  min-height:var(--shell-header-h)!important;
+  margin:0!important;
+  padding:0 24px!important;
+  border:0!important;
+  border-bottom:1px solid var(--border-subtle)!important;
+  border-radius:0!important;
+  background:color-mix(in srgb,var(--surface-panel) 96%,transparent)!important;
+  color:var(--text-primary)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(14px)!important;
+  z-index:64!important;
+}
+body.app-workspace-active header .brand-kicker{display:none!important;}
+body.app-workspace-active header h1{
+  color:var(--text-primary)!important;
+  font-size:15px!important;
+  font-weight:750!important;
+  letter-spacing:-.01em!important;
+}
+body.app-workspace-active .header-left{
+  min-width:auto!important;
+  gap:9px!important;
+  flex:0 0 auto;
+}
+body.app-workspace-active .header-actions{
+  flex:1 1 auto;
+  min-width:0;
+  justify-content:flex-end;
+  gap:8px!important;
+}
+body.app-workspace-active .app-nav-toggle,
+body.app-workspace-active .header-back-btn,
+body.app-workspace-active .settings-btn,
+body.app-workspace-active .header-btn{
+  width:38px;
+  min-width:38px;
+  height:38px;
+  min-height:38px;
+  padding:0!important;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid var(--border-subtle)!important;
+  border-radius:10px!important;
+  background:var(--surface-panel)!important;
+  color:var(--text-primary)!important;
+  box-shadow:none!important;
+}
+body.app-workspace-active #header-login-google{
+  width:auto!important;
+  min-width:0!important;
+  padding:0 13px!important;
+  display:inline-flex!important;
+  background:var(--brand-deep)!important;
+  border-color:var(--brand-deep)!important;
+  color:#fff!important;
+  font-weight:700!important;
+}
+body.app-workspace-active .whoami{
+  border:1px solid var(--border-subtle)!important;
+  background:var(--surface-panel)!important;
+  color:var(--text-primary)!important;
+}
+body.app-workspace-active .header-link{color:var(--brand-deep)!important;}
+body.app-workspace-active .global-search-trigger{
+  display:flex!important;
+  width:min(460px,42vw)!important;
+  min-width:230px!important;
+  height:38px!important;
+  margin-right:auto!important;
+  margin-left:18px!important;
+  padding:0 9px 0 12px!important;
+  border:1px solid var(--border-subtle)!important;
+  border-radius:10px!important;
+  background:var(--surface-subtle)!important;
+  color:var(--text-secondary)!important;
+  box-shadow:none!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+}
+body.app-workspace-active .global-search-trigger:hover{
+  background:var(--surface-hover)!important;
+  border-color:color-mix(in srgb,var(--brand) 28%,var(--border-subtle))!important;
+}
+body.app-workspace-active .global-search-trigger svg{fill:var(--brand-deep)!important;}
+body.app-workspace-active .global-search-trigger kbd{
+  border:1px solid var(--border-subtle)!important;
+  background:var(--surface-panel)!important;
+  color:var(--text-secondary)!important;
+}
+
+/* Sidebar: useful, not the loudest object in the room. */
+.app-sidebar{
+  top:0!important;
+  bottom:0!important;
+  width:var(--shell-sidebar-w)!important;
+  padding:12px 10px 12px!important;
+  border-right:1px solid var(--border-subtle)!important;
+  background:var(--surface-panel)!important;
+  color:var(--text-primary)!important;
+  box-shadow:none!important;
+  z-index:66!important;
+}
+body.app-workspace-active .app-sidebar{transform:translateX(0)!important;}
+.sidebar-brand{
+  min-height:52px!important;
+  gap:9px!important;
+  padding:4px 7px 11px!important;
+  margin-bottom:5px!important;
+  border-bottom:1px solid var(--border-subtle)!important;
+}
+.sidebar-brand img{
+  width:30px!important;
+  height:30px!important;
+  border-radius:8px!important;
+  box-shadow:0 0 0 1px var(--border-subtle);
+}
+.sidebar-brand strong{font-size:12.5px!important;font-weight:760!important;}
+.sidebar-brand span{font-size:10px!important;}
+.sidebar-nav{gap:1px!important;}
+.sidebar-group{gap:1px!important;margin-top:9px!important;}
+.sidebar-group-label{
+  padding:0 8px 4px!important;
+  font-size:9px!important;
+  letter-spacing:.12em!important;
+}
+.sidebar-item{
+  min-height:34px!important;
+  gap:8px!important;
+  padding:4px 7px!important;
+  border-radius:8px!important;
+  font-size:12px!important;
+  font-weight:650!important;
+}
+.sidebar-icon{
+  width:25px!important;
+  height:25px!important;
+  flex-basis:25px!important;
+  border-radius:7px!important;
+  font-size:10px!important;
+}
+.sidebar-item.is-active,.sidebar-item[aria-current="page"]{
+  background:var(--brand-soft)!important;
+  color:var(--brand-deep)!important;
+}
+.sidebar-footer{padding-top:8px!important;}
+body.sidebar-collapsed{--shell-sidebar-w:var(--shell-sidebar-collapsed-w);}
+
+/* Main viewport starts below the fixed app header. */
+body.app-workspace-active .app-main{
+  margin-left:var(--shell-sidebar-w)!important;
+  margin-top:var(--shell-header-h)!important;
+  width:calc(100% - var(--shell-sidebar-w))!important;
+  height:calc(100vh - var(--shell-header-h))!important;
+  height:calc(100dvh - var(--shell-header-h))!important;
+  padding:22px 28px 36px!important;
+  background:var(--surface-page)!important;
+  overflow:auto!important;
+  box-sizing:border-box!important;
+}
+body.app-workspace-active .app-copyright{
+  margin-left:var(--shell-sidebar-w)!important;
+  background:var(--surface-page)!important;
+}
+body.app-workspace-active main .screen{
+  width:min(100%,1320px)!important;
+  max-width:1320px!important;
+}
+
+/* Hard stop for the duplication seen in the screenshots. */
+body[data-current-screen="screen-submenu"] .app-main > .screen:not(#screen-submenu){display:none!important;}
+#screen-submenu > :not(.home-dashboard){display:none!important;}
+#screen-submenu.dashboard-screen.is-active:not(.hidden):not(.is-exiting){
+  display:block!important;
+  width:min(100%,1260px)!important;
+  max-width:1260px!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0 auto!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+/* A hidden/exiting Home screen must never remain in document flow.
+   The old ID-specific display:block rule overrode .hidden and created the
+   persistent blank area above every module. */
+#screen-submenu.dashboard-screen.hidden,
+#screen-submenu.dashboard-screen.is-exiting{
+  display:none!important;
+}
+.home-dashboard{width:100%;display:flex;flex-direction:column;gap:18px;}
+.home-dashboard-heading{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(300px,430px);
+  align-items:end;
+  gap:28px;
+}
+.home-heading-copy{min-width:0;}
+.home-eyebrow,.home-card-kicker,.home-section-head span{
+  display:block;
+  margin:0 0 5px;
+  color:var(--brand-deep);
+  font-size:9.5px;
+  line-height:1.2;
+  font-weight:850;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.home-dashboard-heading h2{
+  margin:0 0 5px!important;
+  padding:0!important;
+  color:var(--text-primary)!important;
+  font-size:30px!important;
+  line-height:1.05!important;
+  font-weight:760!important;
+  letter-spacing:-.03em!important;
+}
+.home-dashboard-heading p{
+  max-width:650px;
+  margin:0;
+  color:var(--text-secondary);
+  font-size:12.5px;
+  line-height:1.5;
+}
+.home-search-launch{
+  width:100%;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:0 10px 0 13px;
+  border:1px solid var(--border-subtle);
+  border-radius:11px;
+  background:var(--surface-panel);
+  color:var(--text-secondary);
+  box-shadow:0 1px 2px rgba(18,35,25,.03);
+  text-align:left;
+  font-size:12px;
+  font-weight:600;
+}
+.home-search-launch:hover{background:var(--surface-hover);border-color:#c9dacf;}
+.home-search-launch svg{width:17px;height:17px;fill:var(--brand-deep);flex:0 0 auto;}
+.home-search-launch kbd{
+  margin-left:auto;
+  padding:3px 6px;
+  border:1px solid var(--border-subtle);
+  border-radius:6px;
+  background:var(--surface-subtle);
+  color:var(--text-secondary);
+  font:700 10px/1 system-ui,sans-serif;
+}
+
+.home-priority-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(320px,.9fr);
+  gap:14px;
+}
+.home-focus-card,.home-overview-card,.home-section{
+  border:1px solid var(--border-subtle);
+  border-radius:14px;
+  box-shadow:0 1px 2px rgba(17,35,24,.035);
+}
+.home-focus-card{
+  min-height:185px;
+  position:relative;
+  display:flex;
+  align-items:stretch;
+  overflow:hidden;
+  border-color:rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 88% 20%,rgba(255,255,255,.14),transparent 23%),
+    linear-gradient(135deg,#135d34 0%,#1c7a45 58%,#2a8b54 100%);
+  color:#fff;
+}
+.home-focus-content{
+  position:relative;
+  z-index:2;
+  width:min(72%,620px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:24px 26px;
+}
+.home-focus-card .home-card-kicker{color:#c9efd6;margin-bottom:7px;}
+.home-focus-card h3{
+  margin:0 0 7px;
+  color:#fff;
+  font-size:22px;
+  line-height:1.12;
+  letter-spacing:-.02em;
+}
+.home-focus-card p{
+  max-width:560px;
+  margin:0;
+  color:rgba(255,255,255,.78);
+  font-size:12px;
+  line-height:1.5;
+}
+.home-focus-actions{display:flex;gap:8px;margin-top:18px;}
+.home-primary-action,.home-secondary-action{
+  min-height:38px;
+  padding:0 14px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:760;
+  box-shadow:none;
+}
+.home-primary-action{
+  border:1px solid #fff!important;
+  background:#fff!important;
+  color:#145d34!important;
+}
+.home-secondary-action{
+  border:1px solid rgba(255,255,255,.28)!important;
+  background:rgba(255,255,255,.08)!important;
+  color:#fff!important;
+}
+.home-focus-mark{
+  position:absolute;
+  right:26px;
+  top:50%;
+  width:118px;
+  height:118px;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+  box-shadow:inset 0 0 0 14px rgba(255,255,255,.025);
+}
+.home-focus-mark span{
+  font-size:28px;
+  font-weight:850;
+  letter-spacing:-.05em;
+  color:rgba(255,255,255,.42);
+}
+.home-overview-card{
+  min-height:185px;
+  padding:18px;
+  background:var(--surface-panel);
+}
+.home-overview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.home-overview-head h3{margin:0;color:var(--text-primary);font-size:15px;}
+.home-status-dot{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--text-secondary);
+  font-size:9.5px;
+  font-weight:650;
+  white-space:nowrap;
+}
+.home-status-dot i{width:6px;height:6px;border-radius:50%;background:#42a765;box-shadow:0 0 0 3px rgba(66,167,101,.12);}
+.home-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+.home-stat{
+  min-height:58px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:1px;
+  padding:8px 10px;
+  border:1px solid var(--border-subtle)!important;
+  border-radius:10px!important;
+  background:var(--surface-subtle)!important;
+  color:var(--text-primary)!important;
+  box-shadow:none!important;
+  text-align:left;
+}
+.home-stat:hover{background:var(--surface-hover)!important;transform:none!important;}
+.home-stat strong{font-size:18px;line-height:1;font-weight:800;letter-spacing:-.02em;}
+.home-stat span{font-size:10px;color:var(--text-secondary);font-weight:650;}
+
+.home-section{
+  padding:15px;
+  background:var(--surface-panel);
+}
+.home-section-head{
+  min-height:34px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:10px;
+}
+.home-section-head h3{margin:0;color:var(--text-primary);font-size:15px;letter-spacing:-.01em;}
+.home-section-head p{max-width:360px;margin:1px 0 0;color:var(--text-secondary);font-size:10.5px;text-align:right;line-height:1.4;}
+.home-study-section .home-section-head span{color:var(--study-accent);}
+.home-clinical-section .home-section-head span{color:var(--clinical-accent);}
+.home-tool-row{display:grid;gap:7px;}
+.home-tool-row-five{grid-template-columns:repeat(5,minmax(0,1fr));}
+.home-tool-grid-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+.home-tool{
+  min-width:0;
+  min-height:62px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 12px;
+  align-items:center;
+  gap:9px;
+  padding:8px 9px;
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:var(--text-primary)!important;
+  box-shadow:none!important;
+  text-align:left;
+  text-decoration:none!important;
+  cursor:pointer;
+}
+.home-tool:hover{
+  border-color:var(--border-subtle)!important;
+  background:var(--surface-subtle)!important;
+  transform:none!important;
+}
+.home-tool-icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:var(--brand-soft);
+  color:var(--brand-deep);
+  font-size:11px;
+  font-weight:850;
+}
+.home-tool-study .home-tool-icon{background:var(--study-soft);color:var(--study-accent);}
+.home-tool-clinical .home-tool-icon{background:var(--clinical-soft);color:var(--clinical-accent);}
+.home-tool-personal .home-tool-icon{background:var(--personal-soft);color:var(--personal-accent);}
+.home-tool > span:nth-child(2){min-width:0;display:flex;flex-direction:column;gap:2px;}
+.home-tool strong{overflow:hidden;color:var(--text-primary);font-size:11.5px;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;}
+.home-tool small{overflow:hidden;color:var(--text-secondary);font-size:9.5px;line-height:1.25;font-weight:500;text-overflow:ellipsis;white-space:nowrap;}
+.home-tool b{color:#9aaba0;font-size:17px;font-weight:400;line-height:1;}
+.home-lower-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.home-section-compact{padding-bottom:13px;}
+.home-clinical-section .home-tool-grid-two .home-tool:last-child:nth-child(odd){grid-column:1 / -1;}
+
+/* Workspaces get quieter surfaces too. */
+body.app-workspace-active .card{
+  border-color:var(--border-subtle)!important;
+  box-shadow:0 1px 2px rgba(17,35,24,.035)!important;
+}
+
+@media(max-width:1180px){
+  .home-tool-row-five{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .home-priority-grid{grid-template-columns:1.35fr .9fr;}
+  body.app-workspace-active .global-search-trigger{width:min(360px,36vw)!important;}
+}
+
+@media(max-width:899px){
+  :root{--shell-sidebar-w:270px;--shell-header-h:58px;}
+  body.app-workspace-active header{
+    left:0!important;
+    height:var(--shell-header-h)!important;
+    min-height:var(--shell-header-h)!important;
+    padding:0 12px!important;
+  }
+  body.app-workspace-active header .brand-lockup{display:none!important;}
+  body.app-workspace-active .app-main{
+    margin-left:0!important;
+    margin-top:var(--shell-header-h)!important;
+    width:100%!important;
+    height:calc(100dvh - var(--shell-header-h))!important;
+    padding:16px 14px 82px!important;
+  }
+  body.app-workspace-active .app-copyright{margin-left:0!important;}
+  body.app-workspace-active .global-search-trigger{
+    width:auto!important;
+    min-width:38px!important;
+    margin:0 auto 0 6px!important;
+  }
+  .app-sidebar{
+    top:0!important;
+    width:min(286px,86vw)!important;
+    padding-top:12px!important;
+  }
+  body.app-workspace-active .app-sidebar{transform:translateX(-104%)!important;}
+  body.app-workspace-active.sidebar-open .app-sidebar{transform:translateX(0)!important;}
+  .home-dashboard-heading{grid-template-columns:1fr;gap:12px;}
+  .home-dashboard-heading h2{font-size:26px!important;}
+  .home-priority-grid{grid-template-columns:1fr;}
+  .home-focus-card{min-height:170px;}
+  .home-overview-card{min-height:0;}
+  .home-tool-row-five{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .home-lower-grid{grid-template-columns:1fr;}
+}
+
+@media(max-width:600px){
+  body.app-workspace-active .header-actions{gap:5px!important;}
+  body.app-workspace-active #header-login-google{font-size:10px!important;padding:0 8px!important;}
+  body.app-workspace-active .global-search-trigger span,
+  body.app-workspace-active .global-search-trigger kbd{display:none!important;}
+  body.app-workspace-active .global-search-trigger{width:38px!important;min-width:38px!important;margin-right:auto!important;justify-content:center!important;padding:0!important;}
+  .home-dashboard{gap:12px;}
+  .home-dashboard-heading p{font-size:11.5px;}
+  .home-search-launch{min-height:42px;}
+  .home-focus-card{min-height:190px;}
+  .home-focus-content{width:100%;padding:20px;}
+  .home-focus-mark{display:none;}
+  .home-focus-card h3{font-size:20px;}
+  .home-focus-actions{flex-wrap:wrap;}
+  .home-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .home-section{padding:12px;}
+  .home-section-head p{display:none;}
+  .home-tool-row-five,.home-tool-grid-two{grid-template-columns:1fr;}
+  .home-tool{min-height:58px;}
+  .home-clinical-section .home-tool-grid-two .home-tool:last-child:nth-child(odd){grid-column:auto;}
+}
+
+/* ==========================================================================
+   APP SHELL / UI PHASE 1.2
+   Consistency pass: one visible brand, one settings entry, complete shell i18n,
+   scalable typography, and explicit sync prerequisites.
+   ========================================================================== */
+body.app-workspace-active header .brand-lockup{
+  display:none!important;
+}
+body.app-workspace-active header .settings-btn{
+  display:none!important;
+}
+body.app-workspace-active .header-left{
+  min-width:38px!important;
+}
+body.app-workspace-active .global-search-trigger{
+  margin-left:10px!important;
+  font-size:calc(12.5px * var(--text-scale, 1))!important;
+}
+body.app-workspace-active #header-login-google{
+  font-size:calc(12px * var(--text-scale, 1))!important;
+}
+body.app-workspace-active .whoami,
+body.app-workspace-active .header-link{
+  font-size:calc(12px * var(--text-scale, 1))!important;
+}
+
+/* Navigation typography now follows the Text size setting instead of freezing. */
+.sidebar-brand strong{
+  font-size:calc(12.5px * var(--text-scale, 1))!important;
+}
+.sidebar-brand span{
+  font-size:calc(10px * var(--text-scale, 1))!important;
+}
+.sidebar-group-label{
+  font-size:calc(9px * var(--text-scale, 1))!important;
+}
+.sidebar-item{
+  font-size:calc(12px * var(--text-scale, 1))!important;
+  line-height:1.25!important;
+}
+.sidebar-icon{
+  font-size:calc(9.5px * var(--text-scale, 1))!important;
+  letter-spacing:-.03em;
+}
+.mobile-bottom-nav button small{
+  font-size:calc(10px * var(--text-scale, 1))!important;
+}
+
+/* Search is global. Home no longer repeats the same control in a second place. */
+.home-dashboard-heading{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:0!important;
+}
+.home-heading-copy{
+  max-width:760px;
+}
+
+/* Dashboard typography follows the same seven-step scale as the rest of the app. */
+.home-eyebrow,
+.home-card-kicker,
+.home-section-head span{
+  font-size:calc(9.5px * var(--text-scale, 1))!important;
+}
+.home-dashboard-heading h2{
+  font-size:calc(30px * var(--text-scale, 1))!important;
+}
+.home-dashboard-heading p{
+  font-size:calc(12.5px * var(--text-scale, 1))!important;
+}
+.home-focus-card h3{
+  font-size:calc(22px * var(--text-scale, 1))!important;
+}
+.home-focus-card p{
+  font-size:calc(12px * var(--text-scale, 1))!important;
+}
+.home-primary-action,
+.home-secondary-action{
+  font-size:calc(12px * var(--text-scale, 1))!important;
+}
+.home-overview-head h3,
+.home-section-head h3{
+  font-size:calc(15px * var(--text-scale, 1))!important;
+}
+.home-status-dot{
+  font-size:calc(9.5px * var(--text-scale, 1))!important;
+}
+.home-stat strong{
+  font-size:calc(18px * var(--text-scale, 1))!important;
+}
+.home-stat span{
+  font-size:calc(10px * var(--text-scale, 1))!important;
+}
+.home-section-head p{
+  font-size:calc(10.5px * var(--text-scale, 1))!important;
+}
+.home-tool-icon{
+  font-size:calc(10px * var(--text-scale, 1))!important;
+  letter-spacing:-.04em;
+}
+.home-tool strong{
+  overflow:visible!important;
+  font-size:calc(11.5px * var(--text-scale, 1))!important;
+  line-height:1.2!important;
+  text-overflow:clip!important;
+  white-space:normal!important;
+}
+.home-tool small{
+  overflow:visible!important;
+  font-size:calc(9.5px * var(--text-scale, 1))!important;
+  line-height:1.25!important;
+  text-overflow:clip!important;
+  white-space:normal!important;
+}
+.home-tool b{
+  font-size:calc(17px * var(--text-scale, 1))!important;
+}
+
+/* Keep all reference and clinical launchers structurally identical. */
+.home-tool-row-five .home-tool,
+.home-tool-grid-two .home-tool{
+  align-self:stretch;
+}
+.home-tool-icon{
+  flex-shrink:0;
+}
+
+/* Clear, translated prerequisite message for manual Drive sync. */
+.sync-account-required-modal{
+  width:min(440px,calc(100vw - 32px));
+  text-align:left;
+}
+.sync-account-required-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  margin-bottom:12px;
+  border-radius:12px;
+  background:var(--brand-soft);
+  color:var(--brand-deep);
+  font-size:calc(18px * var(--text-scale, 1));
+  font-weight:850;
+}
+.sync-account-required-modal h3{
+  margin:0 0 8px;
+  font-size:calc(20px * var(--text-scale, 1));
+}
+.sync-account-required-modal p{
+  margin:0;
+  color:var(--muted);
+  font-size:calc(14px * var(--text-scale, 1));
+  line-height:1.5;
+}
+.sync-account-required-actions{
+  margin-top:18px;
+  justify-content:flex-end;
+}
+.sync-account-required-actions button{
+  font-size:calc(13px * var(--text-scale, 1));
+}
+
+@media(max-width:899px){
+  body.app-workspace-active .global-search-trigger{
+    margin-left:6px!important;
+  }
+  .home-dashboard-heading h2{
+    font-size:calc(26px * var(--text-scale, 1))!important;
+  }
+}
+@media(max-width:600px){
+  body.app-workspace-active #header-login-google{
+    font-size:calc(10px * var(--text-scale, 1))!important;
+  }
+  .home-dashboard-heading p{
+    font-size:calc(11.5px * var(--text-scale, 1))!important;
+  }
+  .home-focus-card h3{
+    font-size:calc(20px * var(--text-scale, 1))!important;
+  }
+}
+#sync-account-required-overlay{z-index:1100;}
+.sync-loading-screen{z-index:1200!important;}
+
+
+/* ========================================================================== 
+   APP SHELL / UI PHASE 1.3
+   Route parity + top-aligned workspaces.
+   ========================================================================== */
+body.app-workspace-active .app-main > .screen:not(#screen-menu){
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+  justify-content:flex-start!important;
+  align-self:start!important;
+}
+body.app-workspace-active .app-main > .screen:not(#screen-menu) > :first-child{
+  margin-top:0!important;
+}
+/* These were already intended in 1.2; this late rule guarantees route parity. */
+body.app-workspace-active header .brand-lockup,
+body.app-workspace-active header #settings-toggle{
+  display:none!important;
+}
+
+
+/* ==========================================================================
+   APP SHELL / UI PHASE 1.4
+   Verified consistency fixes: single search entry, hard top-aligned workspaces,
+   complete shell/dashboard i18n, intact lab launcher and reliable modal/home routing.
+   ========================================================================== */
+/* There is exactly one global Search entry on Home: the persistent header control. */
+#dashboard-search-launch,.home-search-launch{display:none!important;}
+
+/* Do not allow legacy flex-centering to create an empty half-screen above modules. */
+.app-main > .screen:not(#screen-menu),
+body.app-workspace-active .app-main > .screen:not(#screen-menu),
+body.app-workspace-active .app-main > .screen.is-active:not(#screen-menu){
+  justify-content:flex-start!important;
+  align-content:flex-start!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  padding-top:0!important;
+  margin-top:0!important;
+}
+.app-main > .screen:not(#screen-menu) > :first-child,
+body.app-workspace-active .app-main > .screen:not(#screen-menu) > :first-child{
+  margin-top:0!important;
+}
+body.app-workspace-active .app-main{
+  align-content:start!important;
+}
+
+/* Short labels such as Lab/Pt stay visually identical to the rest of the launcher system. */
+.sidebar-icon,.home-tool-icon{white-space:nowrap;}
+
+/* Sync prerequisite modal must always be visible above Settings when opened. */
+#sync-account-required-overlay:not(.hidden){display:flex!important;}
+
+
+/* ========================================================================== 
+   APP SHELL / UI PHASE 1.5
+   No menu flash + deterministic top-anchored module workspaces.
+   ========================================================================== */
+/* Workspace main is an ordinary top-origin scroll container. */
+body.app-workspace-active .app-main{
+  display:block!important;
+  position:fixed!important;
+  top:var(--shell-header-h)!important;
+  right:0!important;
+  bottom:0!important;
+  left:var(--shell-sidebar-w)!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  padding:20px 28px 36px!important;
+  overflow:auto!important;
+  align-content:initial!important;
+}
+
+/* The active module takes only its content height. It cannot vertically center
+   inside the viewport, retain a legacy 100% height, or arrive translated. */
+body.app-workspace-active .app-main > .screen.is-active:not(.hidden):not(#screen-menu){
+  display:flex!important;
+  position:static!important;
+  inset:auto!important;
+  width:min(100%,1320px)!important;
+  max-width:1320px!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0 auto!important;
+  padding:0!important;
+  flex-flow:column nowrap!important;
+  justify-content:flex-start!important;
+  align-items:stretch!important;
+  align-content:flex-start!important;
+  gap:18px!important;
+  transform:none!important;
+}
+body.app-workspace-active .app-main > .screen.is-active:not(.hidden):not(#screen-menu) > :first-child{
+  margin-top:0!important;
+  top:auto!important;
+  transform:none!important;
+}
+
+/* Hidden screens stay genuinely absent even with the stronger active rule. */
+body.app-workspace-active .app-main > .screen.hidden{display:none!important;}
+
+@media(max-width:899px){
+  body.app-workspace-active .app-main{
+    top:var(--shell-header-h)!important;
+    left:0!important;
+    padding:16px 14px 82px!important;
+  }
+}
+
+
+/* Clinical correlations fuzzy-search integration */
+.clinical-correlation-empty{
+  display:flex;flex-direction:column;gap:8px;padding:18px;
+  border:1px dashed var(--border-subtle,#d8e0db);border-radius:12px;
+  background:var(--surface-subtle,#f4f7f5);color:var(--text-secondary,#5f6f65);
+}
+.clinical-correlation-empty strong{color:var(--text-primary,#17211c);font-size:calc(1rem * var(--text-scale,1));}
+.clinical-correlation-examples{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.clinical-correlation-example{
+  min-height:32px;padding:5px 9px;border:1px solid var(--border-subtle,#d8e0db);
+  border-radius:999px;background:var(--surface-panel,#fff);color:var(--text-primary,#17211c);
+  box-shadow:none;font-size:calc(.78rem * var(--text-scale,1));font-weight:650;
+}
+.clinical-correlation-example:hover{background:var(--brand-soft,#e3f3e9);border-color:color-mix(in srgb,var(--brand,#177a43) 35%,var(--border-subtle,#d8e0db));}
+.clinical-correlation-ambiguity{
+  margin-bottom:10px;padding:10px 12px;border:1px solid color-mix(in srgb,#b7791f 35%,transparent);
+  border-radius:10px;background:color-mix(in srgb,#f6ad55 13%,var(--surface-panel,#fff));
+  color:var(--text-primary,#17211c);font-size:calc(.82rem * var(--text-scale,1));line-height:1.45;
+}
+.clinical-correlation-result{
+  display:flex;flex-direction:column;gap:12px;padding:16px;
+  border:1px solid var(--border-subtle,#d8e0db);border-radius:13px;
+  background:var(--surface-panel,#fff);box-shadow:0 1px 2px rgba(16,24,40,.035);
+}
+.clinical-correlation-result + .clinical-correlation-result{margin-top:10px;}
+.clinical-correlation-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.clinical-correlation-eyebrow{
+  margin-bottom:3px;color:var(--brand,#177a43);font-size:calc(.68rem * var(--text-scale,1));
+  font-weight:850;letter-spacing:.08em;text-transform:uppercase;
+}
+.clinical-correlation-head h3{margin:0;color:var(--text-primary,#17211c);font-size:calc(1.02rem * var(--text-scale,1));line-height:1.3;}
+.clinical-correlation-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;}
+.clinical-correlation-badge{
+  display:inline-flex;align-items:center;min-height:25px;padding:3px 7px;border:1px solid var(--border-subtle,#d8e0db);
+  border-radius:999px;background:var(--surface-subtle,#f4f7f5);color:var(--text-secondary,#5f6f65);
+  font-size:calc(.68rem * var(--text-scale,1));font-weight:750;white-space:nowrap;
+}
+.clinical-correlation-badge.is-direct{background:var(--brand-soft,#e3f3e9);color:var(--brand,#177a43);}
+.clinical-correlation-badge.is-suggestion{background:color-mix(in srgb,#f6ad55 13%,var(--surface-panel,#fff));color:var(--text-primary,#17211c);}
+.clinical-correlation-answer{margin:0;color:var(--text-primary,#17211c);font-size:calc(.9rem * var(--text-scale,1));line-height:1.55;}
+.clinical-correlation-section{padding-top:10px;border-top:1px solid var(--border-subtle,#d8e0db);}
+.clinical-correlation-section h4{margin:0 0 6px;color:var(--text-primary,#17211c);font-size:calc(.78rem * var(--text-scale,1));}
+.clinical-correlation-section ul{margin:0;padding-left:18px;color:var(--text-secondary,#5f6f65);font-size:calc(.8rem * var(--text-scale,1));line-height:1.5;}
+.clinical-correlation-section.is-trap h4{color:#9a5b00;}
+.clinical-correlation-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--text-secondary,#5f6f65);font-size:calc(.68rem * var(--text-scale,1));}
+.clinical-correlation-review{font-weight:800;color:#9a5b00;}
+.clinical-correlation-category{align-items:flex-start;}
+.clinical-correlation-category span{line-height:1.25;}
+@media (max-width:720px){
+  .clinical-correlation-head{flex-direction:column;}
+  .clinical-correlation-badges{justify-content:flex-start;}
+}
+
+/* === Phase 1.7: Anatomy Structures v2 + clinical logic package === */
+.anatomy-filter-group{
+  border-top:1px solid var(--border-subtle, rgba(24,48,34,.11));
+  padding:9px 0 4px;
+}
+.anatomy-filter-group:first-of-type{border-top:0;}
+.anatomy-filter-group > summary{
+  cursor:pointer;list-style:none;font-weight:750;font-size:calc(12px * var(--text-scale,1));
+  color:var(--text-primary, #17211c);padding:5px 2px;
+}
+.anatomy-filter-group > summary::-webkit-details-marker{display:none;}
+.anatomy-filter-group > summary::after{content:"⌄";float:right;color:var(--text-secondary,#5f6f65);}
+.anatomy-filter-group[open] > summary::after{content:"⌃";}
+.anatomy-filter-options{display:grid;gap:5px;padding:5px 0 8px;max-height:240px;overflow:auto;}
+.anatomy-filter-options .checkbox-item{margin:0;}
+
+.anatomy-structure-empty{
+  min-height:220px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  gap:8px;padding:24px;border:1px dashed var(--border-subtle, rgba(24,48,34,.14));
+  border-radius:14px;background:var(--surface-subtle,#f2f5f3);color:var(--text-secondary,#5f6f65);
+}
+.anatomy-structure-empty strong{font-size:calc(18px * var(--text-scale,1));color:var(--text-primary,#17211c);}
+.anatomy-structure-result{
+  border:1px solid var(--border-subtle, rgba(24,48,34,.12));border-radius:14px;background:var(--surface-panel,#fff);
+  padding:18px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,.035);
+}
+.anatomy-structure-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+.anatomy-structure-eyebrow{
+  margin-bottom:3px;color:var(--brand,#17753f);font-weight:850;letter-spacing:.09em;text-transform:uppercase;
+  font-size:calc(10px * var(--text-scale,1));
+}
+.anatomy-structure-head h3{margin:0;color:var(--text-primary,#17211c);font-size:calc(20px * var(--text-scale,1));line-height:1.2;}
+.anatomy-structure-latin{margin-top:4px;color:var(--text-secondary,#5f6f65);font-style:italic;font-size:calc(13px * var(--text-scale,1));}
+.anatomy-structure-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;}
+.anatomy-structure-badge{
+  display:inline-flex;padding:4px 8px;border:1px solid var(--border-subtle,rgba(24,48,34,.12));border-radius:999px;
+  background:var(--surface-subtle,#f2f5f3);color:var(--text-secondary,#5f6f65);font-size:calc(10px * var(--text-scale,1));font-weight:700;
+}
+.anatomy-structure-review,.anatomy-search-review{
+  margin-top:10px;color:#8a5a00;font-size:calc(11px * var(--text-scale,1));font-weight:750;
+}
+body[data-theme="dark"] .anatomy-structure-review,body[data-theme="dark"] .anatomy-search-review{color:#f4c46b;}
+.anatomy-structure-names{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;margin-top:14px;}
+.anatomy-structure-name-row{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-subtle,rgba(24,48,34,.08));}
+.anatomy-structure-name-row strong{font-size:calc(11px * var(--text-scale,1));color:var(--text-secondary,#5f6f65);}
+.anatomy-structure-name-row span{font-size:calc(13px * var(--text-scale,1));color:var(--text-primary,#17211c);}
+.anatomy-structure-section{margin-top:15px;padding-top:13px;border-top:1px solid var(--border-subtle,rgba(24,48,34,.1));}
+.anatomy-structure-section h4{margin:0 0 7px;font-size:calc(13px * var(--text-scale,1));color:var(--text-primary,#17211c);}
+.anatomy-structure-section ul{margin:0;padding-left:19px;color:var(--text-secondary,#5f6f65);font-size:calc(12px * var(--text-scale,1));line-height:1.55;}
+.anatomy-structure-section.is-clinical{border-left:3px solid #1f8c72;padding-left:12px;}
+.anatomy-structure-section.is-trap{border-left:3px solid #b87818;padding-left:12px;}
+.anatomy-structure-section.is-oral{border-left:3px solid #6765b8;padding-left:12px;}
+.anatomy-structure-detail-grid{display:grid;grid-template-columns:minmax(110px,.32fr) minmax(0,1fr);gap:6px 12px;}
+.anatomy-structure-detail-grid .k{font-weight:750;color:var(--text-secondary,#5f6f65);font-size:calc(11px * var(--text-scale,1));}
+.anatomy-structure-detail-grid .v{color:var(--text-primary,#17211c);font-size:calc(12px * var(--text-scale,1));overflow-wrap:anywhere;}
+.anatomy-relationship-list{display:flex;flex-wrap:wrap;gap:6px;}
+.anatomy-relationship-chip,.anatomy-clinical-link{
+  border:1px solid var(--border-subtle,rgba(24,48,34,.12));border-radius:9px;background:var(--surface-subtle,#f2f5f3);
+  color:var(--text-primary,#17211c);box-shadow:none;padding:7px 9px;font-size:calc(11px * var(--text-scale,1));font-weight:650;text-align:left;
+}
+.anatomy-relationship-chip:hover,.anatomy-clinical-link:hover{background:var(--brand-soft,#e3f3e9);border-color:color-mix(in srgb,var(--brand,#17753f) 35%,transparent);transform:none;box-shadow:none;}
+.anatomy-clinical-link{display:block;width:100%;margin:5px 0;}
+.anatomy-seed-question{margin:6px 0;border:1px solid var(--border-subtle,rgba(24,48,34,.1));border-radius:9px;padding:8px 10px;background:var(--surface-subtle,#f2f5f3);}
+.anatomy-seed-question summary{cursor:pointer;font-weight:700;color:var(--text-primary,#17211c);font-size:calc(12px * var(--text-scale,1));}
+.anatomy-seed-question p{margin:8px 0 0;color:var(--text-secondary,#5f6f65);font-size:calc(12px * var(--text-scale,1));}
+
+@media (max-width:720px){
+  .anatomy-structure-head{display:block;}
+  .anatomy-structure-badges{justify-content:flex-start;margin-top:8px;}
+  .anatomy-structure-names{grid-template-columns:1fr;}
+  .anatomy-structure-detail-grid{grid-template-columns:1fr;gap:2px;}
+  .anatomy-structure-detail-grid .v{margin-bottom:7px;}
+}
+
+/* === Phase 1.8: unified Anatomy browser + confidence-routed Smart Search === */
+.anatomy-dataset-controls{display:none!important;}
+.anatomy-filter-toolbar{
+  display:grid;gap:9px;padding:0 0 12px;margin-bottom:4px;border-bottom:1px solid var(--border-subtle,rgba(24,48,34,.11));
+}
+.anatomy-filter-toolbar-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.anatomy-filter-toolbar-top strong{font-size:calc(12px * var(--text-scale,1));color:var(--text-primary,#17211c);}
+.anatomy-filter-clear{
+  border:0;background:transparent;color:var(--brand,#17753f);box-shadow:none;padding:4px 2px;
+  font-size:calc(11px * var(--text-scale,1));font-weight:750;
+}
+.anatomy-filter-clear:hover:not(:disabled){background:transparent;text-decoration:underline;transform:none;box-shadow:none;}
+.anatomy-filter-clear:disabled{opacity:.42;cursor:default;}
+.anatomy-active-filters{display:flex;flex-wrap:wrap;gap:6px;}
+.anatomy-active-filter{
+  display:inline-flex;align-items:center;gap:6px;min-height:29px;padding:4px 8px 4px 10px;
+  border:1px solid color-mix(in srgb,var(--brand,#17753f) 30%,var(--border-subtle,#d8e0db));
+  border-radius:999px;background:var(--brand-soft,#e3f3e9);color:var(--brand,#17753f);box-shadow:none;
+  font-size:calc(10.5px * var(--text-scale,1));font-weight:750;
+}
+.anatomy-active-filter:hover{transform:none;box-shadow:none;background:color-mix(in srgb,var(--brand,#17753f) 15%,var(--surface-panel,#fff));}
+.anatomy-active-filter b{font-size:1.2em;line-height:1;font-weight:500;}
+.anatomy-filter-group-clean{padding:8px 0 2px;}
+.anatomy-filter-group-clean > summary{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 1px;
+}
+.anatomy-filter-group-clean > summary::after{display:none;}
+.anatomy-filter-group-clean > summary small{
+  margin-left:auto;color:var(--text-secondary,#5f6f65);font-size:calc(10px * var(--text-scale,1));font-weight:650;
+}
+.anatomy-filter-chip-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px 0 9px;
+  max-height:270px;overflow:auto;
+}
+.anatomy-filter-option{
+  min-width:0;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:7px 8px;
+  border:1px solid var(--border-subtle,rgba(24,48,34,.11));border-radius:9px;background:var(--surface-panel,#fff);
+  color:var(--text-secondary,#5f6f65);box-shadow:none;text-align:left;font-size:calc(10.5px * var(--text-scale,1));font-weight:650;
+}
+.anatomy-filter-option span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.anatomy-filter-option small{flex:0 0 auto;color:var(--text-secondary,#5f6f65);font-size:.88em;font-weight:700;}
+.anatomy-filter-option:hover{transform:none;box-shadow:none;background:var(--surface-subtle,#f2f5f3);color:var(--text-primary,#17211c);}
+.anatomy-filter-option.is-active{
+  border-color:color-mix(in srgb,var(--brand,#17753f) 40%,transparent);background:var(--brand-soft,#e3f3e9);color:var(--brand,#17753f);
+}
+.anatomy-muscle-result .muscle-field{border-color:var(--border-subtle,rgba(24,48,34,.09));}
+
+.search-smart-answer{margin-bottom:12px;}
+.search-smart-answer.hidden{display:none!important;}
+.smart-answer-card{
+  position:relative;overflow:hidden;padding:16px 18px;border:1px solid var(--border-subtle,rgba(24,48,34,.12));
+  border-radius:14px;background:var(--surface-panel,#fff);box-shadow:0 1px 2px rgba(16,24,40,.04);
+}
+.smart-answer-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--brand,#17753f);}
+.smart-answer-card.is-ai::before{background:#6765b8;}
+.smart-answer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.smart-answer-kicker{margin-bottom:3px;color:var(--brand,#17753f);font-size:calc(10px * var(--text-scale,1));font-weight:850;letter-spacing:.09em;text-transform:uppercase;}
+.smart-answer-card.is-ai .smart-answer-kicker{color:#6765b8;}
+.smart-answer-head h3{margin:0;color:var(--text-primary,#17211c);font-size:calc(18px * var(--text-scale,1));line-height:1.25;}
+.smart-answer-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;}
+.smart-answer-badges span{
+  padding:4px 8px;border:1px solid var(--border-subtle,rgba(24,48,34,.12));border-radius:999px;
+  background:var(--surface-subtle,#f2f5f3);color:var(--text-secondary,#5f6f65);font-size:calc(10px * var(--text-scale,1));font-weight:700;white-space:nowrap;
+}
+.smart-answer-copy{margin:11px 0 0;color:var(--text-primary,#17211c);font-size:calc(13px * var(--text-scale,1));line-height:1.5;}
+.smart-answer-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin:12px 0 0;padding:0;list-style:none;}
+.smart-answer-list li{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border-radius:9px;background:var(--surface-subtle,#f2f5f3);}
+.smart-answer-list strong{color:var(--text-primary,#17211c);font-size:calc(12px * var(--text-scale,1));}
+.smart-answer-list span{color:var(--text-secondary,#5f6f65);font-size:calc(10.5px * var(--text-scale,1));}
+.smart-answer-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:11px;color:var(--text-secondary,#5f6f65);font-size:calc(10px * var(--text-scale,1));font-weight:650;}
+.smart-answer-note{margin-top:9px;padding-top:9px;border-top:1px solid var(--border-subtle,rgba(24,48,34,.1));color:var(--text-secondary,#5f6f65);font-size:calc(11px * var(--text-scale,1));line-height:1.45;}
+.smart-answer-loading,.smart-answer-status{
+  display:flex;align-items:center;gap:9px;padding:12px 14px;border:1px solid var(--border-subtle,rgba(24,48,34,.12));
+  border-radius:12px;background:var(--surface-panel,#fff);color:var(--text-secondary,#5f6f65);font-size:calc(11px * var(--text-scale,1));font-weight:650;
+}
+.smart-answer-status.is-limit{border-color:rgba(184,120,24,.3);background:color-mix(in srgb,#f6ad55 8%,var(--surface-panel,#fff));color:#8a5a00;}
+.smart-answer-spinner{width:14px;height:14px;border:2px solid var(--border-subtle,#d8e0db);border-top-color:#6765b8;border-radius:50%;animation:smart-answer-spin .8s linear infinite;}
+@keyframes smart-answer-spin{to{transform:rotate(360deg)}}
+@media (max-width:760px){
+  .anatomy-filter-chip-grid{grid-template-columns:1fr;max-height:none;}
+  .smart-answer-head{display:block;}
+  .smart-answer-badges{justify-content:flex-start;margin-top:8px;}
+  .smart-answer-list{grid-template-columns:1fr;}
+}
+
+/* =========================================================
+   Anamnesis workspace v3: clinical documentation UI upgrade
+   ========================================================= */
+#screen-anamnesis{
+  --anam-accent:#168449;
+  --anam-accent-strong:#0f6b3a;
+  --anam-accent-soft:#edf8f1;
+  --anam-ink:#173126;
+  --anam-line:rgba(23,49,38,.11);
+  --anam-shadow:0 18px 46px rgba(16,52,35,.09);
+}
+
+#screen-anamnesis:not(.anamnesis-record-open) .anamnesis-registry-shell{
+  grid-template-columns:minmax(0, 1120px) !important;
+  justify-content:center;
+  width:min(1180px, calc(100vw - 36px)) !important;
+}
+
+#screen-anamnesis:not(.anamnesis-record-open) .anamnesis-registry-card{
+  position:static !important;
+  width:100%;
+  max-height:none;
+  overflow:hidden;
+  padding:0;
+  border:1px solid var(--anam-line);
+  border-radius:26px;
+  background:rgba(255,255,255,.96);
+  box-shadow:var(--anam-shadow);
+}
+
+#screen-anamnesis .anamnesis-registry-hero{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:18px;
+  padding:26px 28px 22px;
+  border-bottom:1px solid rgba(23,49,38,.08);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(35,151,84,.13), transparent 34%),
+    linear-gradient(135deg, #fbfefc 0%, #f4fbf6 58%, #eef8f1 100%);
+}
+
+#screen-anamnesis .anamnesis-registry-symbol{
+  position:relative;
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg, var(--anam-accent), var(--anam-accent-strong));
+  box-shadow:0 12px 26px rgba(22,132,73,.22);
+}
+
+#screen-anamnesis .anamnesis-registry-symbol-cross,
+#screen-anamnesis .anamnesis-registry-symbol-cross::after{
+  position:absolute;
+  content:"";
+  width:28px;
+  height:7px;
+  border-radius:999px;
+  background:#fff;
+}
+#screen-anamnesis .anamnesis-registry-symbol-cross::after{ transform:rotate(90deg); }
+
+#screen-anamnesis .anamnesis-registry-hero-copy{ min-width:0; }
+#screen-anamnesis .anamnesis-registry-kicker,
+#screen-anamnesis .anamnesis-progress-kicker{
+  display:block;
+  margin-bottom:5px;
+  color:var(--anam-accent-strong);
+  font-size:calc(11px * var(--text-scale, 1));
+  font-weight:800;
+  letter-spacing:.085em;
+  text-transform:uppercase;
+}
+#screen-anamnesis .anamnesis-registry-hero h2{
+  width:auto;
+  margin:0;
+  color:var(--anam-ink);
+  font-size:calc(27px * var(--text-scale, 1));
+  line-height:1.12;
+  letter-spacing:-.02em;
+}
+#screen-anamnesis .anamnesis-registry-hero p{
+  max-width:700px;
+  margin:7px 0 0;
+  line-height:1.55;
+}
+
+#screen-anamnesis .anamnesis-add-patient-primary{
+  width:auto;
+  min-width:142px;
+  height:44px;
+  padding:0 16px;
+  border:0;
+  border-radius:14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:#fff;
+  background:linear-gradient(145deg, var(--anam-accent), var(--anam-accent-strong));
+  box-shadow:0 10px 22px rgba(22,132,73,.18);
+  font-weight:750;
+  white-space:nowrap;
+}
+#screen-anamnesis .anamnesis-add-patient-primary > span:first-child{
+  font-size:22px;
+  line-height:1;
+  margin-top:-2px;
+}
+
+#screen-anamnesis .anamnesis-registry-dashboard{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin:0 28px;
+  padding:18px 0;
+  border-bottom:1px solid rgba(23,49,38,.08);
+}
+#screen-anamnesis .anamnesis-registry-stat{
+  display:grid;
+  gap:4px;
+  padding:2px 22px;
+  border-right:1px solid rgba(23,49,38,.09);
+}
+#screen-anamnesis .anamnesis-registry-stat:first-child{ padding-left:0; }
+#screen-anamnesis .anamnesis-registry-stat:last-child{ border-right:0; }
+#screen-anamnesis .anamnesis-registry-stat span{
+  color:var(--muted);
+  font-size:calc(12px * var(--text-scale, 1));
+  font-weight:650;
+}
+#screen-anamnesis .anamnesis-registry-stat strong{
+  color:var(--anam-ink);
+  font-size:calc(21px * var(--text-scale, 1));
+  line-height:1.15;
+}
+
+#screen-anamnesis .anamnesis-registry-list-head{
+  align-items:end;
+  padding:20px 28px 12px;
+  margin:0;
+}
+#screen-anamnesis .anamnesis-registry-list-head > div > strong{
+  display:block;
+  color:var(--anam-ink);
+  font-size:calc(17px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-registry-list-head p{ margin:4px 0 0; }
+
+#screen-anamnesis .anamnesis-patient-search-wrap{
+  position:relative;
+  width:min(330px, 100%);
+}
+#screen-anamnesis .anamnesis-patient-search-wrap input{
+  width:100%;
+  min-height:42px;
+  margin:0;
+  padding:9px 12px 9px 40px;
+  border:1px solid rgba(23,49,38,.13);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(18,45,31,.035) inset;
+}
+#screen-anamnesis .anamnesis-search-icon{
+  position:absolute;
+  left:13px;
+  top:50%;
+  width:18px;
+  height:18px;
+  transform:translateY(-50%);
+  color:#6c8175;
+  pointer-events:none;
+}
+#screen-anamnesis .anamnesis-search-icon svg{
+  width:100%;
+  height:100%;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+}
+
+#screen-anamnesis:not(.anamnesis-record-open) .anamnesis-patient-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  padding:0 28px 26px;
+}
+#screen-anamnesis .anamnesis-patient-row{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  min-width:0;
+  min-height:112px;
+  padding:6px;
+  border:1px solid rgba(23,49,38,.10);
+  border-radius:18px;
+  background:linear-gradient(180deg,#fff,#fbfdfc);
+  box-shadow:0 7px 18px rgba(18,45,31,.035);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+#screen-anamnesis .anamnesis-patient-row:hover{
+  transform:translateY(-1px);
+  border-color:rgba(22,132,73,.27);
+  box-shadow:0 12px 26px rgba(18,76,44,.08);
+}
+#screen-anamnesis .anamnesis-patient-row.active{
+  border-color:rgba(22,132,73,.34);
+  background:linear-gradient(180deg,#f9fdfa,#f1faf4);
+  box-shadow:0 0 0 2px rgba(22,132,73,.06),0 10px 25px rgba(18,76,44,.08);
+}
+#screen-anamnesis .anamnesis-patient-open{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  min-width:0;
+  padding:11px 8px 11px 10px;
+  text-align:left;
+  border-radius:14px;
+}
+#screen-anamnesis .anamnesis-patient-avatar{
+  width:46px;
+  height:46px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  flex:0 0 46px;
+  color:var(--anam-accent-strong);
+  background:var(--anam-accent-soft);
+  border:1px solid rgba(22,132,73,.12);
+  font-size:calc(13px * var(--text-scale, 1));
+  font-weight:850;
+  letter-spacing:.035em;
+}
+#screen-anamnesis .anamnesis-patient-card-copy{
+  min-width:0;
+  display:grid;
+  gap:6px;
+}
+#screen-anamnesis .anamnesis-patient-card-heading{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+#screen-anamnesis .anamnesis-patient-summary{
+  min-width:0;
+  color:var(--anam-ink);
+  font-size:calc(15px * var(--text-scale, 1));
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#screen-anamnesis .anamnesis-patient-type-badge{
+  flex:0 0 auto;
+  padding:3px 7px;
+  border-radius:999px;
+  color:var(--anam-accent-strong);
+  background:var(--anam-accent-soft);
+  font-size:calc(9.5px * var(--text-scale, 1));
+  font-weight:800;
+  letter-spacing:.02em;
+}
+#screen-anamnesis .anamnesis-patient-type-badge.type-pediatrics{
+  color:#7a4c00;
+  background:#fff6df;
+}
+#screen-anamnesis .anamnesis-patient-type-badge.type-psychiatric{
+  color:#5541a7;
+  background:#f1edff;
+}
+#screen-anamnesis .anamnesis-patient-card-clinical{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  color:#41594c;
+  font-size:calc(12px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-patient-card-clinical > span:last-child{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#screen-anamnesis .anamnesis-patient-updated{
+  font-size:calc(10.5px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-patient-delete{
+  align-self:center;
+  margin-right:3px;
+  opacity:.58;
+  transition:opacity .16s ease,background .16s ease;
+}
+#screen-anamnesis .anamnesis-patient-row:hover .anamnesis-patient-delete{ opacity:1; }
+#screen-anamnesis .anamnesis-patient-empty{
+  grid-column:1 / -1;
+  display:grid;
+  place-items:center;
+  gap:5px;
+  min-height:155px;
+  padding:28px;
+  border:1px dashed rgba(23,49,38,.18);
+  border-radius:18px;
+  text-align:center;
+  background:#fafdfb;
+}
+#screen-anamnesis .anamnesis-patient-empty strong{ color:var(--anam-ink); }
+#screen-anamnesis .anamnesis-patient-empty span{ max-width:480px; }
+#screen-anamnesis .anamnesis-status-inline{ margin:0 28px 20px; }
+
+/* Open-record clinical workspace */
+#screen-anamnesis.anamnesis-record-open .anamnesis-registry-shell{
+  width:min(1680px, calc(100vw - 36px)) !important;
+}
+#screen-anamnesis .anamnesis-editor-card{
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+  grid-template-areas:
+    "mobile mobile"
+    "toolbar toolbar"
+    "progress progress"
+    "nav form";
+  gap:14px 16px;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#screen-anamnesis .anamnesis-mobile-header{ grid-area:mobile; }
+#screen-anamnesis .anamnesis-patient-toolbar{
+  grid-area:toolbar;
+  margin:0 !important;
+  padding:18px 20px !important;
+  border:1px solid var(--anam-line) !important;
+  border-radius:20px !important;
+  background:rgba(255,255,255,.96) !important;
+  box-shadow:0 10px 30px rgba(18,62,37,.055) !important;
+}
+#screen-anamnesis #anamnesis-editor-title{
+  color:var(--anam-ink);
+  font-size:calc(22px * var(--text-scale, 1));
+  letter-spacing:-.015em;
+}
+#screen-anamnesis .anamnesis-patient-type-chip{
+  border-color:rgba(22,132,73,.14);
+  background:var(--anam-accent-soft);
+  color:var(--anam-accent-strong);
+}
+#screen-anamnesis .anam-actions .primary,
+#screen-anamnesis #anamnesis-mobile-save{
+  border-color:var(--anam-accent);
+  background:linear-gradient(145deg,var(--anam-accent),var(--anam-accent-strong));
+  box-shadow:0 7px 16px rgba(22,132,73,.15);
+}
+
+#screen-anamnesis .anamnesis-progress-panel{
+  grid-area:progress;
+  display:grid;
+  grid-template-columns:minmax(230px,1fr) minmax(240px,1.4fr) auto;
+  align-items:center;
+  gap:16px;
+  padding:14px 18px;
+  border:1px solid var(--anam-line);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(247,252,249,.98));
+  box-shadow:0 8px 22px rgba(18,62,37,.04);
+}
+#screen-anamnesis .anamnesis-progress-copy{
+  display:grid;
+  gap:2px;
+  min-width:0;
+}
+#screen-anamnesis .anamnesis-progress-copy strong{
+  color:var(--anam-ink);
+  font-size:calc(16px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-progress-copy .muted{
+  font-size:calc(11px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-progress-meter{
+  height:9px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e5eee8;
+  box-shadow:inset 0 1px 2px rgba(15,49,31,.08);
+}
+#screen-anamnesis .anamnesis-progress-meter > span{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#34a766,var(--anam-accent-strong));
+  transition:width .24s ease;
+}
+#screen-anamnesis .anamnesis-progress-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+#screen-anamnesis .anamnesis-save-state{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-width:max-content;
+  color:#5f7569;
+  font-size:calc(10.5px * var(--text-scale, 1));
+  font-weight:700;
+}
+#screen-anamnesis .anamnesis-save-state-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#3aa76a;
+  box-shadow:0 0 0 4px rgba(58,167,106,.10);
+}
+#screen-anamnesis .anamnesis-save-state[data-state="saving"] .anamnesis-save-state-dot{
+  background:#d49a26;
+  box-shadow:0 0 0 4px rgba(212,154,38,.11);
+  animation:anamnesisSavePulse 1s ease-in-out infinite;
+}
+@keyframes anamnesisSavePulse{ 50%{ opacity:.35; transform:scale(.84); } }
+#screen-anamnesis .anamnesis-next-incomplete{
+  min-height:36px;
+  padding:6px 11px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+
+#screen-anamnesis .anamnesis-section-nav{
+  grid-area:nav;
+  position:sticky;
+  top:84px;
+  align-self:start;
+  max-height:calc(100vh - 108px);
+  overflow:hidden;
+  padding:12px;
+  border:1px solid var(--anam-line);
+  border-radius:18px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 8px 24px rgba(18,62,37,.045);
+}
+#screen-anamnesis .anamnesis-section-nav-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:4px 5px 9px;
+  color:var(--anam-ink);
+  font-size:calc(11px * var(--text-scale, 1));
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+#screen-anamnesis .anamnesis-section-nav-list{
+  display:grid;
+  gap:3px;
+  max-height:calc(100vh - 165px);
+  overflow:auto;
+  scrollbar-width:thin;
+}
+#screen-anamnesis .anamnesis-section-nav-item{
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr) 8px;
+  align-items:center;
+  gap:7px;
+  width:100%;
+  min-height:38px;
+  padding:6px 7px;
+  border:0;
+  border-radius:11px;
+  color:#53685d;
+  background:transparent;
+  text-align:left;
+  font-size:calc(11px * var(--text-scale, 1));
+  font-weight:650;
+  line-height:1.25;
+  transition:background .14s ease,color .14s ease,transform .14s ease;
+}
+#screen-anamnesis .anamnesis-section-nav-item:hover{
+  transform:translateX(2px);
+  color:var(--anam-ink);
+  background:#f4f8f5;
+}
+#screen-anamnesis .anamnesis-section-nav-item.is-active{
+  color:var(--anam-accent-strong);
+  background:var(--anam-accent-soft);
+}
+#screen-anamnesis .anamnesis-section-nav-number{
+  display:grid;
+  place-items:center;
+  width:27px;
+  height:27px;
+  border-radius:9px;
+  color:#71847a;
+  background:#f1f5f2;
+  font-size:9px;
+  font-weight:850;
+}
+#screen-anamnesis .anamnesis-section-nav-item.is-active .anamnesis-section-nav-number{
+  color:#fff;
+  background:var(--anam-accent);
+}
+#screen-anamnesis .anamnesis-section-nav-label{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#screen-anamnesis .anamnesis-section-nav-status{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#dce4df;
+}
+#screen-anamnesis .anamnesis-section-nav-item.is-started .anamnesis-section-nav-status{
+  background:#39a968;
+  box-shadow:0 0 0 3px rgba(57,169,104,.09);
+}
+
+#screen-anamnesis .anamnesis-editor-scroll{
+  grid-area:form;
+  min-width:0;
+  padding:0 !important;
+}
+#screen-anamnesis .anamnesis-editor-scroll > div:not(.hidden) > form{
+  display:grid;
+  gap:12px;
+}
+#screen-anamnesis .anam-section{
+  scroll-margin-top:96px;
+  margin:0 !important;
+  padding:16px 18px !important;
+  border:1px solid rgba(23,49,38,.10) !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.97) !important;
+  box-shadow:0 7px 22px rgba(18,62,37,.035);
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+#screen-anamnesis .anam-section.anamnesis-section-started{
+  border-color:rgba(22,132,73,.17) !important;
+}
+#screen-anamnesis .anam-section:focus-within{
+  border-color:rgba(22,132,73,.34) !important;
+  box-shadow:0 0 0 3px rgba(22,132,73,.055),0 10px 28px rgba(18,62,37,.055);
+}
+#screen-anamnesis .anam-section > summary{
+  margin:-4px -4px 8px;
+  padding:7px 8px;
+  border-radius:12px;
+  color:var(--anam-ink);
+  cursor:pointer;
+  font-size:calc(15px * var(--text-scale, 1));
+  font-weight:800;
+  list-style:none;
+}
+#screen-anamnesis .anam-section > summary::-webkit-details-marker{ display:none; }
+#screen-anamnesis .anam-section > summary::after{
+  content:"⌄";
+  float:right;
+  color:#7b9084;
+  font-size:18px;
+  line-height:1;
+  transition:transform .16s ease;
+}
+#screen-anamnesis .anam-section:not([open]) > summary::after{ transform:rotate(-90deg); }
+#screen-anamnesis .anam-section > h3{
+  margin:0 0 12px;
+  color:var(--anam-ink);
+}
+#screen-anamnesis .anam-section input:not([type="checkbox"]):not([type="radio"]),
+#screen-anamnesis .anam-section textarea,
+#screen-anamnesis .anam-section select{
+  border-color:rgba(23,49,38,.13);
+  border-radius:12px;
+  background:#fcfefd;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+}
+#screen-anamnesis .anam-section input:not([type="checkbox"]):not([type="radio"]):focus,
+#screen-anamnesis .anam-section textarea:focus,
+#screen-anamnesis .anam-section select:focus{
+  border-color:rgba(22,132,73,.50);
+  outline:none;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(22,132,73,.08);
+}
+#screen-anamnesis .anam-section textarea{ min-height:92px; }
+#screen-anamnesis .anam-row label:has(> input[type="checkbox"]),
+#screen-anamnesis .anam-row label:has(> input[type="radio"]){
+  border-radius:11px !important;
+  transition:border-color .14s ease,background .14s ease,transform .14s ease;
+}
+#screen-anamnesis .anam-row label:has(> input[type="checkbox"]:checked),
+#screen-anamnesis .anam-row label:has(> input[type="radio"]:checked){
+  border-color:rgba(22,132,73,.26) !important;
+  background:#f0f9f3 !important;
+  color:var(--anam-ink);
+}
+
+/* New patient workflow chooser */
+#screen-anamnesis .anamnesis-patient-modal{
+  width:min(720px, 94%);
+  border-radius:22px;
+}
+#screen-anamnesis .anamnesis-workflow-picker{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+#screen-anamnesis .anamnesis-workflow-option{
+  display:grid;
+  align-content:start;
+  gap:10px;
+  min-height:154px;
+  padding:15px;
+  border:1px solid rgba(23,49,38,.12);
+  border-radius:17px;
+  color:var(--text);
+  background:#fff;
+  text-align:left;
+}
+#screen-anamnesis .anamnesis-workflow-option:hover{
+  border-color:rgba(22,132,73,.28);
+  background:#fbfefc;
+}
+#screen-anamnesis .anamnesis-workflow-option.is-selected{
+  border-color:rgba(22,132,73,.46);
+  background:var(--anam-accent-soft);
+  box-shadow:0 0 0 3px rgba(22,132,73,.06);
+}
+#screen-anamnesis .anamnesis-workflow-icon{
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  color:var(--anam-accent-strong);
+  background:#e6f6ec;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+#screen-anamnesis .anamnesis-workflow-option > span:last-child{
+  display:grid;
+  gap:5px;
+}
+#screen-anamnesis .anamnesis-workflow-option strong{
+  color:var(--anam-ink);
+  font-size:calc(14px * var(--text-scale, 1));
+}
+#screen-anamnesis .anamnesis-workflow-option small{
+  color:var(--muted);
+  font-size:calc(10.5px * var(--text-scale, 1));
+  line-height:1.45;
+}
+#screen-anamnesis .anamnesis-workflow-select{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Notes should feel like part of the workspace rather than a browser drawer. */
+#screen-anamnesis .anam-notes-drawer{
+  border-left:1px solid rgba(23,49,38,.12);
+  box-shadow:-18px 0 42px rgba(15,46,29,.12);
+}
+#screen-anamnesis .notes-toggle-btn{
+  border:1px solid rgba(22,132,73,.18);
+  color:var(--anam-accent-strong);
+  background:rgba(249,253,250,.96);
+  box-shadow:0 10px 25px rgba(18,62,37,.11);
+}
+
+body[data-theme="dark"] #screen-anamnesis{
+  --anam-accent:#55bf7f;
+  --anam-accent-strong:#80d9a3;
+  --anam-accent-soft:#173426;
+  --anam-ink:#e8f3ed;
+  --anam-line:rgba(224,240,231,.11);
+  --anam-shadow:0 20px 48px rgba(0,0,0,.28);
+}
+body[data-theme="dark"] #screen-anamnesis:not(.anamnesis-record-open) .anamnesis-registry-card,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-toolbar,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-progress-panel,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav,
+body[data-theme="dark"] #screen-anamnesis .anam-section{
+  background:#111c17 !important;
+  border-color:rgba(224,240,231,.11) !important;
+}
+body[data-theme="dark"] #screen-anamnesis .anamnesis-registry-hero{
+  background:radial-gradient(circle at 100% 0%,rgba(85,191,127,.13),transparent 34%),linear-gradient(135deg,#132019,#101914 72%);
+  border-color:rgba(224,240,231,.08);
+}
+body[data-theme="dark"] #screen-anamnesis .anamnesis-registry-dashboard{
+  border-color:rgba(224,240,231,.08);
+}
+body[data-theme="dark"] #screen-anamnesis .anamnesis-registry-stat{ border-color:rgba(224,240,231,.08); }
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-search-wrap input,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-row,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-workflow-option,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-empty{
+  background:#111b16 !important;
+  border-color:rgba(224,240,231,.11) !important;
+}
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-row.active,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-workflow-option.is-selected{
+  background:#153023 !important;
+  border-color:rgba(85,191,127,.34) !important;
+}
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-card-clinical{ color:#b8cbbf; }
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav-item{ color:#a7bbb0; }
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav-item:hover{ background:#17251e; }
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav-number{ background:#1c2a23; color:#adc1b5; }
+body[data-theme="dark"] #screen-anamnesis .anamnesis-progress-meter{ background:#24342b; }
+body[data-theme="dark"] #screen-anamnesis .anam-section input:not([type="checkbox"]):not([type="radio"]),
+body[data-theme="dark"] #screen-anamnesis .anam-section textarea,
+body[data-theme="dark"] #screen-anamnesis .anam-section select,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-patient-search-wrap input{
+  background:#0d1612;
+  border-color:rgba(224,240,231,.12);
+}
+body[data-theme="dark"] #screen-anamnesis .anam-row label:has(> input[type="checkbox"]:checked),
+body[data-theme="dark"] #screen-anamnesis .anam-row label:has(> input[type="radio"]:checked){
+  background:#173426 !important;
+  border-color:rgba(85,191,127,.28) !important;
+  color:#e8f3ed;
+}
+
+@media (max-width:1100px){
+  #screen-anamnesis:not(.anamnesis-record-open) .anamnesis-patient-list{
+    grid-template-columns:1fr;
+  }
+  #screen-anamnesis .anamnesis-editor-card{
+    grid-template-columns:1fr;
+    grid-template-areas:"mobile" "toolbar" "progress" "nav" "form";
+  }
+  #screen-anamnesis .anamnesis-section-nav{
+    position:sticky;
+    top:74px;
+    z-index:8;
+    max-height:none;
+    padding:8px;
+    overflow:hidden;
+  }
+  #screen-anamnesis .anamnesis-section-nav-head{ display:none; }
+  #screen-anamnesis .anamnesis-section-nav-list{
+    display:flex;
+    gap:6px;
+    max-height:none;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding-bottom:2px;
+    scrollbar-width:thin;
+  }
+  #screen-anamnesis .anamnesis-section-nav-item{
+    grid-template-columns:auto auto 7px;
+    flex:0 0 auto;
+    width:auto;
+    max-width:220px;
+    min-height:36px;
+    padding:5px 8px;
+  }
+  #screen-anamnesis .anamnesis-section-nav-item:hover{ transform:none; }
+  #screen-anamnesis .anamnesis-progress-panel{
+    grid-template-columns:minmax(200px,1fr) minmax(180px,1fr);
+  }
+  #screen-anamnesis .anamnesis-progress-actions{ grid-column:1 / -1; }
+}
+
+@media (max-width:700px){
+  #screen-anamnesis:not(.anamnesis-record-open) .anamnesis-registry-shell,
+  #screen-anamnesis.anamnesis-record-open .anamnesis-registry-shell{
+    width:min(100%, calc(100vw - 14px)) !important;
+  }
+  #screen-anamnesis:not(.anamnesis-record-open) .anamnesis-registry-card{
+    border-radius:20px;
+  }
+  #screen-anamnesis .anamnesis-registry-hero{
+    grid-template-columns:auto minmax(0,1fr);
+    gap:12px;
+    padding:18px 16px 15px;
+  }
+  #screen-anamnesis .anamnesis-registry-symbol{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+  }
+  #screen-anamnesis .anamnesis-registry-symbol-cross,
+  #screen-anamnesis .anamnesis-registry-symbol-cross::after{
+    width:23px;
+    height:6px;
+  }
+  #screen-anamnesis .anamnesis-registry-hero h2{ font-size:calc(21px * var(--text-scale, 1)); }
+  #screen-anamnesis .anamnesis-registry-hero p{ font-size:calc(12px * var(--text-scale, 1)); }
+  #screen-anamnesis .anamnesis-add-patient-primary{
+    grid-column:1 / -1;
+    width:100%;
+  }
+  #screen-anamnesis .anamnesis-registry-dashboard{
+    margin:0 16px;
+    padding:13px 0;
+  }
+  #screen-anamnesis .anamnesis-registry-stat{
+    padding:2px 9px;
+  }
+  #screen-anamnesis .anamnesis-registry-stat:first-child{ padding-left:0; }
+  #screen-anamnesis .anamnesis-registry-stat strong{ font-size:calc(16px * var(--text-scale, 1)); }
+  #screen-anamnesis .anamnesis-registry-stat span{ font-size:calc(9.5px * var(--text-scale, 1)); }
+  #screen-anamnesis .anamnesis-registry-list-head{
+    align-items:stretch;
+    padding:16px 16px 10px;
+  }
+  #screen-anamnesis .anamnesis-patient-search-wrap{ width:100%; }
+  #screen-anamnesis:not(.anamnesis-record-open) .anamnesis-patient-list{
+    padding:0 16px 18px;
+    gap:9px;
+  }
+  #screen-anamnesis .anamnesis-patient-row{ min-height:102px; }
+  #screen-anamnesis .anamnesis-patient-avatar{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+  }
+  #screen-anamnesis .anamnesis-status-inline{ margin:0 16px 16px; }
+
+  #screen-anamnesis .anamnesis-editor-card{
+    gap:9px;
+  }
+  #screen-anamnesis[data-anam-layout="phone"] .anamnesis-mobile-header{
+    grid-area:mobile;
+    margin:0 !important;
+    top:5px;
+  }
+  #screen-anamnesis[data-anam-layout="phone"] .anamnesis-section-nav{
+    top:74px;
+    border-radius:15px;
+    background:rgba(255,255,255,.97);
+    box-shadow:0 7px 18px rgba(15,49,31,.08);
+  }
+  body[data-theme="dark"] #screen-anamnesis[data-anam-layout="phone"] .anamnesis-section-nav{
+    background:rgba(17,28,23,.97);
+  }
+  #screen-anamnesis .anamnesis-progress-panel{
+    grid-template-columns:1fr;
+    gap:10px;
+    padding:12px 13px;
+    border-radius:16px;
+  }
+  #screen-anamnesis .anamnesis-progress-meter{ height:7px; }
+  #screen-anamnesis .anamnesis-progress-actions{
+    grid-column:auto;
+    justify-content:space-between;
+  }
+  #screen-anamnesis .anamnesis-next-incomplete{ min-height:34px; }
+  #screen-anamnesis .anam-section{
+    scroll-margin-top:128px;
+    padding:13px !important;
+    border-radius:16px !important;
+  }
+  #screen-anamnesis .anam-section > summary{
+    font-size:calc(14px * var(--text-scale, 1));
+  }
+  #screen-anamnesis .anamnesis-workflow-picker{
+    grid-template-columns:1fr;
+  }
+  #screen-anamnesis .anamnesis-workflow-option{
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:center;
+    min-height:0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #screen-anamnesis .anamnesis-patient-row,
+  #screen-anamnesis .anamnesis-section-nav-item,
+  #screen-anamnesis .anamnesis-progress-meter > span,
+  #screen-anamnesis .anam-section{
+    transition:none !important;
+  }
+  #screen-anamnesis .anamnesis-save-state[data-state="saving"] .anamnesis-save-state-dot{
+    animation:none;
+  }
+}
+
+/* =========================================================
+   Anamnesis workspace v3.1: persistent submenu + safe switch
+   ========================================================= */
+/* Switching an existing record to another workflow is deliberately explicit. */
+#screen-anamnesis .anamnesis-type-switch-modal{
+  width:min(610px,calc(100vw - 30px));
+  padding:22px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:16px 18px;
+  border-radius:22px;
+  border:1px solid rgba(157,84,12,.17);
+  background:#fff;
+  box-shadow:0 24px 70px rgba(42,29,12,.20);
+}
+
+#screen-anamnesis .anamnesis-type-switch-icon{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  color:#8b4d08;
+  background:#fff4df;
+  border:1px solid rgba(179,106,20,.18);
+  font-size:22px;
+  font-weight:900;
+}
+
+#screen-anamnesis .anamnesis-type-switch-copy{
+  min-width:0;
+}
+
+#screen-anamnesis .anamnesis-type-switch-copy h3{
+  margin:0;
+  color:var(--anam-ink);
+  font-size:calc(20px * var(--text-scale,1));
+  line-height:1.2;
+}
+
+#screen-anamnesis .anamnesis-type-switch-copy > p{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:calc(12px * var(--text-scale,1));
+  line-height:1.55;
+}
+
+#screen-anamnesis .anamnesis-type-switch-route{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  margin-top:16px;
+  padding:12px 14px;
+  border:1px solid rgba(23,49,38,.10);
+  border-radius:14px;
+  background:#f8fbf9;
+}
+
+#screen-anamnesis .anamnesis-type-switch-route span:first-child,
+#screen-anamnesis .anamnesis-type-switch-route strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:calc(12px * var(--text-scale,1));
+}
+
+#screen-anamnesis .anamnesis-type-switch-route strong{
+  color:var(--anam-accent-strong);
+  text-align:right;
+}
+
+#screen-anamnesis .anamnesis-type-switch-arrow{
+  color:#809087;
+  font-size:18px;
+}
+
+#screen-anamnesis .anamnesis-type-switch-note{
+  color:#955611 !important;
+  font-weight:700;
+}
+
+#screen-anamnesis .anamnesis-type-switch-actions{
+  grid-column:1 / -1;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  padding-top:2px;
+}
+
+#screen-anamnesis .anamnesis-type-switch-actions button{
+  min-height:40px;
+  padding:8px 14px;
+  border-radius:12px;
+}
+
+#screen-anamnesis .anamnesis-type-switch-proceed{
+  background:#a74616;
+  border-color:#a74616;
+  color:#fff;
+}
+
+#screen-anamnesis .anamnesis-type-switch-proceed:hover,
+#screen-anamnesis .anamnesis-type-switch-proceed:focus-visible{
+  background:#8f3810;
+  border-color:#8f3810;
+}
+
+body[data-theme="dark"] #screen-anamnesis.anamnesis-record-open .anamnesis-registry-card.anamnesis-registry-submenu{
+  background:#111c17 !important;
+  border-color:rgba(224,240,231,.11) !important;
+}
+
+body[data-theme="dark"] #screen-anamnesis.anamnesis-record-open .anamnesis-registry-submenu .anamnesis-registry-hero{
+  background:radial-gradient(circle at 100% 0%,rgba(85,191,127,.10),transparent 32%),linear-gradient(135deg,#132019,#101914 72%);
+}
+
+body[data-theme="dark"] #screen-anamnesis .anamnesis-type-switch-modal{
+  background:#111c17;
+  border-color:rgba(224,240,231,.12);
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+
+body[data-theme="dark"] #screen-anamnesis .anamnesis-type-switch-icon{
+  color:#ffc47d;
+  background:#3a2b17;
+  border-color:rgba(255,196,125,.16);
+}
+
+body[data-theme="dark"] #screen-anamnesis .anamnesis-type-switch-route{
+  background:#0d1612;
+  border-color:rgba(224,240,231,.10);
+}
+
+body[data-theme="dark"] #screen-anamnesis .anamnesis-type-switch-note{
+  color:#ffc47d !important;
+}
+
+@media (max-width:700px){
+  #screen-anamnesis .anamnesis-type-switch-modal{
+    grid-template-columns:1fr;
+    gap:11px;
+    padding:18px;
+    border-radius:18px;
+  }
+
+  #screen-anamnesis .anamnesis-type-switch-icon{
+    width:40px;
+    height:40px;
+    border-radius:13px;
+  }
+
+  #screen-anamnesis .anamnesis-type-switch-copy h3{
+    font-size:calc(18px * var(--text-scale,1));
+  }
+
+  #screen-anamnesis .anamnesis-type-switch-route{
+    grid-template-columns:1fr auto 1fr;
+    gap:7px;
+    padding:10px;
+  }
+
+  #screen-anamnesis .anamnesis-type-switch-actions{
+    grid-column:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  #screen-anamnesis .anamnesis-type-switch-actions button{
+    width:100%;
+  }
+}
+
+/* Anamnesis landing state: registry first, editor only after a patient is opened. */
+#screen-anamnesis .anamnesis-editor-empty{
+  width:100% !important;
+  min-height:210px;
+  padding:28px 30px !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  border:1px solid var(--anam-line) !important;
+  border-radius:20px !important;
+  background:
+    radial-gradient(circle at 95% 12%,rgba(22,132,73,.08),transparent 27%),
+    rgba(255,255,255,.97) !important;
+  box-shadow:0 10px 28px rgba(18,62,37,.05) !important;
+}
+
+#screen-anamnesis .anamnesis-editor-empty.hidden{
+  display:none !important;
+}
+
+#screen-anamnesis .anamnesis-editor-empty-copy{
+  min-width:0;
+}
+
+#screen-anamnesis .anamnesis-editor-empty h2{
+  width:auto !important;
+  margin:0;
+  color:var(--anam-ink);
+  font-size:calc(28px * var(--text-scale,1));
+}
+
+#screen-anamnesis .anamnesis-editor-empty p{
+  max-width:620px;
+  margin:8px 0 0;
+  line-height:1.55;
+}
+
+#screen-anamnesis .anamnesis-editor-empty .anamnesis-add-patient-primary{
+  flex:0 0 auto;
+}
+
+body[data-theme="dark"] #screen-anamnesis .anamnesis-editor-empty{
+  background:#111c17 !important;
+  border-color:rgba(224,240,231,.11) !important;
+}
+
+@media (max-width:700px){
+  #screen-anamnesis .anamnesis-editor-empty{
+    min-height:190px;
+    padding:20px 18px !important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:16px;
+    border-radius:17px !important;
+  }
+
+  #screen-anamnesis .anamnesis-editor-empty h2{
+    font-size:calc(23px * var(--text-scale,1));
+  }
+
+  #screen-anamnesis .anamnesis-editor-empty .anamnesis-add-patient-primary{
+    width:100%;
+  }
+
+  #screen-anamnesis .anamnesis-editor-empty .anamnesis-add-patient-primary > span:last-child{
+    display:inline;
+  }
+}
+
+/* =========================================================
+   Anamnesis v4: separate registry / record views + side sections drawer
+   ========================================================= */
+#screen-anamnesis.anamnesis-registry-view .anamnesis-registry-shell{
+  display:block !important;
+  width:min(1120px, calc(100vw - 36px)) !important;
+  margin-inline:auto;
+}
+
+#screen-anamnesis.anamnesis-registry-view .anamnesis-registry-card{
+  position:static !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  border:1px solid var(--anam-line) !important;
+  border-radius:24px !important;
+  background:rgba(255,255,255,.97) !important;
+  box-shadow:var(--anam-shadow) !important;
+}
+
+#screen-anamnesis.anamnesis-registry-view .anamnesis-editor{
+  display:none !important;
+}
+
+#screen-anamnesis.anamnesis-registry-view .anamnesis-registry-list-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+  margin:0 !important;
+  padding:26px 28px 20px !important;
+  border-bottom:1px solid rgba(23,49,38,.08);
+  background:linear-gradient(180deg,#fbfefc 0%,#f7fbf8 100%);
+}
+
+#screen-anamnesis .anamnesis-registry-title-block{
+  min-width:0;
+}
+
+#screen-anamnesis .anamnesis-registry-title-block > strong{
+  display:block;
+  color:var(--anam-ink);
+  font-size:calc(26px * var(--text-scale,1));
+  line-height:1.12;
+  letter-spacing:-.02em;
+}
+
+#screen-anamnesis .anamnesis-registry-title-block > p{
+  max-width:560px;
+  margin:7px 0 0;
+  line-height:1.5;
+}
+
+#screen-anamnesis .anamnesis-registry-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex:0 1 500px;
+  min-width:0;
+}
+
+#screen-anamnesis .anamnesis-registry-actions .anamnesis-patient-search-wrap{
+  flex:1 1 280px;
+  width:auto;
+  min-width:180px;
+}
+
+#screen-anamnesis .anamnesis-registry-actions .anamnesis-add-patient-primary{
+  flex:0 0 auto;
+}
+
+#screen-anamnesis.anamnesis-registry-view .anamnesis-registry-dashboard{
+  margin:0 28px !important;
+  padding:16px 0 !important;
+}
+
+#screen-anamnesis.anamnesis-record-open .anamnesis-registry-card{
+  display:none !important;
+}
+
+#screen-anamnesis.anamnesis-record-open .anamnesis-editor{
+  display:block !important;
+  width:100%;
+  min-width:0;
+}
+
+#screen-anamnesis.anamnesis-record-open .anamnesis-registry-shell{
+  display:block !important;
+  width:min(1540px, calc(100vw - 36px)) !important;
+  margin-inline:auto;
+}
+
+#screen-anamnesis .anamnesis-editor-card{
+  width:100% !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-areas:
+    "mobile"
+    "toolbar"
+    "progress"
+    "form" !important;
+  gap:14px !important;
+}
+
+/* Sections no longer occupies form width. It behaves like Notes: hidden at
+   the screen edge until the user asks for it. */
+#screen-anamnesis .sections-toggle-btn,
+#screen-anamnesis .notes-toggle-btn{
+  position:fixed !important;
+  right:0 !important;
+  bottom:auto !important;
+  transform:translateY(-50%) !important;
+  width:54px !important;
+  min-width:54px !important;
+  height:142px !important;
+  min-height:142px !important;
+  padding:10px 7px !important;
+  border-radius:16px 0 0 16px !important;
+  border-right:0 !important;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.97) !important;
+  box-shadow:0 12px 28px rgba(14,48,29,.10);
+  font-weight:750;
+  z-index:32 !important;
+}
+
+#screen-anamnesis .sections-toggle-btn{
+  top:38% !important;
+  border-left:3px solid var(--anam-accent) !important;
+  color:var(--anam-accent-strong);
+}
+
+#screen-anamnesis .notes-toggle-btn{
+  top:58% !important;
+}
+
+#screen-anamnesis:not(.anamnesis-record-open) .sections-toggle-btn,
+#screen-anamnesis:not(.anamnesis-record-open) .notes-toggle-btn,
+#screen-anamnesis:not(.anamnesis-record-open) .anamnesis-side-drawer,
+#screen-anamnesis:not(.anamnesis-record-open) .anam-notes-drawer{
+  display:none !important;
+}
+
+#screen-anamnesis .anamnesis-section-nav.anamnesis-side-drawer{
+  position:fixed !important;
+  inset:auto -370px 0 auto !important;
+  top:74px !important;
+  width:350px !important;
+  max-width:88vw !important;
+  height:calc(100vh - 74px) !important;
+  max-height:none !important;
+  padding:12px !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column;
+  gap:8px;
+  border:0 !important;
+  border-left:1px solid var(--border) !important;
+  border-radius:0 !important;
+  background:rgba(255,255,255,.985) !important;
+  box-shadow:-18px 0 44px rgba(15,49,31,.10) !important;
+  z-index:42 !important;
+  transition:right .2s ease !important;
+}
+
+#screen-anamnesis .anamnesis-section-nav.anamnesis-side-drawer.open{
+  right:0 !important;
+}
+
+#screen-anamnesis .anamnesis-side-drawer-edge{
+  position:absolute;
+  left:0;
+  top:0;
+  width:15px;
+  height:100%;
+  padding:0;
+  border:0;
+  border-left:2px solid var(--border);
+  border-radius:0;
+  background:transparent;
+  cursor:pointer;
+}
+
+#screen-anamnesis .anamnesis-side-drawer-edge::after{
+  content:"‹";
+  position:absolute;
+  left:3px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:18px;
+  font-weight:800;
+}
+
+#screen-anamnesis .anamnesis-section-nav-head{
+  flex:0 0 auto;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:8px;
+  padding:3px 2px 10px 14px !important;
+  border-bottom:1px solid rgba(23,49,38,.08);
+}
+
+#screen-anamnesis .anamnesis-section-nav-close{
+  width:32px;
+  height:32px;
+  padding:0;
+  border:1px solid var(--border);
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  color:var(--text);
+  font-size:20px;
+  line-height:1;
+}
+
+#screen-anamnesis .anamnesis-section-nav-list{
+  flex:1 1 auto;
+  display:grid !important;
+  align-content:start;
+  gap:4px !important;
+  max-height:none !important;
+  overflow:auto !important;
+  padding:2px 0 8px 12px;
+}
+
+#screen-anamnesis .anamnesis-section-nav-item{
+  width:100% !important;
+  max-width:none !important;
+  min-height:42px !important;
+  flex:none !important;
+  grid-template-columns:30px minmax(0,1fr) 8px !important;
+  padding:7px 8px !important;
+}
+
+body[data-theme="dark"] #screen-anamnesis .sections-toggle-btn,
+body[data-theme="dark"] #screen-anamnesis .notes-toggle-btn,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav.anamnesis-side-drawer,
+body[data-theme="dark"] #screen-anamnesis .anamnesis-section-nav-close{
+  background:#111c17 !important;
+  color:#e4efe8;
+}
+
+@media (max-width:800px){
+  #screen-anamnesis.anamnesis-registry-view .anamnesis-registry-shell,
+  #screen-anamnesis.anamnesis-record-open .anamnesis-registry-shell{
+    width:min(100%, calc(100vw - 14px)) !important;
+  }
+
+  #screen-anamnesis.anamnesis-registry-view .anamnesis-registry-list-head{
+    align-items:stretch;
+    flex-direction:column;
+    gap:16px;
+    padding:20px 18px 16px !important;
+  }
+
+  #screen-anamnesis .anamnesis-registry-actions{
+    width:100%;
+    flex:0 0 auto;
+  }
+
+  #screen-anamnesis .anamnesis-registry-actions .anamnesis-patient-search-wrap{
+    min-width:0;
+  }
+
+  #screen-anamnesis.anamnesis-registry-view .anamnesis-registry-dashboard{
+    margin:0 18px !important;
+  }
+
+  #screen-anamnesis .sections-toggle-btn,
+  #screen-anamnesis .notes-toggle-btn{
+    width:48px !important;
+    min-width:48px !important;
+    height:118px !important;
+    min-height:118px !important;
+    border-radius:14px 0 0 14px !important;
+  }
+
+  #screen-anamnesis .sections-toggle-btn{ top:40% !important; }
+  #screen-anamnesis .notes-toggle-btn{ top:60% !important; }
+}
+
+@media (max-width:560px){
+  #screen-anamnesis .anamnesis-registry-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  #screen-anamnesis .anamnesis-registry-actions .anamnesis-add-patient-primary{
+    width:100% !important;
+  }
+
+  #screen-anamnesis .anamnesis-registry-title-block > strong{
+    font-size:calc(22px * var(--text-scale,1));
+  }
+}
+
+/* Psychiatry anamnesis v2: compact clinical workflow */
+#screen-anamnesis .anam-psych-form-v2{
+  display:grid;
+  gap:12px;
+}
+#screen-anamnesis .anam-psych-form-v2 > .anam-section{
+  margin-top:0;
+}
+#screen-anamnesis .anam-psych-section{
+  padding:16px;
+}
+#screen-anamnesis .anam-psych-section > h3{
+  margin:0;
+  font-size:calc(18px * var(--text-scale, 1));
+  line-height:1.25;
+}
+#screen-anamnesis .anam-psych-section-intro{
+  margin:6px 0 2px;
+  max-width:980px;
+  color:var(--muted);
+  font-size:calc(13px * var(--text-scale, 1));
+  line-height:1.45;
+}
+#screen-anamnesis .anam-psych-group{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid rgba(17,24,39,.08);
+}
+#screen-anamnesis .anam-psych-group:first-of-type{
+  border-top:0;
+}
+#screen-anamnesis .anam-psych-group-title{
+  display:block;
+  margin-bottom:8px;
+  color:#173628;
+}
+#screen-anamnesis .anam-psych-choice-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:7px;
+}
+#screen-anamnesis .anam-psych-choice-grid .anam-psych-checkbox-label{
+  width:100%;
+  min-height:38px;
+  gap:8px;
+  padding:7px 9px;
+  border:1px solid rgba(17,24,39,.09);
+  border-radius:10px;
+  background:rgba(249,252,250,.88);
+  line-height:1.25;
+  cursor:pointer;
+}
+#screen-anamnesis .anam-psych-choice-grid .anam-psych-checkbox-label:has(input:checked){
+  border-color:rgba(21,128,61,.35);
+  background:#edf8f1;
+  box-shadow:inset 0 0 0 1px rgba(21,128,61,.08);
+}
+#screen-anamnesis .anam-psych-choice-grid .anam-psych-checkbox-label input{
+  flex:0 0 auto;
+}
+#screen-anamnesis .anam-psych-field-grid{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+#screen-anamnesis .anam-psych-field{
+  margin-top:0;
+  min-width:0;
+}
+#screen-anamnesis .anam-psych-field-label{
+  display:flex;
+  align-items:flex-start;
+  min-height:20px;
+  margin:0 0 5px;
+  color:#24362d;
+  font-size:calc(12px * var(--text-scale, 1));
+  font-weight:700;
+  line-height:1.3;
+}
+#screen-anamnesis .anam-psych-field input[type="text"],
+#screen-anamnesis .anam-psych-field select,
+#screen-anamnesis .anam-psych-field textarea{
+  width:100%;
+}
+#screen-anamnesis .anam-psych-field textarea{
+  min-height:74px;
+  resize:vertical;
+}
+#screen-anamnesis .anam-psych-field-compact textarea{
+  min-height:58px;
+}
+#screen-anamnesis .anam-psych-radio-row{
+  min-height:38px;
+  padding:6px 8px;
+  border:1px solid rgba(17,24,39,.09);
+  border-radius:10px;
+  background:rgba(249,252,250,.78);
+}
+#screen-anamnesis .anam-psych-screening{
+  margin-top:14px;
+  padding:12px;
+  border:1px solid rgba(21,128,61,.12);
+  border-radius:14px;
+  background:rgba(241,249,244,.62);
+}
+#screen-anamnesis .anam-psych-screening > h4{
+  margin:0 0 4px;
+  color:#173628;
+  font-size:calc(14px * var(--text-scale, 1));
+}
+#screen-anamnesis .anam-psych-prompts,
+#screen-anamnesis .anam-psych-advanced{
+  margin-top:12px;
+  border:1px solid rgba(17,24,39,.09);
+  border-radius:12px;
+  background:rgba(249,252,250,.74);
+  overflow:hidden;
+}
+#screen-anamnesis .anam-psych-prompts > summary,
+#screen-anamnesis .anam-psych-advanced > summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+#screen-anamnesis .anam-psych-prompts > summary::-webkit-details-marker,
+#screen-anamnesis .anam-psych-advanced > summary::-webkit-details-marker{
+  display:none;
+}
+#screen-anamnesis .anam-psych-prompts > summary::after,
+#screen-anamnesis .anam-psych-advanced > summary::after{
+  content:"+";
+  margin-left:auto;
+  color:var(--brand-2);
+  font-size:calc(18px * var(--text-scale, 1));
+  font-weight:700;
+  line-height:1;
+}
+#screen-anamnesis .anam-psych-prompts[open] > summary::after,
+#screen-anamnesis .anam-psych-advanced[open] > summary::after{
+  content:"−";
+}
+#screen-anamnesis .anam-psych-summary-count{
+  margin-left:auto;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#edf7f0;
+  color:var(--brand-2);
+  font-size:calc(11px * var(--text-scale, 1));
+  font-weight:700;
+  white-space:nowrap;
+}
+#screen-anamnesis .anam-psych-details-note{
+  margin:0;
+  padding:0 12px 10px;
+  color:var(--muted);
+  font-size:calc(12px * var(--text-scale, 1));
+  line-height:1.4;
+}
+#screen-anamnesis .anam-psych-prompt-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:8px;
+  padding:0 12px 12px;
+}
+#screen-anamnesis .anam-psych-prompt-item{
+  min-width:0;
+  padding:9px;
+  border:1px solid rgba(17,24,39,.07);
+  border-radius:10px;
+  background:#fff;
+}
+#screen-anamnesis .anam-psych-advanced-block{
+  margin:0 12px 12px;
+  padding:10px;
+  border:1px solid rgba(17,24,39,.07);
+  border-radius:10px;
+  background:#fff;
+}
+#screen-anamnesis .anam-psych-advanced-block > h4{
+  margin:0 0 8px;
+  color:#173628;
+  font-size:calc(14px * var(--text-scale, 1));
+}
+#screen-anamnesis .anam-psych-advanced .anam-psych-choice-grid{
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+}
+#screen-anamnesis .anam-psych-syndromes .anam-group{
+  margin:0 12px 12px;
+  padding:10px;
+  border:1px solid rgba(17,24,39,.07);
+  border-radius:10px;
+  background:#fff;
+}
+#screen-anamnesis .anam-psych-clinician{
+  font-style:normal;
+  color:#355d49;
+}
+#screen-anamnesis .anam-psych-clinician::after{
+  content:"";
+}
+
+body[data-theme="dark"] #screen-anamnesis .anam-psych-choice-grid .anam-psych-checkbox-label,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-radio-row,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-prompts,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-advanced,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-screening{
+  background:rgba(23,40,31,.72);
+  border-color:rgba(229,240,235,.12);
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-choice-grid .anam-psych-checkbox-label:has(input:checked){
+  background:rgba(31,79,50,.72);
+  border-color:rgba(69,188,121,.34);
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-prompt-item,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-advanced-block,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-syndromes .anam-group{
+  background:#132019;
+  border-color:rgba(229,240,235,.10);
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-field-label,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-group-title,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-screening > h4,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-advanced-block > h4{
+  color:#dcebe2;
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-summary-count{
+  background:rgba(38,91,58,.72);
+  color:#b7e6c8;
+}
+
+@media (max-width:1100px){
+  #screen-anamnesis .anam-psych-choice-grid,
+  #screen-anamnesis .anam-psych-advanced .anam-psych-choice-grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width:760px){
+  #screen-anamnesis .anam-psych-section{
+    padding:11px;
+  }
+  #screen-anamnesis .anam-psych-choice-grid,
+  #screen-anamnesis .anam-psych-advanced .anam-psych-choice-grid,
+  #screen-anamnesis .anam-psych-field-grid,
+  #screen-anamnesis .anam-psych-prompt-grid{
+    grid-template-columns:minmax(0, 1fr);
+  }
+  #screen-anamnesis .anam-psych-prompts > summary,
+  #screen-anamnesis .anam-psych-advanced > summary{
+    padding:9px 10px;
+  }
+  #screen-anamnesis .anam-psych-summary-count{
+    display:none;
+  }
+}
+
+/* --- Anamnesis psychiatry teaching aids + structured report --- */
+#screen-anamnesis .help-icon{
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  min-height:20px !important;
+  flex:0 0 20px;
+  padding:0 !important;
+  border-radius:999px !important;
+  line-height:18px !important;
+  font-size:calc(10px * var(--text-scale, 1)) !important;
+  font-weight:800;
+  overflow:visible;
+  box-shadow:none !important;
+  align-self:flex-start;
+}
+#screen-anamnesis .help-icon::before{
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border-radius:999px;
+}
+#screen-anamnesis .anam-help-term{
+  align-items:center;
+  gap:5px;
+}
+
+#screen-anamnesis .anam-psych-student-screening{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+#screen-anamnesis .anam-psych-student-screening > h4{
+  grid-column:1 / -1;
+}
+#screen-anamnesis .anam-psych-student-block{
+  min-width:0;
+  padding:10px;
+  border:1px solid rgba(17,24,39,.08);
+  border-radius:12px;
+  background:rgba(255,255,255,.72);
+}
+#screen-anamnesis .anam-psych-student-block-title{
+  margin-bottom:6px;
+  font-size:calc(13px * var(--text-scale, 1));
+}
+#screen-anamnesis .anam-psych-student-summary{
+  width:100%;
+  min-height:62px;
+  margin:0;
+  resize:vertical;
+}
+#screen-anamnesis .anam-psych-guidance{
+  margin-top:8px;
+  border-style:dashed;
+  background:rgba(245,250,247,.86);
+}
+#screen-anamnesis .anam-psych-guidance > summary{
+  min-height:38px;
+  padding:7px 9px;
+  font-size:calc(12px * var(--text-scale, 1));
+}
+#screen-anamnesis .anam-psych-prompt-summary-title{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+}
+#screen-anamnesis .anam-psych-prompt-icon{
+  display:inline-grid;
+  place-items:center;
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  border-radius:999px;
+  background:#eaf5ee;
+  color:var(--brand-2);
+  font-weight:800;
+  line-height:1;
+}
+#screen-anamnesis .anam-psych-prompt-list{
+  display:grid;
+  gap:6px;
+  margin:0;
+  padding:0 10px 10px 28px;
+}
+#screen-anamnesis .anam-psych-prompt-line{
+  padding:0 2px;
+  color:#32483c;
+  font-size:calc(12px * var(--text-scale, 1));
+  line-height:1.4;
+}
+#screen-anamnesis .anam-psych-prompt-grid,
+#screen-anamnesis .anam-psych-prompt-item{
+  /* Kept only for backwards-compatible markup; new prompts are read-only guidance. */
+}
+
+#screen-anamnesis .anamnesis-report-button{
+  min-width:132px !important;
+}
+#screen-anamnesis .anamnesis-mobile-header-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  min-width:0;
+}
+#screen-anamnesis .anamnesis-mobile-report,
+#screen-anamnesis .anamnesis-mobile-tools-toggle{
+  min-height:34px;
+  padding:6px 9px;
+  border-radius:12px;
+  font-size:calc(11px * var(--text-scale, 1));
+}
+.anamnesis-report-modal{
+  width:min(880px, calc(100vw - 24px));
+  max-height:min(88vh, 860px);
+  display:grid;
+  grid-template-rows:auto auto minmax(260px, 1fr) auto;
+  gap:12px;
+  padding:18px;
+}
+.anamnesis-report-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.anamnesis-report-head h3{
+  margin:3px 0 0;
+  font-size:calc(22px * var(--text-scale, 1));
+}
+.anamnesis-report-close{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
+  padding:0;
+  border-radius:12px;
+  font-size:22px;
+  line-height:1;
+}
+.anamnesis-report-hint{
+  margin:0;
+  line-height:1.45;
+}
+.anamnesis-report-output{
+  width:100%;
+  min-height:360px;
+  max-height:58vh;
+  margin:0;
+  padding:14px;
+  resize:vertical;
+  white-space:pre-wrap;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size:calc(13px * var(--text-scale, 1));
+  line-height:1.55;
+}
+.anamnesis-report-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.anamnesis-report-actions #anamnesis-report-copy-status{
+  margin-right:auto;
+}
+.anamnesis-report-actions button{
+  min-height:38px;
+  padding:7px 12px;
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-student-block,
+body[data-theme="dark"] #screen-anamnesis .anam-psych-guidance{
+  background:rgba(19,32,25,.84);
+  border-color:rgba(229,240,235,.12);
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-prompt-icon{
+  background:rgba(38,91,58,.72);
+  color:#b7e6c8;
+}
+body[data-theme="dark"] #screen-anamnesis .anam-psych-prompt-line{
+  color:#c9d9d1;
+}
+
+@media (max-width:760px){
+  #screen-anamnesis .anam-psych-student-screening{
+    grid-template-columns:minmax(0, 1fr);
+  }
+  #screen-anamnesis .anam-psych-student-block{
+    padding:8px;
+  }
+  #screen-anamnesis .anam-psych-student-summary{
+    min-height:56px;
+  }
+  #screen-anamnesis .anam-psych-guidance > summary{
+    padding:7px 8px;
+  }
+  #screen-anamnesis .anam-psych-summary-count{
+    display:inline-flex;
+    font-size:calc(10px * var(--text-scale, 1));
+    padding:2px 6px;
+  }
+  #screen-anamnesis .anamnesis-mobile-header-meta{
+    align-items:center;
+  }
+  #screen-anamnesis .anamnesis-mobile-header-actions{
+    flex-wrap:wrap;
+  }
+  .anamnesis-report-modal{
+    width:min(100%, calc(100vw - 12px));
+    max-height:calc(100dvh - 24px);
+    padding:12px;
+    gap:9px;
+  }
+  .anamnesis-report-output{
+    min-height:48vh;
+    max-height:58vh;
+    font-size:12px;
+  }
+  .anamnesis-report-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .anamnesis-report-actions #anamnesis-report-copy-status{
+    grid-column:1 / -1;
   }
 }

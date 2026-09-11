@@ -1,6 +1,7 @@
 "use strict";
 
 const { applyCors, handleOptions } = require("./_cors");
+const { consumeAiQuota, sendQuotaExceeded } = require("./_ai-limit");
 const { callGemini, logAi, readBody, sendJson, text } = require("./_gemini");
 
 const schema = {
@@ -25,6 +26,9 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 400, { success: false, error: "deterministicAnswer is required." });
   }
 
+  const quotaState = await consumeAiQuota({ req, body, aiCallType });
+  if (!quotaState.allowed) return sendQuotaExceeded(res, sendJson, quotaState.quota);
+
   try {
     const result = await callGemini({
       systemInstruction: "Rewrite the supplied deterministic answer in clear, natural language for the requested audience. Preserve every fact and limitation. Do not add advice, diagnosis, interpretation, examples, or facts. If a safe rewrite is not possible, return the original text unchanged.",
@@ -33,10 +37,10 @@ module.exports = async function handler(req, res) {
     });
     const answer = text(result.answer) || deterministicAnswer;
     logAi({ aiCallType, success: true });
-    return sendJson(res, 200, { success: true, answer });
+    return sendJson(res, 200, { success: true, answer, quota: quotaState.quota });
   } catch (error) {
     console.error(error);
     logAi({ aiCallType, success: false });
-    return sendJson(res, 200, { success: false, answer: deterministicAnswer, error: "Patient phrasing is temporarily unavailable." });
+    return sendJson(res, 200, { success: false, answer: deterministicAnswer, error: "Patient phrasing is temporarily unavailable.", quota: quotaState.quota });
   }
 };

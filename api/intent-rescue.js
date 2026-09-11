@@ -1,6 +1,7 @@
 "use strict";
 
 const { applyCors, handleOptions } = require("./_cors");
+const { consumeAiQuota, sendQuotaExceeded } = require("./_ai-limit");
 const { callGemini, confidence, logAi, readBody, sendJson, text } = require("./_gemini");
 
 const schema = {
@@ -33,6 +34,9 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 400, { success: false, error: "question and intents are required." });
   }
 
+  const quotaState = await consumeAiQuota({ req, body, aiCallType });
+  if (!quotaState.allowed) return sendQuotaExceeded(res, sendJson, quotaState.quota);
+
   try {
     const result = await callGemini({
       systemInstruction: "Classify an ambiguous user question into one supplied intent. Use only a supplied intent id. If none fit, return intent as an empty string. You are a routing helper, not a medical advisor.",
@@ -42,10 +46,10 @@ module.exports = async function handler(req, res) {
     const finalIntent = intents.some(item => item.id === result.intent) ? result.intent : null;
     const aiConfidence = finalIntent ? confidence(result.confidence) : 0;
     logAi({ aiCallType, aiConfidence, finalIntent, success: true });
-    return sendJson(res, 200, { success: true, intent: finalIntent, confidence: aiConfidence, reason: text(result.reason, 500) });
+    return sendJson(res, 200, { success: true, intent: finalIntent, confidence: aiConfidence, reason: text(result.reason, 500), quota: quotaState.quota });
   } catch (error) {
     console.error(error);
     logAi({ aiCallType, success: false });
-    return sendJson(res, 503, { success: false, error: "Intent rescue is temporarily unavailable." });
+    return sendJson(res, 503, { success: false, error: "Intent rescue is temporarily unavailable.", quota: quotaState.quota });
   }
 };

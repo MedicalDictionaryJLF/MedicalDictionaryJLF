@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-11T18:52:54Z",
+  "rubrics": [
+    {
+      "rubric_id": "rubric_cavernous_sinus",
+      "title": "Cavernous sinus oral answer",
+      "concept_id": "sinus_cavernous",
+      "must_include": [
+        "location beside sella turcica",
+        "internal carotid artery",
+        "CN III",
+        "CN IV",
+        "CN V1",
+        "CN V2",
+        "CN VI",
+        "venous connections",
+        "clinical infection spread"
+      ],
+      "critical_misses": [
+        "CN VI",
+        "internal carotid artery",
+        "infection spread"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "rubric_id": "rubric_brachial_plexus",
+      "title": "Brachial plexus overview",
+      "concept_id": "plexus_brachial",
+      "must_include": [
+        "roots C5–T1",
+        "trunks",
+        "divisions",
+        "cords",
+        "terminal branches",
+        "relationship to axillary artery",
+        "clinical lesions"
+      ],
+      "critical_misses": [
+        "roots C5–T1",
+        "terminal branches"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "rubric_id": "rubric_femoral_triangle",
+      "title": "Femoral triangle contents",
+      "concept_id": "space_femoral_triangle",
+      "must_include": [
+        "boundaries",
+        "floor",
+        "roof",
+        "femoral nerve",
+        "femoral artery",
+        "femoral vein",
+        "lymphatics",
+        "clinical access"
+      ],
+      "critical_misses": [
+        "NAVEL order or equivalent",
+        "femoral artery",
+        "femoral vein"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "rubric_id": "rubric_foramen_ovale",
+      "title": "Foramen ovale contents",
+      "concept_id": "foramen_ovale",
+      "must_include": [
+        "sphenoid bone",
+        "mandibular nerve V3",
+        "cranial base location",
+        "near foramen spinosum and rotundum"
+      ],
+      "critical_misses": [
+        "mandibular nerve V3"
+      ],
+      "status": "seed_needs_review"
+    }
+  ]
+}

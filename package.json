@@ -4,7 +4,16 @@
   "scripts": {
     "build": "node scripts/build.js",
     "dev": "vite --host 0.0.0.0",
-    "test:anamnesis-ui": "node scripts/anamnesis-ui-tests.mjs"
+    "test:anamnesis-ui": "node scripts/anamnesis-ui-tests.mjs",
+    "test:clinical-correlations": "node scripts/clinical-correlation-tests.mjs",
+    "test:anatomy-packages": "node scripts/anatomy-packages-tests.mjs",
+    "test:smart-search": "node scripts/smart-search-tests.mjs",
+    "test:ai-limit": "node scripts/ai-limit-tests.cjs",
+    "test:patient-trainer-phase1": "node scripts/patient-trainer-phase1-tests.mjs",
+    "test:patient-trainer-ui-v2": "node scripts/patient-trainer-ui-v2-tests.mjs",
+    "validate:anatomy-data": "node scripts/anatomy-data-validator.mjs",
+    "test:anatomy": "npm run generate:anatomy-questions && npm run validate:anatomy-data && npm run test:anatomy-packages",
+    "generate:anatomy-questions": "node scripts/generate-anatomy-questions.mjs"
   },
   "devDependencies": {
     "vite": "^7.0.0"

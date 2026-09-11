@@ -1,14 +1,15 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Medical Dictionary </title>
-  <link rel="stylesheet" href="assets/css/app.css?v=27">
+  <link rel="stylesheet" href="assets/css/app.css?v=61">
 </head>
 <body>
   <div id="app">    <header>
       <div class="header-left">
+        <button id="app-nav-toggle" class="header-btn app-nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></button>
         <button id="header-back" class="header-btn header-back-btn hidden" type="button" aria-label="Back" data-i18n-aria-label="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 5.2 4 12l6.8 6.8 1.4-1.4L7.8 13H20v-2H7.8l4.4-4.4-1.4-1.4z"/></svg></button>
         <div class="brand-lockup">
           <span class="brand-kicker" data-i18n="header_brand_kicker">Clinical Study Workspace</span>
@@ -16,6 +17,7 @@
         </div>
       </div>
       <div class="header-actions">
+        <button id="global-search-trigger" class="global-search-trigger" type="button" aria-label="Search medical dictionary" data-i18n-aria-label="global_search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.43 4.44 1.41-1.42-4.44-4.43A6.5 6.5 0 0 0 10.5 4zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg><span data-i18n="global_search_placeholder">Search anything</span><kbd>Ctrl K</kbd></button>
         <button id="header-login-google" class="header-btn primary hidden" type="button" data-i18n="google_sign_in">Sign in with Google</button>
         <div id="header-account" class="whoami hidden">
           <span data-i18n="signed_in_as">Signed in as</span> <strong id="header-account-name">-</strong>
@@ -107,7 +109,48 @@
       </div>
     </div>
 
-    <main>
+    <div id="sync-account-required-overlay" class="modal-overlay hidden" aria-hidden="true">
+      <div class="modal sync-account-required-modal" role="dialog" aria-modal="true" aria-labelledby="sync-account-required-title" aria-describedby="sync-account-required-desc">
+        <div class="sync-account-required-icon" aria-hidden="true">G</div>
+        <h3 id="sync-account-required-title" data-i18n="sync_sign_in_required_title">Google account required</h3>
+        <p id="sync-account-required-desc" data-i18n="sync_sign_in_required_desc">Sign in with Google before synchronizing. Your local study data remains stored on this device.</p>
+        <div class="row sync-account-required-actions">
+          <button type="button" id="sync-account-close" class="secondary" data-i18n="cancel">Cancel</button>
+          <button type="button" id="sync-account-connect" class="primary" data-i18n="google_sign_in">Sign in with Google</button>
+        </div>
+      </div>
+    </div>
+
+    <aside id="app-sidebar" class="app-sidebar" aria-label="Primary navigation" data-i18n-aria-label="primary_navigation">
+      <div class="sidebar-brand"><img src="assets/logo-menu.png" alt="" aria-hidden="true"><div><strong data-i18n="app_title">Medical Dictionary</strong><span data-i18n="study_workspace">Study workspace</span></div></div>
+      <nav class="sidebar-nav">
+        <button type="button" id="shell-home" class="sidebar-item" data-open-control="shell-home" data-shell-screen="screen-submenu"><span class="sidebar-icon">⌂</span><span data-i18n="home">Home</span></button>
+        <button type="button" class="sidebar-item" data-open-control="to-search" data-shell-screen="screen-search"><span class="sidebar-icon">⌕</span><span data-i18n="search">Search</span></button>
+        <div class="sidebar-group"><span class="sidebar-group-label" data-i18n="reference">Reference</span>
+          <button type="button" class="sidebar-item" data-open-control="to-pharmacology" data-shell-screen="screen-pharmacology"><span class="sidebar-icon">Rx</span><span data-i18n="pharmacology">Pharmacology</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-muscle-training" data-shell-screen="screen-muscle-training"><span class="sidebar-icon">A</span><span data-i18n="anatomy">Anatomy</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-lab-parameters" data-shell-screen="screen-lab-parameters"><span class="sidebar-icon">Lab</span><span data-i18n="laboratory_short">Laboratory</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-latin-terminology" data-shell-screen="screen-latin-terminology"><span class="sidebar-icon">L</span><span data-i18n="latin">Latin</span></button>
+        </div>
+        <div class="sidebar-group"><span class="sidebar-group-label" data-i18n="study">Study</span>
+          <button type="button" class="sidebar-item" data-open-control="to-quiz" data-shell-screen="screen-quiz"><span class="sidebar-icon">?</span><span data-i18n="quiz">Quiz</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-flashcards" data-shell-screen="screen-flashcards"><span class="sidebar-icon">▱</span><span data-i18n="flashcards">Flashcards</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-courses" data-shell-screen="screen-courses"><span class="sidebar-icon">C</span><span data-i18n="courses">Courses</span></button>
+          <button type="button" class="sidebar-item" data-open-control="to-biophysics-tf" data-shell-screen="screen-biophysics-tf"><span class="sidebar-icon">T/F</span><span data-i18n="biophysics_true_false">Biophysics</span></button>
+        </div>
+        <div class="sidebar-group"><span class="sidebar-group-label" data-i18n="clinical">Clinical</span>
+          <button type="button" class="sidebar-item" data-open-control="to-anamnesis" data-shell-screen="screen-anamnesis"><span class="sidebar-icon">＋</span><span data-i18n="anamnesis">Anamnesis</span></button>
+          <a class="sidebar-item" href="anamnesis-training/" data-app-route="anamnesis-training"><span class="sidebar-icon">Pt</span><span data-i18n="patient_trainer">Patient trainer</span></a>
+        </div>
+      </nav>
+      <div class="sidebar-footer"><button type="button" class="sidebar-item" data-open-control="to-entry" data-shell-screen="screen-entry"><span class="sidebar-icon">＋</span><span data-i18n="add_term">Add term</span></button><button type="button" class="sidebar-item" id="sidebar-settings"><span class="sidebar-icon">⚙</span><span data-i18n="settings_title">Settings</span></button></div>
+    </aside>
+    <div id="sidebar-scrim" class="sidebar-scrim" aria-hidden="true"></div>
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation" data-i18n-aria-label="mobile_navigation">
+      <button type="button" data-open-control="shell-home"><span>⌂</span><small data-i18n="home">Home</small></button><button type="button" data-open-control="to-search"><span>⌕</span><small data-i18n="search">Search</small></button><button type="button" data-open-control="to-quiz"><span>?</span><small data-i18n="study">Study</small></button><button type="button" data-open-control="to-anamnesis"><span>＋</span><small data-i18n="clinical">Clinical</small></button><button type="button" id="mobile-nav-more"><span>☰</span><small data-i18n="more">More</small></button>
+    </nav>
+
+    <main class="app-main">
             <section id="screen-menu" class="screen">
         <div class="hero">
           <div class="hero-inner">
@@ -181,25 +224,78 @@
         </div>
       </section>
 
-      <section id="screen-submenu" class="screen hidden">
-        <div class="submenu-shell">
-          <div class="submenu-intro">
-            <h2 id="welcome-title" data-i18n="welcome">Welcome</h2>
-            <p class="submenu-copy" data-i18n="submenu_workspace_copy">Choose a tool to search terminology, build study sessions, or work through structured clinical forms.</p>
+      <section id="screen-submenu" class="screen hidden dashboard-screen">
+        <div class="home-dashboard">
+          <div class="home-dashboard-heading">
+            <div class="home-heading-copy">
+              <span class="home-eyebrow" data-i18n="dashboard_eyebrow">Study dashboard</span>
+              <h2 id="welcome-title" data-i18n="welcome">Welcome</h2>
+              <p data-i18n="dashboard_intro">Everything you need to look up, practise, and continue studying in one workspace.</p>
+            </div>
           </div>
-        <div class="card submenu-grid">
-          <button type="button" id="to-search" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10.5 4a6.5 6.5 0 1 0 4.03 11.6l4.43 4.44 1.41-1.42-4.44-4.43A6.5 6.5 0 0 0 10.5 4zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="search">Search</span><span class="menu-desc" data-i18n="submenu_desc_search">Find terms, definitions, and language variants quickly.</span></span></button>
-          <button type="button" id="to-entry" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="add_term">Add New Terms</span><span class="menu-desc" data-i18n="submenu_desc_add_term">Create and save your own terms with attachments.</span></span></button>
-          <button type="button" id="to-latin-terminology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="latin_terminology">Latin terminology</span><span class="menu-desc" data-i18n="submenu_desc_latin">Browse units and drill foundational medical Latin.</span></span></button>
-          <button type="button" id="to-courses" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h10a4 4 0 0 1 4 4v14h-2v-2H7a2 2 0 0 0-2 2H3V5a2 2 0 0 1 2-2zm2 4v2h8V7H7zm0 4v2h6v-2H7z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="courses">Courses</span><span class="menu-desc" data-i18n="submenu_desc_courses">Open structured medical Latin lessons.</span></span></button>
-          <button type="button" id="to-pharmacology" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 3A5.5 5.5 0 0 0 3 8.5v7a5.5 5.5 0 0 0 11 0v-7A5.5 5.5 0 0 0 8.5 3zm0 2A3.5 3.5 0 0 1 12 8.5V11H5V8.5A3.5 3.5 0 0 1 8.5 5zM5 13h7v2.5a3.5 3.5 0 0 1-7 0V13zm13-4h2v4h-2V9zm-2 1h6v2h-6v-2zm2 5h2v6h-2v-6z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="pharmacology">Pharmacology</span><span class="menu-desc">Search drugs, mechanisms, uses, safety information and ATC classes.</span></span></button>
-          <button type="button" id="to-muscle-training" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zm-3 6h6c1.1 0 2 .9 2 2v3.2c0 .7-.6 1.3-1.3 1.3H14v6.5h-4V15H8.3c-.7 0-1.3-.6-1.3-1.3v-3.2c0-1.1.9-2 2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="anatomy">Anatomy</span><span class="menu-desc" data-i18n="submenu_desc_muscle">Study regions, OINA fields, and movement functions.</span></span></button>
-          <button type="button" id="to-quiz" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 15a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-11a4 4 0 0 0-4 4h2a2 2 0 1 1 3.46 1.41c-.88.89-1.46 1.51-1.46 3.09h2c0-.8.17-1.12.88-1.83A4 4 0 0 0 12 6z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="quiz">Quiz</span><span class="menu-desc" data-i18n="submenu_desc_quiz">Generate custom quizzes across domains and fields.</span></span></button>
-          <button type="button" id="to-biophysics-tf" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4zm0 7h10v2H4zm0 7h16v2H4z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="biophysics_true_false">Biophysics True/False</span><span class="menu-desc" data-i18n="submenu_desc_biophysics">Test conceptual statements with instant feedback.</span></span></button>
-          <button type="button" id="to-flashcards" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v10h-2V6H5zm-2 4h12a2 2 0 0 1 2 2v10H5a2 2 0 0 1-2-2z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="flashcards">Flashcards</span><span class="menu-desc" data-i18n="submenu_desc_flashcards">Build sessions and review with spaced repetition.</span></span></button>
-          <button type="button" id="to-anamnesis" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 1.5V8h3.5L14 4.5zM9 11h6v1.8H9V11zm0 4h6v1.8H9V15z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="anamnesis">Anamnesis</span><span class="menu-desc" data-i18n="submenu_desc_anamnesis">Structured intake forms for internal, psychiatry, and pediatrics.</span></span></button>
-          <button type="button" id="to-lab-parameters" class="secondary"><span class="menu-icon" aria-hidden="true"><svg viewBox="0 0 640 640"><path d="M384 64L224 64C206.3 64 192 78.3 192 96C192 113.7 206.3 128 224 128L224 279.5L103.5 490.3C98.6 499 96 508.7 96 518.7C96 550.4 121.6 576 153.3 576L486.7 576C518.3 576 544 550.4 544 518.7C544 508.7 541.4 498.9 536.5 490.3L416 279.5L416 128C433.7 128 448 113.7 448 96C448 78.3 433.7 64 416 64L384 64zM288 279.5L288 128L352 128L352 279.5C352 290.6 354.9 301.6 360.4 311.3L402 384L238 384L279.6 311.3C285.1 301.6 288 290.7 288 279.5z"/></svg></span><span class="menu-copy"><span class="menu-label" data-i18n="laboratory_parameters">Laboratory parameters</span><span class="menu-desc" data-i18n="submenu_desc_lab">Filter analytes by tag and compare reference ranges.</span></span></button>
-        </div>
+
+          <div class="home-priority-grid">
+            <article class="home-focus-card">
+              <div class="home-focus-content">
+                <span class="home-card-kicker" data-i18n="continue_studying">Continue studying</span>
+                <h3 data-i18n="pick_up_where_left_off">Pick up where you left off.</h3>
+                <p data-i18n="continue_studying_desc">Open your structured courses, or jump straight into a focused quiz when you only have a few minutes.</p>
+                <div class="home-focus-actions">
+                  <button type="button" class="home-primary-action" data-open-control="to-courses" data-i18n="continue_course">Continue course</button>
+                  <button type="button" class="home-secondary-action" data-open-control="to-quiz" data-i18n="start_quick_quiz">Start quick quiz</button>
+                </div>
+              </div>
+              <div class="home-focus-mark" aria-hidden="true"><span>MD</span></div>
+            </article>
+
+            <aside class="home-overview-card" aria-label="Study overview" data-i18n-aria-label="study_overview">
+              <div class="home-overview-head">
+                <div><span class="home-card-kicker" data-i18n="today">Today</span><h3 data-i18n="study_overview">Study overview</h3></div>
+                <span class="home-status-dot"><i></i> <span data-i18n="local_progress">Local progress</span></span>
+              </div>
+              <div class="home-stat-grid">
+                <button type="button" class="home-stat" data-open-control="to-flashcards"><strong id="home-due-count">0</strong><span data-i18n="reviews_due">Reviews due</span></button>
+                <button type="button" class="home-stat" data-open-control="to-entry"><strong id="home-saved-count">0</strong><span data-i18n="saved_terms">Saved terms</span></button>
+                <button type="button" class="home-stat" data-open-control="to-quiz"><strong id="home-session-count">0</strong><span data-i18n="quiz_sessions">Quiz sessions</span></button>
+                <button type="button" class="home-stat" data-open-control="to-flashcards"><strong id="home-reviewed-count">0</strong><span data-i18n="cards_today">Cards today</span></button>
+              </div>
+            </aside>
+          </div>
+
+          <section class="home-section" aria-labelledby="home-reference-title">
+            <div class="home-section-head">
+              <div><span data-i18n="reference">REFERENCE</span><h3 id="home-reference-title" data-i18n="look_something_up">Look something up</h3></div>
+              <p data-i18n="reference_desc">Fast access to the core medical reference library.</p>
+            </div>
+            <div class="home-tool-row home-tool-row-five">
+              <button type="button" id="to-search" class="home-tool home-tool-reference"><span class="home-tool-icon">⌕</span><span><strong data-i18n="search">Search</strong><small data-i18n="all_terminology">All terminology</small></span><b>›</b></button>
+              <button type="button" id="to-pharmacology" class="home-tool home-tool-reference"><span class="home-tool-icon">Rx</span><span><strong data-i18n="pharmacology">Pharmacology</strong><small data-i18n="drugs_classes">Drugs &amp; classes</small></span><b>›</b></button>
+              <button type="button" id="to-muscle-training" class="home-tool home-tool-reference"><span class="home-tool-icon">A</span><span><strong data-i18n="anatomy">Anatomy</strong><small data-i18n="muscles_oina">Muscles &amp; OINA</small></span><b>›</b></button>
+              <button type="button" id="to-lab-parameters" class="home-tool home-tool-reference"><span class="home-tool-icon">Lab</span><span><strong class="home-tool-label" data-i18n="laboratory_short">Laboratory</strong><small data-i18n="reference_ranges">Reference ranges</small></span><b>›</b></button>
+              <button type="button" id="to-latin-terminology" class="home-tool home-tool-reference"><span class="home-tool-icon">L</span><span><strong data-i18n="latin_terminology">Latin terminology</strong><small data-i18n="medical_terminology">Medical terminology</small></span><b>›</b></button>
+            </div>
+          </section>
+
+          <div class="home-lower-grid">
+            <section class="home-section home-section-compact home-study-section" aria-labelledby="home-study-title">
+              <div class="home-section-head"><div><span data-i18n="study">STUDY</span><h3 id="home-study-title" data-i18n="practice_review">Practice &amp; review</h3></div></div>
+              <div class="home-tool-grid-two">
+                <button type="button" id="to-quiz" class="home-tool home-tool-study"><span class="home-tool-icon">?</span><span><strong data-i18n="quiz">Quiz</strong><small data-i18n="build_focused_session">Build a focused session</small></span><b>›</b></button>
+                <button type="button" id="to-flashcards" class="home-tool home-tool-study"><span class="home-tool-icon">▱</span><span><strong data-i18n="flashcards">Flashcards</strong><small data-i18n="spaced_repetition">Spaced repetition</small></span><b>›</b></button>
+                <button type="button" id="to-courses" class="home-tool home-tool-study"><span class="home-tool-icon">C</span><span><strong data-i18n="courses">Courses</strong><small data-i18n="structured_learning">Structured learning</small></span><b>›</b></button>
+                <button type="button" id="to-biophysics-tf" class="home-tool home-tool-study"><span class="home-tool-icon">T/F</span><span><strong data-i18n="biophysics_true_false">Biophysics True/False</strong><small data-i18n="true_false_drills">True / false drills</small></span><b>›</b></button>
+              </div>
+            </section>
+
+            <section class="home-section home-section-compact home-clinical-section" aria-labelledby="home-clinical-title">
+              <div class="home-section-head"><div><span data-i18n="clinical">CLINICAL</span><h3 id="home-clinical-title" data-i18n="patient_work">Patient work</h3></div></div>
+              <div class="home-tool-grid-two">
+                <button type="button" id="to-anamnesis" class="home-tool home-tool-clinical"><span class="home-tool-icon">＋</span><span><strong data-i18n="anamnesis">Anamnesis</strong><small data-i18n="clinical_documentation">Clinical documentation</small></span><b>›</b></button>
+                <a class="home-tool home-tool-clinical" href="anamnesis-training/" data-app-route="anamnesis-training"><span class="home-tool-icon">Pt</span><span><strong data-i18n="patient_trainer">Patient trainer</strong><small data-i18n="interview_simulation">Interview simulation</small></span><b>›</b></a>
+                <button type="button" id="to-entry" class="home-tool home-tool-personal"><span class="home-tool-icon">＋</span><span><strong data-i18n="add_term">Add term</strong><small data-i18n="your_own_terminology">Your own terminology</small></span><b>›</b></button>
+              </div>
+            </section>
+          </div>
         </div>
       </section>
 
@@ -245,6 +341,7 @@
               </div>
               <p class="search-stage-note" data-i18n="search_results_live">Results update while you type.</p>
             </div>
+            <div id="search-smart-answer" class="search-smart-answer hidden" aria-live="polite"></div>
             <div id="search-results" class="search-results-grid"></div>
           </div>
         </div>
@@ -766,21 +863,14 @@
               <div>
                 <h3 class="dataset-title" data-i18n="anatomy">Anatomy</h3>
               </div>
-              <p class="dataset-copy" data-i18n="anatomy_selection_copy">Select one or more regions and categories to focus the anatomy browser on the structures you want to review.</p>
+              <p id="anatomy-selection-copy" class="dataset-copy" data-i18n="anatomy_unified_selection_copy">Filter the complete anatomy library by structure type, system or region.</p>
             </div>
             <div class="anatomy-region-card">
               <div class="dataset-head dataset-head-compact">
                 <div>
                   <p class="dataset-kicker" data-i18n="filters">Filters</p>
-                  <h3 class="dataset-title" data-i18n="anatomy_region_selection">Region selection</h3>
+                  <h3 id="anatomy-filter-title" class="dataset-title" data-i18n="anatomy_structure_filters">Structure filters</h3>
                 </div>
-              </div>
-              <div class="dataset-controls anatomy-dataset-controls">
-                <label for="anatomy-dataset-select" class="search-label">Dataset</label>
-                <select id="anatomy-dataset-select">
-                  <option value="muscles">Muscles</option>
-                  <option value="anatomy">Anatomy</option>
-                </select>
               </div>
               <div id="muscle-region-list" class="anatomy-filter-list scrollable"></div>
             </div>
@@ -790,12 +880,12 @@
               <div>
                 <h3 class="dataset-title" data-i18n="search_and_results">Search and Results</h3>
               </div>
-              <p class="dataset-stage-note" data-i18n="anatomy_search_copy">Search across names, attachments, supply, and movement fields.</p>
+              <p id="anatomy-search-copy" class="dataset-stage-note" data-i18n="anatomy_unified_search_copy">Search names, regions, systems, OINA fields, relationships and structured notes.</p>
             </div>
             <div class="search-controls dataset-controls anatomy-search-controls">
               <label for="muscle-search-input" class="search-label" data-i18n="search">Search</label>
               <div class="anatomy-search-row">
-                <input id="muscle-search-input" placeholder="Search muscle name (min 2 chars)" data-i18n-placeholder="search_muscle_text" />
+                <input id="muscle-search-input" placeholder="Search muscles, bones, nerves, vessels and other structures" data-i18n-placeholder="anatomy_unified_search_placeholder" />
                 <select id="muscle-search-field">
                   <option value="any" data-i18n="any">Any</option>
                   <option value="region" data-i18n="muscle_search_region">Region</option>
@@ -972,12 +1062,38 @@
       <section id="screen-anamnesis" class="screen hidden">
         <div class="anamnesis-registry-shell">
           <aside id="anamnesis-registry-card" class="card anamnesis-registry-card">
-            <div class="anamnesis-registry-head">
-              <div>
+            <div class="anamnesis-registry-head anamnesis-registry-list-head">
+              <div class="anamnesis-registry-title-block">
+                <span class="anamnesis-registry-kicker" data-i18n="clinical_documentation">Clinical documentation</span>
                 <strong data-i18n="anamnesis_patients">Patients</strong>
                 <p class="muted" data-i18n="anamnesis_registry_hint">Select an existing patient or create a new anamnesis record.</p>
               </div>
-              <button type="button" id="anamnesis-add-patient" class="anamnesis-add-patient" aria-label="Add patient" data-i18n-aria-label="anamnesis_add_patient">+</button>
+              <div class="anamnesis-registry-actions">
+                <label class="anamnesis-patient-search-wrap">
+                  <span class="anamnesis-search-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+                  </span>
+                  <input id="anamnesis-patient-search" type="search" autocomplete="off" data-i18n-placeholder="anamnesis_search_patients" placeholder="Search patients" />
+                </label>
+                <button type="button" id="anamnesis-add-patient" class="anamnesis-add-patient anamnesis-add-patient-primary" aria-label="Add patient" data-i18n-aria-label="anamnesis_add_patient">
+                  <span aria-hidden="true">+</span>
+                  <span data-i18n="anamnesis_new_record">New record</span>
+                </button>
+              </div>
+            </div>
+            <div class="anamnesis-registry-dashboard" aria-label="Anamnesis overview">
+              <div class="anamnesis-registry-stat">
+                <span data-i18n="anamnesis_records">Records</span>
+                <strong id="anamnesis-record-count">0</strong>
+              </div>
+              <div class="anamnesis-registry-stat">
+                <span data-i18n="anamnesis_last_updated">Last updated</span>
+                <strong id="anamnesis-last-updated">—</strong>
+              </div>
+              <div class="anamnesis-registry-stat">
+                <span data-i18n="anamnesis_workflows">Workflows</span>
+                <strong>3</strong>
+              </div>
             </div>
             <div id="anamnesis-patient-list" class="anamnesis-patient-list" role="list" aria-label="Patient anamnesis records" data-i18n-aria-label="anamnesis_patient_records"></div>
             <p id="anamnesis-status" class="muted anamnesis-status-inline"></p>
@@ -995,13 +1111,10 @@
                 </div>
                 <div class="anamnesis-mobile-header-meta">
                   <span id="anamnesis-mobile-workflow-badge" class="anamnesis-mobile-badge">Patients</span>
-                  <button
-                    type="button"
-                    id="anamnesis-mobile-tools-toggle"
-                    class="secondary anamnesis-mobile-tools-toggle"
-                    aria-expanded="false"
-                    data-i18n="settings_title"
-                  >Settings</button>
+                  <div class="anamnesis-mobile-header-actions">
+                    <button type="button" id="anamnesis-mobile-report" class="secondary anamnesis-mobile-report" data-i18n="anamnesis_report_short">Report</button>
+                    <button type="button" id="anamnesis-mobile-tools-toggle" class="secondary anamnesis-mobile-tools-toggle" aria-expanded="false" data-i18n="settings_title">Settings</button>
+                  </div>
                 </div>
               </div>
               <div class="anamnesis-patient-toolbar">
@@ -1017,6 +1130,7 @@
                   </div>
                   <div class="row anam-actions">
                     <button type="button" id="anamnesis-show-patients" class="secondary" data-i18n="anamnesis_patients">Patients</button>
+                    <button type="button" id="anamnesis-report" class="secondary anamnesis-report-button" data-i18n="anamnesis_structured_report">Structured report</button>
                     <button type="button" id="anamnesis-save" class="primary" data-i18n="save">Save</button>
                   </div>
                 </div>
@@ -1049,6 +1163,23 @@
                   </div>
                 </div>
               </div>
+              <section class="anamnesis-progress-panel" aria-label="Documentation progress">
+                <div class="anamnesis-progress-copy">
+                  <span class="anamnesis-progress-kicker" data-i18n="anamnesis_documentation_progress">Documentation progress</span>
+                  <strong id="anamnesis-progress-label">0% documented</strong>
+                  <span id="anamnesis-progress-detail" class="muted">Start with identification and the chief complaint.</span>
+                </div>
+                <div class="anamnesis-progress-meter" aria-hidden="true">
+                  <span id="anamnesis-progress-fill"></span>
+                </div>
+                <div class="anamnesis-progress-actions">
+                  <span id="anamnesis-save-state" class="anamnesis-save-state" data-state="saved">
+                    <span class="anamnesis-save-state-dot" aria-hidden="true"></span>
+                    <span data-i18n="anamnesis_saved_locally_state">Saved locally</span>
+                  </span>
+                  <button type="button" id="anamnesis-next-incomplete" class="secondary anamnesis-next-incomplete" data-i18n="anamnesis_next_incomplete">Next incomplete</button>
+                </div>
+              </section>
               <div class="scrollable anamnesis-editor-scroll">
                 <div id="anamnesis-form-internal-wrap">
           <form id="anamnesis-form">
@@ -1834,8 +1965,18 @@
             </div>
           </section>
         </div>
-        <button type="button" id="anamnesis-notes-toggle" class="notes-toggle-btn" data-i18n="anamnesis_notes">Notes</button>
-        <aside id="anamnesis-notes-drawer" class="anam-notes-drawer">
+        <button type="button" id="anamnesis-sections-toggle" class="sections-toggle-btn" data-i18n="anamnesis_sections" aria-controls="anamnesis-section-nav" aria-expanded="false">Sections</button>
+        <nav id="anamnesis-section-nav" class="anamnesis-section-nav anamnesis-side-drawer" aria-label="Anamnesis sections" aria-hidden="true">
+          <button type="button" id="anamnesis-sections-edge" class="anamnesis-side-drawer-edge" aria-label="Close sections panel"></button>
+          <div class="anamnesis-section-nav-head">
+            <span data-i18n="anamnesis_sections">Sections</span>
+            <small id="anamnesis-section-count" class="muted"></small>
+            <button type="button" id="anamnesis-sections-close" class="anamnesis-section-nav-close" aria-label="Close" data-i18n-aria-label="close">&times;</button>
+          </div>
+          <div id="anamnesis-section-nav-list" class="anamnesis-section-nav-list"></div>
+        </nav>
+        <button type="button" id="anamnesis-notes-toggle" class="notes-toggle-btn" data-i18n="anamnesis_notes" aria-controls="anamnesis-notes-drawer" aria-expanded="false">Notes</button>
+        <aside id="anamnesis-notes-drawer" class="anam-notes-drawer" aria-hidden="true">
           <button type="button" id="anamnesis-notes-edge" class="anam-notes-edge" aria-label="Close notes panel" data-i18n-aria-label="anamnesis_close_notes_panel"></button>
           <div class="anam-notes-head">
             <strong data-i18n="anamnesis_notes">Notes</strong>
@@ -1847,20 +1988,70 @@
           </label>
           <textarea id="anamnesis-notes-text" name="anamnesis_global_notes" placeholder="Write your general notes here..." data-anam-key="anam_write_your_general_notes_here_2"></textarea>
         </aside>
+        <div id="anamnesis-report-modal" class="modal-overlay hidden" aria-hidden="true">
+          <div class="modal anamnesis-report-modal" role="dialog" aria-modal="true" aria-labelledby="anamnesis-report-title">
+            <div class="anamnesis-report-head">
+              <div>
+                <span class="anamnesis-registry-kicker" data-i18n="clinical_documentation">Clinical documentation</span>
+                <h3 id="anamnesis-report-title" data-i18n="anamnesis_structured_report">Structured report</h3>
+              </div>
+              <button type="button" id="anamnesis-report-close" class="anamnesis-report-close" aria-label="Close">&times;</button>
+            </div>
+            <p class="muted anamnesis-report-hint" data-i18n="anamnesis_report_hint">Generated only from information documented in this record. Empty fields are omitted and no normal findings are assumed.</p>
+            <textarea id="anamnesis-report-output" class="anamnesis-report-output" spellcheck="false" aria-label="Structured anamnesis report"></textarea>
+            <div class="anamnesis-report-actions">
+              <span id="anamnesis-report-copy-status" class="muted" aria-live="polite"></span>
+              <button type="button" id="anamnesis-report-copy" class="primary" data-i18n="anamnesis_copy_report">Copy report</button>
+              <button type="button" id="anamnesis-report-done" class="secondary" data-i18n="close">Close</button>
+            </div>
+          </div>
+        </div>
         <div id="anamnesis-patient-modal" class="modal-overlay hidden" aria-hidden="true">
           <div class="modal anamnesis-patient-modal">
             <h3 data-i18n="anamnesis_new_patient_record">New patient record</h3>
             <p data-i18n="anamnesis_create_patient_hint">Create a patient entry and choose the anamnesis workflow.</p>
-            <div class="anamnesis-modal-grid">
-              <select id="anamnesis-new-type">
-                <option value="psychiatric" data-i18n="anamnesis_type_psychiatric">Psychiatric</option>
-                <option value="internal" data-i18n="anamnesis_type_internal">Internal</option>
+            <div class="anamnesis-modal-grid anamnesis-workflow-picker" role="radiogroup" aria-label="Anamnesis workflow">
+              <button type="button" class="anamnesis-workflow-option is-selected" data-anamnesis-workflow="internal" role="radio" aria-checked="true">
+                <span class="anamnesis-workflow-icon" aria-hidden="true">IM</span>
+                <span><strong data-i18n="anamnesis_type_internal">Internal</strong><small data-i18n="anamnesis_workflow_internal_copy">General adult history, systems review and physical status.</small></span>
+              </button>
+              <button type="button" class="anamnesis-workflow-option" data-anamnesis-workflow="pediatrics" role="radio" aria-checked="false">
+                <span class="anamnesis-workflow-icon" aria-hidden="true">PED</span>
+                <span><strong data-i18n="anamnesis_type_pediatrics">Pediatrics</strong><small data-i18n="anamnesis_workflow_pediatrics_copy">Pediatric history with development, immunization and family context.</small></span>
+              </button>
+              <button type="button" class="anamnesis-workflow-option" data-anamnesis-workflow="psychiatric" role="radio" aria-checked="false">
+                <span class="anamnesis-workflow-icon" aria-hidden="true">PSY</span>
+                <span><strong data-i18n="anamnesis_type_psychiatric">Psychiatric</strong><small data-i18n="anamnesis_workflow_psychiatric_copy">Psychiatric interview with structured mental-state documentation.</small></span>
+              </button>
+              <select id="anamnesis-new-type" class="anamnesis-workflow-select" aria-hidden="true" tabindex="-1">
+                <option value="internal" selected data-i18n="anamnesis_type_internal">Internal</option>
                 <option value="pediatrics" data-i18n="anamnesis_type_pediatrics">Pediatrics</option>
+                <option value="psychiatric" data-i18n="anamnesis_type_psychiatric">Psychiatric</option>
               </select>
             </div>
             <div class="row" style="justify-content:flex-end; margin-top:14px">
               <button type="button" id="anamnesis-modal-cancel" class="secondary" data-i18n="cancel">Cancel</button>
               <button type="button" id="anamnesis-modal-create" data-i18n="anamnesis_create_patient">Create patient</button>
+            </div>
+          </div>
+        </div>
+        <div id="anamnesis-type-switch-modal" class="modal-overlay hidden" aria-hidden="true">
+          <div class="modal anamnesis-type-switch-modal" role="dialog" aria-modal="true" aria-labelledby="anamnesis-type-switch-title">
+            <div class="anamnesis-type-switch-icon" aria-hidden="true">!</div>
+            <div class="anamnesis-type-switch-copy">
+              <span class="anamnesis-registry-kicker" data-i18n="anamnesis_switch_workflow_kicker">Change anamnesis type</span>
+              <h3 id="anamnesis-type-switch-title" data-i18n="anamnesis_switch_workflow_title">Switch this patient to another anamnesis?</h3>
+              <p data-i18n="anamnesis_switch_workflow_warning">You already entered information outside Identification and Chief Complaint. Switching will keep those first two sections, but the remaining answers and general notes in this patient record will be cleared.</p>
+              <div class="anamnesis-type-switch-route" aria-label="Workflow change">
+                <span id="anamnesis-type-switch-from">Internal/Surgery</span>
+                <span class="anamnesis-type-switch-arrow" aria-hidden="true">→</span>
+                <strong id="anamnesis-type-switch-to">Pediatrics</strong>
+              </div>
+              <p class="anamnesis-type-switch-note" data-i18n="anamnesis_switch_workflow_irreversible">This cannot be undone after you proceed.</p>
+            </div>
+            <div class="anamnesis-type-switch-actions">
+              <button type="button" id="anamnesis-type-switch-cancel" class="secondary" data-i18n="cancel">Cancel</button>
+              <button type="button" id="anamnesis-type-switch-proceed" class="danger anamnesis-type-switch-proceed" data-i18n="anamnesis_switch_workflow_proceed">Proceed and switch</button>
             </div>
           </div>
         </div>
@@ -1870,7 +2061,8 @@
     <footer class="app-copyright" aria-label="Copyright">&copy; 2026 Daniel Marcok. All Rights Reserved.</footer>
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="module" src="assets/js/app.js?v=30"></script>
+<script src="assets/js/app-shell.js?v=51" defer></script>
+<script type="module" src="assets/js/app.js?v=61"></script>
 </body>
 </html>
 

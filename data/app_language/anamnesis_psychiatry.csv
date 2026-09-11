@@ -412,7 +412,7 @@ psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Proc
 psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_hard_follow,Do others tell you your speech is hard to follow?,textarea,,
 psych_21,Open-ended Clinical Interview Prompts,open_thought_process,Thought Process - Additional Questions,psych_open_thought_organize,Do you find it hard to organise your ideas?,textarea,,
 
-psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_cope,When things feel overwhelming, how do you cope?,textarea,,
+psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_cope,"When things feel overwhelming, how do you cope?",textarea,,
 psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_worth_living,Have you ever felt that life was not worth living?,textarea,,
 psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_ending_life,Have you ever thought about ending your life?,textarea,,
 psych_21,Open-ended Clinical Interview Prompts,open_risk,Risk Assessment - Additional Questions,psych_open_risk_plans,Have you ever made any plans?,textarea,,

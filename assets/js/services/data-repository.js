@@ -9,12 +9,11 @@ export const TERMINOLOGY_SOURCES = [
   { key: "latin", label: "Latin", path: "terminology/latin/latin_remedies.csv", sourceLabel: "Remedies" },
   { key: "microorganisms", label: "Microorganisms", path: "terminology/microorganisms.csv" },
   { key: "physiology", label: "Physiology", path: "terminology/physiology.csv" },
-  { key: "procedures", label: "Procedures", path: "terminology/procedures.csv" },
-  { key: "muscles", label: "Muscles", path: "terminology/muscles.csv" }
+  { key: "procedures", label: "Procedures", path: "terminology/procedures.csv" }
 ];
 
 export const SEARCH_GROUP_DEFINITIONS = [
-  { key: "anatomy", label: "Anatomy", datasets: ["anatomy", "muscles"] },
+  { key: "anatomy", label: "Anatomy", datasets: ["anatomy"] },
   { key: "physiology", label: "Physiology", datasets: ["physiology"] },
   { key: "diagnostics_procedures", label: "Diagnostics & Procedures", datasets: ["diagnostic_methods", "procedures"] },
   { key: "disease_and_symptoms", label: "Diseases and symptoms", datasets: ["disease_and_symptoms"] },
@@ -26,7 +25,6 @@ export const SEARCH_GROUP_DEFINITIONS = [
 
 export const SEARCH_GROUP_BY_DATASET = {
   anatomy: "anatomy",
-  muscles: "anatomy",
   physiology: "physiology",
   diagnostic_methods: "diagnostics_procedures",
   procedures: "diagnostics_procedures",

@@ -35,8 +35,10 @@ assert.ok(questionGroups.some((group) => group.intents.some((intent) => intent.v
 assert.ok(questionGroups.some((group) => group.intents.some((intent) => intent.covered)));
 
 const ordered = labsForGroup('fbc', patientCase);
-assert.deepEqual(Object.keys(ordered), ['wbc']);
+assert.deepEqual(Object.keys(ordered), ['hemoglobin', 'wbc', 'platelets']);
 assert.match(ordered.wbc, /WBC/i);
+assert.match(ordered.hemoglobin, /Haemoglobin/i);
+assert.match(ordered.platelets, /Platelets/i);
 
 assert.equal(DETAILS_PASSWORD, '1379');
 assert.equal(DEFAULT_RECOGNITION_LANGUAGE, 'en-US');

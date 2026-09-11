@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-11T18:52:54Z",
+  "cases": [
+    {
+      "case_id": "bridge_humerus_radial_nerve",
+      "title": "Humeral shaft fracture and wrist drop",
+      "prompt": "A patient cannot extend the wrist after a mid-shaft humeral fracture. Which nerve is most likely injured and which anatomical relation explains it?",
+      "linked_concept_ids": [
+        "bone_humerus",
+        "nerve_radial"
+      ],
+      "expected_points": [
+        "radial nerve",
+        "radial groove",
+        "posterior compartment/extensors",
+        "wrist drop"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "case_id": "bridge_surgical_neck_axillary",
+      "title": "Surgical neck fracture and deltoid weakness",
+      "prompt": "After shoulder trauma, a patient has weak abduction and numbness over the deltoid region. Which nerve is injured?",
+      "linked_concept_ids": [
+        "bone_humerus",
+        "nerve_axillary",
+        "space_quadrangular"
+      ],
+      "expected_points": [
+        "axillary nerve",
+        "surgical neck of humerus",
+        "deltoid",
+        "regimental badge area"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "case_id": "bridge_cavernous_sinus",
+      "title": "Cavernous sinus infection spread",
+      "prompt": "A facial infection spreads intracranially and the patient develops diplopia. Which sinus and which cranial nerve is especially vulnerable?",
+      "linked_concept_ids": [
+        "sinus_cavernous",
+        "nerve_cn_vi"
+      ],
+      "expected_points": [
+        "cavernous sinus",
+        "abducens nerve CN VI",
+        "internal carotid relation",
+        "ocular motor deficits"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "case_id": "bridge_femoral_neck",
+      "title": "Femoral neck fracture and femoral head blood supply",
+      "prompt": "An elderly patient fractures the femoral neck. Which artery is most important for femoral head viability?",
+      "linked_concept_ids": [
+        "bone_femur",
+        "artery_medial_circumflex_femoral"
+      ],
+      "expected_points": [
+        "medial circumflex femoral artery",
+        "retinacular branches",
+        "avascular necrosis risk"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "case_id": "bridge_appendicitis",
+      "title": "Appendicitis and appendicular artery",
+      "prompt": "A patient has appendicitis requiring surgery. Which artery supplies the appendix and from which territory does it arise?",
+      "linked_concept_ids": [
+        "organ_appendix",
+        "artery_appendicular",
+        "artery_superior_mesenteric"
+      ],
+      "expected_points": [
+        "appendicular artery",
+        "ileocolic branch",
+        "superior mesenteric artery",
+        "midgut territory"
+      ],
+      "status": "seed_needs_review"
+    }
+  ]
+}

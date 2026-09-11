@@ -1,0 +1,1096 @@
+﻿id,type,latin,language,preferred_term,aliases,status,source_refs
+bone_vertebral_column,bone,columna vertebralis,de,Wirbelsäule,,seed_needs_review,terminology_seed_v2.2
+bone_sternum,bone,sternum,de,Brustbein,,seed_needs_review,terminology_seed_v2.2
+bone_rib,bone,costa,de,Rippe,,seed_needs_review,terminology_seed_v2.2
+bone_frontal,bone,os frontale,de,Stirnbein,,seed_needs_review,terminology_seed_v2.2
+bone_parietal,bone,os parietale,de,Scheitelbein,,seed_needs_review,terminology_seed_v2.2
+bone_occipital,bone,os occipitale,de,Hinterhauptbein,,seed_needs_review,terminology_seed_v2.2
+bone_temporal,bone,os temporale,de,Schläfenbein,,seed_needs_review,terminology_seed_v2.2
+bone_sphenoid,bone,os sphenoidale,de,Keilbein,,seed_needs_review,terminology_seed_v2.2
+bone_ethmoid,bone,os ethmoidale,sk,čuchová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_ethmoid,bone,os ethmoidale,de,Siebbein,,seed_needs_review,terminology_seed_v2.2
+bone_mandible,bone,mandibula,de,Unterkiefer,,seed_needs_review,terminology_seed_v2.2
+bone_maxilla,bone,maxilla,de,Oberkiefer,,seed_needs_review,terminology_seed_v2.2
+bone_palatine,bone,os palatinum,sk,podnebná kosť,,seed_needs_review,terminology_seed_v2.2
+bone_palatine,bone,os palatinum,de,Gaumenbein,,seed_needs_review,terminology_seed_v2.2
+bone_clavicle,bone,clavicula,de,Schlüsselbein,Clavicula,seed_needs_review,terminology_seed_v2.2
+bone_scapula,bone,scapula,de,Schulterblatt,Scapula,seed_needs_review,terminology_seed_v2.2
+bone_humerus,bone,humerus,de,Oberarmknochen,,seed_needs_review,terminology_seed_v2.2
+bone_radius,bone,radius,de,Speiche,,seed_needs_review,terminology_seed_v2.2
+bone_ulna,bone,ulna,de,Elle,,seed_needs_review,terminology_seed_v2.2
+bone_hip,bone,os coxae,sk,panvová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_hip,bone,os coxae,de,Hüftbein,,seed_needs_review,terminology_seed_v2.2
+bone_femur,bone,femur,de,Oberschenkelknochen,,seed_needs_review,terminology_seed_v2.2
+bone_tibia,bone,tibia,de,Schienbein,Tibia,seed_needs_review,terminology_seed_v2.2
+bone_fibula,bone,fibula,de,Wadenbein,Fibula,seed_needs_review,terminology_seed_v2.2
+bone_patella,bone,patella,sk,jabĺčko,patela,seed_needs_review,terminology_seed_v2.2
+bone_patella,bone,patella,de,Kniescheibe,Patella,seed_needs_review,terminology_seed_v2.2
+joint_atlanto_occipital,joint,articulatio atlantooccipitalis,sk,atlantookcipitálny kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_atlanto_occipital,joint,articulatio atlantooccipitalis,de,oberes Kopfgelenk,,seed_needs_review,terminology_seed_v2.2
+joint_atlanto_axial,joint,articulatio atlantoaxialis,sk,atlantoaxiálny kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_atlanto_axial,joint,articulatio atlantoaxialis,de,unteres Kopfgelenk,,seed_needs_review,terminology_seed_v2.2
+joint_shoulder,joint,articulatio glenohumeralis,sk,ramenný kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_shoulder,joint,articulatio glenohumeralis,de,Schultergelenk,,seed_needs_review,terminology_seed_v2.2
+joint_elbow,joint,articulatio cubiti,sk,lakťový kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_elbow,joint,articulatio cubiti,de,Ellenbogengelenk,,seed_needs_review,terminology_seed_v2.2
+joint_hip,joint,articulatio coxae,sk,bedrový kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_hip,joint,articulatio coxae,de,Hüftgelenk,,seed_needs_review,terminology_seed_v2.2
+joint_knee,joint,articulatio genus,sk,kolenný kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_knee,joint,articulatio genus,de,Kniegelenk,,seed_needs_review,terminology_seed_v2.2
+artery_aorta,artery,aorta,sk,aorta,srdcovnica,seed_needs_review,terminology_seed_v2.2
+artery_aorta,artery,aorta,de,Aorta,,seed_needs_review,terminology_seed_v2.2
+artery_pulmonary_trunk,artery,truncus pulmonalis,de,Lungenstamm,Truncus pulmonalis,seed_needs_review,terminology_seed_v2.2
+artery_right_coronary,artery,arteria coronaria dextra,sk,pravá vencovitá tepna,,seed_needs_review,terminology_seed_v2.2
+artery_right_coronary,artery,arteria coronaria dextra,de,rechte Herzkranzarterie,,seed_needs_review,terminology_seed_v2.2
+artery_left_coronary,artery,arteria coronaria sinistra,sk,ľavá vencovitá tepna,,seed_needs_review,terminology_seed_v2.2
+artery_left_coronary,artery,arteria coronaria sinistra,de,linke Herzkranzarterie,,seed_needs_review,terminology_seed_v2.2
+artery_common_carotid,artery,arteria carotis communis,sk,spoločná krčnica,,seed_needs_review,terminology_seed_v2.2
+artery_common_carotid,artery,arteria carotis communis,de,gemeinsame Halsschlagader,,seed_needs_review,terminology_seed_v2.2
+artery_internal_carotid,artery,arteria carotis interna,sk,vnútorná krčnica,,seed_needs_review,terminology_seed_v2.2
+artery_internal_carotid,artery,arteria carotis interna,de,innere Halsschlagader,,seed_needs_review,terminology_seed_v2.2
+artery_external_carotid,artery,arteria carotis externa,sk,vonkajšia krčnica,,seed_needs_review,terminology_seed_v2.2
+artery_external_carotid,artery,arteria carotis externa,de,äußere Halsschlagader,,seed_needs_review,terminology_seed_v2.2
+artery_subclavian,artery,arteria subclavia,sk,podkľúčna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_subclavian,artery,arteria subclavia,de,Unterschlüsselbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_axillary,artery,arteria axillaris,sk,podpazušná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_axillary,artery,arteria axillaris,de,Achselarterie,,seed_needs_review,terminology_seed_v2.2
+artery_brachial,artery,arteria brachialis,sk,ramenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_brachial,artery,arteria brachialis,de,Oberarmarterie,,seed_needs_review,terminology_seed_v2.2
+artery_radial,artery,arteria radialis,sk,vretenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_radial,artery,arteria radialis,de,Speichenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_ulnar,artery,arteria ulnaris,sk,lakťová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_ulnar,artery,arteria ulnaris,de,Ellenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_celiac_trunk,artery,truncus coeliacus,sk,brušný kmeň,,seed_needs_review,terminology_seed_v2.2
+artery_celiac_trunk,artery,truncus coeliacus,de,Truncus coeliacus,,seed_needs_review,terminology_seed_v2.2
+artery_superior_mesenteric,artery,arteria mesenterica superior,sk,horná mezenterická tepna,,seed_needs_review,terminology_seed_v2.2
+artery_superior_mesenteric,artery,arteria mesenterica superior,de,obere Mesenterialarterie,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_mesenteric,artery,arteria mesenterica inferior,sk,dolná mezenterická tepna,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_mesenteric,artery,arteria mesenterica inferior,de,untere Mesenterialarterie,,seed_needs_review,terminology_seed_v2.2
+artery_common_iliac,artery,arteria iliaca communis,sk,spoločná bedrová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_common_iliac,artery,arteria iliaca communis,de,gemeinsame Darmbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_internal_iliac,artery,arteria iliaca interna,sk,vnútorná bedrová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_internal_iliac,artery,arteria iliaca interna,de,innere Darmbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_external_iliac,artery,arteria iliaca externa,sk,vonkajšia bedrová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_external_iliac,artery,arteria iliaca externa,de,äußere Darmbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_femoral,artery,arteria femoralis,sk,stehenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_femoral,artery,arteria femoralis,de,Oberschenkelarterie,,seed_needs_review,terminology_seed_v2.2
+artery_popliteal,artery,arteria poplitea,sk,zákolenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_popliteal,artery,arteria poplitea,de,Kniekehlenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_tibial,artery,arteria tibialis anterior,sk,predná píšťalová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_tibial,artery,arteria tibialis anterior,de,vordere Schienbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_tibial,artery,arteria tibialis posterior,sk,zadná píšťalová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_tibial,artery,arteria tibialis posterior,de,hintere Schienbeinarterie,,seed_needs_review,terminology_seed_v2.2
+vein_superior_vena_cava,vein,vena cava superior,sk,horná dutá žila,,seed_needs_review,terminology_seed_v2.2
+vein_superior_vena_cava,vein,vena cava superior,de,obere Hohlvene,,seed_needs_review,terminology_seed_v2.2
+vein_inferior_vena_cava,vein,vena cava inferior,sk,dolná dutá žila,,seed_needs_review,terminology_seed_v2.2
+vein_inferior_vena_cava,vein,vena cava inferior,de,untere Hohlvene,,seed_needs_review,terminology_seed_v2.2
+vein_internal_jugular,vein,vena jugularis interna,sk,vnútorná hrdelná žila,,seed_needs_review,terminology_seed_v2.2
+vein_internal_jugular,vein,vena jugularis interna,de,innere Drosselvene,,seed_needs_review,terminology_seed_v2.2
+vein_subclavian,vein,vena subclavia,sk,podkľúčna žila,,seed_needs_review,terminology_seed_v2.2
+vein_subclavian,vein,vena subclavia,de,Unterschlüsselbeinvene,,seed_needs_review,terminology_seed_v2.2
+vein_brachiocephalic,vein,vena brachiocephalica,sk,ramennohlavová žila,,seed_needs_review,terminology_seed_v2.2
+vein_brachiocephalic,vein,vena brachiocephalica,de,Arm-Kopf-Vene,,seed_needs_review,terminology_seed_v2.2
+vein_axillary,vein,vena axillaris,sk,podpazušná žila,,seed_needs_review,terminology_seed_v2.2
+vein_axillary,vein,vena axillaris,de,Achselvene,,seed_needs_review,terminology_seed_v2.2
+vein_cephalic,vein,vena cephalica,sk,hlavová žila,,seed_needs_review,terminology_seed_v2.2
+vein_cephalic,vein,vena cephalica,de,Vena cephalica,,seed_needs_review,terminology_seed_v2.2
+vein_basilic,vein,vena basilica,sk,bazilická žila,,seed_needs_review,terminology_seed_v2.2
+vein_basilic,vein,vena basilica,de,Vena basilica,,seed_needs_review,terminology_seed_v2.2
+vein_portal,vein,vena portae hepatis,sk,vrátnicová žila,,seed_needs_review,terminology_seed_v2.2
+vein_portal,vein,vena portae hepatis,de,Pfortader,,seed_needs_review,terminology_seed_v2.2
+vein_femoral,vein,vena femoralis,sk,stehenná žila,,seed_needs_review,terminology_seed_v2.2
+vein_femoral,vein,vena femoralis,de,Oberschenkelvene,,seed_needs_review,terminology_seed_v2.2
+vein_great_saphenous,vein,vena saphena magna,sk,veľká skrytá žila,,seed_needs_review,terminology_seed_v2.2
+vein_great_saphenous,vein,vena saphena magna,de,große Rosenvene,Vena saphena magna,seed_needs_review,terminology_seed_v2.2
+sinus_cavernous,venous_sinus,sinus cavernosus,sk,dutinový splav,,seed_needs_review,terminology_seed_v2.2
+sinus_cavernous,venous_sinus,sinus cavernosus,de,Sinus cavernosus,,seed_needs_review,terminology_seed_v2.2
+sinus_dural_venous,venous_sinus,sinus durae matris,sk,splavy tvrdej mozgovej pleny,,seed_needs_review,terminology_seed_v2.2
+sinus_dural_venous,venous_sinus,sinus durae matris,de,Hirnhautsinus,,seed_needs_review,terminology_seed_v2.2
+plexus_brachial,nerve_plexus,plexus brachialis,de,Armgeflecht,,seed_needs_review,terminology_seed_v2.2
+plexus_lumbar,nerve_plexus,plexus lumbalis,sk,driekový pletenec,,seed_needs_review,terminology_seed_v2.2
+plexus_lumbar,nerve_plexus,plexus lumbalis,de,Lendengeflecht,,seed_needs_review,terminology_seed_v2.2
+plexus_sacral,nerve_plexus,plexus sacralis,sk,krížový pletenec,,seed_needs_review,terminology_seed_v2.2
+plexus_sacral,nerve_plexus,plexus sacralis,de,Kreuzbeingeflecht,,seed_needs_review,terminology_seed_v2.2
+nerve_musculocutaneous,nerve,nervus musculocutaneus,sk,svalovokožný nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_musculocutaneous,nerve,nervus musculocutaneus,de,Muskel-Haut-Nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_median,nerve,nervus medianus,sk,stredový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_median,nerve,nervus medianus,de,Medianusnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_ulnar,nerve,nervus ulnaris,sk,lakťový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_ulnar,nerve,nervus ulnaris,de,Ulnarisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_radial,nerve,nervus radialis,de,Radialisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_axillary,nerve,nervus axillaris,de,Axillarisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_femoral,nerve,nervus femoralis,de,Femoralisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_obturator,nerve,nervus obturatorius,de,Obturatoriusnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_sciatic,nerve,nervus ischiadicus,de,Ischiasnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_tibial,nerve,nervus tibialis,de,Tibialisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_common_fibular,nerve,nervus fibularis communis,sk,spoločný ihlicový nerv,spoločný lýtkový nerv,seed_needs_review,terminology_seed_v2.2
+nerve_common_fibular,nerve,nervus fibularis communis,de,gemeinsamer Wadenbeinnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_cn_i,cranial_nerve,nervus olfactorius,sk,čuchový nerv (I),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_i,cranial_nerve,nervus olfactorius,de,Riechnerv (I),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_ii,cranial_nerve,nervus opticus,sk,zrakový nerv (II),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_ii,cranial_nerve,nervus opticus,de,Sehnerv (II),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_iii,cranial_nerve,nervus oculomotorius,sk,okohybný nerv (III),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_iii,cranial_nerve,nervus oculomotorius,de,Augenbewegungsnerv (III),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_iv,cranial_nerve,nervus trochlearis,sk,kladkový nerv (IV),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_iv,cranial_nerve,nervus trochlearis,de,Rollnerv (IV),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_v,cranial_nerve,nervus trigeminus,sk,trojklaný nerv (V),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_v,cranial_nerve,nervus trigeminus,de,Drillingsnerv (V),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_vi,cranial_nerve,nervus abducens,sk,odťahovací nerv (VI),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_vi,cranial_nerve,nervus abducens,de,Abziehnerv (VI),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_vii,cranial_nerve,nervus facialis,sk,tvárový nerv (VII),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_vii,cranial_nerve,nervus facialis,de,Gesichtsnerv (VII),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_viii,cranial_nerve,nervus vestibulocochlearis,sk,predsieňovoslimákový nerv (VIII),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_viii,cranial_nerve,nervus vestibulocochlearis,de,Hör- und Gleichgewichtsnerv (VIII),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_ix,cranial_nerve,nervus glossopharyngeus,sk,jazykovohltanový nerv (IX),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_ix,cranial_nerve,nervus glossopharyngeus,de,Zungen-Rachen-Nerv (IX),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_x,cranial_nerve,nervus vagus,sk,blúdivý nerv (X),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_x,cranial_nerve,nervus vagus,de,Vagusnerv (X),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_xi,cranial_nerve,nervus accessorius,sk,prídavný nerv (XI),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_xi,cranial_nerve,nervus accessorius,de,Zusatznerv (XI),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_xii,cranial_nerve,nervus hypoglossus,sk,podjazykový nerv (XII),,seed_needs_review,terminology_seed_v2.2
+nerve_cn_xii,cranial_nerve,nervus hypoglossus,de,Unterzungennerv (XII),,seed_needs_review,terminology_seed_v2.2
+foramen_magnum,foramen,foramen magnum,sk,veľký záhlavový otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_magnum,foramen,foramen magnum,de,großes Hinterhauptloch,,seed_needs_review,terminology_seed_v2.2
+canal_optic,canal,canalis opticus,sk,zrakový kanál,,seed_needs_review,terminology_seed_v2.2
+canal_optic,canal,canalis opticus,de,Sehnervenkanal,,seed_needs_review,terminology_seed_v2.2
+fissure_superior_orbital,fissure,fissura orbitalis superior,sk,horná očnicová štrbina,,seed_needs_review,terminology_seed_v2.2
+fissure_superior_orbital,fissure,fissura orbitalis superior,de,obere Augenhöhlenspalte,,seed_needs_review,terminology_seed_v2.2
+foramen_rotundum,foramen,foramen rotundum,sk,okrúhly otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_rotundum,foramen,foramen rotundum,de,rundes Loch,,seed_needs_review,terminology_seed_v2.2
+foramen_ovale,foramen,foramen ovale,sk,oválny otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_ovale,foramen,foramen ovale,de,ovales Loch,,seed_needs_review,terminology_seed_v2.2
+foramen_spinosum,foramen,foramen spinosum,sk,tŕňový otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_spinosum,foramen,foramen spinosum,de,Dornloch,,seed_needs_review,terminology_seed_v2.2
+foramen_jugular,foramen,foramen jugulare,sk,hrdelný otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_jugular,foramen,foramen jugulare,de,Drosselloch,,seed_needs_review,terminology_seed_v2.2
+canal_hypoglossal,canal,canalis nervi hypoglossi,sk,kanál podjazykového nervu,,seed_needs_review,terminology_seed_v2.2
+canal_hypoglossal,canal,canalis nervi hypoglossi,de,Hypoglossuskanal,,seed_needs_review,terminology_seed_v2.2
+space_pterygopalatine_fossa,space,fossa pterygopalatina,sk,krídlovopodnebná jama,,seed_needs_review,terminology_seed_v2.2
+space_pterygopalatine_fossa,space,fossa pterygopalatina,de,Flügelgaumengrube,,seed_needs_review,terminology_seed_v2.2
+space_infratemporal_fossa,space,fossa infratemporalis,sk,podspánková jama,,seed_needs_review,terminology_seed_v2.2
+space_infratemporal_fossa,space,fossa infratemporalis,de,Unterschläfengrube,,seed_needs_review,terminology_seed_v2.2
+organ_heart,organ,cor,de,Herz,,seed_needs_review,terminology_seed_v2.2
+organ_lung,organ,pulmo,sk,pľúca,,seed_needs_review,terminology_seed_v2.2
+organ_lung,organ,pulmo,de,Lunge,,seed_needs_review,terminology_seed_v2.2
+structure_pleura,serous_membrane,pleura,sk,pohrudnica,,seed_needs_review,terminology_seed_v2.2
+structure_pleura,serous_membrane,pleura,de,Pleura,,seed_needs_review,terminology_seed_v2.2
+structure_trachea,airway,trachea,de,Luftröhre,,seed_needs_review,terminology_seed_v2.2
+structure_larynx,airway,larynx,sk,hrtan,,seed_needs_review,terminology_seed_v2.2
+structure_larynx,airway,larynx,de,Kehlkopf,,seed_needs_review,terminology_seed_v2.2
+organ_stomach,organ,gaster,sk,žalúdok,,seed_needs_review,terminology_seed_v2.2
+organ_stomach,organ,gaster,de,Magen,,seed_needs_review,terminology_seed_v2.2
+organ_small_intestine,organ,intestinum tenue,de,Dünndarm,,seed_needs_review,terminology_seed_v2.2
+organ_large_intestine,organ,intestinum crassum,de,Dickdarm,,seed_needs_review,terminology_seed_v2.2
+organ_liver,organ,hepar,sk,pečeň,,seed_needs_review,terminology_seed_v2.2
+organ_liver,organ,hepar,de,Leber,,seed_needs_review,terminology_seed_v2.2
+organ_pancreas,organ,pancreas,de,Bauchspeicheldrüse,Pankreas,seed_needs_review,terminology_seed_v2.2
+structure_peritoneum,serous_membrane,peritoneum,sk,pobrušnica,,seed_needs_review,terminology_seed_v2.2
+structure_peritoneum,serous_membrane,peritoneum,de,Bauchfell,,seed_needs_review,terminology_seed_v2.2
+organ_kidney,organ,ren,de,Niere,,seed_needs_review,terminology_seed_v2.2
+structure_ureter,duct,ureter,sk,močovod,,seed_needs_review,terminology_seed_v2.2
+structure_ureter,duct,ureter,de,Harnleiter,,seed_needs_review,terminology_seed_v2.2
+organ_urinary_bladder,organ,vesica urinaria,de,Harnblase,,seed_needs_review,terminology_seed_v2.2
+organ_spinal_cord,organ,medulla spinalis,de,Rückenmark,,seed_needs_review,terminology_seed_v2.2
+organ_brainstem,organ,truncus encephali,sk,mozgový kmeň,,seed_needs_review,terminology_seed_v2.2
+organ_brainstem,organ,truncus encephali,de,Hirnstamm,,seed_needs_review,terminology_seed_v2.2
+organ_cerebellum,organ,cerebellum,de,Kleinhirn,,seed_needs_review,terminology_seed_v2.2
+organ_diencephalon,organ,diencephalon,sk,medzimozog,,seed_needs_review,terminology_seed_v2.2
+organ_diencephalon,organ,diencephalon,de,Zwischenhirn,,seed_needs_review,terminology_seed_v2.2
+organ_telencephalon,organ,telencephalon,sk,koncový mozog,,seed_needs_review,terminology_seed_v2.2
+organ_telencephalon,organ,telencephalon,de,Endhirn,,seed_needs_review,terminology_seed_v2.2
+structure_ventricles,cavity_system,ventriculi cerebri,sk,mozgové komory,,seed_needs_review,terminology_seed_v2.2
+structure_ventricles,cavity_system,ventriculi cerebri,de,Hirnventrikel,,seed_needs_review,terminology_seed_v2.2
+structure_meninges,membrane,meninges,sk,mozgové a miechové obaly,,seed_needs_review,terminology_seed_v2.2
+structure_meninges,membrane,meninges,de,Hirn- und Rückenmarkshäute,,seed_needs_review,terminology_seed_v2.2
+organ_eye,organ,bulbus oculi,sk,očná guľa,,seed_needs_review,terminology_seed_v2.2
+organ_eye,organ,bulbus oculi,de,Augapfel,,seed_needs_review,terminology_seed_v2.2
+organ_ear,organ,auris,sk,ucho,,seed_needs_review,terminology_seed_v2.2
+organ_ear,organ,auris,de,Ohr,,seed_needs_review,terminology_seed_v2.2
+bone_atlas,bone,atlas,sk,nosič (C1),,seed_needs_review,terminology_seed_v2.2
+bone_atlas,bone,atlas,de,Atlas (C1),,seed_needs_review,terminology_seed_v2.2
+bone_axis,bone,axis,sk,čapovec (C2),,seed_needs_review,terminology_seed_v2.2
+bone_axis,bone,axis,de,Axis (C2),,seed_needs_review,terminology_seed_v2.2
+bone_cervical_vertebra,bone_group,vertebrae cervicales,sk,krčné stavce,,seed_needs_review,terminology_seed_v2.2
+bone_cervical_vertebra,bone_group,vertebrae cervicales,de,Halswirbel,,seed_needs_review,terminology_seed_v2.2
+bone_thoracic_vertebra,bone_group,vertebrae thoracicae,sk,hrudníkové stavce,,seed_needs_review,terminology_seed_v2.2
+bone_thoracic_vertebra,bone_group,vertebrae thoracicae,de,Brustwirbel,,seed_needs_review,terminology_seed_v2.2
+bone_lumbar_vertebra,bone_group,vertebrae lumbales,sk,driekové stavce,,seed_needs_review,terminology_seed_v2.2
+bone_lumbar_vertebra,bone_group,vertebrae lumbales,de,Lendenwirbel,,seed_needs_review,terminology_seed_v2.2
+bone_sacrum,bone,os sacrum,sk,krížová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_sacrum,bone,os sacrum,de,Kreuzbein,,seed_needs_review,terminology_seed_v2.2
+bone_coccyx,bone,os coccygis,sk,kostrč,,seed_needs_review,terminology_seed_v2.2
+bone_coccyx,bone,os coccygis,de,Steißbein,,seed_needs_review,terminology_seed_v2.2
+bone_zygomatic,bone,os zygomaticum,sk,jarmová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_zygomatic,bone,os zygomaticum,de,Jochbein,,seed_needs_review,terminology_seed_v2.2
+bone_nasal,bone,os nasale,sk,nosová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_nasal,bone,os nasale,de,Nasenbein,,seed_needs_review,terminology_seed_v2.2
+bone_lacrimal,bone,os lacrimale,sk,slzná kosť,,seed_needs_review,terminology_seed_v2.2
+bone_lacrimal,bone,os lacrimale,de,Tränenbein,,seed_needs_review,terminology_seed_v2.2
+bone_vomer,bone,vomer,sk,čerieslo,,seed_needs_review,terminology_seed_v2.2
+bone_vomer,bone,vomer,de,Pflugscharbein,,seed_needs_review,terminology_seed_v2.2
+bone_inferior_nasal_concha,bone,concha nasalis inferior,sk,dolná nosová mušľa,,seed_needs_review,terminology_seed_v2.2
+bone_inferior_nasal_concha,bone,concha nasalis inferior,de,untere Nasenmuschel,,seed_needs_review,terminology_seed_v2.2
+bone_hyoid,bone,os hyoideum,sk,jazylka,,seed_needs_review,terminology_seed_v2.2
+bone_hyoid,bone,os hyoideum,de,Zungenbein,,seed_needs_review,terminology_seed_v2.2
+bone_scaphold_carpal,bone,os scaphoideum,sk,člnkovitá kosť zápästia,,seed_needs_review,terminology_seed_v2.2
+bone_scaphold_carpal,bone,os scaphoideum,de,Kahnbein der Hand,,seed_needs_review,terminology_seed_v2.2
+bone_lunate,bone,os lunatum,sk,polmesiačikovitá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_lunate,bone,os lunatum,de,Mondbein,,seed_needs_review,terminology_seed_v2.2
+bone_triquetrum,bone,os triquetrum,sk,trojhranná kosť,,seed_needs_review,terminology_seed_v2.2
+bone_triquetrum,bone,os triquetrum,de,Dreiecksbein,,seed_needs_review,terminology_seed_v2.2
+bone_pisiform,bone,os pisiforme,sk,hráškovitá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_pisiform,bone,os pisiforme,de,Erbsenbein,,seed_needs_review,terminology_seed_v2.2
+bone_trapezium,bone,os trapezium,sk,lichobežníková kosť,,seed_needs_review,terminology_seed_v2.2
+bone_trapezium,bone,os trapezium,de,großes Vieleckbein,,seed_needs_review,terminology_seed_v2.2
+bone_trapezoid,bone,os trapezoideum,sk,lichobežníčková kosť,,seed_needs_review,terminology_seed_v2.2
+bone_trapezoid,bone,os trapezoideum,de,kleines Vieleckbein,,seed_needs_review,terminology_seed_v2.2
+bone_capitate,bone,os capitatum,sk,hlavatá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_capitate,bone,os capitatum,de,Kopfbein,,seed_needs_review,terminology_seed_v2.2
+bone_hamate,bone,os hamatum,sk,hákovitá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_hamate,bone,os hamatum,de,Hakenbein,,seed_needs_review,terminology_seed_v2.2
+bone_metacarpals,bone_group,ossa metacarpi,sk,záprstné kosti,,seed_needs_review,terminology_seed_v2.2
+bone_metacarpals,bone_group,ossa metacarpi,de,Mittelhandknochen,,seed_needs_review,terminology_seed_v2.2
+bone_hand_phalanges,bone_group,phalanges manus,sk,články prstov ruky,,seed_needs_review,terminology_seed_v2.2
+bone_hand_phalanges,bone_group,phalanges manus,de,Fingerknochen,,seed_needs_review,terminology_seed_v2.2
+bone_talus,bone,talus,sk,členková kosť,,seed_needs_review,terminology_seed_v2.2
+bone_talus,bone,talus,de,Sprungbein,,seed_needs_review,terminology_seed_v2.2
+bone_calcaneus,bone,calcaneus,sk,pätová kosť,,seed_needs_review,terminology_seed_v2.2
+bone_calcaneus,bone,calcaneus,de,Fersenbein,,seed_needs_review,terminology_seed_v2.2
+bone_navicular,bone,os naviculare,sk,člnkovitá kosť nohy,,seed_needs_review,terminology_seed_v2.2
+bone_navicular,bone,os naviculare,de,Kahnbein des Fußes,,seed_needs_review,terminology_seed_v2.2
+bone_cuboid,bone,os cuboideum,sk,kockovitá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_cuboid,bone,os cuboideum,de,Würfelbein,,seed_needs_review,terminology_seed_v2.2
+bone_cuneiforms,bone_group,ossa cuneiformia,sk,klinovité kosti,,seed_needs_review,terminology_seed_v2.2
+bone_cuneiforms,bone_group,ossa cuneiformia,de,Keilbeine,,seed_needs_review,terminology_seed_v2.2
+bone_metatarsals,bone_group,ossa metatarsi,sk,priehlavkové kosti,,seed_needs_review,terminology_seed_v2.2
+bone_metatarsals,bone_group,ossa metatarsi,de,Mittelfußknochen,,seed_needs_review,terminology_seed_v2.2
+bone_foot_phalanges,bone_group,phalanges pedis,sk,články prstov nohy,,seed_needs_review,terminology_seed_v2.2
+bone_foot_phalanges,bone_group,phalanges pedis,de,Zehenknochen,,seed_needs_review,terminology_seed_v2.2
+joint_temporomandibular,joint,articulatio temporomandibularis,sk,čeľustný kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_temporomandibular,joint,articulatio temporomandibularis,de,Kiefergelenk,,seed_needs_review,terminology_seed_v2.2
+joint_wrist,joint,articulatio radiocarpalis,sk,zápästný kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_wrist,joint,articulatio radiocarpalis,de,Handgelenk,,seed_needs_review,terminology_seed_v2.2
+joint_ankle,joint,articulatio talocruralis,sk,horný členkový kĺb,,seed_needs_review,terminology_seed_v2.2
+joint_ankle,joint,articulatio talocruralis,de,oberes Sprunggelenk,,seed_needs_review,terminology_seed_v2.2
+joint_sacroiliac,joint,articulatio sacroiliaca,de,Iliosakralgelenk,Sakroiliakalgelenk; Kreuz-Darmbein-Gelenk,seed_needs_review,terminology_seed_v2.2
+ligament_acl,ligament,ligamentum cruciatum anterius,sk,predný skrížený väz,,seed_needs_review,terminology_seed_v2.2
+ligament_acl,ligament,ligamentum cruciatum anterius,de,vorderes Kreuzband,,seed_needs_review,terminology_seed_v2.2
+ligament_pcl,ligament,ligamentum cruciatum posterius,sk,zadný skrížený väz,,seed_needs_review,terminology_seed_v2.2
+ligament_pcl,ligament,ligamentum cruciatum posterius,de,hinteres Kreuzband,,seed_needs_review,terminology_seed_v2.2
+ligament_inguinal,ligament,ligamentum inguinale,sk,slabinový väz,,seed_needs_review,terminology_seed_v2.2
+ligament_inguinal,ligament,ligamentum inguinale,de,Leistenband,,seed_needs_review,terminology_seed_v2.2
+artery_brachiocephalic_trunk,artery,truncus brachiocephalicus,sk,ramennohlavový kmeň,,seed_needs_review,terminology_seed_v2.2
+artery_brachiocephalic_trunk,artery,truncus brachiocephalicus,de,Arm-Kopf-Stamm,,seed_needs_review,terminology_seed_v2.2
+artery_vertebral,artery,arteria vertebralis,sk,stavcová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_vertebral,artery,arteria vertebralis,de,Wirbelarterie,,seed_needs_review,terminology_seed_v2.2
+artery_basilar,artery,arteria basilaris,sk,bazilárna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_basilar,artery,arteria basilaris,de,Basilararterie,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_cerebral,artery,arteria cerebri anterior,sk,predná mozgová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_cerebral,artery,arteria cerebri anterior,de,vordere Hirnarterie,,seed_needs_review,terminology_seed_v2.2
+artery_middle_cerebral,artery,arteria cerebri media,sk,stredná mozgová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_middle_cerebral,artery,arteria cerebri media,de,mittlere Hirnarterie,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_cerebral,artery,arteria cerebri posterior,sk,zadná mozgová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_cerebral,artery,arteria cerebri posterior,de,hintere Hirnarterie,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_communicating,artery,arteria communicans anterior,sk,predná spojovacia tepna,,seed_needs_review,terminology_seed_v2.2
+artery_anterior_communicating,artery,arteria communicans anterior,de,vordere Verbindungsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_communicating,artery,arteria communicans posterior,sk,zadná spojovacia tepna,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_communicating,artery,arteria communicans posterior,de,hintere Verbindungsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_ophthalmic,artery,arteria ophthalmica,sk,očná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_ophthalmic,artery,arteria ophthalmica,de,Augenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_middle_meningeal,artery,arteria meningea media,sk,stredná meningeálna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_middle_meningeal,artery,arteria meningea media,de,mittlere Hirnhautarterie,,seed_needs_review,terminology_seed_v2.2
+artery_facial,artery,arteria facialis,sk,tvárová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_facial,artery,arteria facialis,de,Gesichtsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_lingual,artery,arteria lingualis,sk,jazyková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_lingual,artery,arteria lingualis,de,Zungenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_maxillary,artery,arteria maxillaris,sk,čeľustná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_maxillary,artery,arteria maxillaris,de,Oberkieferarterie,,seed_needs_review,terminology_seed_v2.2
+artery_superficial_temporal,artery,arteria temporalis superficialis,sk,povrchová spánková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_superficial_temporal,artery,arteria temporalis superficialis,de,oberflächliche Schläfenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_occipital,artery,arteria occipitalis,sk,záhlavová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_occipital,artery,arteria occipitalis,de,Hinterhauptarterie,,seed_needs_review,terminology_seed_v2.2
+artery_internal_thoracic,artery,arteria thoracica interna,sk,vnútorná hrudníková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_internal_thoracic,artery,arteria thoracica interna,de,innere Brustkorbarterie,,seed_needs_review,terminology_seed_v2.2
+artery_intercostal_posterior,artery,arteriae intercostales posteriores,sk,zadné medzirebrové tepny,,seed_needs_review,terminology_seed_v2.2
+artery_intercostal_posterior,artery,arteriae intercostales posteriores,de,hintere Zwischenrippenarterien,,seed_needs_review,terminology_seed_v2.2
+artery_profunda_brachii,artery,arteria profunda brachii,sk,hĺbková ramenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_profunda_brachii,artery,arteria profunda brachii,de,tiefe Oberarmarterie,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_circumflex_humeral,artery,arteria circumflexa humeri posterior,sk,zadná obkružujúca ramenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_circumflex_humeral,artery,arteria circumflexa humeri posterior,de,hintere Oberarmumgehungsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_renal,artery,arteria renalis,sk,obličková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_renal,artery,arteria renalis,de,Nierenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_suprarenal_middle,artery,arteria suprarenalis media,sk,stredná nadobličková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_suprarenal_middle,artery,arteria suprarenalis media,de,mittlere Nebennierenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_gonadal,artery,arteria testicularis/ovarica,sk,gonadálna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_gonadal,artery,arteria testicularis/ovarica,de,Keimdrüsenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_left_gastric,artery,arteria gastrica sinistra,sk,ľavá žalúdková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_left_gastric,artery,arteria gastrica sinistra,de,linke Magenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_splenic,artery,arteria splenica,sk,slezinová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_splenic,artery,arteria splenica,de,Milzarterie,,seed_needs_review,terminology_seed_v2.2
+artery_common_hepatic,artery,arteria hepatica communis,sk,spoločná pečeňová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_common_hepatic,artery,arteria hepatica communis,de,gemeinsame Leberarterie,,seed_needs_review,terminology_seed_v2.2
+artery_proper_hepatic,artery,arteria hepatica propria,sk,vlastná pečeňová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_proper_hepatic,artery,arteria hepatica propria,de,eigentliche Leberarterie,,seed_needs_review,terminology_seed_v2.2
+artery_gastroduodenal,artery,arteria gastroduodenalis,sk,žalúdkovo-dvanástniková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_gastroduodenal,artery,arteria gastroduodenalis,de,Magen-Zwölffingerdarm-Arterie,,seed_needs_review,terminology_seed_v2.2
+artery_appendicular,artery,arteria appendicularis,sk,tepna červovitého prívesku,,seed_needs_review,terminology_seed_v2.2
+artery_appendicular,artery,arteria appendicularis,de,Appendixarterie,,seed_needs_review,terminology_seed_v2.2
+artery_deep_femoral,artery,arteria profunda femoris,sk,hĺbková stehenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_deep_femoral,artery,arteria profunda femoris,de,tiefe Oberschenkelarterie,,seed_needs_review,terminology_seed_v2.2
+artery_medial_circumflex_femoral,artery,arteria circumflexa femoris medialis,sk,vnútorná obkružujúca stehenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_medial_circumflex_femoral,artery,arteria circumflexa femoris medialis,de,mediale Oberschenkelumgehungsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_lateral_circumflex_femoral,artery,arteria circumflexa femoris lateralis,sk,vonkajšia obkružujúca stehenná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_lateral_circumflex_femoral,artery,arteria circumflexa femoris lateralis,de,laterale Oberschenkelumgehungsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_fibular,artery,arteria fibularis,sk,ihlicová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_fibular,artery,arteria fibularis,de,Wadenbeinarterie,,seed_needs_review,terminology_seed_v2.2
+artery_dorsalis_pedis,artery,arteria dorsalis pedis,sk,chrbtová tepna nohy,,seed_needs_review,terminology_seed_v2.2
+artery_dorsalis_pedis,artery,arteria dorsalis pedis,de,Fußrückenarterie,,seed_needs_review,terminology_seed_v2.2
+vein_azygos,vein,vena azygos,sk,nepárová žila,,seed_needs_review,terminology_seed_v2.2
+vein_azygos,vein,vena azygos,de,Azygosvene,,seed_needs_review,terminology_seed_v2.2
+vein_hemiazygos,vein,vena hemiazygos,sk,polonepárová žila,,seed_needs_review,terminology_seed_v2.2
+vein_hemiazygos,vein,vena hemiazygos,de,Hemiazygosvene,,seed_needs_review,terminology_seed_v2.2
+vein_accessory_hemiazygos,vein,vena hemiazygos accessoria,sk,prídavná polonepárová žila,,seed_needs_review,terminology_seed_v2.2
+vein_accessory_hemiazygos,vein,vena hemiazygos accessoria,de,akzessorische Hemiazygosvene,,seed_needs_review,terminology_seed_v2.2
+vein_renal,vein,vena renalis,sk,obličková žila,,seed_needs_review,terminology_seed_v2.2
+vein_renal,vein,vena renalis,de,Nierenvene,,seed_needs_review,terminology_seed_v2.2
+vein_hepatic,vein,venae hepaticae,sk,pečeňové žily,,seed_needs_review,terminology_seed_v2.2
+vein_hepatic,vein,venae hepaticae,de,Lebervenen,,seed_needs_review,terminology_seed_v2.2
+vein_splenic,vein,vena splenica,sk,slezinová žila,,seed_needs_review,terminology_seed_v2.2
+vein_splenic,vein,vena splenica,de,Milzvene,,seed_needs_review,terminology_seed_v2.2
+vein_superior_mesenteric,vein,vena mesenterica superior,sk,horná mezenterická žila,,seed_needs_review,terminology_seed_v2.2
+vein_superior_mesenteric,vein,vena mesenterica superior,de,obere Mesenterialvene,,seed_needs_review,terminology_seed_v2.2
+vein_inferior_mesenteric,vein,vena mesenterica inferior,sk,dolná mezenterická žila,,seed_needs_review,terminology_seed_v2.2
+vein_inferior_mesenteric,vein,vena mesenterica inferior,de,untere Mesenterialvene,,seed_needs_review,terminology_seed_v2.2
+vein_external_iliac,vein,vena iliaca externa,sk,vonkajšia bedrová žila,,seed_needs_review,terminology_seed_v2.2
+vein_external_iliac,vein,vena iliaca externa,de,äußere Darmbeinvene,,seed_needs_review,terminology_seed_v2.2
+vein_internal_iliac,vein,vena iliaca interna,sk,vnútorná bedrová žila,,seed_needs_review,terminology_seed_v2.2
+vein_internal_iliac,vein,vena iliaca interna,de,innere Darmbeinvene,,seed_needs_review,terminology_seed_v2.2
+vein_common_iliac,vein,vena iliaca communis,sk,spoločná bedrová žila,,seed_needs_review,terminology_seed_v2.2
+vein_common_iliac,vein,vena iliaca communis,de,gemeinsame Darmbeinvene,,seed_needs_review,terminology_seed_v2.2
+vein_small_saphenous,vein,vena saphena parva,sk,malá skrytá žila,,seed_needs_review,terminology_seed_v2.2
+vein_small_saphenous,vein,vena saphena parva,de,kleine Rosenvene,Vena saphena parva,seed_needs_review,terminology_seed_v2.2
+vein_popliteal,vein,vena poplitea,sk,zákolenná žila,,seed_needs_review,terminology_seed_v2.2
+vein_popliteal,vein,vena poplitea,de,Kniekehlenvene,,seed_needs_review,terminology_seed_v2.2
+sinus_superior_sagittal,venous_sinus,sinus sagittalis superior,sk,horný šípový splav,,seed_needs_review,terminology_seed_v2.2
+sinus_superior_sagittal,venous_sinus,sinus sagittalis superior,de,oberer Sagittalsinus,,seed_needs_review,terminology_seed_v2.2
+sinus_inferior_sagittal,venous_sinus,sinus sagittalis inferior,sk,dolný šípový splav,,seed_needs_review,terminology_seed_v2.2
+sinus_inferior_sagittal,venous_sinus,sinus sagittalis inferior,de,unterer Sagittalsinus,,seed_needs_review,terminology_seed_v2.2
+sinus_straight,venous_sinus,sinus rectus,sk,priamy splav,,seed_needs_review,terminology_seed_v2.2
+sinus_straight,venous_sinus,sinus rectus,de,gerader Sinus,,seed_needs_review,terminology_seed_v2.2
+sinus_transverse,venous_sinus,sinus transversus,sk,priečny splav,,seed_needs_review,terminology_seed_v2.2
+sinus_transverse,venous_sinus,sinus transversus,de,Quersinus,,seed_needs_review,terminology_seed_v2.2
+sinus_sigmoid,venous_sinus,sinus sigmoideus,sk,esovitý splav,,seed_needs_review,terminology_seed_v2.2
+sinus_sigmoid,venous_sinus,sinus sigmoideus,de,Sigmoidsinus,,seed_needs_review,terminology_seed_v2.2
+sinus_superior_petrosal,venous_sinus,sinus petrosus superior,sk,horný skalný splav,,seed_needs_review,terminology_seed_v2.2
+sinus_superior_petrosal,venous_sinus,sinus petrosus superior,de,oberer Felsenbeinsinus,,seed_needs_review,terminology_seed_v2.2
+sinus_inferior_petrosal,venous_sinus,sinus petrosus inferior,sk,dolný skalný splav,,seed_needs_review,terminology_seed_v2.2
+sinus_inferior_petrosal,venous_sinus,sinus petrosus inferior,de,unterer Felsenbeinsinus,,seed_needs_review,terminology_seed_v2.2
+nerve_long_thoracic,nerve,nervus thoracicus longus,sk,dlhý hrudníkový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_long_thoracic,nerve,nervus thoracicus longus,de,langer Brustnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_suprascapular,nerve,nervus suprascapularis,sk,nadlopatkový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_suprascapular,nerve,nervus suprascapularis,de,Suprascapularisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_pectoral,nerve,nervus pectoralis lateralis,sk,bočný prsný nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_pectoral,nerve,nervus pectoralis lateralis,de,lateraler Brustnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_medial_pectoral,nerve,nervus pectoralis medialis,sk,vnútorný prsný nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_medial_pectoral,nerve,nervus pectoralis medialis,de,medialer Brustnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_thoracodorsal,nerve,nervus thoracodorsalis,sk,hrudnochrbtový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_thoracodorsal,nerve,nervus thoracodorsalis,de,Thoracodorsalisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_subscapular_upper,nerve,nervus subscapularis superior,sk,horný podlopatkový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_subscapular_upper,nerve,nervus subscapularis superior,de,oberer Subscapularisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_subscapular_lower,nerve,nervus subscapularis inferior,sk,dolný podlopatkový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_subscapular_lower,nerve,nervus subscapularis inferior,de,unterer Subscapularisnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_femoral_cutaneous,nerve,nervus cutaneus femoris lateralis,sk,bočný kožný nerv stehna,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_femoral_cutaneous,nerve,nervus cutaneus femoris lateralis,de,lateraler Oberschenkelhautnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_saphenous,nerve,nervus saphenus,de,Saphenusnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_superior_gluteal,nerve,nervus gluteus superior,sk,horný sedací nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_superior_gluteal,nerve,nervus gluteus superior,de,oberer Gesäßnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_inferior_gluteal,nerve,nervus gluteus inferior,sk,dolný sedací nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_inferior_gluteal,nerve,nervus gluteus inferior,de,unterer Gesäßnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_pudendal,nerve,nervus pudendus,sk,ohambný nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_pudendal,nerve,nervus pudendus,de,Pudendusnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_phrenic,nerve,nervus phrenicus,sk,bránicový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_phrenic,nerve,nervus phrenicus,de,Zwerchfellnerv,,seed_needs_review,terminology_seed_v2.2
+plexus_cervical,nerve_plexus,plexus cervicalis,de,Halsgeflecht,,seed_needs_review,terminology_seed_v2.2
+nerve_recurrent_laryngeal,nerve,nervus laryngeus recurrens,sk,zvratný hrtanový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_recurrent_laryngeal,nerve,nervus laryngeus recurrens,de,rückläufiger Kehlkopfnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_superior_laryngeal,nerve,nervus laryngeus superior,sk,horný hrtanový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_superior_laryngeal,nerve,nervus laryngeus superior,de,oberer Kehlkopfnerv,,seed_needs_review,terminology_seed_v2.2
+structure_sympathetic_trunk,autonomic_structure,truncus sympathicus,sk,sympatikový kmeň,,seed_needs_review,terminology_seed_v2.2
+structure_sympathetic_trunk,autonomic_structure,truncus sympathicus,de,Grenzstrang,,seed_needs_review,terminology_seed_v2.2
+structure_celiac_plexus,autonomic_structure,plexus coeliacus,sk,brušný pletenec,,seed_needs_review,terminology_seed_v2.2
+structure_celiac_plexus,autonomic_structure,plexus coeliacus,de,Plexus coeliacus,,seed_needs_review,terminology_seed_v2.2
+structure_pelvic_splanchnic,autonomic_structure,nervi splanchnici pelvici,sk,panvové útrobné nervy,,seed_needs_review,terminology_seed_v2.2
+structure_pelvic_splanchnic,autonomic_structure,nervi splanchnici pelvici,de,Beckeneingeweidenerven,,seed_needs_review,terminology_seed_v2.2
+foramen_cribriform_plate,foramen,foramina laminae cribrosae,sk,otvory čuchovej platničky,,seed_needs_review,terminology_seed_v2.2
+foramen_cribriform_plate,foramen,foramina laminae cribrosae,de,Siebbeinlöcher,,seed_needs_review,terminology_seed_v2.2
+canal_carotid,canal,canalis caroticus,sk,kanál vnútornej krčnice,,seed_needs_review,terminology_seed_v2.2
+canal_carotid,canal,canalis caroticus,de,Karotiskanal,,seed_needs_review,terminology_seed_v2.2
+meatus_internal_acoustic,canal,meatus acusticus internus,sk,vnútorný zvukovod,,seed_needs_review,terminology_seed_v2.2
+meatus_internal_acoustic,canal,meatus acusticus internus,de,innerer Gehörgang,,seed_needs_review,terminology_seed_v2.2
+foramen_stylomastoid,foramen,foramen stylomastoideum,sk,ihlobradavkový otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_stylomastoid,foramen,foramen stylomastoideum,de,Griffelfortsatz-Warzenfortsatz-Loch,,seed_needs_review,terminology_seed_v2.2
+foramen_lacerum,foramen,foramen lacerum,sk,roztrhnutý otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_lacerum,foramen,foramen lacerum,de,zerrissenes Loch,,seed_needs_review,terminology_seed_v2.2
+foramen_infraorbital,foramen,foramen infraorbitale,de,Unteraugenhöhlenloch,,seed_needs_review,terminology_seed_v2.2
+foramen_mental,foramen,foramen mentale,sk,bradový otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_mental,foramen,foramen mentale,de,Kinnloch,,seed_needs_review,terminology_seed_v2.2
+foramen_mandibular,foramen,foramen mandibulae,sk,sánkový otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_mandibular,foramen,foramen mandibulae,de,Unterkieferloch,,seed_needs_review,terminology_seed_v2.2
+foramen_greater_palatine,foramen,foramen palatinum majus,sk,veľký podnebný otvor,,seed_needs_review,terminology_seed_v2.2
+foramen_greater_palatine,foramen,foramen palatinum majus,de,großes Gaumenloch,,seed_needs_review,terminology_seed_v2.2
+foramen_lesser_palatine,foramen,foramina palatina minora,sk,malé podnebné otvory,,seed_needs_review,terminology_seed_v2.2
+foramen_lesser_palatine,foramen,foramina palatina minora,de,kleine Gaumenlöcher,,seed_needs_review,terminology_seed_v2.2
+fissure_pterygomaxillary,fissure,fissura pterygomaxillaris,sk,krídlovočeľustná štrbina,,seed_needs_review,terminology_seed_v2.2
+fissure_pterygomaxillary,fissure,fissura pterygomaxillaris,de,Flügelkiefer-Spalte,,seed_needs_review,terminology_seed_v2.2
+space_cubital_fossa,space,fossa cubitalis,sk,lakťová jama,,seed_needs_review,terminology_seed_v2.2
+space_cubital_fossa,space,fossa cubitalis,de,Ellenbeuge,,seed_needs_review,terminology_seed_v2.2
+space_femoral_triangle,space,trigonum femorale,sk,stehenný trojuholník,,seed_needs_review,terminology_seed_v2.2
+space_femoral_triangle,space,trigonum femorale,de,Schenkeldreieck,,seed_needs_review,terminology_seed_v2.2
+space_carpal_tunnel,space,canalis carpi,sk,karpálny tunel,,seed_needs_review,terminology_seed_v2.2
+space_carpal_tunnel,space,canalis carpi,de,Karpaltunnel,,seed_needs_review,terminology_seed_v2.2
+space_quadrangular,space,spatium quadrangulare,sk,štvorhranný priestor,,seed_needs_review,terminology_seed_v2.2
+space_quadrangular,space,spatium quadrangulare,de,viereckige Lücke,,seed_needs_review,terminology_seed_v2.2
+space_adductor_canal,space,canalis adductorius,de,Adduktorenkanal,,seed_needs_review,terminology_seed_v2.2
+organ_tongue,organ,lingua,sk,jazyk,,seed_needs_review,terminology_seed_v2.2
+organ_tongue,organ,lingua,de,Zunge,,seed_needs_review,terminology_seed_v2.2
+gland_parotid,salivary_gland,glandula parotidea,sk,príušná slinná žľaza,,seed_needs_review,terminology_seed_v2.2
+gland_parotid,salivary_gland,glandula parotidea,de,Ohrspeicheldrüse,,seed_needs_review,terminology_seed_v2.2
+gland_submandibular,salivary_gland,glandula submandibularis,sk,podčeľustná slinná žľaza,,seed_needs_review,terminology_seed_v2.2
+gland_submandibular,salivary_gland,glandula submandibularis,de,Unterkieferspeicheldrüse,,seed_needs_review,terminology_seed_v2.2
+gland_sublingual,salivary_gland,glandula sublingualis,sk,podjazyková slinná žľaza,,seed_needs_review,terminology_seed_v2.2
+gland_sublingual,salivary_gland,glandula sublingualis,de,Unterzungenspeicheldrüse,,seed_needs_review,terminology_seed_v2.2
+organ_pharynx,organ,pharynx,sk,hltan,,seed_needs_review,terminology_seed_v2.2
+organ_pharynx,organ,pharynx,de,Rachen,,seed_needs_review,terminology_seed_v2.2
+organ_oesophagus,organ,oesophagus,de,Speiseröhre,,seed_needs_review,terminology_seed_v2.2
+organ_duodenum,organ,duodenum,sk,dvanástnik,,seed_needs_review,terminology_seed_v2.2
+organ_duodenum,organ,duodenum,de,Zwölffingerdarm,,seed_needs_review,terminology_seed_v2.2
+organ_jejunum,organ,jejunum,sk,lačník,,seed_needs_review,terminology_seed_v2.2
+organ_jejunum,organ,jejunum,de,Leerdarm,,seed_needs_review,terminology_seed_v2.2
+organ_ileum,organ,ileum,sk,bedrovník,,seed_needs_review,terminology_seed_v2.2
+organ_ileum,organ,ileum,de,Krummdarm,,seed_needs_review,terminology_seed_v2.2
+organ_cecum,organ,caecum,sk,slepé črevo,,seed_needs_review,terminology_seed_v2.2
+organ_cecum,organ,caecum,de,Blinddarm,,seed_needs_review,terminology_seed_v2.2
+organ_appendix,organ,appendix vermiformis,de,Wurmfortsatz,,seed_needs_review,terminology_seed_v2.2
+organ_colon_ascending,organ,colon ascendens,sk,vzostupný tračník,,seed_needs_review,terminology_seed_v2.2
+organ_colon_ascending,organ,colon ascendens,de,Colon ascendens,,seed_needs_review,terminology_seed_v2.2
+organ_colon_transverse,organ,colon transversum,sk,priečny tračník,,seed_needs_review,terminology_seed_v2.2
+organ_colon_transverse,organ,colon transversum,de,Colon transversum,,seed_needs_review,terminology_seed_v2.2
+organ_colon_descending,organ,colon descendens,sk,zostupný tračník,,seed_needs_review,terminology_seed_v2.2
+organ_colon_descending,organ,colon descendens,de,Colon descendens,,seed_needs_review,terminology_seed_v2.2
+organ_colon_sigmoid,organ,colon sigmoideum,sk,esovitý tračník,,seed_needs_review,terminology_seed_v2.2
+organ_colon_sigmoid,organ,colon sigmoideum,de,Sigma,,seed_needs_review,terminology_seed_v2.2
+organ_rectum,organ,rectum,de,Mastdarm,,seed_needs_review,terminology_seed_v2.2
+organ_gallbladder,organ,vesica biliaris,sk,žlčník,,seed_needs_review,terminology_seed_v2.2
+organ_gallbladder,organ,vesica biliaris,de,Gallenblase,,seed_needs_review,terminology_seed_v2.2
+organ_spleen,organ,splen,sk,slezina,,seed_needs_review,terminology_seed_v2.2
+organ_spleen,organ,splen,de,Milz,,seed_needs_review,terminology_seed_v2.2
+gland_suprarenal,endocrine_gland,glandula suprarenalis,sk,nadoblička,nadobličková žľaza,seed_needs_review,terminology_seed_v2.2
+gland_suprarenal,endocrine_gland,glandula suprarenalis,de,Nebenniere,,seed_needs_review,terminology_seed_v2.2
+organ_testis,organ,testis,sk,semenník,,seed_needs_review,terminology_seed_v2.2
+organ_testis,organ,testis,de,Hoden,,seed_needs_review,terminology_seed_v2.2
+organ_epididymis,organ,epididymis,sk,nadsemenník,,seed_needs_review,terminology_seed_v2.2
+organ_epididymis,organ,epididymis,de,Nebenhoden,,seed_needs_review,terminology_seed_v2.2
+duct_ductus_deferens,duct,ductus deferens,sk,semenovod,,seed_needs_review,terminology_seed_v2.2
+duct_ductus_deferens,duct,ductus deferens,de,Samenleiter,,seed_needs_review,terminology_seed_v2.2
+gland_prostate,organ,prostata,sk,prostata,,seed_needs_review,terminology_seed_v2.2
+gland_prostate,organ,prostata,de,Prostata,,seed_needs_review,terminology_seed_v2.2
+organ_ovary,organ,ovarium,sk,vaječník,,seed_needs_review,terminology_seed_v2.2
+organ_ovary,organ,ovarium,de,Eierstock,,seed_needs_review,terminology_seed_v2.2
+organ_uterine_tube,organ,tuba uterina,sk,vajíčkovod,,seed_needs_review,terminology_seed_v2.2
+organ_uterine_tube,organ,tuba uterina,de,Eileiter,,seed_needs_review,terminology_seed_v2.2
+organ_uterus,organ,uterus,sk,maternica,,seed_needs_review,terminology_seed_v2.2
+organ_uterus,organ,uterus,de,Gebärmutter,,seed_needs_review,terminology_seed_v2.2
+organ_vagina,organ,vagina,sk,pošva,,seed_needs_review,terminology_seed_v2.2
+organ_vagina,organ,vagina,de,Scheide,,seed_needs_review,terminology_seed_v2.2
+structure_urethra,duct,urethra,sk,močová rúra,,seed_needs_review,terminology_seed_v2.2
+structure_urethra,duct,urethra,de,Harnröhre,,seed_needs_review,terminology_seed_v2.2
+gland_pituitary,endocrine_gland,hypophysis,sk,podmozgová žľaza,hypofýza,seed_needs_review,terminology_seed_v2.2
+gland_pituitary,endocrine_gland,hypophysis,de,Hirnanhangsdrüse,Hypophyse,seed_needs_review,terminology_seed_v2.2
+gland_thyroid,endocrine_gland,glandula thyroidea,sk,štítna žľaza,,seed_needs_review,terminology_seed_v2.2
+gland_thyroid,endocrine_gland,glandula thyroidea,de,Schilddrüse,,seed_needs_review,terminology_seed_v2.2
+gland_parathyroid,endocrine_gland,glandulae parathyroideae,sk,prištítne telieska,,seed_needs_review,terminology_seed_v2.2
+gland_parathyroid,endocrine_gland,glandulae parathyroideae,de,Nebenschilddrüsen,,seed_needs_review,terminology_seed_v2.2
+structure_cornea,sensory_structure,cornea,sk,rohovka,,seed_needs_review,terminology_seed_v2.2
+structure_cornea,sensory_structure,cornea,de,Hornhaut,,seed_needs_review,terminology_seed_v2.2
+structure_lens,sensory_structure,lens crystallina,sk,šošovka,,seed_needs_review,terminology_seed_v2.2
+structure_lens,sensory_structure,lens crystallina,de,Augenlinse,,seed_needs_review,terminology_seed_v2.2
+structure_retina,sensory_structure,retina,sk,sietnica,,seed_needs_review,terminology_seed_v2.2
+structure_retina,sensory_structure,retina,de,Netzhaut,,seed_needs_review,terminology_seed_v2.2
+gland_lacrimal,gland,glandula lacrimalis,sk,slzná žľaza,,seed_needs_review,terminology_seed_v2.2
+gland_lacrimal,gland,glandula lacrimalis,de,Tränendrüse,,seed_needs_review,terminology_seed_v2.2
+structure_conjunctiva,membrane,tunica conjunctiva,sk,spojovka,,seed_needs_review,terminology_seed_v2.2
+structure_conjunctiva,membrane,tunica conjunctiva,de,Bindehaut,,seed_needs_review,terminology_seed_v2.2
+structure_tympanic_membrane,sensory_structure,membrana tympanica,sk,bubienok,,seed_needs_review,terminology_seed_v2.2
+structure_tympanic_membrane,sensory_structure,membrana tympanica,de,Trommelfell,,seed_needs_review,terminology_seed_v2.2
+structure_middle_ear,sensory_structure,auris media,sk,stredné ucho,,seed_needs_review,terminology_seed_v2.2
+structure_middle_ear,sensory_structure,auris media,de,Mittelohr,,seed_needs_review,terminology_seed_v2.2
+structure_inner_ear,sensory_structure,auris interna,sk,vnútorné ucho,,seed_needs_review,terminology_seed_v2.2
+structure_inner_ear,sensory_structure,auris interna,de,Innenohr,,seed_needs_review,terminology_seed_v2.2
+structure_cochlea,sensory_structure,cochlea,sk,slimák,,seed_needs_review,terminology_seed_v2.2
+structure_cochlea,sensory_structure,cochlea,de,Hörschnecke,,seed_needs_review,terminology_seed_v2.2
+structure_vestibular_apparatus,sensory_structure,apparatus vestibularis,sk,rovnovážny aparát,,seed_needs_review,terminology_seed_v2.2
+structure_vestibular_apparatus,sensory_structure,apparatus vestibularis,de,Gleichgewichtsorgan,,seed_needs_review,terminology_seed_v2.2
+brain_thalamus,brain_region,thalamus,sk,talamus,,seed_needs_review,terminology_seed_v2.2
+brain_thalamus,brain_region,thalamus,de,Thalamus,,seed_needs_review,terminology_seed_v2.2
+brain_hypothalamus,brain_region,hypothalamus,sk,hypotalamus,,seed_needs_review,terminology_seed_v2.2
+brain_hypothalamus,brain_region,hypothalamus,de,Hypothalamus,,seed_needs_review,terminology_seed_v2.2
+brain_basal_nuclei,brain_region,nuclei basales,sk,bazálne jadrá,,seed_needs_review,terminology_seed_v2.2
+brain_basal_nuclei,brain_region,nuclei basales,de,Basalganglien,,seed_needs_review,terminology_seed_v2.2
+brain_caudate,brain_region,nucleus caudatus,sk,chvostnaté jadro,,seed_needs_review,terminology_seed_v2.2
+brain_caudate,brain_region,nucleus caudatus,de,Schweifkern,,seed_needs_review,terminology_seed_v2.2
+brain_putamen,brain_region,putamen,sk,putamen,,seed_needs_review,terminology_seed_v2.2
+brain_putamen,brain_region,putamen,de,Putamen,,seed_needs_review,terminology_seed_v2.2
+brain_globus_pallidus,brain_region,globus pallidus,sk,bledá guľa,,seed_needs_review,terminology_seed_v2.2
+brain_globus_pallidus,brain_region,globus pallidus,de,Globus pallidus,,seed_needs_review,terminology_seed_v2.2
+brain_internal_capsule,white_matter,capsula interna,sk,vnútorné puzdro,,seed_needs_review,terminology_seed_v2.2
+brain_internal_capsule,white_matter,capsula interna,de,innere Kapsel,,seed_needs_review,terminology_seed_v2.2
+brain_frontal_lobe,brain_region,lobus frontalis,sk,čelový lalok,,seed_needs_review,terminology_seed_v2.2
+brain_frontal_lobe,brain_region,lobus frontalis,de,Stirnlappen,,seed_needs_review,terminology_seed_v2.2
+brain_parietal_lobe,brain_region,lobus parietalis,sk,temenný lalok,,seed_needs_review,terminology_seed_v2.2
+brain_parietal_lobe,brain_region,lobus parietalis,de,Scheitellappen,,seed_needs_review,terminology_seed_v2.2
+brain_temporal_lobe,brain_region,lobus temporalis,sk,spánkový lalok,,seed_needs_review,terminology_seed_v2.2
+brain_temporal_lobe,brain_region,lobus temporalis,de,Schläfenlappen,,seed_needs_review,terminology_seed_v2.2
+brain_occipital_lobe,brain_region,lobus occipitalis,sk,záhlavový lalok,,seed_needs_review,terminology_seed_v2.2
+brain_occipital_lobe,brain_region,lobus occipitalis,de,Hinterhauptlappen,,seed_needs_review,terminology_seed_v2.2
+brain_hippocampus,brain_region,hippocampus,sk,hipokampus,,seed_needs_review,terminology_seed_v2.2
+brain_hippocampus,brain_region,hippocampus,de,Hippocampus,,seed_needs_review,terminology_seed_v2.2
+brain_amygdala,brain_region,corpus amygdaloideum,sk,mandľovité teleso,,seed_needs_review,terminology_seed_v2.2
+brain_amygdala,brain_region,corpus amygdaloideum,de,Mandelkern,,seed_needs_review,terminology_seed_v2.2
+tract_corticospinal,tract,tractus corticospinalis,sk,kortikospinálna dráha,,seed_needs_review,terminology_seed_v2.2
+tract_corticospinal,tract,tractus corticospinalis,de,Pyramidenbahn,,seed_needs_review,terminology_seed_v2.2
+tract_dorsal_column,tract,tractus columnarum posteriorum,sk,dráha zadných povrazcov a mediálneho lemnisku,,seed_needs_review,terminology_seed_v2.2
+tract_dorsal_column,tract,tractus columnarum posteriorum,de,Hinterstrang-Mediallemniskus-Bahn,,seed_needs_review,terminology_seed_v2.2
+tract_spinothalamic,tract,tractus spinothalamicus,sk,spinotalamická dráha,,seed_needs_review,terminology_seed_v2.2
+tract_spinothalamic,tract,tractus spinothalamicus,de,Tractus spinothalamicus,,seed_needs_review,terminology_seed_v2.2
+pathway_visual,pathway,via optica,sk,zraková dráha,,seed_needs_review,terminology_seed_v2.2
+pathway_visual,pathway,via optica,de,Sehbahn,,seed_needs_review,terminology_seed_v2.2
+pathway_auditory,pathway,via auditiva,sk,sluchová dráha,,seed_needs_review,terminology_seed_v2.2
+pathway_auditory,pathway,via auditiva,de,Hörbahn,,seed_needs_review,terminology_seed_v2.2
+pathway_vestibular,pathway,via vestibularis,sk,vestibulárna dráha,,seed_needs_review,terminology_seed_v2.2
+pathway_vestibular,pathway,via vestibularis,de,Vestibularbahn,,seed_needs_review,terminology_seed_v2.2
+lymph_thoracic_duct,lymphatic_structure,ductus thoracicus,de,Milchbrustgang,Ductus thoracicus,seed_needs_review,terminology_seed_v2.2
+lymph_right_lymphatic_duct,lymphatic_structure,ductus lymphaticus dexter,sk,pravý miazgovod,,seed_needs_review,terminology_seed_v2.2
+lymph_right_lymphatic_duct,lymphatic_structure,ductus lymphaticus dexter,de,rechter Lymphgang,,seed_needs_review,terminology_seed_v2.2
+lymph_cervical_nodes,lymph_node_group,nodi lymphatici cervicales,sk,krčné lymfatické uzliny,,seed_needs_review,terminology_seed_v2.2
+lymph_cervical_nodes,lymph_node_group,nodi lymphatici cervicales,de,Halslymphknoten,,seed_needs_review,terminology_seed_v2.2
+lymph_axillary_nodes,lymph_node_group,nodi lymphatici axillares,sk,podpazušné lymfatické uzliny,,seed_needs_review,terminology_seed_v2.2
+lymph_axillary_nodes,lymph_node_group,nodi lymphatici axillares,de,Achsellymphknoten,,seed_needs_review,terminology_seed_v2.2
+lymph_inguinal_nodes,lymph_node_group,nodi lymphatici inguinales,sk,slabinové lymfatické uzliny,,seed_needs_review,terminology_seed_v2.2
+lymph_inguinal_nodes,lymph_node_group,nodi lymphatici inguinales,de,Leistenlymphknoten,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_superior,muscle,Musculus rectus superior,sk,horný priamy sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_superior,muscle,Musculus rectus superior,de,oberer gerader Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_inferior,muscle,Musculus rectus inferior,sk,dolný priamy sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_inferior,muscle,Musculus rectus inferior,de,unterer gerader Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_medialis,muscle,Musculus rectus medialis,sk,vnútorný priamy sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_medialis,muscle,Musculus rectus medialis,de,medialer gerader Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_lateralis,muscle,Musculus rectus lateralis,sk,vonkajší priamy sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_lateralis,muscle,Musculus rectus lateralis,de,lateraler gerader Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_superior,muscle,Musculus obliquus superior,sk,horný šikmý sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_superior,muscle,Musculus obliquus superior,de,oberer schräger Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_inferior,muscle,Musculus obliquus inferior,sk,dolný šikmý sval oka,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_inferior,muscle,Musculus obliquus inferior,de,unterer schräger Augenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_palpebrae_superioris,muscle,Musculus levator palpebrae superioris,sk,zdvíhač hornej mihalnice,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_palpebrae_superioris,muscle,Musculus levator palpebrae superioris,de,Oberlidheber,,seed_needs_review,terminology_seed_v2.2
+muscle_epicranius,muscle,Musculus epicranius,sk,nadlebečný sval,,seed_needs_review,terminology_seed_v2.2
+muscle_epicranius,muscle,Musculus epicranius,de,Schädeldeckenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_occipitofrontalis,muscle,Musculus occipitofrontalis,de,Hinterhaupt-Stirn-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_temporoparietalis,muscle,Musculus temporoparietalis,sk,spánkovo-temenný sval,,seed_needs_review,terminology_seed_v2.2
+muscle_temporoparietalis,muscle,Musculus temporoparietalis,de,Schläfen-Scheitel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_masseter,muscle,Musculus masseter,de,Kaumuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_temporalis,muscle,Musculus temporalis,de,Schläfenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pterygoideus_medialis,muscle,Musculus pterygoideus medialis,sk,vnútorný krídlový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_pterygoideus_medialis,muscle,Musculus pterygoideus medialis,de,innerer Flügelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pterygoideus_lateralis,muscle,Musculus pterygoideus lateralis,sk,vonkajší krídlový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_pterygoideus_lateralis,muscle,Musculus pterygoideus lateralis,de,äußerer Flügelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_anterior,muscle,Musculus auricularis anterior,sk,predný ušnicový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_anterior,muscle,Musculus auricularis anterior,de,vorderer Ohrmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_superior,muscle,Musculus auricularis superior,sk,horný ušnicový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_superior,muscle,Musculus auricularis superior,de,oberer Ohrmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_posterior,muscle,Musculus auricularis posterior,sk,zadný ušnicový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_auricularis_posterior,muscle,Musculus auricularis posterior,de,hinterer Ohrmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_helicis_major,muscle,Musculus helicis major,sk,veľký sval závitu ušnice,,seed_needs_review,terminology_seed_v2.2
+muscle_helicis_major,muscle,Musculus helicis major,de,großer Helixmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_helicis_minor,muscle,Musculus helicis minor,sk,malý sval závitu ušnice,,seed_needs_review,terminology_seed_v2.2
+muscle_helicis_minor,muscle,Musculus helicis minor,de,kleiner Helixmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_tragicus,muscle,Musculus tragicus,sk,sval tragusu,,seed_needs_review,terminology_seed_v2.2
+muscle_tragicus,muscle,Musculus tragicus,de,Tragusmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_antitragicus,muscle,Musculus antitragicus,sk,sval antitragusu,,seed_needs_review,terminology_seed_v2.2
+muscle_antitragicus,muscle,Musculus antitragicus,de,Antitragusmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_auriculae,muscle,Musculus transversus auriculae,sk,priečny sval ušnice,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_auriculae,muscle,Musculus transversus auriculae,de,querer Ohrmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_auriculae,muscle,Musculus obliquus auriculae,sk,šikmý sval ušnice,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_auriculae,muscle,Musculus obliquus auriculae,de,schräger Ohrmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_corrugator_supercilii,muscle,Musculus corrugator supercilii,sk,zvrašťovač obočia,,seed_needs_review,terminology_seed_v2.2
+muscle_corrugator_supercilii,muscle,Musculus corrugator supercilii,de,Augenbrauenrunzler,,seed_needs_review,terminology_seed_v2.2
+muscle_procerus,muscle,Musculus procerus,sk,sval koreňa nosa,,seed_needs_review,terminology_seed_v2.2
+muscle_procerus,muscle,Musculus procerus,de,Nasenwurzelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_nasalis,muscle,Musculus nasalis,sk,nosový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_nasalis,muscle,Musculus nasalis,de,Nasenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_septi_nasi,muscle,Musculus depressor septi nasi,sk,sťahovač nosovej priehradky,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_septi_nasi,muscle,Musculus depressor septi nasi,de,Nasenflügelsenker,,seed_needs_review,terminology_seed_v2.2
+muscle_orbicularis_oculi,muscle,Musculus orbicularis oculi,de,Augenringmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_labii_superioris,muscle,Musculus levator labii superioris,sk,zdvíhač hornej pery,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_labii_superioris,muscle,Musculus levator labii superioris,de,Oberlippenheber,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_labii_superioris_alaeque_nasi,muscle,Musculus levator labii superioris alaeque nasi,sk,zdvíhač hornej pery a krídla nosa,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_labii_superioris_alaeque_nasi,muscle,Musculus levator labii superioris alaeque nasi,de,Oberlippen- und Nasenflügelheber,,seed_needs_review,terminology_seed_v2.2
+muscle_zygomaticus_minor,muscle,Musculus zygomaticus minor,sk,malý jarmový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_zygomaticus_minor,muscle,Musculus zygomaticus minor,de,kleiner Jochbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_zygomaticus_major,muscle,Musculus zygomaticus major,sk,veľký jarmový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_zygomaticus_major,muscle,Musculus zygomaticus major,de,großer Jochbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_anguli_oris,muscle,Musculus levator anguli oris,sk,zdvíhač ústneho kútika,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_anguli_oris,muscle,Musculus levator anguli oris,de,Mundwinkelheber,,seed_needs_review,terminology_seed_v2.2
+muscle_risorius,muscle,Musculus risorius,sk,smiechový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_risorius,muscle,Musculus risorius,de,Lachmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_buccinator,muscle,Musculus buccinator,de,Backenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_orbicularis_oris,muscle,Musculus orbicularis oris,de,Mundringmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_anguli_oris,muscle,Musculus depressor anguli oris,sk,sťahovač ústneho kútika,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_anguli_oris,muscle,Musculus depressor anguli oris,de,Mundwinkelsenker,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_labii_inferioris,muscle,Musculus depressor labii inferioris,sk,sťahovač dolnej pery,,seed_needs_review,terminology_seed_v2.2
+muscle_depressor_labii_inferioris,muscle,Musculus depressor labii inferioris,de,Unterlippensenker,,seed_needs_review,terminology_seed_v2.2
+muscle_mentalis,muscle,Musculus mentalis,sk,bradový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_mentalis,muscle,Musculus mentalis,de,Kinnmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_stapedius,muscle,Musculus stapedius,sk,strmienkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_stapedius,muscle,Musculus stapedius,de,Steigbügelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_tensor_tympani,muscle,Musculus tensor tympani,sk,napínač bubienka,,seed_needs_review,terminology_seed_v2.2
+muscle_tensor_tympani,muscle,Musculus tensor tympani,de,Trommelfellspanner,,seed_needs_review,terminology_seed_v2.2
+muscle_genioglossus,muscle,Musculus genioglossus,sk,bradojazykový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_genioglossus,muscle,Musculus genioglossus,de,Kinn-Zungen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_hyoglossus,muscle,Musculus hyoglossus,sk,jazylkovo-jazykový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_hyoglossus,muscle,Musculus hyoglossus,de,Zungenbein-Zungen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_styloglossus,muscle,Musculus styloglossus,sk,ihlovo-jazykový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_styloglossus,muscle,Musculus styloglossus,de,Griffelfortsatz-Zungen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_longitudinalis_superior_linguae,muscle,Musculus longitudinalis superior linguae,sk,horný pozdĺžny sval jazyka,,seed_needs_review,terminology_seed_v2.2
+muscle_longitudinalis_superior_linguae,muscle,Musculus longitudinalis superior linguae,de,oberer Längsmuskel der Zunge,,seed_needs_review,terminology_seed_v2.2
+muscle_longitudinalis_inferior_linguae,muscle,Musculus longitudinalis inferior linguae,sk,dolný pozdĺžny sval jazyka,,seed_needs_review,terminology_seed_v2.2
+muscle_longitudinalis_inferior_linguae,muscle,Musculus longitudinalis inferior linguae,de,unterer Längsmuskel der Zunge,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_linguae,muscle,Musculus transversus linguae,sk,priečny sval jazyka,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_linguae,muscle,Musculus transversus linguae,de,querer Zungenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_verticalis_linguae,muscle,Musculus verticalis linguae,sk,zvislý sval jazyka,,seed_needs_review,terminology_seed_v2.2
+muscle_verticalis_linguae,muscle,Musculus verticalis linguae,de,senkrechter Zungenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_platysma,muscle,Platysma,de,Halshautmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_longus_colli,muscle,Musculus longus colli,sk,dlhý sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_longus_colli,muscle,Musculus longus colli,de,langer Halsmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_longus_capitis,muscle,Musculus longus capitis,sk,dlhý sval hlavy,,seed_needs_review,terminology_seed_v2.2
+muscle_longus_capitis,muscle,Musculus longus capitis,de,langer Kopfmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_anterior_capitis,muscle,Musculus rectus anterior capitis,sk,predný priamy sval hlavy,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_anterior_capitis,muscle,Musculus rectus anterior capitis,de,vorderer gerader Kopfmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_lateralis_capitis,muscle,Musculus rectus lateralis capitis,sk,bočný priamy sval hlavy,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_lateralis_capitis,muscle,Musculus rectus lateralis capitis,de,seitlicher gerader Kopfmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_anterior,muscle,Musculus scalenus anterior,sk,predný šikmý sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_anterior,muscle,Musculus scalenus anterior,de,vorderer Treppenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_medius,muscle,Musculus scalenus medius,sk,stredný šikmý sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_medius,muscle,Musculus scalenus medius,de,mittlerer Treppenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_posterior,muscle,Musculus scalenus posterior,sk,zadný šikmý sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_posterior,muscle,Musculus scalenus posterior,de,hinterer Treppenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_minimus,muscle,Musculus scalenus minimus,sk,najmenší šikmý sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_scalenus_minimus,muscle,Musculus scalenus minimus,de,kleinster Treppenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_sternocleidomastoideus,muscle,Musculus sternocleidomastoideus,de,Kopfwender,Sternocleidomastoideus,seed_needs_review,terminology_seed_v2.2
+muscle_digastricus,muscle,Musculus digastricus,sk,dvojbruškový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_digastricus,muscle,Musculus digastricus,de,zweibäuchiger Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_stylohyoideus,muscle,Musculus stylohyoideus,sk,ihlojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_stylohyoideus,muscle,Musculus stylohyoideus,de,Griffelfortsatz-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_mylohyoideus,muscle,Musculus mylohyoideus,sk,čeľustnojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_mylohyoideus,muscle,Musculus mylohyoideus,de,Kiefer-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_geniohyoideus,muscle,Musculus geniohyoideus,sk,bradojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_geniohyoideus,muscle,Musculus geniohyoideus,de,Kinn-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_sternohyoideus,muscle,Musculus sternohyoideus,sk,hrudnojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_sternohyoideus,muscle,Musculus sternohyoideus,de,Brustbein-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_omohyoideus,muscle,Musculus omohyoideus,sk,lopatkovojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_omohyoideus,muscle,Musculus omohyoideus,de,Schulterblatt-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_sternothyreoideus,muscle,Musculus sternothyreoideus,sk,hrudnoštítny sval,,seed_needs_review,terminology_seed_v2.2
+muscle_sternothyreoideus,muscle,Musculus sternothyreoideus,de,Brustbein-Schildknorpel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_thyreohyoideus,muscle,Musculus thyreohyoideus,sk,štítnojazylkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_thyreohyoideus,muscle,Musculus thyreohyoideus,de,Schildknorpel-Zungenbein-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_glandulae_thyreoideae,muscle,Musculus levator glandulae thyreoideae,sk,zdvíhač štítnej žľazy,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_glandulae_thyreoideae,muscle,Musculus levator glandulae thyreoideae,de,Schilddrüsenheber,,seed_needs_review,terminology_seed_v2.2
+muscle_cricothyroideus,muscle,Musculus cricothyroideus,sk,prstienkovoštítny sval,,seed_needs_review,terminology_seed_v2.2
+muscle_cricothyroideus,muscle,Musculus cricothyroideus,de,Ringknorpel-Schildknorpel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_cricoarytenoideus_posterior,muscle,Musculus cricoarytenoideus posterior,sk,zadný prstienkovokrhlovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_cricoarytenoideus_posterior,muscle,Musculus cricoarytenoideus posterior,de,hinterer Ringknorpel-Stellknorpel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_cricoarytenoideus_lateralis,muscle,Musculus cricoarytenoideus lateralis,sk,bočný prstienkovokrhlovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_cricoarytenoideus_lateralis,muscle,Musculus cricoarytenoideus lateralis,de,seitlicher Ringknorpel-Stellknorpel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_arytenoideus_transversus,muscle,Musculus arytenoideus transversus,sk,priečny krhlovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_arytenoideus_transversus,muscle,Musculus arytenoideus transversus,de,querer Stellknorpelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_arytenoideus_obliquus,muscle,Musculus arytenoideus obliquus,sk,šikmý krhlovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_arytenoideus_obliquus,muscle,Musculus arytenoideus obliquus,de,schräger Stellknorpelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_thyroarytenoideus,muscle,Musculus thyroarytenoideus,sk,štítnokrhlovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_thyroarytenoideus,muscle,Musculus thyroarytenoideus,de,Schildknorpel-Stellknorpel-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_vocalis,muscle,Musculus vocalis,sk,hlasivkový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_vocalis,muscle,Musculus vocalis,de,Stimmbandmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_superior_pharyngis,muscle,Musculus constrictor superior pharyngis,sk,horný zvierač hltana,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_superior_pharyngis,muscle,Musculus constrictor superior pharyngis,de,oberer Schlundschnürer,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_medius_pharyngis,muscle,Musculus constrictor medius pharyngis,sk,stredný zvierač hltana,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_medius_pharyngis,muscle,Musculus constrictor medius pharyngis,de,mittlerer Schlundschnürer,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_inferior_pharyngis,muscle,Musculus constrictor inferior pharyngis,sk,dolný zvierač hltana,,seed_needs_review,terminology_seed_v2.2
+muscle_constrictor_inferior_pharyngis,muscle,Musculus constrictor inferior pharyngis,de,unterer Schlundschnürer,,seed_needs_review,terminology_seed_v2.2
+muscle_stylopharyngeus,muscle,Musculus stylopharyngeus,sk,ihlohltanový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_stylopharyngeus,muscle,Musculus stylopharyngeus,de,Griffelfortsatz-Rachen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_palatopharyngeus,muscle,Musculus palatopharyngeus,sk,podnebnohltanový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_palatopharyngeus,muscle,Musculus palatopharyngeus,de,Gaumen-Rachen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_salpingopharyngeus,muscle,Musculus salpingopharyngeus,sk,sluchovotrubicovo-hltanový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_salpingopharyngeus,muscle,Musculus salpingopharyngeus,de,Tuben-Rachen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_veli_palatini,muscle,Musculus levator veli palatini,sk,zdvíhač mäkkého podnebia,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_veli_palatini,muscle,Musculus levator veli palatini,de,Gaumensegelheber,,seed_needs_review,terminology_seed_v2.2
+muscle_tensor_veli_palatini,muscle,Musculus tensor veli palatini,sk,napínač mäkkého podnebia,,seed_needs_review,terminology_seed_v2.2
+muscle_tensor_veli_palatini,muscle,Musculus tensor veli palatini,de,Gaumensegelspanner,,seed_needs_review,terminology_seed_v2.2
+muscle_uvulae,muscle,Musculus uvulae,sk,sval čapíka,,seed_needs_review,terminology_seed_v2.2
+muscle_uvulae,muscle,Musculus uvulae,de,Zäpfchenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_palatoglossus,muscle,Musculus palatoglossus,sk,podnebnojazykový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_palatoglossus,muscle,Musculus palatoglossus,de,Gaumen-Zungen-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pectoralis_major,muscle,Musculus pectoralis major,de,großer Brustmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pectoralis_minor,muscle,Musculus pectoralis minor,de,kleiner Brustmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_subclavius,muscle,Musculus subclavius,sk,podkľúčny sval,,seed_needs_review,terminology_seed_v2.2
+muscle_subclavius,muscle,Musculus subclavius,de,Unterschlüsselbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_serratus_anterior,muscle,Musculus serratus anterior,de,vorderer Sägemuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levatores_costarum,muscle,Musculi levatores costarum,sk,zdvíhače rebier,,seed_needs_review,terminology_seed_v2.2
+muscle_levatores_costarum,muscle,Musculi levatores costarum,de,Rippenheber,,seed_needs_review,terminology_seed_v2.2
+muscle_intercostales_externi,muscle,Musculi intercostales externi,de,äußere Zwischenrippenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_intercostales_interni,muscle,Musculi intercostales interni,de,innere Zwischenrippenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_intercostales_intimi,muscle,Musculi intercostales intimi,sk,najvnútornejšie medzirebrové svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_intercostales_intimi,muscle,Musculi intercostales intimi,de,innerste Zwischenrippenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_subcostales,muscle,Musculi subcostales,sk,podrebrové svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_subcostales,muscle,Musculi subcostales,de,Unterrippenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_thoracis,muscle,Musculus transversus thoracis,sk,priečny sval hrudníka,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_thoracis,muscle,Musculus transversus thoracis,de,querer Brustmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_diaphragma,muscle,Diaphragma,sk,bránica,,seed_needs_review,terminology_seed_v2.2
+muscle_diaphragma,muscle,Diaphragma,de,Zwerchfell,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_scapulae,muscle,Musculus levator scapulae,sk,zdvíhač lopatky,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_scapulae,muscle,Musculus levator scapulae,de,Schulterblattheber,,seed_needs_review,terminology_seed_v2.2
+muscle_rhomboidei,muscle,Musculi rhomboidei,sk,kosoštvorcové svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_rhomboidei,muscle,Musculi rhomboidei,de,Rautenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_serratus_posterior_superior,muscle,Musculus serratus posterior superior,sk,horný zadný pílovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_serratus_posterior_superior,muscle,Musculus serratus posterior superior,de,oberer hinterer Sägemuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_serratus_posterior_inferior,muscle,Musculus serratus posterior inferior,sk,dolný zadný pílovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_serratus_posterior_inferior,muscle,Musculus serratus posterior inferior,de,unterer hinterer Sägemuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_erector_spinae,muscle,Musculus erector spinae,sk,vzpriamovač chrbtice,,seed_needs_review,terminology_seed_v2.2
+muscle_erector_spinae,muscle,Musculus erector spinae,de,Rückenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_lumborum,muscle,Musculus iliocostalis lumborum,sk,drieková časť bedrovorebrového svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_lumborum,muscle,Musculus iliocostalis lumborum,de,Lendenanteil des Darmbein-Rippen-Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_thoracis,muscle,Musculus iliocostalis thoracis,sk,hrudníková časť bedrovorebrového svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_thoracis,muscle,Musculus iliocostalis thoracis,de,Brustanteil des Darmbein-Rippen-Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_cervicis,muscle,Musculus iliocostalis cervicis,sk,krčná časť bedrovorebrového svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_iliocostalis_cervicis,muscle,Musculus iliocostalis cervicis,de,Halsanteil des Darmbein-Rippen-Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_thoracis,muscle,Musculus longissimus thoracis,sk,hrudníková časť najdlhšieho svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_thoracis,muscle,Musculus longissimus thoracis,de,Brustanteil des längsten Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_cervicis,muscle,Musculus longissimus cervicis,sk,krčná časť najdlhšieho svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_cervicis,muscle,Musculus longissimus cervicis,de,Halsanteil des längsten Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_capitis,muscle,Musculus longissimus capitis,sk,hlavová časť najdlhšieho svalu,,seed_needs_review,terminology_seed_v2.2
+muscle_longissimus_capitis,muscle,Musculus longissimus capitis,de,Kopfanteil des längsten Muskels,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_thoracis,muscle,Musculus spinalis thoracis,sk,hrudníkový tŕňový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_thoracis,muscle,Musculus spinalis thoracis,de,Brust-Dornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_cervicis,muscle,Musculus spinalis cervicis,sk,krčný tŕňový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_cervicis,muscle,Musculus spinalis cervicis,de,Hals-Dornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_capitis,muscle,Musculus spinalis capitis,sk,hlavový tŕňový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_spinalis_capitis,muscle,Musculus spinalis capitis,de,Kopf-Dornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_transversospinales,muscle,Musculi transversospinales,sk,priečnotŕňové svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_transversospinales,muscle,Musculi transversospinales,de,transversospinale Muskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_thoracis,muscle,Musculus semispinalis thoracis,sk,polotŕňový sval hrudníka,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_thoracis,muscle,Musculus semispinalis thoracis,de,Brust-Halbdornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_cervicis,muscle,Musculus semispinalis cervicis,sk,polotŕňový sval krku,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_cervicis,muscle,Musculus semispinalis cervicis,de,Hals-Halbdornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_capitis,muscle,Musculus semispinalis capitis,sk,polotŕňový sval hlavy,,seed_needs_review,terminology_seed_v2.2
+muscle_semispinalis_capitis,muscle,Musculus semispinalis capitis,de,Kopf-Halbdornmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_multifidus,muscle,Musculus multifidus,sk,mnohoklanný sval,,seed_needs_review,terminology_seed_v2.2
+muscle_multifidus,muscle,Musculus multifidus,de,vielgefiederter Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rotatores_thoracis,muscle,Musculi rotatores thoracis,sk,otáčače hrudníka,,seed_needs_review,terminology_seed_v2.2
+muscle_rotatores_thoracis,muscle,Musculi rotatores thoracis,de,Drehmuskeln der Brustwirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_rotatores_cervicis,muscle,Musculi rotatores cervicis,sk,otáčače krku,,seed_needs_review,terminology_seed_v2.2
+muscle_rotatores_cervicis,muscle,Musculi rotatores cervicis,de,Drehmuskeln der Halswirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_cervicis,muscle,Musculi interspinales cervicis,sk,medzitŕňové svaly krku,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_cervicis,muscle,Musculi interspinales cervicis,de,Zwischendornmuskeln der Halswirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_thoracis,muscle,Musculi interspinales thoracis,sk,medzitŕňové svaly hrudníka,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_thoracis,muscle,Musculi interspinales thoracis,de,Zwischendornmuskeln der Brustwirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_lumborum,muscle,Musculi interspinales lumborum,sk,medzitŕňové svaly drieku,,seed_needs_review,terminology_seed_v2.2
+muscle_interspinales_lumborum,muscle,Musculi interspinales lumborum,de,Zwischendornmuskeln der Lendenwirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_cervicis,muscle,Musculi intertransversarii cervicis,sk,medzipriečne svaly krku,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_cervicis,muscle,Musculi intertransversarii cervicis,de,Zwischenquerfortsatzmuskeln der Halswirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_thoracis,muscle,Musculi intertransversarii thoracis,sk,medzipriečne svaly hrudníka,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_thoracis,muscle,Musculi intertransversarii thoracis,de,Zwischenquerfortsatzmuskeln der Brustwirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_lumborum,muscle,Musculi intertransversarii lumborum,sk,medzipriečne svaly drieku,,seed_needs_review,terminology_seed_v2.2
+muscle_intertransversarii_lumborum,muscle,Musculi intertransversarii lumborum,de,Zwischenquerfortsatzmuskeln der Lendenwirbelsäule,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_externus_abdominis,muscle,Musculus obliquus externus abdominis,de,äußerer schräger Bauchmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obliquus_internus_abdominis,muscle,Musculus obliquus internus abdominis,de,innerer schräger Bauchmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_abdominis,muscle,Musculus transversus abdominis,sk,priečny sval brucha,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_abdominis,muscle,Musculus transversus abdominis,de,querer Bauchmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_rectus_abdominis,muscle,Musculus rectus abdominis,de,gerader Bauchmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pyramidalis,muscle,Musculus pyramidalis,sk,ihlanový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_pyramidalis,muscle,Musculus pyramidalis,de,Pyramidenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_ani,muscle,Musculus levator ani,sk,zdvíhač konečníka,,seed_needs_review,terminology_seed_v2.2
+muscle_levator_ani,muscle,Musculus levator ani,de,Afterheber,,seed_needs_review,terminology_seed_v2.2
+muscle_coccygeus,muscle,Musculus coccygeus,sk,kostrčový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_coccygeus,muscle,Musculus coccygeus,de,Steißbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_bulbospongiosus,muscle,Musculus bulbospongiosus,sk,hľuzovitohubovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_bulbospongiosus,muscle,Musculus bulbospongiosus,de,Bulbospongiosusmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_ischiocavernosus,muscle,Musculus ischiocavernosus,sk,sedacokavernózny sval,,seed_needs_review,terminology_seed_v2.2
+muscle_ischiocavernosus,muscle,Musculus ischiocavernosus,de,Ischiocavernosusmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_perinei_superficialis,muscle,Musculus transversus perinei superficialis,sk,povrchový priečny sval hrádze,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_perinei_superficialis,muscle,Musculus transversus perinei superficialis,de,oberflächlicher querer Dammmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_perinei_profundus,muscle,Musculus transversus perinei profundus,sk,hlboký priečny sval hrádze,,seed_needs_review,terminology_seed_v2.2
+muscle_transversus_perinei_profundus,muscle,Musculus transversus perinei profundus,de,tiefer querer Dammmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_sphincter_urethrae_externus,muscle,Musculus sphincter urethrae externus,sk,vonkajší zvierač močovej rúry,,seed_needs_review,terminology_seed_v2.2
+muscle_sphincter_urethrae_externus,muscle,Musculus sphincter urethrae externus,de,äußerer Harnröhrenschließmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_supraspinatus,muscle,Musculus supraspinatus,de,Obergrätenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_infraspinatus,muscle,Musculus infraspinatus,de,Untergrätenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_teres_minor,muscle,Musculus teres minor,de,kleiner Rundmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_teres_major,muscle,Musculus teres major,de,großer Rundmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_subscapularis,muscle,Musculus subscapularis,de,Unterschulterblattmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_coracobrachialis,muscle,Musculus coracobrachialis,de,Rabenschnabel-Oberarm-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_brachialis,muscle,Musculus brachialis,de,Oberarmmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_anconeus,muscle,Musculus anconeus,sk,lakťový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_anconeus,muscle,Musculus anconeus,de,Ellenbogenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pronator_teres,muscle,Musculus pronator teres,de,runder Einwärtsdreher,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_carpi_radialis,muscle,Musculus flexor carpi radialis,de,speichenseitiger Handbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_palmaris_longus,muscle,Musculus palmaris longus,de,langer Hohlhandmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_carpi_ulnaris,muscle,Musculus flexor carpi ulnaris,de,ellenseitiger Handbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_superficialis,muscle,Musculus flexor digitorum superficialis,de,oberflächlicher Fingerbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_profundus,muscle,Musculus flexor digitorum profundus,de,tiefer Fingerbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_pollicis_longus,muscle,Musculus flexor pollicis longus,de,langer Daumenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_pronator_quadratus,muscle,Musculus pronator quadratus,de,quadratischer Einwärtsdreher,,seed_needs_review,terminology_seed_v2.2
+muscle_brachioradialis,muscle,Musculus brachioradialis,de,Oberarmspeichenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_radialis_longus,muscle,Musculus extensor carpi radialis longus,sk,dlhý vretenný vystierač zápästia,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_radialis_longus,muscle,Musculus extensor carpi radialis longus,de,langer speichenseitiger Handstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_radialis_brevis,muscle,Musculus extensor carpi radialis brevis,sk,krátky vretenný vystierač zápästia,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_radialis_brevis,muscle,Musculus extensor carpi radialis brevis,de,kurzer speichenseitiger Handstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum,muscle,Musculus extensor digitorum,sk,vystierač prstov,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum,muscle,Musculus extensor digitorum,de,Fingerstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digiti_minimi,muscle,Musculus extensor digiti minimi,sk,vystierač malíčka,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digiti_minimi,muscle,Musculus extensor digiti minimi,de,Kleinfingerstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_ulnaris,muscle,Musculus extensor carpi ulnaris,sk,lakťový vystierač zápästia,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_carpi_ulnaris,muscle,Musculus extensor carpi ulnaris,de,ellenseitiger Handstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_supinator,muscle,Musculus supinator,sk,odvracač,,seed_needs_review,terminology_seed_v2.2
+muscle_supinator,muscle,Musculus supinator,de,Auswärtsdreher,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_pollicis_longus,muscle,Musculus abductor pollicis longus,sk,dlhý odťahovač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_pollicis_longus,muscle,Musculus abductor pollicis longus,de,langer Daumenspreizer,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_pollicis_brevis,muscle,Musculus extensor pollicis brevis,sk,krátky vystierač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_pollicis_brevis,muscle,Musculus extensor pollicis brevis,de,kurzer Daumenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_pollicis_longus,muscle,Musculus extensor pollicis longus,sk,dlhý vystierač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_pollicis_longus,muscle,Musculus extensor pollicis longus,de,langer Daumenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_indicis,muscle,Musculus extensor indicis,sk,vystierač ukazováka,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_indicis,muscle,Musculus extensor indicis,de,Zeigefingerstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_pollicis_brevis,muscle,Musculus abductor pollicis brevis,sk,krátky odťahovač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_pollicis_brevis,muscle,Musculus flexor pollicis brevis,sk,krátky ohýbač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_pollicis_brevis,muscle,Musculus flexor pollicis brevis,de,kurzer Daumenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_opponens_pollicis,muscle,Musculus opponens pollicis,sk,oponujúci sval palca,,seed_needs_review,terminology_seed_v2.2
+muscle_opponens_pollicis,muscle,Musculus opponens pollicis,de,Daumengegensteller,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_pollicis,muscle,Musculus adductor pollicis,sk,priťahovač palca,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_pollicis,muscle,Musculus adductor pollicis,de,Daumenanzieher,,seed_needs_review,terminology_seed_v2.2
+muscle_palmaris_brevis,muscle,Musculus palmaris brevis,sk,krátky dlaňový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_palmaris_brevis,muscle,Musculus palmaris brevis,de,kurzer Hohlhandmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_digiti_minimi,muscle,Musculus abductor digiti minimi,sk,odťahovač malíčka ruky,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_digiti_minimi,muscle,Musculus abductor digiti minimi,de,Kleinfingerspreizer,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_digiti_minimi_lower_limb,muscle,Musculus abductor digiti minimi,sk,odťahovač malíčka nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_digiti_minimi_lower_limb,muscle,Musculus abductor digiti minimi,de,Kleinzehenspreizer,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digiti_minimi_brevis,muscle,Musculus flexor digiti minimi brevis,sk,krátky ohýbač malíčka ruky,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digiti_minimi_brevis,muscle,Musculus flexor digiti minimi brevis,de,kurzer Kleinfingerbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digiti_minimi_brevis_lower_limb,muscle,Musculus flexor digiti minimi brevis,sk,krátky ohýbač malíčka nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digiti_minimi_brevis_lower_limb,muscle,Musculus flexor digiti minimi brevis,de,kurzer Kleinzehenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_opponens_digiti_minimi,muscle,Musculus opponens digiti minimi,sk,oponujúci sval malíčka,,seed_needs_review,terminology_seed_v2.2
+muscle_opponens_digiti_minimi,muscle,Musculus opponens digiti minimi,de,Kleinfingergegensteller,,seed_needs_review,terminology_seed_v2.2
+muscle_lumbricales,muscle,Musculi lumbricales,sk,červovité svaly ruky,,seed_needs_review,terminology_seed_v2.2
+muscle_lumbricales,muscle,Musculi lumbricales,de,Wurmmuskeln der Hand,,seed_needs_review,terminology_seed_v2.2
+muscle_lumbricales_lower_limb,muscle,Musculi lumbricales,sk,červovité svaly nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_lumbricales_lower_limb,muscle,Musculi lumbricales,de,Wurmmuskeln des Fußes,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_palmares,muscle,Musculi interossei palmares,sk,dlaňové medzikostné svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_palmares,muscle,Musculi interossei palmares,de,hohlhandseitige Zwischenknochenmuskeln,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_dorsales,muscle,Musculi interossei dorsales,sk,chrbtové medzikostné svaly ruky,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_dorsales,muscle,Musculi interossei dorsales,de,rückseitige Zwischenknochenmuskeln der Hand,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_dorsales_lower_limb,muscle,Musculi interossei dorsales,sk,chrbtové medzikostné svaly nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_dorsales_lower_limb,muscle,Musculi interossei dorsales,de,rückseitige Zwischenknochenmuskeln des Fußes,,seed_needs_review,terminology_seed_v2.2
+muscle_gluteus_maximus,muscle,Musculus gluteus maximus,de,großer Gesäßmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_gluteus_medius,muscle,Musculus gluteus medius,de,mittlerer Gesäßmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_gluteus_minimus,muscle,Musculus gluteus minimus,de,kleiner Gesäßmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_piriformis,muscle,Musculus piriformis,sk,hruškovitý sval,,seed_needs_review,terminology_seed_v2.2
+muscle_piriformis,muscle,Musculus piriformis,de,birnenförmiger Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obturatorius_internus,muscle,Musculus obturatorius internus,sk,vnútorný zapchávajúci sval,,seed_needs_review,terminology_seed_v2.2
+muscle_obturatorius_internus,muscle,Musculus obturatorius internus,de,innerer Hüftlochmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_gemellus_superior,muscle,Musculus gemellus superior,sk,horný dvojčatový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_gemellus_superior,muscle,Musculus gemellus superior,de,oberer Zwillingsmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_gemellus_inferior,muscle,Musculus gemellus inferior,sk,dolný dvojčatový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_gemellus_inferior,muscle,Musculus gemellus inferior,de,unterer Zwillingsmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_quadratus_femoris,muscle,Musculus quadratus femoris,sk,štvorcový sval stehna,,seed_needs_review,terminology_seed_v2.2
+muscle_quadratus_femoris,muscle,Musculus quadratus femoris,de,quadratischer Oberschenkelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_obturatorius_externus,muscle,Musculus obturatorius externus,sk,vonkajší zapchávajúci sval,,seed_needs_review,terminology_seed_v2.2
+muscle_obturatorius_externus,muscle,Musculus obturatorius externus,de,äußerer Hüftlochmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_iliopsoas,muscle,Musculus iliopsoas,de,Darmbein-Lenden-Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_psoas_major,muscle,Musculus psoas major,sk,veľký driekový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_psoas_major,muscle,Musculus psoas major,de,großer Lendenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_iliacus,muscle,Musculus iliacus,sk,bedrový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_iliacus,muscle,Musculus iliacus,de,Darmbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_sartorius,muscle,Musculus sartorius,de,Schneidermuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_quadriceps_femoris,muscle,Musculus quadriceps femoris,de,vierköpfiger Oberschenkelmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_articularis_genus,muscle,Musculus articularis genus,sk,kĺbový sval kolena,,seed_needs_review,terminology_seed_v2.2
+muscle_articularis_genus,muscle,Musculus articularis genus,de,Kniegelenksmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_pectineus,muscle,Musculus pectineus,de,Kammmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_longus,muscle,Musculus adductor longus,sk,dlhý priťahovač stehna,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_longus,muscle,Musculus adductor longus,de,langer Adduktor,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_brevis,muscle,Musculus adductor brevis,sk,krátky priťahovač stehna,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_brevis,muscle,Musculus adductor brevis,de,kurzer Adduktor,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_magnus,muscle,Musculus adductor magnus,de,großer Adduktor,,seed_needs_review,terminology_seed_v2.2
+muscle_gracilis,muscle,Musculus gracilis,de,schlanker Muskel,,seed_needs_review,terminology_seed_v2.2
+muscle_semitendinosus,muscle,Musculus semitendinosus,de,Halbsehnenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_semimembranosus,muscle,Musculus semimembranosus,de,Plattensehnenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_tibialis_anterior,muscle,Musculus tibialis anterior,de,vorderer Schienbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_hallucis_longus,muscle,Musculus extensor hallucis longus,sk,dlhý vystierač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_hallucis_longus,muscle,Musculus extensor hallucis longus,de,langer Großzehenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum_longus,muscle,Musculus extensor digitorum longus,sk,dlhý vystierač prstov nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum_longus,muscle,Musculus extensor digitorum longus,de,langer Zehenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_fibularis_tertius,muscle,Musculus fibularis tertius,sk,tretí ihlicový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_fibularis_tertius,muscle,Musculus fibularis tertius,de,dritter Wadenbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_fibularis_longus,muscle,Musculus fibularis longus,de,langer Wadenbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_fibularis_brevis,muscle,Musculus fibularis brevis,de,kurzer Wadenbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_soleus,muscle,Musculus soleus,sk,šikmý lýtkový sval,hlboký lýtkový sval; šikmý sval lýtka,seed_needs_review,Slovak anatomy cross-check; terminology remains review-queued
+muscle_plantaris,muscle,Musculus plantaris,sk,chodidlový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_plantaris,muscle,Musculus plantaris,de,Fußsohlenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_popliteus,muscle,Musculus popliteus,sk,zákolenný sval,,seed_needs_review,terminology_seed_v2.2
+muscle_tibialis_posterior,muscle,Musculus tibialis posterior,sk,zadný píšťalový sval,,seed_needs_review,terminology_seed_v2.2
+muscle_tibialis_posterior,muscle,Musculus tibialis posterior,de,hinterer Schienbeinmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_hallucis_longus,muscle,Musculus flexor hallucis longus,sk,dlhý ohýbač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_hallucis_longus,muscle,Musculus flexor hallucis longus,de,langer Großzehenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_longus,muscle,Musculus flexor digitorum longus,sk,dlhý ohýbač prstov nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_longus,muscle,Musculus flexor digitorum longus,de,langer Zehenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum_brevis,muscle,Musculus extensor digitorum brevis,sk,krátky vystierač prstov nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_digitorum_brevis,muscle,Musculus extensor digitorum brevis,de,kurzer Zehenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_hallucis_brevis,muscle,Musculus extensor hallucis brevis,sk,krátky vystierač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_extensor_hallucis_brevis,muscle,Musculus extensor hallucis brevis,de,kurzer Großzehenstrecker,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_hallucis,muscle,Musculus abductor hallucis,sk,odťahovač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_abductor_hallucis,muscle,Musculus abductor hallucis,de,Großzehenspreizer,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_brevis,muscle,Musculus flexor digitorum brevis,sk,krátky ohýbač prstov nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_digitorum_brevis,muscle,Musculus flexor digitorum brevis,de,kurzer Zehenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_quadratus_plantae,muscle,Musculus quadratus plantae,sk,štvorcový sval chodidla,,seed_needs_review,terminology_seed_v2.2
+muscle_quadratus_plantae,muscle,Musculus quadratus plantae,de,quadratischer Sohlenmuskel,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_hallucis_brevis,muscle,Musculus flexor hallucis brevis,sk,krátky ohýbač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_flexor_hallucis_brevis,muscle,Musculus flexor hallucis brevis,de,kurzer Großzehenbeuger,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_hallucis,muscle,Musculus adductor hallucis,sk,priťahovač palca nohy,,seed_needs_review,terminology_seed_v2.2
+muscle_adductor_hallucis,muscle,Musculus adductor hallucis,de,Großzehenanzieher,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_plantares,muscle,Musculi interossei plantares,sk,chodidlové medzikostné svaly,,seed_needs_review,terminology_seed_v2.2
+muscle_interossei_plantares,muscle,Musculi interossei plantares,de,fußsohlenseitige Zwischenknochenmuskeln,,seed_needs_review,terminology_seed_v2.2
+aponeurosis_epicranial,aponeurosis,galea aponeurotica,sk,nadlebečná aponeuróza,,seed_needs_review,terminology_seed_v2.2
+aponeurosis_epicranial,aponeurosis,galea aponeurotica,de,Galea aponeurotica,,seed_needs_review,terminology_seed_v2.2
+landmark_mastoid_process,bony_landmark,processus mastoideus,sk,bradavkový výbežok,,seed_needs_review,terminology_seed_v2.2
+landmark_mastoid_process,bony_landmark,processus mastoideus,de,Warzenfortsatz,,seed_needs_review,terminology_seed_v2.2
+structure_auricle,sensory_structure,auricula,sk,ušnica,,seed_needs_review,terminology_seed_v2.2
+structure_auricle,sensory_structure,auricula,de,Ohrmuschel,,seed_needs_review,terminology_seed_v2.2
+nerve_posterior_auricular,nerve,nervus auricularis posterior,sk,zadný ušnicový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_posterior_auricular,nerve,nervus auricularis posterior,de,hinterer Ohrnerv,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_auricular,artery,arteria auricularis posterior,sk,zadná ušnicová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_posterior_auricular,artery,arteria auricularis posterior,de,hintere Ohrarterie,,seed_needs_review,terminology_seed_v2.2
+landmark_cervical_transverse_process,bony_landmark,processus transversi vertebrarum cervicalium,sk,priečne výbežky krčných stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_cervical_transverse_process,bony_landmark,processus transversi vertebrarum cervicalium,de,Querfortsätze der Halswirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_cervical_spinous_process,bony_landmark,processus spinosi vertebrarum cervicalium,sk,tŕňové výbežky krčných stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_cervical_spinous_process,bony_landmark,processus spinosi vertebrarum cervicalium,de,Dornfortsätze der Halswirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_thoracic_transverse_process,bony_landmark,processus transversi vertebrarum thoracicarum,sk,priečne výbežky hrudníkových stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_thoracic_transverse_process,bony_landmark,processus transversi vertebrarum thoracicarum,de,Querfortsätze der Brustwirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_thoracic_spinous_process,bony_landmark,processus spinosi vertebrarum thoracicarum,sk,tŕňové výbežky hrudníkových stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_thoracic_spinous_process,bony_landmark,processus spinosi vertebrarum thoracicarum,de,Dornfortsätze der Brustwirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_lumbar_transverse_process,bony_landmark,processus transversi vertebrarum lumbalium,sk,priečne výbežky driekových stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_lumbar_transverse_process,bony_landmark,processus transversi vertebrarum lumbalium,de,Querfortsätze der Lendenwirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_lumbar_spinous_process,bony_landmark,processus spinosi vertebrarum lumbalium,sk,tŕňové výbežky driekových stavcov,,seed_needs_review,terminology_seed_v2.2
+landmark_lumbar_spinous_process,bony_landmark,processus spinosi vertebrarum lumbalium,de,Dornfortsätze der Lendenwirbel,,seed_needs_review,terminology_seed_v2.2
+landmark_scalene_tubercle,bony_landmark,tuberculum musculi scaleni anterioris,sk,hrbolček predného šikmého svalu na prvom rebre,,seed_needs_review,terminology_seed_v2.2
+landmark_scalene_tubercle,bony_landmark,tuberculum musculi scaleni anterioris,de,Tuberculum musculi scaleni anterioris,,seed_needs_review,terminology_seed_v2.2
+membrane_suprapleural,membrane,membrana suprapleuralis,sk,nadpleurálna blana,,seed_needs_review,terminology_seed_v2.2
+membrane_suprapleural,membrane,membrana suprapleuralis,de,Suprapleuralmembran,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_cervical,artery,arteria cervicalis ascendens,sk,vzostupná krčná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_cervical,artery,arteria cervicalis ascendens,de,aufsteigende Halsarterie,,seed_needs_review,terminology_seed_v2.2
+nerve_group_cervical_spinal,nerve_group,nervi spinales cervicales,sk,krčné miechové nervy,,seed_needs_review,terminology_seed_v2.2
+nerve_group_cervical_spinal,nerve_group,nervi spinales cervicales,de,Halsnerven,,seed_needs_review,terminology_seed_v2.2
+landmark_manubrium_sterni,bony_landmark,manubrium sterni,sk,rukoväť hrudnej kosti,,seed_needs_review,terminology_seed_v2.2
+landmark_manubrium_sterni,bony_landmark,manubrium sterni,de,Manubrium sterni,,seed_needs_review,terminology_seed_v2.2
+cartilage_costal,cartilage,cartilago costalis,sk,rebrová chrupavka,,seed_needs_review,terminology_seed_v2.2
+cartilage_costal,cartilage,cartilago costalis,de,Rippenknorpel,,seed_needs_review,terminology_seed_v2.2
+cartilage_thyroid,cartilage,cartilago thyroidea,sk,štítna chrupavka,,seed_needs_review,terminology_seed_v2.2
+cartilage_thyroid,cartilage,cartilago thyroidea,de,Schildknorpel,,seed_needs_review,terminology_seed_v2.2
+cartilage_cricoid,cartilage,cartilago cricoidea,sk,prstienková chrupavka,,seed_needs_review,terminology_seed_v2.2
+cartilage_cricoid,cartilage,cartilago cricoidea,de,Ringknorpel,,seed_needs_review,terminology_seed_v2.2
+plexus_ansa_cervicalis,nerve_plexus,ansa cervicalis,sk,krčná slučka,,seed_needs_review,terminology_seed_v2.2
+plexus_ansa_cervicalis,nerve_plexus,ansa cervicalis,de,Ansa cervicalis,,seed_needs_review,terminology_seed_v2.2
+plexus_pharyngeal,nerve_plexus,plexus pharyngeus,sk,hltanový pletenec,,seed_needs_review,terminology_seed_v2.2
+plexus_pharyngeal,nerve_plexus,plexus pharyngeus,de,Rachengeflecht,,seed_needs_review,terminology_seed_v2.2
+artery_superior_thyroid,artery,arteria thyroidea superior,sk,horná štítna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_superior_thyroid,artery,arteria thyroidea superior,de,obere Schilddrüsenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_thyroid,artery,arteria thyroidea inferior,sk,dolná štítna tepna,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_thyroid,artery,arteria thyroidea inferior,de,untere Schilddrüsenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_pharyngeal,artery,arteria pharyngea ascendens,sk,vzostupná hltanová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_pharyngeal,artery,arteria pharyngea ascendens,de,aufsteigende Rachenarterie,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_palatine,artery,arteria palatina ascendens,sk,vzostupná podnebná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_ascending_palatine,artery,arteria palatina ascendens,de,aufsteigende Gaumenarterie,,seed_needs_review,terminology_seed_v2.2
+aponeurosis_palatine,aponeurosis,aponeurosis palatina,sk,podnebná aponeuróza,,seed_needs_review,terminology_seed_v2.2
+aponeurosis_palatine,aponeurosis,aponeurosis palatina,de,Gaumenaponeurose,,seed_needs_review,terminology_seed_v2.2
+structure_pharyngeal_raphe,raphe,raphe pharyngis,sk,hltanový šev,,seed_needs_review,terminology_seed_v2.2
+structure_pharyngeal_raphe,raphe,raphe pharyngis,de,Rachennaht,,seed_needs_review,terminology_seed_v2.2
+cartilage_auditory_tube,cartilage,cartilago tubae auditivae,sk,chrupavka sluchovej trubice,,seed_needs_review,terminology_seed_v2.2
+cartilage_auditory_tube,cartilage,cartilago tubae auditivae,de,Tubenknorpel,,seed_needs_review,terminology_seed_v2.2
+structure_uvula,organ_part,uvula palatina,sk,podnebný čapík,,seed_needs_review,terminology_seed_v2.2
+structure_uvula,organ_part,uvula palatina,de,Gaumenzäpfchen,,seed_needs_review,terminology_seed_v2.2
+nerve_intercostal,nerve_group,nervi intercostales,sk,medzirebrové nervy,,seed_needs_review,terminology_seed_v2.2
+nerve_intercostal,nerve_group,nervi intercostales,de,Interkostalnerven,,seed_needs_review,terminology_seed_v2.2
+artery_intercostal_anterior,artery,arteriae intercostales anteriores,sk,predné medzirebrové tepny,,seed_needs_review,terminology_seed_v2.2
+artery_intercostal_anterior,artery,arteriae intercostales anteriores,de,vordere Zwischenrippenarterien,,seed_needs_review,terminology_seed_v2.2
+nerve_posterior_rami_spinal,nerve_group,rami posteriores nervorum spinalium,sk,zadné vetvy miechových nervov,,seed_needs_review,terminology_seed_v2.2
+nerve_posterior_rami_spinal,nerve_group,rami posteriores nervorum spinalium,de,Hinteräste der Spinalnerven,,seed_needs_review,terminology_seed_v2.2
+nerve_anterior_rami_spinal,nerve_group,rami anteriores nervorum spinalium,sk,predné vetvy miechových nervov,,seed_needs_review,terminology_seed_v2.2
+nerve_anterior_rami_spinal,nerve_group,rami anteriores nervorum spinalium,de,Vorderäste der Spinalnerven,,seed_needs_review,terminology_seed_v2.2
+artery_deep_cervical,artery,arteria cervicalis profunda,sk,hĺbková krčná tepna,,seed_needs_review,terminology_seed_v2.2
+artery_deep_cervical,artery,arteria cervicalis profunda,de,tiefe Halsarterie,,seed_needs_review,terminology_seed_v2.2
+artery_lumbar,artery,arteriae lumbales,sk,driekové tepny,,seed_needs_review,terminology_seed_v2.2
+artery_lumbar,artery,arteriae lumbales,de,Lumbalarterien,,seed_needs_review,terminology_seed_v2.2
+fascia_thoracolumbar,fascia,fascia thoracolumbalis,sk,hrudnodrieková fascia,,seed_needs_review,terminology_seed_v2.2
+fascia_thoracolumbar,fascia,fascia thoracolumbalis,de,Thorakolumbalfaszie,,seed_needs_review,terminology_seed_v2.2
+structure_linea_alba,raphe,linea alba,sk,biela čiara brucha,,seed_needs_review,terminology_seed_v2.2
+structure_linea_alba,raphe,linea alba,de,Linea alba,,seed_needs_review,terminology_seed_v2.2
+landmark_iliac_crest,bony_landmark,crista iliaca,sk,bedrový hrebeň,,seed_needs_review,terminology_seed_v2.2
+landmark_iliac_crest,bony_landmark,crista iliaca,de,Darmbeinkamm,,seed_needs_review,terminology_seed_v2.2
+nerve_thoracoabdominal,nerve_group,nervi thoracoabdominales,sk,hrudnobrušné nervy,,seed_needs_review,terminology_seed_v2.2
+nerve_thoracoabdominal,nerve_group,nervi thoracoabdominales,de,Thorakoabdominalnerven,,seed_needs_review,terminology_seed_v2.2
+nerve_subcostal,nerve,nervus subcostalis,sk,podrebrový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_subcostal,nerve,nervus subcostalis,de,Subkostalnerv,,seed_needs_review,terminology_seed_v2.2
+artery_epigastric_superior,artery,arteria epigastrica superior,sk,horná nadbrušková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_epigastric_superior,artery,arteria epigastrica superior,de,obere epigastrische Arterie,,seed_needs_review,terminology_seed_v2.2
+artery_epigastric_inferior,artery,arteria epigastrica inferior,sk,dolná nadbrušková tepna,,seed_needs_review,terminology_seed_v2.2
+artery_epigastric_inferior,artery,arteria epigastrica inferior,de,untere epigastrische Arterie,,seed_needs_review,terminology_seed_v2.2
+landmark_pubic_crest,bony_landmark,crista pubica,sk,lonový hrebeň,,seed_needs_review,terminology_seed_v2.2
+landmark_pubic_crest,bony_landmark,crista pubica,de,Schambeinkamm,,seed_needs_review,terminology_seed_v2.2
+joint_pubic_symphysis,joint,symphysis pubica,sk,lonová spona,,seed_needs_review,terminology_seed_v2.2
+joint_pubic_symphysis,joint,symphysis pubica,de,Schambeinfuge,,seed_needs_review,terminology_seed_v2.2
+landmark_xiphoid_process,bony_landmark,processus xiphoideus,sk,mečovitý výbežok,,seed_needs_review,terminology_seed_v2.2
+landmark_xiphoid_process,bony_landmark,processus xiphoideus,de,Schwertfortsatz,,seed_needs_review,terminology_seed_v2.2
+nerve_medial_plantar,nerve,nervus plantaris medialis,sk,vnútorný chodidlový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_medial_plantar,nerve,nervus plantaris medialis,de,medialer Plantarnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_plantar,nerve,nervus plantaris lateralis,sk,vonkajší chodidlový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_lateral_plantar,nerve,nervus plantaris lateralis,de,lateraler Plantarnerv,,seed_needs_review,terminology_seed_v2.2
+artery_plantar_medial,artery,arteria plantaris medialis,sk,vnútorná chodidlová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_plantar_medial,artery,arteria plantaris medialis,de,mediale Plantararterie,,seed_needs_review,terminology_seed_v2.2
+artery_plantar_lateral,artery,arteria plantaris lateralis,sk,vonkajšia chodidlová tepna,,seed_needs_review,terminology_seed_v2.2
+artery_plantar_lateral,artery,arteria plantaris lateralis,de,laterale Plantararterie,,seed_needs_review,terminology_seed_v2.2
+artery_metatarsal_plantar,artery,arteriae metatarsales plantares,sk,chodidlové priehlavkové tepny,,seed_needs_review,terminology_seed_v2.2
+artery_metatarsal_plantar,artery,arteriae metatarsales plantares,de,plantare Mittelfußarterien,,seed_needs_review,terminology_seed_v2.2
+landmark_calcaneal_tuberosity,bony_landmark,tuber calcanei,sk,pätový hrboľ,,seed_needs_review,terminology_seed_v2.2
+landmark_calcaneal_tuberosity,bony_landmark,tuber calcanei,de,Fersenbeinhöcker,,seed_needs_review,terminology_seed_v2.2
+membrane_obturator,membrane,membrana obturatoria,sk,zapchávajúca blana,,seed_needs_review,terminology_seed_v2.2
+membrane_obturator,membrane,membrana obturatoria,de,Membrana obturatoria,,seed_needs_review,terminology_seed_v2.2
+landmark_greater_trochanter,bony_landmark,trochanter major,sk,veľký chocholík,,seed_needs_review,terminology_seed_v2.2
+landmark_greater_trochanter,bony_landmark,trochanter major,de,großer Rollhügel,,seed_needs_review,terminology_seed_v2.2
+landmark_ischial_spine,bony_landmark,spina ischiadica,sk,sedací tŕň,,seed_needs_review,terminology_seed_v2.2
+landmark_ischial_spine,bony_landmark,spina ischiadica,de,Sitzbeinstachel,,seed_needs_review,terminology_seed_v2.2
+landmark_ischial_tuberosity,bony_landmark,tuber ischiadicum,sk,sedací hrboľ,,seed_needs_review,terminology_seed_v2.2
+landmark_ischial_tuberosity,bony_landmark,tuber ischiadicum,de,Sitzbeinhöcker,,seed_needs_review,terminology_seed_v2.2
+nerve_to_obturator_internus,nerve,nervus musculi obturatorii interni,sk,nerv vnútorného zapchávajúceho svalu,,seed_needs_review,terminology_seed_v2.2
+nerve_to_obturator_internus,nerve,nervus musculi obturatorii interni,de,Nerv zum inneren Hüftlochmuskel,,seed_needs_review,terminology_seed_v2.2
+nerve_to_quadratus_femoris,nerve,nervus musculi quadrati femoris,sk,nerv štvorcového svalu stehna,,seed_needs_review,terminology_seed_v2.2
+nerve_to_quadratus_femoris,nerve,nervus musculi quadrati femoris,de,Nerv zum quadratischen Oberschenkelmuskel,,seed_needs_review,terminology_seed_v2.2
+artery_obturator,artery,arteria obturatoria,sk,zapchávajúca tepna,,seed_needs_review,terminology_seed_v2.2
+artery_obturator,artery,arteria obturatoria,de,Obturatorarterie,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_gluteal,artery,arteria glutea inferior,sk,dolná sedacia tepna,,seed_needs_review,terminology_seed_v2.2
+artery_inferior_gluteal,artery,arteria glutea inferior,de,untere Gesäßarterie,,seed_needs_review,terminology_seed_v2.2
+bone_cuneiform_lateral,bone,os cuneiforme laterale,sk,vonkajšia klinovitá kosť,,seed_needs_review,terminology_seed_v2.2
+bone_cuneiform_lateral,bone,os cuneiforme laterale,de,laterales Keilbein,,seed_needs_review,terminology_seed_v2.2
+nerve_infraorbital,nerve,nervus infraorbitalis,sk,podočnicový nerv,pod očnicový nerv,seed_needs_review,terminology_seed_v2.2; spelling normalized against podočnicový anatomical terminology
+nerve_infraorbital,nerve,nervus infraorbitalis,de,Infraorbitalnerv,,seed_needs_review,terminology_seed_v2.2
+nerve_inferior_alveolar,nerve,nervus alveolaris inferior,sk,dolný zubný nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_inferior_alveolar,nerve,nervus alveolaris inferior,de,Nervus alveolaris inferior,,seed_needs_review,terminology_seed_v2.2
+nerve_mental,nerve,nervus mentalis,sk,bradový nerv,,seed_needs_review,terminology_seed_v2.2
+nerve_mental,nerve,nervus mentalis,de,Kinnnerv,,seed_needs_review,terminology_seed_v2.2
+landmark_sella_turcica,bony_landmark,sella turcica,sk,turecké sedlo,,seed_needs_review,terminology_seed_v2.2
+landmark_sella_turcica,bony_landmark,sella turcica,de,Türkensattel,,seed_needs_review,terminology_seed_v2.2
+ligament_plantar_mtp,ligament,ligamenta plantaria articulationum metatarsophalangearum,sk,chodidlové väzy metatarzofalangeálnych kĺbov,,seed_needs_review,terminology_seed_v2.2
+ligament_plantar_mtp,ligament,ligamenta plantaria articulationum metatarsophalangearum,de,plantare Bänder der Zehengrundgelenke,,seed_needs_review,terminology_seed_v2.2

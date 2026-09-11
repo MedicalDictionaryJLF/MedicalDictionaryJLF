@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medicaldictionaryjlf.local/schemas/clinical-correlations.schema.json",
+  "title": "Clinical Correlations Logic Database",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset",
+    "logic_model",
+    "correlations",
+    "query_examples"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "dataset": {
+      "type": "object"
+    },
+    "logic_model": {
+      "type": "object"
+    },
+    "correlations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "subject",
+          "relation_type",
+          "target",
+          "answer",
+          "details",
+          "clinical_relevance",
+          "exam_traps",
+          "question_templates",
+          "tags",
+          "course_tags",
+          "difficulty",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^cc_[a-z0-9_]+$"
+          },
+          "category": {
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/$defs/entityRef"
+          },
+          "relation_type": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/$defs/entityRef"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          },
+          "clinical_relevance": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exam_traps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "question_templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "course_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "difficulty": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "object"
+          },
+          "query_support": {
+            "type": "object",
+            "description": "Phase 1.7 fuzzy-search enrichment layered on top of the package correlation record.",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "query_examples": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "quiz_generation": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "entityRef": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

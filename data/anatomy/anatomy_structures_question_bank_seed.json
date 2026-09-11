@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-11T18:52:54Z",
+  "dataset_id": "anatomy_structures_core_elaborated",
+  "questions": [
+    {
+      "question_id": "anat_struct_q_001",
+      "type": "multiple_choice",
+      "prompt": "Which nerve passes through the carpal tunnel?",
+      "correct_answer": "median nerve",
+      "distractors": [
+        "ulnar nerve",
+        "radial nerve",
+        "axillary nerve"
+      ],
+      "concept_ids": [
+        "nerve_median",
+        "space_carpal_tunnel"
+      ],
+      "explanation": "The median nerve passes through the carpal tunnel with flexor tendons.",
+      "tags": [
+        "upper limb",
+        "nerve",
+        "space"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_002",
+      "type": "multiple_choice",
+      "prompt": "Which artery passes through the foramen spinosum?",
+      "correct_answer": "middle meningeal artery",
+      "distractors": [
+        "facial artery",
+        "ophthalmic artery",
+        "internal carotid artery"
+      ],
+      "concept_ids": [
+        "artery_middle_meningeal",
+        "foramen_spinosum"
+      ],
+      "explanation": "The middle meningeal artery enters the cranial cavity through the foramen spinosum.",
+      "tags": [
+        "skull",
+        "foramen"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_003",
+      "type": "typing",
+      "prompt": "Give the Latin name for the sphenoid bone.",
+      "correct_answer": "os sphenoidale",
+      "distractors": [],
+      "concept_ids": [
+        "bone_sphenoid"
+      ],
+      "explanation": null,
+      "tags": [
+        "latin",
+        "skull"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_004",
+      "type": "multiple_choice",
+      "prompt": "Which structure is most associated with wrist drop after humeral shaft fracture?",
+      "correct_answer": "radial nerve",
+      "distractors": [
+        "median nerve",
+        "ulnar nerve",
+        "musculocutaneous nerve"
+      ],
+      "concept_ids": [
+        "nerve_radial",
+        "bone_humerus"
+      ],
+      "explanation": "The radial nerve runs in the radial groove of the humerus and supplies extensors.",
+      "tags": [
+        "upper limb",
+        "clinical"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_005",
+      "type": "multiple_choice",
+      "prompt": "Which artery is the major blood supply to the femoral head?",
+      "correct_answer": "medial circumflex femoral artery",
+      "distractors": [
+        "lateral circumflex femoral artery",
+        "popliteal artery",
+        "anterior tibial artery"
+      ],
+      "concept_ids": [
+        "artery_medial_circumflex_femoral",
+        "bone_femur"
+      ],
+      "explanation": null,
+      "tags": [
+        "lower limb",
+        "clinical"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_006",
+      "type": "multiple_choice",
+      "prompt": "Which dural venous sinus continues as the internal jugular vein?",
+      "correct_answer": "sigmoid sinus",
+      "distractors": [
+        "straight sinus",
+        "superior sagittal sinus",
+        "cavernous sinus"
+      ],
+      "concept_ids": [
+        "sinus_sigmoid",
+        "vein_internal_jugular"
+      ],
+      "explanation": null,
+      "tags": [
+        "venous sinus"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_007",
+      "type": "multiple_choice",
+      "prompt": "Which cranial nerve exits via the hypoglossal canal?",
+      "correct_answer": "hypoglossal nerve",
+      "distractors": [
+        "vagus nerve",
+        "facial nerve",
+        "glossopharyngeal nerve"
+      ],
+      "concept_ids": [
+        "nerve_cn_xii",
+        "canal_hypoglossal"
+      ],
+      "explanation": null,
+      "tags": [
+        "cranial nerves",
+        "skull base"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_008",
+      "type": "multiple_choice",
+      "prompt": "Which vessel is the continuation of the anterior tibial artery on the dorsum of the foot?",
+      "correct_answer": "dorsalis pedis artery",
+      "distractors": [
+        "posterior tibial artery",
+        "fibular artery",
+        "popliteal artery"
+      ],
+      "concept_ids": [
+        "artery_dorsalis_pedis",
+        "artery_anterior_tibial"
+      ],
+      "explanation": null,
+      "tags": [
+        "lower limb",
+        "artery"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_009",
+      "type": "multiple_choice",
+      "prompt": "Which organ lies in the sella turcica?",
+      "correct_answer": "pituitary gland",
+      "distractors": [
+        "thyroid gland",
+        "pineal gland",
+        "parathyroid gland"
+      ],
+      "concept_ids": [
+        "gland_pituitary",
+        "bone_sphenoid"
+      ],
+      "explanation": null,
+      "tags": [
+        "endocrine",
+        "skull"
+      ],
+      "status": "seed_needs_review"
+    },
+    {
+      "question_id": "anat_struct_q_010",
+      "type": "multiple_choice",
+      "prompt": "Which nerve is classically injured in surgical neck fracture of the humerus?",
+      "correct_answer": "axillary nerve",
+      "distractors": [
+        "radial nerve",
+        "median nerve",
+        "ulnar nerve"
+      ],
+      "concept_ids": [
+        "nerve_axillary",
+        "bone_humerus"
+      ],
+      "explanation": "The axillary nerve passes near the surgical neck of the humerus.",
+      "tags": [
+        "upper limb",
+        "clinical"
+      ],
+      "status": "seed_needs_review"
+    }
+  ]
+}

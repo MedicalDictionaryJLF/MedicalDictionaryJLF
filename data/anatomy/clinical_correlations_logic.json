@@ -1,0 +1,4408 @@
+{
+  "schema_version": "1.0.0",
+  "dataset": {
+    "id": "clinical_correlations_logic_seed",
+    "title": "Clinical Correlations Logic Seed",
+    "description": "Topographic, neurovascular, lesion and surgical-danger correlations designed to sit on top of the Anatomy Structures v2 database.",
+    "generated_at": "2026-08-11T19:24:03Z",
+    "content_status": "educational_seed_requires_human_review",
+    "correlation_count": 40,
+    "category_counts": {
+      "topographic_vessel_relation": 7,
+      "clinical_vessel_relation": 3,
+      "compression_relation": 1,
+      "topographic_duct_relation": 1,
+      "topographic_bundle_relation": 6,
+      "topographic_nerve_relation": 1,
+      "foramen_content_relation": 4,
+      "space_content_relation": 1,
+      "gland_content_relation": 1,
+      "topographic_nerve_duct_relation": 1,
+      "fracture_neurovascular_relation": 3,
+      "surface_nerve_relation": 1,
+      "canal_content_relation": 4,
+      "fracture_vascular_relation": 1,
+      "surgical_danger_relation": 1,
+      "lesion_correlation": 4
+    },
+    "synonyms_added_at": "2026-08-11T19:32:46Z",
+    "query_support_status": "synonymized_seed_requires_review",
+    "search_algorithm": {
+      "algorithm_id": "clinical_correlation_fuzzy_search_v1",
+      "supports": [
+        "synonym expansion",
+        "abbreviation expansion",
+        "latin/english variants",
+        "common misspellings",
+        "bounded Levenshtein",
+        "token coverage",
+        "negative trap detection",
+        "left/right and cranial-nerve safety rules"
+      ],
+      "recommended_min_score": 55,
+      "recommended_direct_answer_score": 75,
+      "recommended_ambiguous_delta": 8
+    }
+  },
+  "logic_model": {
+    "purpose": "Allow the app to answer and quiz clinically relevant relation questions, not just list isolated anatomical structures.",
+    "query_intents": [
+      {
+        "intent": "what_passes_through",
+        "slots": [
+          "container_structure",
+          "content_type"
+        ],
+        "example": "What passes through foramen spinosum?"
+      },
+      {
+        "intent": "what_runs_along",
+        "slots": [
+          "surface_or_border",
+          "organ_or_region",
+          "side"
+        ],
+        "example": "What artery runs along the greater curvature of the stomach?"
+      },
+      {
+        "intent": "what_is_vulnerable_at",
+        "slots": [
+          "injury_site",
+          "structure_type"
+        ],
+        "example": "Which nerve is injured at the neck of fibula?"
+      },
+      {
+        "intent": "what_does_lesion_cause",
+        "slots": [
+          "nerve_or_pathway"
+        ],
+        "example": "What happens in CN VI palsy?"
+      },
+      {
+        "intent": "which_structure_supplies",
+        "slots": [
+          "target_structure",
+          "supply_type"
+        ],
+        "example": "Which artery supplies the gallbladder?"
+      },
+      {
+        "intent": "ordered_contents",
+        "slots": [
+          "space_or_triangle",
+          "orientation"
+        ],
+        "example": "What is the order in the femoral triangle?"
+      },
+      {
+        "intent": "clinical_explain_why",
+        "slots": [
+          "clinical_condition",
+          "anatomical_relation"
+        ],
+        "example": "Why can a posterior duodenal ulcer bleed badly?"
+      }
+    ],
+    "answer_contract": {
+      "short_answer": "One direct answer suitable for search preview or quiz answer.",
+      "exam_answer": "Direct answer plus relation, course/origin, clinical relevance and trap.",
+      "provenance": "Always expose review status and source_refs. If source_refs are empty, show seed/review warning."
+    },
+    "ranking_rules": [
+      "Exact structure/container match beats broad text match.",
+      "Relation type matching the query intent beats generic clinical note match.",
+      "Course week context can boost relevant correlations during course study.",
+      "If several vessels/structures are correct, return ordered or segmented answer rather than one arbitrary result."
+    ],
+    "ui_badges": [
+      "Topographic relation",
+      "Clinical danger",
+      "Foramen content",
+      "Lesion sign",
+      "Surgical relation",
+      "Seed review needed"
+    ]
+  },
+  "correlations": [
+    {
+      "id": "cc_stomach_greater_curvature_gastro_omental",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_stomach",
+        "name": "stomach: greater curvature"
+      },
+      "relation_type": "artery_runs_along",
+      "target": {
+        "id": "artery_gastro_omental_right_left",
+        "name": "right and left gastro-omental arteries"
+      },
+      "answer": "The greater curvature of the stomach is supplied by an arterial arcade formed mainly by the right gastro-omental artery and the left gastro-omental artery.",
+      "details": {
+        "arteries": [
+          {
+            "name": "right gastro-omental artery",
+            "origin": "gastroduodenal artery",
+            "course": "runs from right to left along the greater curvature between layers of the greater omentum"
+          },
+          {
+            "name": "left gastro-omental artery",
+            "origin": "splenic artery",
+            "course": "runs from left to right along the greater curvature"
+          }
+        ],
+        "nearby_ligament": "gastrocolic ligament / greater omentum",
+        "contrast": "lesser curvature is supplied by right and left gastric arteries"
+      },
+      "clinical_relevance": [
+        "Important during gastric surgery and control of bleeding along the greater curvature."
+      ],
+      "exam_traps": [
+        "Do not answer right gastric or left gastric artery; those follow the lesser curvature.",
+        "Short gastric arteries supply mainly the fundus near the superior part of the greater curvature, not the full inferior greater-curvature arcade."
+      ],
+      "question_templates": [
+        "Which arteries run along the greater curvature of the stomach?",
+        "Which artery passes along the inferior/great-curvature side of the stomach?",
+        "Greater curvature bleeding: which vessels are nearby?"
+      ],
+      "tags": [
+        "stomach",
+        "greater curvature",
+        "gastro-omental",
+        "blood supply"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat1_week_13",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "stomach: greater curvature",
+          "right and left gastro-omental arteries",
+          "artery runs along",
+          "stomach",
+          "greater curvature",
+          "gastro-omental",
+          "blood supply"
+        ],
+        "direct_synonyms": [
+          "stomach",
+          "gaster",
+          "ventriculus",
+          "gastric",
+          "žalúdok",
+          "magen",
+          "greater curvature",
+          "curvatura major",
+          "great curvature",
+          "inferior border of stomach",
+          "inferior side of stomach",
+          "big curvature",
+          "outer curvature",
+          "large curvature",
+          "gastromental",
+          "gastro omental",
+          "gastroomental",
+          "gastroepiploic",
+          "gastro epiploic",
+          "gastrepiploic",
+          "gastroepiploick",
+          "gastro-omental artery",
+          "gastroepiploic artery",
+          "gastro omental artery",
+          "gastro-epiploic",
+          "arteria gastroomentalis",
+          "arteria gastroepiploica",
+          "right gastro-omental artery",
+          "right gastroepiploic artery",
+          "right gastro omental artery",
+          "arteria gastroomentalis dextra",
+          "arteria gastroepiploica dextra",
+          "left gastro-omental artery",
+          "left gastroepiploic artery",
+          "left gastro omental artery",
+          "arteria gastroomentalis sinistra",
+          "arteria gastroepiploica sinistra",
+          "artery along",
+          "artery passes along",
+          "artery runs on",
+          "blood supply of border",
+          "vessel on curvature",
+          "inferior side of stomach artery",
+          "great curvature artery",
+          "greater omentum artery",
+          "which artery passes along stomach greater curvature",
+          "gastrocolic ligament vessels",
+          "right and left gastroepiploic"
+        ],
+        "common_misspellings": [
+          "gastromental",
+          "gastro omental",
+          "gastroomental",
+          "gastroepiploic",
+          "gastro epiploic",
+          "gastrepiploic",
+          "gastroepiploick"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "artery along",
+          "artery passes along",
+          "artery runs on",
+          "blood supply of border",
+          "vessel on curvature"
+        ],
+        "negative_traps": [
+          "Do not answer right gastric or left gastric artery; those follow the lesser curvature.",
+          "Short gastric arteries supply mainly the fundus near the superior part of the greater curvature, not the full inferior greater-curvature arcade."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_stomach_lesser_curvature_gastric",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_stomach",
+        "name": "stomach: lesser curvature"
+      },
+      "relation_type": "artery_runs_along",
+      "target": {
+        "id": "artery_gastric_right_left",
+        "name": "right and left gastric arteries"
+      },
+      "answer": "The lesser curvature is supplied by the right gastric and left gastric arteries, which anastomose along the lesser curvature.",
+      "details": {
+        "arteries": [
+          {
+            "name": "left gastric artery",
+            "origin": "celiac trunk"
+          },
+          {
+            "name": "right gastric artery",
+            "origin": "usually proper hepatic artery"
+          }
+        ],
+        "nearby_ligament": "lesser omentum"
+      },
+      "clinical_relevance": [
+        "Important in gastric ulcer bleeding and gastric mobilization."
+      ],
+      "exam_traps": [
+        "Do not confuse with gastro-omental arteries, which follow the greater curvature."
+      ],
+      "question_templates": [
+        "Which arteries follow the lesser curvature of the stomach?"
+      ],
+      "tags": [
+        "stomach",
+        "lesser curvature",
+        "gastric arteries"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "stomach: lesser curvature",
+          "right and left gastric arteries",
+          "artery runs along",
+          "stomach",
+          "lesser curvature",
+          "gastric arteries"
+        ],
+        "direct_synonyms": [
+          "stomach",
+          "gaster",
+          "ventriculus",
+          "gastric",
+          "žalúdok",
+          "magen",
+          "lesser curvature",
+          "curvatura minor",
+          "small curvature",
+          "superior border of stomach",
+          "upper border of stomach",
+          "inner curvature",
+          "short gastric arteries",
+          "arteriae gastricae breves",
+          "short gastrics",
+          "artery along",
+          "artery passes along",
+          "artery runs on",
+          "blood supply of border",
+          "vessel on curvature",
+          "lesser curvature artery",
+          "small curvature artery",
+          "hepatogastric ligament vessels",
+          "right and left gastric"
+        ],
+        "common_misspellings": [],
+        "abbreviations": [],
+        "relation_phrases": [
+          "artery along",
+          "artery passes along",
+          "artery runs on",
+          "blood supply of border",
+          "vessel on curvature"
+        ],
+        "negative_traps": [
+          "Do not confuse with gastro-omental arteries, which follow the greater curvature."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_stomach_fundus_short_gastric",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_stomach",
+        "name": "fundus of stomach"
+      },
+      "relation_type": "supplied_by",
+      "target": {
+        "id": "artery_short_gastric",
+        "name": "short gastric arteries"
+      },
+      "answer": "The fundus of the stomach is supplied mainly by short gastric arteries from the splenic artery.",
+      "details": {
+        "origin": "splenic artery",
+        "route": "gastrosplenic ligament"
+      },
+      "clinical_relevance": [
+        "May be involved during splenectomy or surgery near the gastric fundus."
+      ],
+      "exam_traps": [
+        "Short gastric arteries are not the main answer for the entire greater curvature arcade."
+      ],
+      "question_templates": [
+        "Which arteries supply the fundus of the stomach?"
+      ],
+      "tags": [
+        "stomach",
+        "fundus",
+        "short gastric arteries"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "fundus of stomach",
+          "short gastric arteries",
+          "supplied by",
+          "stomach",
+          "fundus"
+        ],
+        "direct_synonyms": [
+          "stomach",
+          "gaster",
+          "ventriculus",
+          "gastric",
+          "žalúdok",
+          "magen",
+          "short gastric arteries",
+          "arteriae gastricae breves",
+          "short gastrics",
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies",
+          "fundus blood supply",
+          "gastric fundus artery"
+        ],
+        "common_misspellings": [],
+        "abbreviations": [],
+        "relation_phrases": [
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies"
+        ],
+        "negative_traps": [
+          "Short gastric arteries are not the main answer for the entire greater curvature arcade."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_duodenal_ulcer_gastroduodenal",
+      "category": "clinical_vessel_relation",
+      "subject": {
+        "id": "organ_duodenum",
+        "name": "first part of duodenum"
+      },
+      "relation_type": "posterior_relation_vulnerable",
+      "target": {
+        "id": "artery_gastroduodenal",
+        "name": "gastroduodenal artery"
+      },
+      "answer": "The gastroduodenal artery passes posterior to the first part of the duodenum and can bleed in a posterior duodenal ulcer.",
+      "details": {
+        "spatial_relation": "posterior to superior/first part of duodenum",
+        "source": "common hepatic artery"
+      },
+      "clinical_relevance": [
+        "Classic cause of severe upper gastrointestinal bleeding from posterior duodenal ulcer."
+      ],
+      "exam_traps": [
+        "Anterior duodenal ulcers are more likely to perforate; posterior ulcers are classically associated with gastroduodenal artery bleeding."
+      ],
+      "question_templates": [
+        "Posterior duodenal ulcer bleeds from which artery?",
+        "Which vessel lies posterior to the first part of the duodenum?"
+      ],
+      "tags": [
+        "duodenum",
+        "ulcer",
+        "gastroduodenal artery",
+        "bleeding"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "first part of duodenum",
+          "gastroduodenal artery",
+          "posterior relation vulnerable",
+          "duodenum",
+          "ulcer",
+          "bleeding"
+        ],
+        "direct_synonyms": [
+          "duodenum",
+          "duodenal",
+          "dvanástnik",
+          "zwölffingerdarm",
+          "first part of duodenum",
+          "duodenal bulb",
+          "superior part of duodenum",
+          "pars superior duodeni",
+          "D1",
+          "duodenom",
+          "duodenumum",
+          "duedenum",
+          "gastroduodenal artery",
+          "arteria gastroduodenalis",
+          "GDA",
+          "gastro duodenal",
+          "gastrodoudenal",
+          "gastroduodinal",
+          "gastrodeuodenal",
+          "third part of duodenum",
+          "horizontal part of duodenum",
+          "inferior part of duodenum",
+          "pars horizontalis duodeni",
+          "D3",
+          "posterior relation",
+          "behind it",
+          "bleeds from",
+          "ulcer bleeding",
+          "what artery is posterior",
+          "posterior duodenal ulcer bleeding",
+          "duodenal bulb ulcer artery",
+          "D1 posterior artery",
+          "ulcer bleeds gastroduodenal"
+        ],
+        "common_misspellings": [
+          "duodenum",
+          "duodenom",
+          "duodenumum",
+          "duodenal",
+          "duedenum",
+          "gastro duodenal",
+          "gastrodoudenal",
+          "gastroduodinal",
+          "gastrodeuodenal"
+        ],
+        "abbreviations": [
+          "D1",
+          "GDA",
+          "D3"
+        ],
+        "relation_phrases": [
+          "posterior relation",
+          "behind it",
+          "bleeds from",
+          "ulcer bleeding",
+          "what artery is posterior"
+        ],
+        "negative_traps": [
+          "Anterior duodenal ulcers are more likely to perforate; posterior ulcers are classically associated with gastroduodenal artery bleeding."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_duodenum_third_part_sma",
+      "category": "compression_relation",
+      "subject": {
+        "id": "organ_duodenum",
+        "name": "third part of duodenum"
+      },
+      "relation_type": "crossed_anteriorly_by",
+      "target": {
+        "id": "artery_superior_mesenteric",
+        "name": "superior mesenteric artery"
+      },
+      "answer": "The superior mesenteric artery crosses anterior to the third/horizontal part of the duodenum.",
+      "details": {
+        "spatial_relation": "SMA anterior, aorta posterior; duodenum between them"
+      },
+      "clinical_relevance": [
+        "In SMA syndrome, the third part of the duodenum can be compressed between the SMA and aorta."
+      ],
+      "exam_traps": [
+        "This is the third part of the duodenum, not the first part."
+      ],
+      "question_templates": [
+        "Which artery crosses anterior to the third part of the duodenum?",
+        "SMA syndrome compresses which part of the duodenum?"
+      ],
+      "tags": [
+        "duodenum",
+        "SMA",
+        "compression"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "third part of duodenum",
+          "superior mesenteric artery",
+          "crossed anteriorly by",
+          "duodenum",
+          "SMA",
+          "compression"
+        ],
+        "direct_synonyms": [
+          "duodenum",
+          "duodenal",
+          "dvanástnik",
+          "zwölffingerdarm",
+          "third part of duodenum",
+          "horizontal part of duodenum",
+          "inferior part of duodenum",
+          "pars horizontalis duodeni",
+          "D3",
+          "duodenom",
+          "duodenumum",
+          "duedenum",
+          "superior mesenteric artery",
+          "arteria mesenterica superior",
+          "SMA",
+          "superior mesenteric a.",
+          "first part of duodenum",
+          "duodenal bulb",
+          "superior part of duodenum",
+          "pars superior duodeni",
+          "D1",
+          "crossed by",
+          "passes in front of",
+          "anterior relation",
+          "compresses",
+          "overlies",
+          "SMA syndrome",
+          "third part duodenum compression",
+          "D3 anterior artery",
+          "aorta SMA duodenum"
+        ],
+        "common_misspellings": [
+          "duodenum",
+          "duodenom",
+          "duodenumum",
+          "duodenal",
+          "duedenum"
+        ],
+        "abbreviations": [
+          "D3",
+          "SMA",
+          "D1"
+        ],
+        "relation_phrases": [
+          "crossed by",
+          "passes in front of",
+          "anterior relation",
+          "compresses",
+          "overlies"
+        ],
+        "negative_traps": [
+          "This is the third part of the duodenum, not the first part."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_pancreatic_head_bile_duct",
+      "category": "topographic_duct_relation",
+      "subject": {
+        "id": "organ_pancreas",
+        "name": "head of pancreas"
+      },
+      "relation_type": "adjacent_to",
+      "target": {
+        "id": "duct_common_bile",
+        "name": "common bile duct"
+      },
+      "answer": "The common bile duct passes posterior to, or through a groove in, the head of the pancreas before joining the pancreatic duct near the major duodenal papilla.",
+      "details": {
+        "clinical_pattern": "pancreatic head mass may obstruct the common bile duct"
+      },
+      "clinical_relevance": [
+        "Carcinoma of the pancreatic head can cause obstructive jaundice."
+      ],
+      "exam_traps": [
+        "Pancreatic tail lesions are more related to the splenic hilum; pancreatic head lesions classically affect the bile duct."
+      ],
+      "question_templates": [
+        "Pancreatic head tumor compresses which duct?",
+        "Which duct is related to the head of pancreas?"
+      ],
+      "tags": [
+        "pancreas",
+        "bile duct",
+        "jaundice"
+      ],
+      "course_tags": [
+        "anat1_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "head of pancreas",
+          "common bile duct",
+          "adjacent to",
+          "pancreas",
+          "bile duct",
+          "jaundice"
+        ],
+        "direct_synonyms": [
+          "pancreas",
+          "pancreatic",
+          "pankreas",
+          "slinivka",
+          "head of pancreas",
+          "caput pancreatis",
+          "pancreatic head",
+          "pancreatis",
+          "pankreatic",
+          "common bile duct",
+          "ductus choledochus",
+          "bile duct",
+          "CBD",
+          "choledochus",
+          "tail of pancreas",
+          "cauda pancreatis",
+          "pancreatic tail",
+          "next to",
+          "relation of",
+          "nearby",
+          "lies adjacent to",
+          "close to",
+          "pancreatic head cancer jaundice",
+          "bile duct behind pancreas",
+          "choledochus pancreatic head"
+        ],
+        "common_misspellings": [
+          "pancreas",
+          "pankreas",
+          "pancreatis",
+          "pankreatic"
+        ],
+        "abbreviations": [
+          "CBD"
+        ],
+        "relation_phrases": [
+          "next to",
+          "relation of",
+          "nearby",
+          "lies adjacent to",
+          "close to"
+        ],
+        "negative_traps": [
+          "Pancreatic tail lesions are more related to the splenic hilum; pancreatic head lesions classically affect the bile duct."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_pancreatic_tail_splenic_vessels",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_pancreas",
+        "name": "tail of pancreas"
+      },
+      "relation_type": "related_to",
+      "target": {
+        "id": "artery_splenic",
+        "name": "splenic vessels"
+      },
+      "answer": "The tail of the pancreas lies near the splenic hilum within the splenorenal ligament and is closely related to the splenic vessels.",
+      "details": {
+        "space": "splenorenal ligament",
+        "nearby_organ": "spleen"
+      },
+      "clinical_relevance": [
+        "Pancreatic tail can be injured during splenectomy."
+      ],
+      "exam_traps": [
+        "Tail is near spleen; head is embraced by duodenum."
+      ],
+      "question_templates": [
+        "Which pancreatic part is near the splenic hilum?",
+        "Which vessels are closely related to the pancreatic tail?"
+      ],
+      "tags": [
+        "pancreas",
+        "tail",
+        "splenic vessels"
+      ],
+      "course_tags": [
+        "anat1_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "tail of pancreas",
+          "splenic vessels",
+          "related to",
+          "pancreas",
+          "tail"
+        ],
+        "direct_synonyms": [
+          "pancreas",
+          "pancreatic",
+          "pankreas",
+          "slinivka",
+          "tail of pancreas",
+          "cauda pancreatis",
+          "pancreatic tail",
+          "pancreatis",
+          "pankreatic",
+          "splenic vessels",
+          "splenic artery and vein",
+          "lienal vessels",
+          "arteria splenica",
+          "vena splenica",
+          "head of pancreas",
+          "caput pancreatis",
+          "pancreatic head",
+          "related to",
+          "near",
+          "runs with",
+          "associated with",
+          "splenic artery along pancreas",
+          "pancreatic tail splenic hilum",
+          "splenic vessels pancreas relation"
+        ],
+        "common_misspellings": [
+          "pancreas",
+          "pankreas",
+          "pancreatis",
+          "pankreatic"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "related to",
+          "near",
+          "runs with",
+          "associated with"
+        ],
+        "negative_traps": [
+          "Tail is near spleen; head is embraced by duodenum."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_appendix_appendicular_artery",
+      "category": "clinical_vessel_relation",
+      "subject": {
+        "id": "organ_appendix",
+        "name": "vermiform appendix"
+      },
+      "relation_type": "supplied_by",
+      "target": {
+        "id": "artery_appendicular",
+        "name": "appendicular artery"
+      },
+      "answer": "The appendix is supplied by the appendicular artery, usually a branch of the ileocolic artery from the superior mesenteric artery.",
+      "details": {
+        "route": "runs in the mesoappendix",
+        "parent_vessel": "ileocolic artery"
+      },
+      "clinical_relevance": [
+        "Thrombosis or obstruction of this end artery contributes to ischemia in appendicitis."
+      ],
+      "exam_traps": [
+        "The appendicular artery is from the SMA territory via ileocolic artery, not IMA."
+      ],
+      "question_templates": [
+        "Which artery supplies the appendix?",
+        "The appendicular artery is a branch of which artery?"
+      ],
+      "tags": [
+        "appendix",
+        "appendicular artery",
+        "SMA"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "vermiform appendix",
+          "appendicular artery",
+          "supplied by",
+          "appendix",
+          "SMA"
+        ],
+        "direct_synonyms": [
+          "appendix",
+          "vermiform appendix",
+          "appendix vermiformis",
+          "slepé črevo appendix",
+          "appendicular artery",
+          "arteria appendicularis",
+          "appendix artery",
+          "apendicular",
+          "appendical",
+          "appendiceal",
+          "superior mesenteric artery",
+          "arteria mesenterica superior",
+          "SMA",
+          "superior mesenteric a.",
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies",
+          "blood supply appendix",
+          "mesoappendix artery"
+        ],
+        "common_misspellings": [
+          "apendicular",
+          "appendical",
+          "appendiceal"
+        ],
+        "abbreviations": [
+          "SMA"
+        ],
+        "relation_phrases": [
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies"
+        ],
+        "negative_traps": [
+          "The appendicular artery is from the SMA territory via ileocolic artery, not IMA."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_gallbladder_cystic_artery",
+      "category": "clinical_vessel_relation",
+      "subject": {
+        "id": "organ_gallbladder",
+        "name": "gallbladder"
+      },
+      "relation_type": "supplied_by",
+      "target": {
+        "id": "artery_cystic",
+        "name": "cystic artery"
+      },
+      "answer": "The gallbladder is usually supplied by the cystic artery, most commonly a branch of the right hepatic artery.",
+      "details": {
+        "surgical_area": "Calot/hepatocystic triangle"
+      },
+      "clinical_relevance": [
+        "Identifying the cystic artery is crucial during cholecystectomy."
+      ],
+      "exam_traps": [
+        "Anatomical variations are common; do not assume the exact branching pattern without inspection in surgery."
+      ],
+      "question_templates": [
+        "Which artery supplies the gallbladder?",
+        "What vessel is clipped during cholecystectomy with the cystic duct?"
+      ],
+      "tags": [
+        "gallbladder",
+        "cystic artery",
+        "hepatocystic triangle"
+      ],
+      "course_tags": [
+        "anat1_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "gallbladder",
+          "cystic artery",
+          "supplied by",
+          "hepatocystic triangle"
+        ],
+        "direct_synonyms": [
+          "gallbladder",
+          "vesica biliaris",
+          "vesica fellea",
+          "žlčník",
+          "gallenblase",
+          "cystic artery",
+          "arteria cystica",
+          "cistic",
+          "cystic",
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies",
+          "artery gallbladder",
+          "Calot triangle artery",
+          "cholecystectomy cystic artery"
+        ],
+        "common_misspellings": [
+          "cistic",
+          "cystic"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "supplied by",
+          "blood supply",
+          "artery of",
+          "vascular supply",
+          "which artery supplies"
+        ],
+        "negative_traps": [
+          "Anatomical variations are common; do not assume the exact branching pattern without inspection in surgery."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_liver_portal_triad",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "organ_liver",
+        "name": "porta hepatis / hepatoduodenal ligament"
+      },
+      "relation_type": "contains",
+      "target": {
+        "id": "bundle_portal_triad",
+        "name": "portal triad"
+      },
+      "answer": "The hepatoduodenal ligament contains the portal triad: proper hepatic artery, hepatic portal vein and bile duct.",
+      "details": {
+        "arrangement": "classically bile duct right, proper hepatic artery left, portal vein posterior"
+      },
+      "clinical_relevance": [
+        "Pringle maneuver compresses the hepatoduodenal ligament to control inflow bleeding to the liver."
+      ],
+      "exam_traps": [
+        "Hepatic veins are not part of the portal triad; they drain directly into the IVC."
+      ],
+      "question_templates": [
+        "What structures are in the portal triad?",
+        "Which ligament contains the portal triad?"
+      ],
+      "tags": [
+        "liver",
+        "portal triad",
+        "hepatoduodenal ligament"
+      ],
+      "course_tags": [
+        "anat1_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "porta hepatis / hepatoduodenal ligament",
+          "portal triad",
+          "contains",
+          "liver",
+          "hepatoduodenal ligament"
+        ],
+        "direct_synonyms": [
+          "porta hepatis",
+          "hepatic hilum",
+          "liver hilum",
+          "hepatoduodenal ligament",
+          "ligamentum hepatoduodenale",
+          "free edge of lesser omentum",
+          "hepato duodenal",
+          "hepatodoudenal",
+          "hepatoduodinal",
+          "portal triad",
+          "portal vein, hepatic artery, bile duct",
+          "triad",
+          "Glisson triad",
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in",
+          "portal triad contents",
+          "hepatoduodenal ligament contents",
+          "portal vein hepatic artery bile duct"
+        ],
+        "common_misspellings": [
+          "hepato duodenal",
+          "hepatodoudenal",
+          "hepatoduodinal"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in"
+        ],
+        "negative_traps": [
+          "Hepatic veins are not part of the portal triad; they drain directly into the IVC."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_intercostal_van_costal_groove",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "bone_rib",
+        "name": "inferior border of rib / costal groove"
+      },
+      "relation_type": "contains_or_protects",
+      "target": {
+        "id": "bundle_intercostal_van",
+        "name": "intercostal vein, artery and nerve"
+      },
+      "answer": "The intercostal neurovascular bundle runs in the costal groove along the inferior border of the rib, arranged superior to inferior as vein, artery and nerve.",
+      "details": {
+        "mnemonic": "VAN from superior to inferior",
+        "safe_procedure": "needle/chest tube is placed just superior to the rib below to avoid the main bundle"
+      },
+      "clinical_relevance": [
+        "Chest drains are placed above the upper border of the rib to reduce risk of injuring the VAN bundle."
+      ],
+      "exam_traps": [
+        "Do not place instruments just under a rib; that is where the main intercostal bundle runs."
+      ],
+      "question_templates": [
+        "What runs in the costal groove?",
+        "Why insert a chest tube above the rib?"
+      ],
+      "tags": [
+        "rib",
+        "intercostal",
+        "VAN",
+        "chest tube"
+      ],
+      "course_tags": [
+        "anat1_week_01",
+        "anat1_week_11"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "inferior border of rib / costal groove",
+          "intercostal vein, artery and nerve",
+          "contains or protects",
+          "rib",
+          "intercostal",
+          "VAN",
+          "chest tube"
+        ],
+        "direct_synonyms": [
+          "rib",
+          "costa",
+          "rebro",
+          "rippe",
+          "costal groove",
+          "sulcus costae",
+          "inferior border of rib",
+          "under rib",
+          "intercostal",
+          "intercostalis",
+          "intercostel",
+          "intercostal vein artery nerve",
+          "VAN bundle",
+          "VAN",
+          "intercostal neurovascular bundle",
+          "vein artery nerve",
+          "contains",
+          "protected by",
+          "runs in groove",
+          "under border",
+          "VAN order",
+          "costal groove contents",
+          "safe thoracentesis above rib",
+          "intercostal bundle"
+        ],
+        "common_misspellings": [
+          "intercostal",
+          "intercostalis",
+          "intercostel"
+        ],
+        "abbreviations": [
+          "VAN"
+        ],
+        "relation_phrases": [
+          "contains",
+          "protected by",
+          "runs in groove",
+          "under border"
+        ],
+        "negative_traps": [
+          "Do not place instruments just under a rib; that is where the main intercostal bundle runs."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_lung_root_phrenic_vagus",
+      "category": "topographic_nerve_relation",
+      "subject": {
+        "id": "organ_lung",
+        "name": "root of lung"
+      },
+      "relation_type": "related_to",
+      "target": {
+        "id": "nerve_phrenic_and_vagus",
+        "name": "phrenic nerve anterior, vagus nerve posterior"
+      },
+      "answer": "At the root of the lung, the phrenic nerve passes anteriorly and the vagus nerve passes posteriorly.",
+      "details": {
+        "phrenic": "anterior to lung root",
+        "vagus": "posterior to lung root"
+      },
+      "clinical_relevance": [
+        "Important in thoracic surgery and mediastinal anatomy."
+      ],
+      "exam_traps": [
+        "Phrenic nerve is anterior to the root; vagus nerve is posterior."
+      ],
+      "question_templates": [
+        "Which nerve passes anterior to the root of the lung?",
+        "Which nerve passes posterior to the root of the lung?"
+      ],
+      "tags": [
+        "lung root",
+        "phrenic nerve",
+        "vagus nerve"
+      ],
+      "course_tags": [
+        "anat1_week_11"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "root of lung",
+          "phrenic nerve anterior, vagus nerve posterior",
+          "related to",
+          "lung root",
+          "phrenic nerve",
+          "vagus nerve"
+        ],
+        "direct_synonyms": [
+          "root of lung",
+          "radix pulmonis",
+          "lung hilum",
+          "hilum of lung",
+          "pulmonary root",
+          "phrenic nerve",
+          "nervus phrenicus",
+          "vagus nerve",
+          "nervus vagus",
+          "CN X",
+          "cranial nerve X",
+          "frenic",
+          "phrenicus",
+          "phrenick",
+          "vagus",
+          "vagal",
+          "related to",
+          "near",
+          "runs with",
+          "associated with",
+          "phrenic anterior vagus posterior",
+          "lung root nerves",
+          "hilum phrenic vagus"
+        ],
+        "common_misspellings": [
+          "frenic",
+          "phrenicus",
+          "phrenick",
+          "vagus",
+          "vagal",
+          "vagus nerve",
+          "nervus vagus"
+        ],
+        "abbreviations": [
+          "CN X"
+        ],
+        "relation_phrases": [
+          "related to",
+          "near",
+          "runs with",
+          "associated with"
+        ],
+        "negative_traps": [
+          "Phrenic nerve is anterior to the root; vagus nerve is posterior."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_lad_anterior_interventricular",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_heart",
+        "name": "anterior interventricular sulcus"
+      },
+      "relation_type": "artery_runs_in",
+      "target": {
+        "id": "artery_anterior_interventricular",
+        "name": "anterior interventricular artery / LAD"
+      },
+      "answer": "The anterior interventricular artery, commonly called the LAD, runs in the anterior interventricular sulcus.",
+      "details": {
+        "origin": "left coronary artery",
+        "supplies": "anterior interventricular septum and anterior ventricular walls"
+      },
+      "clinical_relevance": [
+        "LAD occlusion can produce extensive anterior myocardial infarction."
+      ],
+      "exam_traps": [
+        "Do not confuse with posterior interventricular artery in the posterior interventricular sulcus."
+      ],
+      "question_templates": [
+        "Which artery runs in the anterior interventricular sulcus?",
+        "LAD is another name for which coronary branch?"
+      ],
+      "tags": [
+        "heart",
+        "LAD",
+        "coronary arteries"
+      ],
+      "course_tags": [
+        "anat1_week_09",
+        "anat1_week_10"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "anterior interventricular sulcus",
+          "anterior interventricular artery / LAD",
+          "artery runs in",
+          "heart",
+          "LAD",
+          "coronary arteries"
+        ],
+        "direct_synonyms": [
+          "anterior interventricular sulcus",
+          "anterior interventricular groove",
+          "sulcus interventricularis anterior",
+          "inter ventricular",
+          "interventrikular",
+          "interventricularis",
+          "anterior interventricular artery",
+          "left anterior descending artery",
+          "LAD",
+          "ramus interventricularis anterior",
+          "anterior descending artery",
+          "gallbladder",
+          "vesica biliaris",
+          "vesica fellea",
+          "žlčník",
+          "gallenblase",
+          "LAD groove",
+          "widow maker artery"
+        ],
+        "common_misspellings": [
+          "inter ventricular",
+          "interventrikular",
+          "interventricularis"
+        ],
+        "abbreviations": [
+          "LAD"
+        ],
+        "relation_phrases": [],
+        "negative_traps": [
+          "Do not confuse with posterior interventricular artery in the posterior interventricular sulcus."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_rca_coronary_sulcus",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_heart",
+        "name": "right coronary sulcus"
+      },
+      "relation_type": "artery_runs_in",
+      "target": {
+        "id": "artery_right_coronary",
+        "name": "right coronary artery"
+      },
+      "answer": "The right coronary artery runs in the right part of the coronary/atrioventricular sulcus.",
+      "details": {
+        "branches": "right marginal and often posterior interventricular artery in right-dominant circulation"
+      },
+      "clinical_relevance": [
+        "RCA occlusion may affect inferior wall and AV node depending on dominance."
+      ],
+      "exam_traps": [
+        "Coronary dominance depends on origin of posterior interventricular artery."
+      ],
+      "question_templates": [
+        "Which artery runs in the right coronary sulcus?",
+        "Which coronary artery often supplies the AV node?"
+      ],
+      "tags": [
+        "heart",
+        "RCA",
+        "coronary sulcus"
+      ],
+      "course_tags": [
+        "anat1_week_09"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "right coronary sulcus",
+          "right coronary artery",
+          "artery runs in",
+          "heart",
+          "RCA",
+          "coronary sulcus"
+        ],
+        "direct_synonyms": [
+          "coronary sulcus",
+          "atrioventricular groove",
+          "sulcus coronarius",
+          "right coronary artery",
+          "RCA",
+          "arteria coronaria dextra",
+          "RCA groove",
+          "right coronary sulcus artery",
+          "AV groove right"
+        ],
+        "common_misspellings": [],
+        "abbreviations": [
+          "RCA"
+        ],
+        "relation_phrases": [],
+        "negative_traps": [
+          "Coronary dominance depends on origin of posterior interventricular artery."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_circumflex_left_coronary_sulcus",
+      "category": "topographic_vessel_relation",
+      "subject": {
+        "id": "organ_heart",
+        "name": "left coronary sulcus"
+      },
+      "relation_type": "artery_runs_in",
+      "target": {
+        "id": "artery_circumflex",
+        "name": "circumflex artery"
+      },
+      "answer": "The circumflex branch of the left coronary artery runs in the left coronary/atrioventricular sulcus.",
+      "details": {
+        "origin": "left coronary artery"
+      },
+      "clinical_relevance": [
+        "Can supply lateral wall of left ventricle and, in left dominance, posterior interventricular territory."
+      ],
+      "exam_traps": [
+        "The LAD runs anteriorly; the circumflex turns around the left AV groove."
+      ],
+      "question_templates": [
+        "Which artery runs in the left coronary sulcus?"
+      ],
+      "tags": [
+        "heart",
+        "circumflex",
+        "coronary arteries"
+      ],
+      "course_tags": [
+        "anat1_week_09"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "left coronary sulcus",
+          "circumflex artery",
+          "artery runs in",
+          "heart",
+          "circumflex",
+          "coronary arteries"
+        ],
+        "direct_synonyms": [
+          "coronary sulcus",
+          "atrioventricular groove",
+          "sulcus coronarius",
+          "circumflex artery",
+          "LCx",
+          "ramus circumflexus",
+          "left circumflex artery",
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus",
+          "posterior circumflex humeral artery",
+          "PCHA",
+          "arteria circumflexa humeri posterior",
+          "medial circumflex femoral artery",
+          "MCFA",
+          "arteria circumflexa femoris medialis",
+          "LCx groove",
+          "left AV groove",
+          "circumflex coronary sulcus"
+        ],
+        "common_misspellings": [
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus"
+        ],
+        "abbreviations": [
+          "PCHA",
+          "MCFA"
+        ],
+        "relation_phrases": [],
+        "negative_traps": [
+          "The LAD runs anteriorly; the circumflex turns around the left AV groove."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_middle_meningeal_foramen_spinosum",
+      "category": "foramen_content_relation",
+      "subject": {
+        "id": "foramen_spinosum",
+        "name": "foramen spinosum"
+      },
+      "relation_type": "transmits",
+      "target": {
+        "id": "artery_middle_meningeal",
+        "name": "middle meningeal artery"
+      },
+      "answer": "The foramen spinosum transmits the middle meningeal artery.",
+      "details": {
+        "nearby_bone": "sphenoid greater wing"
+      },
+      "clinical_relevance": [
+        "Middle meningeal artery tear classically causes epidural hematoma after temporal region trauma."
+      ],
+      "exam_traps": [
+        "Foramen ovale transmits V3; foramen rotundum transmits V2."
+      ],
+      "question_templates": [
+        "What passes through foramen spinosum?",
+        "Epidural hematoma usually involves which artery?"
+      ],
+      "tags": [
+        "foramen spinosum",
+        "middle meningeal artery",
+        "epidural hematoma"
+      ],
+      "course_tags": [
+        "anat1_week_02",
+        "anat1_week_03"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "foramen spinosum",
+          "middle meningeal artery",
+          "transmits",
+          "epidural hematoma"
+        ],
+        "direct_synonyms": [
+          "foramen spinosum",
+          "spinosum",
+          "spinosus",
+          "spinozum",
+          "middle meningeal artery",
+          "arteria meningea media",
+          "MMA",
+          "meningeal",
+          "meningealis",
+          "meningial",
+          "meningeus",
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through",
+          "foramen spinosum contents",
+          "middle meningeal through",
+          "epidural hematoma artery"
+        ],
+        "common_misspellings": [
+          "spinosum",
+          "spinosus",
+          "spinozum",
+          "meningeal",
+          "meningealis",
+          "meningial",
+          "meningeus"
+        ],
+        "abbreviations": [
+          "MMA"
+        ],
+        "relation_phrases": [
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through"
+        ],
+        "negative_traps": [
+          "Foramen ovale transmits V3; foramen rotundum transmits V2."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_cavernous_sinus_contents",
+      "category": "space_content_relation",
+      "subject": {
+        "id": "sinus_cavernous",
+        "name": "cavernous sinus"
+      },
+      "relation_type": "contains_or_related_to",
+      "target": {
+        "id": "bundle_cavernous_sinus_contents",
+        "name": "ICA and cranial nerves III, IV, V1, V2, VI"
+      },
+      "answer": "The cavernous sinus contains the internal carotid artery and abducens nerve within the sinus; oculomotor, trochlear, ophthalmic and maxillary nerves run in the lateral wall.",
+      "details": {
+        "inside_sinus": [
+          "internal carotid artery",
+          "abducens nerve (CN VI)"
+        ],
+        "lateral_wall": [
+          "oculomotor nerve (CN III)",
+          "trochlear nerve (CN IV)",
+          "ophthalmic nerve (V1)",
+          "maxillary nerve (V2)"
+        ]
+      },
+      "clinical_relevance": [
+        "Facial or nasal infections can spread to cavernous sinus and cause ocular motor deficits; CN VI is especially vulnerable."
+      ],
+      "exam_traps": [
+        "Mandibular nerve V3 is not in the cavernous sinus lateral wall."
+      ],
+      "question_templates": [
+        "What structures are related to the cavernous sinus?",
+        "Which cranial nerve is most vulnerable in cavernous sinus lesions?"
+      ],
+      "tags": [
+        "cavernous sinus",
+        "cranial nerves",
+        "ICA"
+      ],
+      "course_tags": [
+        "anat1_week_03",
+        "anat2_week_03",
+        "anat2_week_05"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "cavernous sinus",
+          "ICA and cranial nerves III, IV, V1, V2, VI",
+          "contains or related to",
+          "cranial nerves",
+          "ICA"
+        ],
+        "direct_synonyms": [
+          "cavernous sinus",
+          "sinus cavernosus",
+          "cavernous venous sinus",
+          "cavernosus",
+          "cavernous",
+          "cavernozus",
+          "internal carotid artery",
+          "ICA",
+          "arteria carotis interna",
+          "maxillary nerve",
+          "V2",
+          "maxillary division",
+          "nervus maxillaris",
+          "abducens nerve",
+          "CN VI",
+          "cranial nerve VI",
+          "sixth cranial nerve",
+          "nervus abducens",
+          "axillary nerve",
+          "nervus axillaris",
+          "oculomotorius",
+          "oculomotor",
+          "occulomotor",
+          "oculomotoric",
+          "trochlearis",
+          "trochlear",
+          "troclear",
+          "abducens",
+          "abducent",
+          "abducence",
+          "abduciens",
+          "ophthalmic",
+          "ophtalmic",
+          "opthalmic",
+          "ophthalmicus",
+          "carotid",
+          "carotis",
+          "karotid",
+          "axillary",
+          "axillaris",
+          "axilarry",
+          "axilary",
+          "surgical neck of humerus",
+          "collum chirurgicum humeri",
+          "humeral surgical neck",
+          "contents",
+          "inside",
+          "lateral wall",
+          "passes through",
+          "relation",
+          "cavernous sinus nerves",
+          "ICA CN VI inside sinus",
+          "lateral wall cavernous sinus",
+          "SOF and cavernous sinus"
+        ],
+        "common_misspellings": [
+          "cavernosus",
+          "cavernous",
+          "cavernozus"
+        ],
+        "abbreviations": [
+          "ICA",
+          "V2",
+          "CN VI"
+        ],
+        "relation_phrases": [
+          "contents",
+          "inside",
+          "lateral wall",
+          "passes through",
+          "relation"
+        ],
+        "negative_traps": [
+          "Mandibular nerve V3 is not in the cavernous sinus lateral wall."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_parotid_contents",
+      "category": "gland_content_relation",
+      "subject": {
+        "id": "salivary_parotid_gland",
+        "name": "parotid gland"
+      },
+      "relation_type": "traversed_by",
+      "target": {
+        "id": "bundle_parotid_contents",
+        "name": "facial nerve, retromandibular vein and external carotid artery"
+      },
+      "answer": "The parotid gland is traversed by the facial nerve, retromandibular vein and external carotid artery.",
+      "details": {
+        "order_superficial_to_deep": "facial nerve, retromandibular vein, external carotid artery"
+      },
+      "clinical_relevance": [
+        "Parotid surgery risks injury to the facial nerve."
+      ],
+      "exam_traps": [
+        "Facial nerve passes through the gland but does not innervate the gland secretomotorly."
+      ],
+      "question_templates": [
+        "Which nerve is endangered in parotid surgery?",
+        "What structures pass through the parotid gland?"
+      ],
+      "tags": [
+        "parotid",
+        "facial nerve",
+        "external carotid"
+      ],
+      "course_tags": [
+        "anat2_week_04",
+        "anat2_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "parotid gland",
+          "facial nerve, retromandibular vein and external carotid artery",
+          "traversed by",
+          "parotid",
+          "facial nerve",
+          "external carotid"
+        ],
+        "direct_synonyms": [
+          "parotid gland",
+          "glandula parotis",
+          "parotis",
+          "parotid",
+          "parotidea",
+          "facial nerve",
+          "CN VII",
+          "cranial nerve VII",
+          "nervus facialis",
+          "retromandibular vein",
+          "vena retromandibularis",
+          "external carotid artery",
+          "ECA",
+          "arteria carotis externa",
+          "retro mandibular",
+          "retromandibularis",
+          "retromandibular",
+          "carotid",
+          "carotis",
+          "karotid",
+          "traversed by",
+          "passes through gland",
+          "inside gland",
+          "content of gland",
+          "parotid gland contents",
+          "facial nerve in parotid",
+          "retromandibular vein parotid",
+          "external carotid parotid"
+        ],
+        "common_misspellings": [
+          "parotis",
+          "parotid",
+          "parotidea",
+          "retro mandibular",
+          "retromandibularis",
+          "retromandibular",
+          "carotid",
+          "carotis",
+          "karotid"
+        ],
+        "abbreviations": [
+          "CN VII",
+          "ECA"
+        ],
+        "relation_phrases": [
+          "traversed by",
+          "passes through gland",
+          "inside gland",
+          "content of gland"
+        ],
+        "negative_traps": [
+          "Facial nerve passes through the gland but does not innervate the gland secretomotorly."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_lingual_nerve_submandibular_duct",
+      "category": "topographic_nerve_duct_relation",
+      "subject": {
+        "id": "duct_submandibular",
+        "name": "submandibular duct"
+      },
+      "relation_type": "crossed_by",
+      "target": {
+        "id": "nerve_lingual",
+        "name": "lingual nerve"
+      },
+      "answer": "The lingual nerve loops under the submandibular duct, classically described as twice crossed by the duct in the floor of the mouth.",
+      "details": {
+        "mnemonic": "lingual nerve says double-crossed by Wharton duct"
+      },
+      "clinical_relevance": [
+        "Important in surgery of submandibular duct/gland and floor of mouth."
+      ],
+      "exam_traps": [
+        "The hypoglossal nerve is motor to tongue muscles; the lingual nerve provides general sensation to anterior tongue."
+      ],
+      "question_templates": [
+        "Which nerve loops around the submandibular duct?",
+        "What is the relation of lingual nerve to Wharton duct?"
+      ],
+      "tags": [
+        "submandibular duct",
+        "lingual nerve",
+        "floor of mouth"
+      ],
+      "course_tags": [
+        "anat1_week_12",
+        "anat2_week_03"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "submandibular duct",
+          "lingual nerve",
+          "crossed by",
+          "floor of mouth"
+        ],
+        "direct_synonyms": [
+          "submandibular duct",
+          "Wharton duct",
+          "Wharton’s duct",
+          "ductus submandibularis",
+          "sub mandibular",
+          "submandibularis",
+          "submandibular",
+          "lingual nerve",
+          "nervus lingualis",
+          "lingualis",
+          "lingual",
+          "lingval",
+          "rib",
+          "costa",
+          "rebro",
+          "rippe",
+          "crossed by",
+          "hooks around",
+          "which nerve crosses",
+          "passes under/over",
+          "lingual nerve crosses Wharton duct",
+          "submandibular duct relation",
+          "nerve hooks under duct"
+        ],
+        "common_misspellings": [
+          "sub mandibular",
+          "submandibularis",
+          "submandibular",
+          "lingualis",
+          "lingual",
+          "lingval"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "crossed by",
+          "hooks around",
+          "which nerve crosses",
+          "passes under/over"
+        ],
+        "negative_traps": [
+          "The hypoglossal nerve is motor to tongue muscles; the lingual nerve provides general sensation to anterior tongue."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_carotid_sheath_contents",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "space_carotid_sheath",
+        "name": "carotid sheath"
+      },
+      "relation_type": "contains",
+      "target": {
+        "id": "bundle_carotid_sheath_contents",
+        "name": "common/internal carotid artery, internal jugular vein and vagus nerve"
+      },
+      "answer": "The carotid sheath contains the common/internal carotid artery medially, internal jugular vein laterally and vagus nerve posteriorly between them.",
+      "details": {
+        "contents": [
+          "common/internal carotid artery",
+          "internal jugular vein",
+          "vagus nerve"
+        ],
+        "sympathetic_trunk": "posterior to sheath, not inside"
+      },
+      "clinical_relevance": [
+        "Central line placement and neck surgery require awareness of carotid sheath anatomy."
+      ],
+      "exam_traps": [
+        "The sympathetic trunk is not inside the carotid sheath."
+      ],
+      "question_templates": [
+        "What are the contents of the carotid sheath?",
+        "Where is the vagus nerve in the carotid sheath?"
+      ],
+      "tags": [
+        "carotid sheath",
+        "vagus",
+        "IJV"
+      ],
+      "course_tags": [
+        "anat2_week_04"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "carotid sheath",
+          "common/internal carotid artery, internal jugular vein and vagus nerve",
+          "contains",
+          "vagus",
+          "IJV"
+        ],
+        "direct_synonyms": [
+          "carotid sheath",
+          "vagina carotica",
+          "carotid",
+          "carotis",
+          "karotid",
+          "vagus nerve",
+          "nervus vagus",
+          "CN X",
+          "cranial nerve X",
+          "internal carotid artery",
+          "ICA",
+          "arteria carotis interna",
+          "internal jugular vein",
+          "IJV",
+          "vena jugularis interna",
+          "vagus",
+          "vagal",
+          "jugular",
+          "jugularis",
+          "juguler",
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in",
+          "carotid sheath contents",
+          "CCA ICA IJV vagus",
+          "neck neurovascular sheath"
+        ],
+        "common_misspellings": [
+          "carotid",
+          "carotis",
+          "karotid",
+          "vagus",
+          "vagal",
+          "vagus nerve",
+          "nervus vagus",
+          "jugular",
+          "jugularis",
+          "juguler"
+        ],
+        "abbreviations": [
+          "CN X",
+          "ICA",
+          "IJV"
+        ],
+        "relation_phrases": [
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in"
+        ],
+        "negative_traps": [
+          "The sympathetic trunk is not inside the carotid sheath."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_optic_canal_contents",
+      "category": "foramen_content_relation",
+      "subject": {
+        "id": "canal_optic",
+        "name": "optic canal"
+      },
+      "relation_type": "transmits",
+      "target": {
+        "id": "bundle_optic_canal_contents",
+        "name": "optic nerve and ophthalmic artery"
+      },
+      "answer": "The optic canal transmits the optic nerve and ophthalmic artery.",
+      "details": {
+        "bone": "sphenoid lesser wing"
+      },
+      "clinical_relevance": [
+        "Orbital apex injuries may affect vision and ocular blood supply."
+      ],
+      "exam_traps": [
+        "Superior orbital fissure transmits CN III, IV, V1 and VI; optic canal transmits CN II."
+      ],
+      "question_templates": [
+        "What passes through the optic canal?"
+      ],
+      "tags": [
+        "optic canal",
+        "CN II",
+        "ophthalmic artery"
+      ],
+      "course_tags": [
+        "anat1_week_02",
+        "anat2_week_12"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "optic canal",
+          "optic nerve and ophthalmic artery",
+          "transmits",
+          "CN II",
+          "ophthalmic artery"
+        ],
+        "direct_synonyms": [
+          "optic canal",
+          "canalis opticus",
+          "optic nerve",
+          "CN II",
+          "cranial nerve II",
+          "nervus opticus",
+          "ophthalmic artery",
+          "arteria ophthalmica",
+          "ophthalmic",
+          "ophtalmic",
+          "opthalmic",
+          "ophthalmicus",
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through",
+          "optic canal contents",
+          "optic nerve ophthalmic artery"
+        ],
+        "common_misspellings": [
+          "ophthalmic",
+          "ophtalmic",
+          "opthalmic",
+          "ophthalmicus"
+        ],
+        "abbreviations": [
+          "CN II"
+        ],
+        "relation_phrases": [
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through"
+        ],
+        "negative_traps": [
+          "Superior orbital fissure transmits CN III, IV, V1 and VI; optic canal transmits CN II."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_superior_orbital_fissure_contents",
+      "category": "foramen_content_relation",
+      "subject": {
+        "id": "fissure_superior_orbital",
+        "name": "superior orbital fissure"
+      },
+      "relation_type": "transmits",
+      "target": {
+        "id": "bundle_sof_contents",
+        "name": "CN III, IV, V1, VI and superior ophthalmic vein"
+      },
+      "answer": "The superior orbital fissure transmits oculomotor nerve, trochlear nerve, ophthalmic division of trigeminal nerve, abducens nerve and superior ophthalmic vein.",
+      "details": {
+        "contents": [
+          "CN III",
+          "CN IV",
+          "V1",
+          "CN VI",
+          "superior ophthalmic vein"
+        ]
+      },
+      "clinical_relevance": [
+        "Superior orbital fissure syndrome causes multiple ocular motor and sensory deficits."
+      ],
+      "exam_traps": [
+        "Optic nerve passes through optic canal, not superior orbital fissure."
+      ],
+      "question_templates": [
+        "What passes through the superior orbital fissure?"
+      ],
+      "tags": [
+        "superior orbital fissure",
+        "orbit",
+        "cranial nerves"
+      ],
+      "course_tags": [
+        "anat1_week_02",
+        "anat2_week_03"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "superior orbital fissure",
+          "CN III, IV, V1, VI and superior ophthalmic vein",
+          "transmits",
+          "orbit",
+          "cranial nerves"
+        ],
+        "direct_synonyms": [
+          "superior orbital fissure",
+          "SOF",
+          "fissura orbitalis superior",
+          "superior ophthalmic vein",
+          "vena ophthalmica superior",
+          "ophthalmic",
+          "ophtalmic",
+          "opthalmic",
+          "ophthalmicus",
+          "oculomotor nerve",
+          "CN III",
+          "cranial nerve III",
+          "third cranial nerve",
+          "nervus oculomotorius",
+          "trochlear nerve",
+          "CN IV",
+          "cranial nerve IV",
+          "fourth cranial nerve",
+          "nervus trochlearis",
+          "abducens nerve",
+          "CN VI",
+          "cranial nerve VI",
+          "sixth cranial nerve",
+          "nervus abducens",
+          "oculomotorius",
+          "oculomotor",
+          "occulomotor",
+          "oculomotoric",
+          "trochlearis",
+          "trochlear",
+          "troclear",
+          "abducens",
+          "abducent",
+          "abducence",
+          "abduciens",
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through",
+          "SOF contents",
+          "superior orbital fissure nerves",
+          "3 4 V1 6"
+        ],
+        "common_misspellings": [
+          "ophthalmic",
+          "ophtalmic",
+          "opthalmic",
+          "ophthalmicus"
+        ],
+        "abbreviations": [
+          "SOF",
+          "CN III",
+          "CN IV",
+          "CN VI",
+          "3 4 V1 6"
+        ],
+        "relation_phrases": [
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through"
+        ],
+        "negative_traps": [
+          "Optic nerve passes through optic canal, not superior orbital fissure."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_surgical_neck_axillary_pcha",
+      "category": "fracture_neurovascular_relation",
+      "subject": {
+        "id": "bone_humerus",
+        "name": "surgical neck of humerus"
+      },
+      "relation_type": "vulnerable_structure_nearby",
+      "target": {
+        "id": "bundle_axillary_posterior_circumflex",
+        "name": "axillary nerve and posterior circumflex humeral artery"
+      },
+      "answer": "The axillary nerve and posterior circumflex humeral artery pass near the surgical neck of the humerus.",
+      "details": {
+        "space": "quadrangular space"
+      },
+      "clinical_relevance": [
+        "Surgical neck fracture or anterior shoulder dislocation can injure axillary nerve, causing deltoid weakness and sensory loss over the regimental badge area."
+      ],
+      "exam_traps": [
+        "Radial nerve is classically related to the radial groove/shaft, not surgical neck."
+      ],
+      "question_templates": [
+        "Surgical neck fracture injures which nerve?",
+        "Which artery accompanies the axillary nerve near surgical neck?"
+      ],
+      "tags": [
+        "humerus",
+        "axillary nerve",
+        "posterior circumflex humeral artery"
+      ],
+      "course_tags": [
+        "anat1_week_04",
+        "anat1_week_06",
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "surgical neck of humerus",
+          "axillary nerve and posterior circumflex humeral artery",
+          "vulnerable structure nearby",
+          "humerus",
+          "axillary nerve",
+          "posterior circumflex humeral artery"
+        ],
+        "direct_synonyms": [
+          "surgical neck of humerus",
+          "collum chirurgicum humeri",
+          "humeral surgical neck",
+          "humerus",
+          "humeri",
+          "humeral",
+          "humerous",
+          "axillary nerve",
+          "nervus axillaris",
+          "posterior circumflex humeral artery",
+          "PCHA",
+          "arteria circumflexa humeri posterior",
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus",
+          "axillary",
+          "axillaris",
+          "axilarry",
+          "axilary",
+          "maxillary nerve",
+          "V2",
+          "maxillary division",
+          "nervus maxillaris",
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured",
+          "surgical neck fracture nerve",
+          "axillary nerve humerus",
+          "PCHA surgical neck"
+        ],
+        "common_misspellings": [
+          "humerus",
+          "humeri",
+          "humeral",
+          "humerous",
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus",
+          "axillary",
+          "axillaris",
+          "axilarry",
+          "axilary"
+        ],
+        "abbreviations": [
+          "PCHA",
+          "V2"
+        ],
+        "relation_phrases": [
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured"
+        ],
+        "negative_traps": [
+          "Radial nerve is classically related to the radial groove/shaft, not surgical neck."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_radial_groove_radial_profunda",
+      "category": "fracture_neurovascular_relation",
+      "subject": {
+        "id": "bone_humerus",
+        "name": "radial groove / humeral shaft"
+      },
+      "relation_type": "vulnerable_structure_nearby",
+      "target": {
+        "id": "bundle_radial_profunda_brachii",
+        "name": "radial nerve and profunda brachii artery"
+      },
+      "answer": "The radial nerve and profunda brachii artery run in the radial groove of the humerus.",
+      "details": {
+        "clinical_motor": "wrist and finger extension weakness"
+      },
+      "clinical_relevance": [
+        "Humeral shaft fracture can injure radial nerve and cause wrist drop."
+      ],
+      "exam_traps": [
+        "Do not confuse with axillary nerve at surgical neck."
+      ],
+      "question_templates": [
+        "Midshaft humeral fracture injures which nerve?",
+        "Which artery accompanies radial nerve in radial groove?"
+      ],
+      "tags": [
+        "humerus",
+        "radial nerve",
+        "profunda brachii",
+        "wrist drop"
+      ],
+      "course_tags": [
+        "anat1_week_04",
+        "anat1_week_06"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "radial groove / humeral shaft",
+          "radial nerve and profunda brachii artery",
+          "vulnerable structure nearby",
+          "humerus",
+          "radial nerve",
+          "profunda brachii",
+          "wrist drop"
+        ],
+        "direct_synonyms": [
+          "radial groove",
+          "spiral groove",
+          "sulcus nervi radialis",
+          "radial nerve groove",
+          "humeral shaft",
+          "shaft of humerus",
+          "corpus humeri",
+          "radial",
+          "radialis",
+          "radiallis",
+          "radial nerve",
+          "nervus radialis",
+          "profunda brachii artery",
+          "deep brachial artery",
+          "arteria profunda brachii",
+          "humerus",
+          "humeri",
+          "humeral",
+          "humerous",
+          "surgical neck of humerus",
+          "collum chirurgicum humeri",
+          "humeral surgical neck",
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured",
+          "humeral shaft fracture wrist drop",
+          "radial groove contents",
+          "radial nerve profunda brachii"
+        ],
+        "common_misspellings": [
+          "radial",
+          "radialis",
+          "radiallis",
+          "humerus",
+          "humeri",
+          "humeral",
+          "humerous"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured"
+        ],
+        "negative_traps": [
+          "Do not confuse with axillary nerve at surgical neck."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_medial_epicondyle_ulnar",
+      "category": "surface_nerve_relation",
+      "subject": {
+        "id": "bone_humerus",
+        "name": "medial epicondyle"
+      },
+      "relation_type": "nerve_passes_behind",
+      "target": {
+        "id": "nerve_ulnar",
+        "name": "ulnar nerve"
+      },
+      "answer": "The ulnar nerve passes posterior to the medial epicondyle of the humerus.",
+      "details": {
+        "surface_landmark": "funny bone"
+      },
+      "clinical_relevance": [
+        "Injury may cause sensory loss in medial hand and weakness of intrinsic hand muscles."
+      ],
+      "exam_traps": [
+        "Median nerve is in cubital fossa anteriorly; ulnar nerve passes behind medial epicondyle."
+      ],
+      "question_templates": [
+        "Which nerve passes behind the medial epicondyle?",
+        "Funny bone sensation involves which nerve?"
+      ],
+      "tags": [
+        "ulnar nerve",
+        "medial epicondyle"
+      ],
+      "course_tags": [
+        "anat1_week_06"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "medial epicondyle",
+          "ulnar nerve",
+          "nerve passes behind"
+        ],
+        "direct_synonyms": [
+          "medial epicondyle",
+          "medial epicondyle of humerus",
+          "epicondylus medialis humeri",
+          "funny bone region",
+          "ulnar nerve",
+          "nervus ulnaris",
+          "ulnar",
+          "ulnaris",
+          "ulner",
+          "humerus",
+          "humeri",
+          "humeral",
+          "humerous",
+          "passes behind",
+          "funny bone",
+          "behind epicondyle",
+          "funny bone nerve",
+          "ulnar nerve medial epicondyle",
+          "cubital tunnel nerve"
+        ],
+        "common_misspellings": [
+          "ulnar",
+          "ulnaris",
+          "ulner"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "passes behind",
+          "funny bone",
+          "behind epicondyle"
+        ],
+        "negative_traps": [
+          "Median nerve is in cubital fossa anteriorly; ulnar nerve passes behind medial epicondyle."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_carpal_tunnel_contents",
+      "category": "canal_content_relation",
+      "subject": {
+        "id": "space_carpal_tunnel",
+        "name": "carpal tunnel"
+      },
+      "relation_type": "contains",
+      "target": {
+        "id": "bundle_carpal_tunnel_contents",
+        "name": "median nerve and flexor tendons"
+      },
+      "answer": "The carpal tunnel contains the median nerve and tendons of flexor digitorum superficialis, flexor digitorum profundus and flexor pollicis longus.",
+      "details": {
+        "contents": [
+          "median nerve",
+          "FDS tendons",
+          "FDP tendons",
+          "FPL tendon"
+        ],
+        "not_contents": [
+          "ulnar nerve",
+          "ulnar artery"
+        ]
+      },
+      "clinical_relevance": [
+        "Median nerve compression in the carpal tunnel causes carpal tunnel syndrome."
+      ],
+      "exam_traps": [
+        "Ulnar nerve and artery pass superficial/medial through Guyon canal region, not inside the carpal tunnel."
+      ],
+      "question_templates": [
+        "What passes through the carpal tunnel?",
+        "Carpal tunnel syndrome affects which nerve?"
+      ],
+      "tags": [
+        "carpal tunnel",
+        "median nerve",
+        "flexor tendons"
+      ],
+      "course_tags": [
+        "anat1_week_06",
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "carpal tunnel",
+          "median nerve and flexor tendons",
+          "contains",
+          "median nerve",
+          "flexor tendons"
+        ],
+        "direct_synonyms": [
+          "carpal tunnel",
+          "canalis carpi",
+          "carpal canal",
+          "carpal",
+          "carpalis",
+          "karpal",
+          "median nerve",
+          "nervus medianus",
+          "flexor tendons",
+          "flexor muscle tendons",
+          "FDS FDP FPL tendons",
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in",
+          "carpal tunnel contents",
+          "median nerve tunnel",
+          "flexor tendons median"
+        ],
+        "common_misspellings": [
+          "carpal",
+          "carpalis",
+          "karpal"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in"
+        ],
+        "negative_traps": [
+          "Ulnar nerve and artery pass superficial/medial through Guyon canal region, not inside the carpal tunnel."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_cubital_fossa_tan",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "space_cubital_fossa",
+        "name": "cubital fossa"
+      },
+      "relation_type": "contains_ordered",
+      "target": {
+        "id": "bundle_cubital_fossa_tan",
+        "name": "biceps tendon, brachial artery and median nerve"
+      },
+      "answer": "From lateral to medial in the cubital fossa, the key contents are biceps tendon, brachial artery and median nerve.",
+      "details": {
+        "mnemonic": "TAN lateral to medial: Tendon, Artery, Nerve",
+        "additional": "radial nerve lies more laterally/deep before dividing"
+      },
+      "clinical_relevance": [
+        "Venipuncture and arterial blood pressure measurement occur near this region."
+      ],
+      "exam_traps": [
+        "Ulnar nerve is not a main anterior cubital fossa content; it passes posterior to medial epicondyle."
+      ],
+      "question_templates": [
+        "What are the contents of cubital fossa from lateral to medial?",
+        "Where is the median nerve relative to brachial artery in cubital fossa?"
+      ],
+      "tags": [
+        "cubital fossa",
+        "brachial artery",
+        "median nerve"
+      ],
+      "course_tags": [
+        "anat1_week_06",
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "cubital fossa",
+          "biceps tendon, brachial artery and median nerve",
+          "contains ordered",
+          "brachial artery",
+          "median nerve"
+        ],
+        "direct_synonyms": [
+          "cubital fossa",
+          "fossa cubitalis",
+          "elbow fossa",
+          "cubital",
+          "cubitalis",
+          "kubital",
+          "median nerve",
+          "nervus medianus",
+          "biceps tendon",
+          "tendon of biceps brachii",
+          "brachial artery",
+          "arteria brachialis",
+          "brachial",
+          "brachialis",
+          "bracial",
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic",
+          "TAN cubital fossa",
+          "cubital fossa order",
+          "tendon artery nerve"
+        ],
+        "common_misspellings": [
+          "cubital",
+          "cubitalis",
+          "kubital",
+          "brachial",
+          "brachialis",
+          "bracial"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic"
+        ],
+        "negative_traps": [
+          "Ulnar nerve is not a main anterior cubital fossa content; it passes posterior to medial epicondyle."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_femoral_triangle_navl",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "space_femoral_triangle",
+        "name": "femoral triangle"
+      },
+      "relation_type": "contains_ordered",
+      "target": {
+        "id": "bundle_femoral_triangle_navl",
+        "name": "femoral nerve, artery, vein and lymphatics"
+      },
+      "answer": "From lateral to medial in the femoral triangle: femoral nerve, femoral artery, femoral vein and lymphatics.",
+      "details": {
+        "mnemonic": "NAVL lateral to medial"
+      },
+      "clinical_relevance": [
+        "Important for femoral pulse, arterial access and femoral hernia anatomy."
+      ],
+      "exam_traps": [
+        "Femoral nerve is outside the femoral sheath; artery, vein and canal are within the sheath."
+      ],
+      "question_templates": [
+        "What is the order of structures in the femoral triangle?",
+        "What lies medial to femoral artery?"
+      ],
+      "tags": [
+        "femoral triangle",
+        "NAVL",
+        "femoral sheath"
+      ],
+      "course_tags": [
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "femoral triangle",
+          "femoral nerve, artery, vein and lymphatics",
+          "contains ordered",
+          "NAVL",
+          "femoral sheath"
+        ],
+        "direct_synonyms": [
+          "femoral triangle",
+          "trigonum femorale",
+          "Scarpa triangle",
+          "Scarpa’s triangle",
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve",
+          "femoral nerve",
+          "nervus femoralis",
+          "lymphatics",
+          "lymph nodes",
+          "lymphatic vessels",
+          "femoral artery",
+          "arteria femoralis",
+          "femoral vein",
+          "vena femoralis",
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic",
+          "NAVL femoral triangle",
+          "femoral triangle order",
+          "nerve artery vein lymph"
+        ],
+        "common_misspellings": [
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic"
+        ],
+        "negative_traps": [
+          "Femoral nerve is outside the femoral sheath; artery, vein and canal are within the sheath."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_adductor_canal_contents",
+      "category": "canal_content_relation",
+      "subject": {
+        "id": "space_adductor_canal",
+        "name": "adductor canal"
+      },
+      "relation_type": "contains",
+      "target": {
+        "id": "bundle_adductor_canal_contents",
+        "name": "femoral artery, femoral vein, saphenous nerve and nerve to vastus medialis"
+      },
+      "answer": "The adductor canal contains the femoral artery and vein, saphenous nerve and nerve to vastus medialis; the femoral nerve itself is not inside the canal.",
+      "details": {
+        "boundaries": "sartorius roof; vastus medialis anterolateral; adductor longus/magnus posterior"
+      },
+      "clinical_relevance": [
+        "Adductor canal block can target saphenous nerve while sparing much quadriceps motor function."
+      ],
+      "exam_traps": [
+        "Femoral nerve is not an adductor canal content."
+      ],
+      "question_templates": [
+        "What passes through the adductor canal?",
+        "Is femoral nerve inside the adductor canal?"
+      ],
+      "tags": [
+        "adductor canal",
+        "saphenous nerve",
+        "femoral artery"
+      ],
+      "course_tags": [
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "adductor canal",
+          "femoral artery, femoral vein, saphenous nerve and nerve to vastus medialis",
+          "contains",
+          "saphenous nerve",
+          "femoral artery"
+        ],
+        "direct_synonyms": [
+          "adductor canal",
+          "Hunter canal",
+          "subsartorial canal",
+          "canalis adductorius",
+          "femoral artery",
+          "arteria femoralis",
+          "femoral vein",
+          "vena femoralis",
+          "saphenous nerve",
+          "nervus saphenus",
+          "nerve to vastus medialis",
+          "nervus vasti medialis",
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve",
+          "saphenous",
+          "saphenus",
+          "safenous",
+          "femoral nerve",
+          "nervus femoralis",
+          "medial circumflex femoral artery",
+          "MCFA",
+          "arteria circumflexa femoris medialis",
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in",
+          "Hunter canal contents",
+          "adductor canal contents",
+          "saphenous nerve canal"
+        ],
+        "common_misspellings": [
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve",
+          "saphenous",
+          "saphenus",
+          "safenous"
+        ],
+        "abbreviations": [
+          "MCFA"
+        ],
+        "relation_phrases": [
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in"
+        ],
+        "negative_traps": [
+          "Femoral nerve is not an adductor canal content."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_fibular_neck_common_fibular",
+      "category": "fracture_neurovascular_relation",
+      "subject": {
+        "id": "bone_fibula",
+        "name": "neck of fibula"
+      },
+      "relation_type": "vulnerable_structure_nearby",
+      "target": {
+        "id": "nerve_common_fibular",
+        "name": "common fibular nerve"
+      },
+      "answer": "The common fibular nerve winds around the neck of the fibula and is vulnerable to injury there.",
+      "details": {
+        "branches": [
+          "deep fibular nerve",
+          "superficial fibular nerve"
+        ]
+      },
+      "clinical_relevance": [
+        "Injury can cause foot drop and sensory loss over dorsum of foot/lateral leg depending on lesion."
+      ],
+      "exam_traps": [
+        "Tibial nerve runs in posterior compartment/popliteal fossa, not around fibular neck."
+      ],
+      "question_templates": [
+        "Fibular neck fracture injures which nerve?",
+        "Which nerve lesion causes foot drop at fibular neck?"
+      ],
+      "tags": [
+        "fibular neck",
+        "common fibular nerve",
+        "foot drop"
+      ],
+      "course_tags": [
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "neck of fibula",
+          "common fibular nerve",
+          "vulnerable structure nearby",
+          "fibular neck",
+          "foot drop"
+        ],
+        "direct_synonyms": [
+          "neck of fibula",
+          "fibular neck",
+          "collum fibulae",
+          "neck of the fibula",
+          "common fibular nerve",
+          "common peroneal nerve",
+          "nervus fibularis communis",
+          "nervus peroneus communis",
+          "fibular",
+          "fibularis",
+          "peroneal",
+          "fibuler",
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured",
+          "fibular neck nerve injury",
+          "common peroneal nerve foot drop",
+          "neck of fibula foot drop"
+        ],
+        "common_misspellings": [
+          "fibular",
+          "fibularis",
+          "peroneal",
+          "fibuler"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "injured in fracture",
+          "vulnerable near",
+          "damage causes",
+          "what nerve is injured"
+        ],
+        "negative_traps": [
+          "Tibial nerve runs in posterior compartment/popliteal fossa, not around fibular neck."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_popliteal_fossa_nva",
+      "category": "topographic_bundle_relation",
+      "subject": {
+        "id": "space_popliteal_fossa",
+        "name": "popliteal fossa"
+      },
+      "relation_type": "contains_ordered",
+      "target": {
+        "id": "bundle_popliteal_fossa_nva",
+        "name": "tibial nerve, popliteal vein and popliteal artery"
+      },
+      "answer": "In the popliteal fossa, from superficial to deep, the main midline structures are tibial nerve, popliteal vein and popliteal artery.",
+      "details": {
+        "order": "nerve superficial, vein intermediate, artery deepest"
+      },
+      "clinical_relevance": [
+        "Popliteal aneurysm can compress nearby tibial nerve or affect distal blood flow."
+      ],
+      "exam_traps": [
+        "The artery is deepest, directly related to the femur/knee capsule."
+      ],
+      "question_templates": [
+        "What is the order of popliteal fossa contents from superficial to deep?"
+      ],
+      "tags": [
+        "popliteal fossa",
+        "tibial nerve",
+        "popliteal artery"
+      ],
+      "course_tags": [
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "popliteal fossa",
+          "tibial nerve, popliteal vein and popliteal artery",
+          "contains ordered",
+          "tibial nerve",
+          "popliteal artery"
+        ],
+        "direct_synonyms": [
+          "popliteal fossa",
+          "fossa poplitea",
+          "popliteal",
+          "popliteus",
+          "poplitea",
+          "poplitealis",
+          "tibial nerve",
+          "nervus tibialis",
+          "popliteal vein",
+          "vena poplitea",
+          "popliteal artery",
+          "arteria poplitea",
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic",
+          "popliteal fossa order",
+          "NVA popliteal",
+          "tibial nerve popliteal vein artery"
+        ],
+        "common_misspellings": [
+          "popliteal",
+          "popliteus",
+          "poplitea",
+          "poplitealis"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic"
+        ],
+        "negative_traps": [
+          "The artery is deepest, directly related to the femur/knee capsule."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_tarsal_tunnel_contents",
+      "category": "canal_content_relation",
+      "subject": {
+        "id": "space_tarsal_tunnel",
+        "name": "tarsal tunnel"
+      },
+      "relation_type": "contains_ordered",
+      "target": {
+        "id": "bundle_tarsal_tunnel_contents",
+        "name": "tibialis posterior, flexor digitorum longus, posterior tibial vessels, tibial nerve and flexor hallucis longus"
+      },
+      "answer": "Behind the medial malleolus in the tarsal tunnel, the order is tibialis posterior, flexor digitorum longus, posterior tibial artery/veins, tibial nerve and flexor hallucis longus.",
+      "details": {
+        "mnemonic": "Tom, Dick And Very Nervous Harry"
+      },
+      "clinical_relevance": [
+        "Tarsal tunnel syndrome compresses the tibial nerve."
+      ],
+      "exam_traps": [
+        "Anterior tibial artery is on the anterior leg/dorsum as dorsalis pedis, not in tarsal tunnel."
+      ],
+      "question_templates": [
+        "What passes through the tarsal tunnel?",
+        "Which nerve is compressed in tarsal tunnel syndrome?"
+      ],
+      "tags": [
+        "tarsal tunnel",
+        "tibial nerve",
+        "posterior tibial artery"
+      ],
+      "course_tags": [
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "tarsal tunnel",
+          "tibialis posterior, flexor digitorum longus, posterior tibial vessels, tibial nerve and flexor hallucis longus",
+          "contains ordered",
+          "tibial nerve",
+          "posterior tibial artery"
+        ],
+        "direct_synonyms": [
+          "tarsal tunnel",
+          "canalis malleolaris",
+          "behind medial malleolus",
+          "tarsal",
+          "tarsalis",
+          "tarzal",
+          "tibial nerve",
+          "nervus tibialis",
+          "tibialis posterior",
+          "tendon of tibialis posterior",
+          "flexor digitorum longus",
+          "FDL",
+          "posterior tibial vessels",
+          "posterior tibial artery and veins",
+          "arteria tibialis posterior",
+          "flexor hallucis longus",
+          "FHL",
+          "hallucis",
+          "halucis",
+          "hallicis",
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic",
+          "Tom Dick And Very Nervous Harry",
+          "tarsal tunnel order",
+          "posterior tibial nerve vessels tendons"
+        ],
+        "common_misspellings": [
+          "tarsal",
+          "tarsalis",
+          "tarzal",
+          "hallucis",
+          "halucis",
+          "hallicis"
+        ],
+        "abbreviations": [
+          "FDL",
+          "FHL"
+        ],
+        "relation_phrases": [
+          "order",
+          "from lateral to medial",
+          "from superficial to deep",
+          "contents order",
+          "mnemonic"
+        ],
+        "negative_traps": [
+          "Anterior tibial artery is on the anterior leg/dorsum as dorsalis pedis, not in tarsal tunnel."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_femoral_neck_medial_circumflex",
+      "category": "fracture_vascular_relation",
+      "subject": {
+        "id": "bone_femur",
+        "name": "femoral neck"
+      },
+      "relation_type": "blood_supply_vulnerable",
+      "target": {
+        "id": "artery_medial_circumflex_femoral",
+        "name": "medial circumflex femoral artery / retinacular arteries"
+      },
+      "answer": "The femoral head is supplied mainly by retinacular branches from the medial circumflex femoral artery; femoral neck fracture can disrupt this supply.",
+      "details": {
+        "risk": "avascular necrosis of femoral head"
+      },
+      "clinical_relevance": [
+        "Displaced femoral neck fractures risk avascular necrosis of the femoral head."
+      ],
+      "exam_traps": [
+        "The artery to the head of femur is important in children but usually not the main adult supply."
+      ],
+      "question_templates": [
+        "Which artery supplies most of the femoral head?",
+        "Why can femoral neck fracture cause avascular necrosis?"
+      ],
+      "tags": [
+        "femoral neck",
+        "medial circumflex femoral artery",
+        "AVN"
+      ],
+      "course_tags": [
+        "anat1_week_05",
+        "anat1_week_07"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "femoral neck",
+          "medial circumflex femoral artery / retinacular arteries",
+          "blood supply vulnerable",
+          "medial circumflex femoral artery",
+          "AVN"
+        ],
+        "direct_synonyms": [
+          "femoral neck",
+          "collum femoris",
+          "neck of femur",
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve",
+          "femoral artery",
+          "arteria femoralis",
+          "medial circumflex femoral artery",
+          "MCFA",
+          "arteria circumflexa femoris medialis",
+          "retinacular arteries",
+          "retinacular vessels",
+          "ascending cervical branches",
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus",
+          "blood supply vulnerable",
+          "avascular necrosis",
+          "fracture endangers artery",
+          "femoral neck avascular necrosis",
+          "retinacular arteries femoral head",
+          "medial circumflex femoral fracture"
+        ],
+        "common_misspellings": [
+          "femoral",
+          "femoralis",
+          "femur artery",
+          "femur nerve",
+          "circumflex",
+          "circumfleks",
+          "cirumflex",
+          "circumflexus"
+        ],
+        "abbreviations": [
+          "MCFA"
+        ],
+        "relation_phrases": [
+          "blood supply vulnerable",
+          "avascular necrosis",
+          "fracture endangers artery"
+        ],
+        "negative_traps": [
+          "The artery to the head of femur is important in children but usually not the main adult supply."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_ureter_under_uterine_artery",
+      "category": "surgical_danger_relation",
+      "subject": {
+        "id": "structure_ureter",
+        "name": "ureter in female pelvis"
+      },
+      "relation_type": "passes_under",
+      "target": {
+        "id": "artery_uterine",
+        "name": "uterine artery"
+      },
+      "answer": "The ureter passes inferior to the uterine artery near the cervix: water under the bridge.",
+      "details": {
+        "mnemonic": "water under the bridge"
+      },
+      "clinical_relevance": [
+        "The ureter can be injured during hysterectomy or uterine artery ligation."
+      ],
+      "exam_traps": [
+        "The uterine artery crosses over the ureter, not under it."
+      ],
+      "question_templates": [
+        "What passes under the uterine artery?",
+        "Water under the bridge refers to which structures?"
+      ],
+      "tags": [
+        "ureter",
+        "uterine artery",
+        "pelvis",
+        "hysterectomy"
+      ],
+      "course_tags": [
+        "anat2_week_01",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "ureter in female pelvis",
+          "uterine artery",
+          "passes under",
+          "ureter",
+          "pelvis",
+          "hysterectomy"
+        ],
+        "direct_synonyms": [
+          "ureter",
+          "močovod",
+          "urether",
+          "uterine artery",
+          "arteria uterina",
+          "uterine",
+          "uterina",
+          "uterinne",
+          "passes under",
+          "water under bridge",
+          "surgical danger",
+          "uterine artery relation",
+          "water under the bridge",
+          "ureter under uterine artery",
+          "hysterectomy ureter injury"
+        ],
+        "common_misspellings": [
+          "ureter",
+          "urether",
+          "močovod",
+          "uterine",
+          "uterina",
+          "uterinne"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "passes under",
+          "water under bridge",
+          "surgical danger",
+          "uterine artery relation"
+        ],
+        "negative_traps": [
+          "The uterine artery crosses over the ureter, not under it."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_obturator_canal_contents",
+      "category": "canal_content_relation",
+      "subject": {
+        "id": "space_obturator_canal",
+        "name": "obturator canal"
+      },
+      "relation_type": "contains",
+      "target": {
+        "id": "bundle_obturator_canal_contents",
+        "name": "obturator nerve, artery and vein"
+      },
+      "answer": "The obturator canal transmits the obturator nerve, artery and vein from pelvis to medial thigh.",
+      "details": {
+        "target_region": "medial thigh"
+      },
+      "clinical_relevance": [
+        "Obturator nerve lesion weakens thigh adduction."
+      ],
+      "exam_traps": [
+        "Femoral nerve passes under the inguinal ligament, not through obturator canal."
+      ],
+      "question_templates": [
+        "What passes through the obturator canal?"
+      ],
+      "tags": [
+        "obturator canal",
+        "obturator nerve",
+        "medial thigh"
+      ],
+      "course_tags": [
+        "anat1_week_07",
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "obturator canal",
+          "obturator nerve, artery and vein",
+          "contains",
+          "obturator nerve",
+          "medial thigh"
+        ],
+        "direct_synonyms": [
+          "obturator canal",
+          "canalis obturatorius",
+          "obturator",
+          "obturatorius",
+          "obturater",
+          "obturator nerve",
+          "nervus obturatorius",
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in",
+          "obturator canal contents",
+          "obturator nerve artery vein"
+        ],
+        "common_misspellings": [
+          "obturator",
+          "obturatorius",
+          "obturater"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "contains",
+          "what is inside",
+          "contents",
+          "what passes in"
+        ],
+        "negative_traps": [
+          "Femoral nerve passes under the inguinal ligament, not through obturator canal."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_pudendal_lesser_sciatic",
+      "category": "foramen_content_relation",
+      "subject": {
+        "id": "space_lesser_sciatic_foramen",
+        "name": "lesser sciatic foramen"
+      },
+      "relation_type": "transmits",
+      "target": {
+        "id": "bundle_pudendal_internal_pudendal",
+        "name": "pudendal nerve and internal pudendal vessels"
+      },
+      "answer": "The pudendal nerve and internal pudendal vessels leave the pelvis through the greater sciatic foramen, hook around the sacrospinous ligament, and enter the perineum through the lesser sciatic foramen.",
+      "details": {
+        "ligament_relation": "around ischial spine/sacrospinous ligament"
+      },
+      "clinical_relevance": [
+        "Pudendal nerve block targets the nerve near the ischial spine."
+      ],
+      "exam_traps": [
+        "They do not stay in the gluteal region; they re-enter through the lesser sciatic foramen to reach the perineum."
+      ],
+      "question_templates": [
+        "Which nerve enters the perineum through the lesser sciatic foramen?",
+        "Where is pudendal nerve block performed?"
+      ],
+      "tags": [
+        "pudendal nerve",
+        "lesser sciatic foramen",
+        "perineum"
+      ],
+      "course_tags": [
+        "anat2_week_02"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "lesser sciatic foramen",
+          "pudendal nerve and internal pudendal vessels",
+          "transmits",
+          "pudendal nerve",
+          "perineum"
+        ],
+        "direct_synonyms": [
+          "lesser sciatic foramen",
+          "foramen ischiadicum minus",
+          "pudendal nerve",
+          "nervus pudendus",
+          "internal pudendal vessels",
+          "internal pudendal artery and vein",
+          "arteria pudenda interna",
+          "vena pudenda interna",
+          "pudendal",
+          "pudendus",
+          "pudenthal",
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through",
+          "pudendal nerve lesser sciatic foramen",
+          "internal pudendal vessels lesser sciatic"
+        ],
+        "common_misspellings": [
+          "pudendal",
+          "pudendus",
+          "pudenthal"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "transmits",
+          "passes through",
+          "contents of foramen",
+          "what goes through"
+        ],
+        "negative_traps": [
+          "They do not stay in the gluteal region; they re-enter through the lesser sciatic foramen to reach the perineum."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_cranial_nerve_iii_pupil_ptosis",
+      "category": "lesion_correlation",
+      "subject": {
+        "id": "nerve_cn_iii",
+        "name": "oculomotor nerve"
+      },
+      "relation_type": "lesion_causes",
+      "target": {
+        "id": "sign_cn3_palsy",
+        "name": "ptosis, diplopia and possible dilated pupil"
+      },
+      "answer": "Oculomotor nerve lesion may cause ptosis, impaired eye movements and, if parasympathetic fibers are affected, a dilated pupil.",
+      "details": {
+        "motor": "levator palpebrae superioris and most extraocular muscles",
+        "parasympathetic": "pupillary constriction"
+      },
+      "clinical_relevance": [
+        "A painful third-nerve palsy with pupil involvement can suggest compressive pathology."
+      ],
+      "exam_traps": [
+        "CN VI lesion mainly prevents abduction; CN III is broader and may involve pupil."
+      ],
+      "question_templates": [
+        "CN III palsy causes which signs?",
+        "Which cranial nerve lesion causes ptosis and dilated pupil?"
+      ],
+      "tags": [
+        "CN III",
+        "oculomotor",
+        "pupil",
+        "ptosis"
+      ],
+      "course_tags": [
+        "anat2_week_03",
+        "anat2_week_12"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "oculomotor nerve",
+          "ptosis, diplopia and possible dilated pupil",
+          "lesion causes",
+          "CN III",
+          "oculomotor",
+          "pupil",
+          "ptosis"
+        ],
+        "direct_synonyms": [
+          "oculomotor nerve",
+          "CN III",
+          "cranial nerve III",
+          "third cranial nerve",
+          "nervus oculomotorius",
+          "oculomotorius",
+          "oculomotor",
+          "occulomotor",
+          "oculomotoric",
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign",
+          "CN III palsy",
+          "oculomotor palsy ptosis mydriasis",
+          "down and out eye"
+        ],
+        "common_misspellings": [
+          "oculomotorius",
+          "oculomotor",
+          "occulomotor",
+          "oculomotoric"
+        ],
+        "abbreviations": [
+          "CN III"
+        ],
+        "relation_phrases": [
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign"
+        ],
+        "negative_traps": [
+          "CN VI lesion mainly prevents abduction; CN III is broader and may involve pupil."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_cn_vi_lateral_rectus",
+      "category": "lesion_correlation",
+      "subject": {
+        "id": "nerve_cn_vi",
+        "name": "abducens nerve"
+      },
+      "relation_type": "innervates",
+      "target": {
+        "id": "muscle_lateral_rectus",
+        "name": "lateral rectus muscle"
+      },
+      "answer": "The abducens nerve innervates the lateral rectus muscle, which abducts the eye.",
+      "details": {
+        "deficit": "inability to abduct eye on affected side"
+      },
+      "clinical_relevance": [
+        "CN VI palsy causes horizontal diplopia and medial deviation at rest."
+      ],
+      "exam_traps": [
+        "Superior oblique is CN IV; lateral rectus is CN VI."
+      ],
+      "question_templates": [
+        "Which nerve innervates lateral rectus?",
+        "CN VI palsy affects which movement?"
+      ],
+      "tags": [
+        "CN VI",
+        "lateral rectus",
+        "eye movement"
+      ],
+      "course_tags": [
+        "anat2_week_03",
+        "anat2_week_12"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "abducens nerve",
+          "lateral rectus muscle",
+          "innervates",
+          "CN VI",
+          "lateral rectus",
+          "eye movement"
+        ],
+        "direct_synonyms": [
+          "abducens nerve",
+          "CN VI",
+          "cranial nerve VI",
+          "sixth cranial nerve",
+          "nervus abducens",
+          "abducens",
+          "abducent",
+          "abducence",
+          "abduciens",
+          "innervates",
+          "supplies muscle",
+          "motor supply",
+          "CN VI palsy",
+          "abducens lateral rectus",
+          "cannot abduct eye"
+        ],
+        "common_misspellings": [
+          "abducens",
+          "abducent",
+          "abducence",
+          "abduciens"
+        ],
+        "abbreviations": [
+          "CN VI"
+        ],
+        "relation_phrases": [
+          "innervates",
+          "supplies muscle",
+          "motor supply"
+        ],
+        "negative_traps": [
+          "Superior oblique is CN IV; lateral rectus is CN VI."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_hypoglossal_tongue_deviation",
+      "category": "lesion_correlation",
+      "subject": {
+        "id": "nerve_cn_xii",
+        "name": "hypoglossal nerve"
+      },
+      "relation_type": "lesion_causes",
+      "target": {
+        "id": "sign_tongue_deviation",
+        "name": "tongue deviation toward the side of a lower motor neuron lesion"
+      },
+      "answer": "Hypoglossal nerve lower motor neuron lesion causes the protruded tongue to deviate toward the affected side.",
+      "details": {
+        "muscles": "intrinsic and extrinsic tongue muscles except palatoglossus"
+      },
+      "clinical_relevance": [
+        "Useful in cranial nerve examination."
+      ],
+      "exam_traps": [
+        "Palatoglossus is supplied by vagus nerve via pharyngeal plexus."
+      ],
+      "question_templates": [
+        "Tongue deviates to the lesion side in which nerve lesion?",
+        "Which cranial nerve supplies most tongue muscles?"
+      ],
+      "tags": [
+        "CN XII",
+        "tongue",
+        "hypoglossal"
+      ],
+      "course_tags": [
+        "anat2_week_03"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "hypoglossal nerve",
+          "tongue deviation toward the side of a lower motor neuron lesion",
+          "lesion causes",
+          "CN XII",
+          "tongue",
+          "hypoglossal"
+        ],
+        "direct_synonyms": [
+          "hypoglossal nerve",
+          "CN XII",
+          "cranial nerve XII",
+          "nervus hypoglossus",
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign",
+          "CN XII lesion",
+          "tongue deviates side lesion",
+          "hypoglossal palsy"
+        ],
+        "common_misspellings": [],
+        "abbreviations": [
+          "CN XII"
+        ],
+        "relation_phrases": [
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign"
+        ],
+        "negative_traps": [
+          "Palatoglossus is supplied by vagus nerve via pharyngeal plexus."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    },
+    {
+      "id": "cc_visual_pathway_optic_chiasm",
+      "category": "lesion_correlation",
+      "subject": {
+        "id": "pathway_visual",
+        "name": "optic chiasm"
+      },
+      "relation_type": "lesion_causes",
+      "target": {
+        "id": "visual_field_bitemporal_hemianopia",
+        "name": "bitemporal hemianopia"
+      },
+      "answer": "A lesion of the optic chiasm classically affects crossing nasal retinal fibers and causes bitemporal hemianopia.",
+      "details": {
+        "common_cause": "pituitary region mass"
+      },
+      "clinical_relevance": [
+        "Pituitary tumors can compress the optic chiasm."
+      ],
+      "exam_traps": [
+        "Optic tract lesions cause contralateral homonymous hemianopia, not bitemporal hemianopia."
+      ],
+      "question_templates": [
+        "Optic chiasm lesion causes which visual field defect?",
+        "Pituitary tumor compresses which visual pathway structure?"
+      ],
+      "tags": [
+        "visual pathway",
+        "optic chiasm",
+        "pituitary"
+      ],
+      "course_tags": [
+        "anat2_week_12",
+        "anat2_week_13"
+      ],
+      "difficulty": "core",
+      "evidence": {
+        "status": "seed_needs_review",
+        "source_refs": [],
+        "note": "Educational anatomy seed correlation. Requires human/faculty review before being marked verified."
+      },
+      "query_support": {
+        "canonical_terms": [
+          "optic chiasm",
+          "bitemporal hemianopia",
+          "lesion causes",
+          "visual pathway",
+          "pituitary"
+        ],
+        "direct_synonyms": [
+          "optic chiasm",
+          "chiasma opticum",
+          "optic chiasma",
+          "hemianopia",
+          "hemianopsia",
+          "hemianopsy",
+          "hemianopsie",
+          "bitemporal",
+          "bi temporal",
+          "bitemporalis",
+          "visual pathway",
+          "optic pathway",
+          "visus pathway",
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign",
+          "optic chiasm lesion",
+          "bitemporal hemianopia",
+          "pituitary tumor visual field"
+        ],
+        "common_misspellings": [
+          "hemianopia",
+          "hemianopsia",
+          "hemianopsy",
+          "hemianopsie",
+          "bitemporal",
+          "bi temporal",
+          "bitemporalis"
+        ],
+        "abbreviations": [],
+        "relation_phrases": [
+          "lesion causes",
+          "damage causes",
+          "palsy sign",
+          "clinical sign"
+        ],
+        "negative_traps": [
+          "Optic tract lesions cause contralateral homonymous hemianopia, not bitemporal hemianopia."
+        ],
+        "search_boosts": {
+          "subject": 90,
+          "target": 85,
+          "direct_synonym": 75,
+          "relation_phrase": 65,
+          "clinical_relevance": 45,
+          "exam_trap": 35,
+          "fuzzy_term": 30
+        }
+      }
+    }
+  ],
+  "query_examples": [
+    {
+      "query": "what artery passes along the inferior side of the stomach in greater curvature",
+      "expected_correlation_ids": [
+        "cc_stomach_greater_curvature_gastro_omental"
+      ],
+      "expected_answer": "right and left gastro-omental arteries; especially the right gastro-omental on the inferior/right part and left gastro-omental on the left part of the greater curvature"
+    },
+    {
+      "query": "posterior duodenal ulcer bleeding artery",
+      "expected_correlation_ids": [
+        "cc_duodenal_ulcer_gastroduodenal"
+      ],
+      "expected_answer": "gastroduodenal artery"
+    },
+    {
+      "query": "what passes through foramen spinosum",
+      "expected_correlation_ids": [
+        "cc_middle_meningeal_foramen_spinosum"
+      ],
+      "expected_answer": "middle meningeal artery"
+    },
+    {
+      "query": "surgical neck of humerus nerve",
+      "expected_correlation_ids": [
+        "cc_surgical_neck_axillary_pcha"
+      ],
+      "expected_answer": "axillary nerve"
+    },
+    {
+      "query": "fibular neck fracture foot drop",
+      "expected_correlation_ids": [
+        "cc_fibular_neck_common_fibular"
+      ],
+      "expected_answer": "common fibular nerve"
+    },
+    {
+      "query": "femoral triangle order",
+      "expected_correlation_ids": [
+        "cc_femoral_triangle_navl"
+      ],
+      "expected_answer": "nerve, artery, vein, lymphatics from lateral to medial"
+    },
+    {
+      "query": "water under the bridge anatomy",
+      "expected_correlation_ids": [
+        "cc_ureter_under_uterine_artery"
+      ],
+      "expected_answer": "ureter passes under uterine artery"
+    },
+    {
+      "query": "what is in cavernous sinus",
+      "expected_correlation_ids": [
+        "cc_cavernous_sinus_contents"
+      ],
+      "expected_answer": "ICA, CN VI inside; CN III, IV, V1, V2 in lateral wall"
+    }
+  ],
+  "quiz_generation": {
+    "question_types": [
+      "relation_short_answer",
+      "relation_multiple_choice",
+      "clinical_vignette_to_structure",
+      "container_to_contents",
+      "injury_site_to_nerve",
+      "artery_to_region",
+      "ordered_contents"
+    ],
+    "distractor_strategy": {
+      "vessel_questions": "Use vessels from the same region or same organ-system territory.",
+      "nerve_questions": "Use nearby nerves, branches from the same plexus, or common confusion pairs.",
+      "foramen_questions": "Use foramina from the same skull base group.",
+      "ordered_contents": "Shuffle correct contents or use common incorrect order."
+    }
+  }
+}

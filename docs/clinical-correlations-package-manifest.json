@@ -1,0 +1,52 @@
+{
+  "package_version": "1.0.0",
+  "generated_at": "2026-08-11T19:32:46Z",
+  "source_package": "clinical_correlations_logic_package",
+  "purpose": "Adds synonyms, spelling variants and a safe fuzzy-search algorithm for anatomy clinical correlations.",
+  "validation": {
+    "correlation_count": 40,
+    "support_entries": 40,
+    "global_synonym_keys": 109,
+    "misspelling_keys": 46,
+    "relation_synonym_keys": 19,
+    "all_correlations_have_query_support": true,
+    "duplicate_support_ids": []
+  },
+  "files": [
+    {
+      "file_name": "CODEX_ADD_CORRELATION_SYNONYMS_AND_FUZZY_SEARCH_PROMPT.md",
+      "size_bytes": 3794,
+      "sha256": "22da0d687c68bdda5856825494cb12fb6e605a78400cc390acd7c3d19c18e275"
+    },
+    {
+      "file_name": "clinical_correlation_search_algorithm.js",
+      "size_bytes": 10466,
+      "sha256": "471807735e6b3428ae49fa559bc503ef751a6115aa1bac3ef2dc24f5b13c7818"
+    },
+    {
+      "file_name": "clinical_correlation_synonyms.json",
+      "size_bytes": 83588,
+      "sha256": "357835e4c83975e5dac74193aefe75026513dc9e7b2744e27e36a03eb297ed74"
+    },
+    {
+      "file_name": "clinical_correlation_synonyms.schema.json",
+      "size_bytes": 2818,
+      "sha256": "c1d2760d612c996e8aad9da10d670042c7ff9f853639164c55670590abedde5e"
+    },
+    {
+      "file_name": "clinical_correlations_logic_synonymized.json",
+      "size_bytes": 133047,
+      "sha256": "5680e225a7c2522d86fc827b2879c0289255c15f1b42445f40682f631750fee8"
+    },
+    {
+      "file_name": "clinical_correlations_synonyms_flat.csv",
+      "size_bytes": 32794,
+      "sha256": "332b9a1778bdae833518d11294136f9dc42250e5c718c8fa3ea8817693d8993f"
+    },
+    {
+      "file_name": "clinical_query_normalization_rules.json",
+      "size_bytes": 3700,
+      "sha256": "a04a7b4df685cecc8b5bfa770e3d19856fec9deda9a3423e45b177318ad51482"
+    }
+  ]
+}

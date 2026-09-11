@@ -1,0 +1,45 @@
+{
+  "package_version": "1.0.0",
+  "generated_at": "2026-08-11T19:24:03Z",
+  "correlation_count": 40,
+  "category_counts": {
+    "topographic_vessel_relation": 7,
+    "clinical_vessel_relation": 3,
+    "compression_relation": 1,
+    "topographic_duct_relation": 1,
+    "topographic_bundle_relation": 6,
+    "topographic_nerve_relation": 1,
+    "foramen_content_relation": 4,
+    "space_content_relation": 1,
+    "gland_content_relation": 1,
+    "topographic_nerve_duct_relation": 1,
+    "fracture_neurovascular_relation": 3,
+    "surface_nerve_relation": 1,
+    "canal_content_relation": 4,
+    "fracture_vascular_relation": 1,
+    "surgical_danger_relation": 1,
+    "lesion_correlation": 4
+  },
+  "files": [
+    {
+      "file_name": "CODEX_ADD_CLINICAL_CORRELATIONS_LOGIC_PROMPT.md",
+      "size_bytes": 3640,
+      "sha256": "7d2e831abcbae1f6ae4302bded8da35c8cb43d7bd45442079bf75f2f1f7f0d06"
+    },
+    {
+      "file_name": "clinical_correlations.schema.json",
+      "size_bytes": 2883,
+      "sha256": "654f2c91d133284bd0363540db741112ff6c4e0afecdfe5ddecc818a7251caf0"
+    },
+    {
+      "file_name": "clinical_correlations_flat.csv",
+      "size_bytes": 28713,
+      "sha256": "436a8aa532bc51d74e84de5b08f7a21d2d7e7f6ea78c7a485cd192819ec6891a"
+    },
+    {
+      "file_name": "clinical_correlations_logic.json",
+      "size_bytes": 64580,
+      "sha256": "acd91a7753f8c898fbb7c7eb33b78dd4d41f7eb4625773d7cdcd24dc88220c97"
+    }
+  ]
+}

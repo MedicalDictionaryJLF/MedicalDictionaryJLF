@@ -1,0 +1,8 @@
+{
+  "name": "patient-trainer-interactive-exam-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/pt_v6_features.test.mjs && node tests/interactive_exam.test.mjs && node tests/posterior_view_v6.test.mjs && node tests/pt_v9_ecg_monitor.test.mjs && node tests/pt_v12_waveforms.test.mjs"
+  }
+}

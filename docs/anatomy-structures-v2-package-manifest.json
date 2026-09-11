@@ -1,0 +1,78 @@
+{
+  "package_version": "2.0.0",
+  "generated_at": "2026-08-11T18:52:54Z",
+  "validation": {
+    "record_count": 311,
+    "relationship_count": 256,
+    "type_counts": {
+      "bone": 44,
+      "joint": 10,
+      "artery": 55,
+      "vein": 24,
+      "venous_sinus": 9,
+      "nerve_plexus": 4,
+      "nerve": 25,
+      "cranial_nerve": 12,
+      "foramen": 13,
+      "canal": 4,
+      "fissure": 2,
+      "space": 7,
+      "organ": 38,
+      "serous_membrane": 2,
+      "airway": 2,
+      "duct": 3,
+      "cavity_system": 1,
+      "membrane": 2,
+      "bone_group": 8,
+      "ligament": 3,
+      "autonomic_structure": 3,
+      "salivary_gland": 3,
+      "endocrine_gland": 4,
+      "sensory_structure": 8,
+      "gland": 1,
+      "brain_region": 12,
+      "white_matter": 1,
+      "tract": 3,
+      "pathway": 3,
+      "lymphatic_structure": 2,
+      "lymph_node_group": 3
+    }
+  },
+  "files": [
+    {
+      "file_name": "CODEX_UPGRADE_ANATOMY_STRUCTURES_V2_PROMPT.md",
+      "size_bytes": 3133,
+      "sha256": "f3952d26e1241e5f5ae503f5ec7b15281372004b1fc378772402efe02d168e88"
+    },
+    {
+      "file_name": "anatomy_structures_clinical_bridges_seed.json",
+      "size_bytes": 2870,
+      "sha256": "6b5fc81fee5dd76ab0c93ca5ee97a3bbe308af14d221bd11406a6f0f668c6755"
+    },
+    {
+      "file_name": "anatomy_structures_core_elaborated.json",
+      "size_bytes": 517765,
+      "sha256": "771eae9d23e4c063b4b54b6d9f4b117a464e880483ca36c9c3987e2b44936bcf"
+    },
+    {
+      "file_name": "anatomy_structures_core_elaborated_flat.csv",
+      "size_bytes": 90825,
+      "sha256": "d1f6c1d63bd44e13580babc7e65803dbe01172847bec230fefb2bfd45410d622"
+    },
+    {
+      "file_name": "anatomy_structures_oral_rubrics_seed.json",
+      "size_bytes": 2046,
+      "sha256": "c66b5c4277dd5c5c7168f0a1bd9e1112fcf23e6d80a07b66c248aa3f170c1302"
+    },
+    {
+      "file_name": "anatomy_structures_question_bank_seed.json",
+      "size_bytes": 5736,
+      "sha256": "bdb762074e1b1dca47a40998e057b5c37e905be773fc8b43e4d02c616a172e47"
+    },
+    {
+      "file_name": "anatomy_structures_v2.schema.json",
+      "size_bytes": 4228,
+      "sha256": "971b0b6172c33dd5d112b6d0c3f0a4ca9470f56845bd8fd9893d8a540621f494"
+    }
+  ]
+}

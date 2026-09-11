@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medicaldictionaryjlf.local/schemas/anatomy-structures-v2.schema.json",
+  "title": "Anatomy Structures Database v2.3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset",
+    "structures",
+    "relationships"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "dataset": {
+      "type": "object"
+    },
+    "allowed_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "structures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "terms",
+          "region",
+          "system",
+          "key_features",
+          "details",
+          "clinical_notes",
+          "learning",
+          "evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "terms": {
+            "type": "object",
+            "required": [
+              "en",
+              "la",
+              "de"
+            ],
+            "properties": {
+              "en": {
+                "$ref": "#/$defs/languageTermNullable"
+              },
+              "la": {
+                "$ref": "#/$defs/languageTermNullable"
+              },
+              "de": {
+                "$ref": "#/$defs/languageTermNullable"
+              }
+            }
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "system": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "course_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "key_features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "details": {
+            "type": "object"
+          },
+          "clinical_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "learning": {
+            "type": "object"
+          },
+          "evidence": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "muscle"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "system": {
+                  "contains": {
+                    "const": "muscular"
+                  }
+                },
+                "details": {
+                  "type": "object",
+                  "required": [
+                    "muscle"
+                  ],
+                  "properties": {
+                    "muscle": {
+                      "type": "object",
+                      "required": [
+                        "classifications",
+                        "parts",
+                        "origin",
+                        "insertion",
+                        "innervation",
+                        "blood_supply",
+                        "actions"
+                      ],
+                      "properties": {
+                        "classifications": {
+                          "type": "array"
+                        },
+                        "parts": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "origin": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "insertion": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "innervation": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "blood_supply": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "actions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source_id",
+          "relation_type",
+          "target_id",
+          "evidence_status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "relation_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_status": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "question_eligible": {
+            "type": "boolean",
+            "description": "Optional educational gate. false preserves the anatomical relation for search/graph use but excludes generated questions from the active quiz pool."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "suggested_indexes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relationship_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "app_usage": {
+      "type": "object"
+    },
+    "relationship_definitions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "description",
+          "symmetric"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inverse_relation_type": {
+            "type": "string"
+          },
+          "symmetric": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "languageTermNullable": {
+      "type": "object",
+      "required": [
+        "preferred",
+        "aliases"
+      ],
+      "properties": {
+        "preferred": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

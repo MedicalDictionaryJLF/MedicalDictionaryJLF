@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-11T19:32:46Z",
+  "algorithm_id": "clinical_correlation_fuzzy_search_v1",
+  "normalization_pipeline": [
+    {
+      "step": 1,
+      "name": "unicode_normalization",
+      "rule": "NFKD normalize and remove combining marks so Slovak/German diacritics do not block matches."
+    },
+    {
+      "step": 2,
+      "name": "casefold",
+      "rule": "Lowercase all query and index text."
+    },
+    {
+      "step": 3,
+      "name": "punctuation_standardization",
+      "rule": "Normalize hyphens, apostrophes and slashes. Convert gastro-omental and gastro omental to a comparable token form."
+    },
+    {
+      "step": 4,
+      "name": "roman_numeral_protection",
+      "rule": "Preserve cranial nerve numerals I-XII as protected tokens. Do not fuzzy-match protected tokens."
+    },
+    {
+      "step": 5,
+      "name": "abbreviation_expansion",
+      "rule": "Expand aliases like LAD, RCA, SMA, ICA, IJV, CN III, SOF, VAN, NAVL, PCHA, MCFA and CBD."
+    },
+    {
+      "step": 6,
+      "name": "synonym_expansion",
+      "rule": "Expand canonical anatomy terms using global_synonyms and per-correlation direct_synonyms."
+    },
+    {
+      "step": 7,
+      "name": "tokenize",
+      "rule": "Split into alphanumeric tokens, preserving protected tokens and anatomical compounds."
+    },
+    {
+      "step": 8,
+      "name": "stopword_removal",
+      "rule": "Remove general question words but keep side, relation and anatomical qualifiers."
+    },
+    {
+      "step": 9,
+      "name": "fuzzy_candidates",
+      "rule": "Apply bounded Damerau-Levenshtein only to unprotected anatomy tokens."
+    },
+    {
+      "step": 10,
+      "name": "safety_filter",
+      "rule": "Reject fuzzy matches that cross artery/vein, greater/lesser, left/right, or cranial nerve numeral boundaries."
+    }
+  ],
+  "scoring": {
+    "exact_correlation_id": 120,
+    "exact_subject": 100,
+    "exact_target": 95,
+    "exact_abbreviation": 92,
+    "exact_canonical_token": 88,
+    "direct_synonym": 80,
+    "relation_phrase": 65,
+    "question_template": 62,
+    "answer_text": 55,
+    "clinical_relevance": 45,
+    "exam_trap_match": 35,
+    "fuzzy_token": 30,
+    "token_coverage_multiplier": 20,
+    "dangerous_conflict_penalty": -80,
+    "left_right_conflict_penalty": -60,
+    "greater_lesser_conflict_penalty": -70,
+    "artery_vein_conflict_penalty": -65,
+    "cranial_numeral_conflict_penalty": -90
+  },
+  "distance_thresholds": {
+    "token_length_1_to_4": 0,
+    "token_length_5_to_7": 1,
+    "token_length_8_or_more": 2,
+    "compound_terms": 2,
+    "protected_tokens": 0
+  },
+  "result_policy": {
+    "min_show_score": 45,
+    "min_direct_answer_score": 75,
+    "ambiguous_delta": 8,
+    "max_results": 10,
+    "show_suggestion_when_below": 55,
+    "if_ambiguous": "Show ranked suggestions and ask the user to choose; do not force a direct answer."
+  },
+  "safety_examples": [
+    {
+      "query": "greater curvature artery",
+      "safe_behavior": "Prefer gastro-omental arteries; penalize lesser-curvature gastric arteries."
+    },
+    {
+      "query": "lesser curvature artery",
+      "safe_behavior": "Prefer right and left gastric arteries; penalize gastro-omental result."
+    },
+    {
+      "query": "CN IV palsy",
+      "safe_behavior": "Do not fuzzy-match to CN VI even though both are ocular motor nerves."
+    },
+    {
+      "query": "femoral vein order",
+      "safe_behavior": "Do not return femoral artery as direct answer unless the femoral triangle order record is the match."
+    },
+    {
+      "query": "gastric artery greater curvature",
+      "safe_behavior": "Detect trap: gastric arteries are lesser curvature; show correction."
+    }
+  ]
+}

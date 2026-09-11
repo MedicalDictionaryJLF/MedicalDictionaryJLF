@@ -3,51 +3,72 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adaptive Anamnesis Avatar Trainer</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <title>Patient Trainer · Medical Dictionary</title>
+    <link rel="stylesheet" href="./styles.css?v=110" />
   </head>
   <body>
     <div id="app" class="app-shell">
       <section id="setupScreen" class="setup-screen">
-        <div class="setup-card">
-          <p class="eyebrow">Medical Education Simulator</p>
-          <h1>Anamnesis Avatar Trainer</h1>
-          <p class="hero-text">
-            Choose a case, difficulty, and regime before entering the station. The interview starts with an empty chat, because the student is supposed to assess the patient, not receive a spoiler trailer.
-          </p>
-          <div class="setup-grid">
-            <label>
-              <span>Case</span>
-              <select id="caseSelect"></select>
-            </label>
-            <button id="randomCaseBtn" type="button" class="secondary random-case-btn">Random case</button>
-            <label>
-              <span>Difficulty</span>
-              <select id="difficultySelect">
-                <option value="beginner">Beginner</option>
-                <option value="intermediate" selected>Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </label>
-            <label>
-              <span>Regime</span>
-              <select id="modeSelect">
-                <option value="practice" selected>Practice</option>
-                <option value="teaching">Teaching</option>
-                <option value="exam">Exam</option>
-              </select>
-            </label>
+        <div class="setup-shell">
+          <header class="setup-brandbar">
+            <a class="back-to-app" href="../main/" aria-label="Back to Medical Dictionary">← Medical Dictionary</a>
+            <span class="setup-version">Patient Trainer · Clinical Encounter</span>
+          </header>
+
+          <div class="setup-hero-grid">
+            <section class="setup-intro-card">
+              <p class="eyebrow">Medical Education Simulator</p>
+              <h1>Enter a clinical station</h1>
+              <p class="hero-text">
+                Interview the patient, examine selectively, request investigations, keep a working differential, and hand the case over when you are ready.
+              </p>
+              <div class="setup-feature-row" aria-label="Station workflow">
+                <span>01 Interview</span><span>02 Examine</span><span>03 Investigate</span><span>04 Reason</span><span>05 Handover</span>
+              </div>
+            </section>
+
+            <section class="setup-card setup-config-card">
+              <div class="setup-card-heading">
+                <div><p class="eyebrow">Station setup</p><h2>Configure your attempt</h2></div>
+                <button id="randomCaseBtn" type="button" class="secondary compact-setup-action">Random case</button>
+              </div>
+              <div class="setup-grid">
+                <label class="setup-field setup-field-wide">
+                  <span>Case</span>
+                  <select id="caseSelect"></select>
+                </label>
+                <label class="setup-field">
+                  <span>Difficulty</span>
+                  <select id="difficultySelect">
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate" selected>Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </label>
+                <label class="setup-field">
+                  <span>Regime</span>
+                  <select id="modeSelect">
+                    <option value="practice" selected>Practice</option>
+                    <option value="teaching">Teaching</option>
+                    <option value="exam">Exam</option>
+                  </select>
+                </label>
+              </div>
+              <div id="setupPreview" class="setup-preview"></div>
+              <button id="startTrainingBtn" type="button" class="start-training-btn">Enter station</button>
+            </section>
           </div>
-          <div id="setupPreview" class="setup-preview"></div>
-          <button id="startTrainingBtn" type="button" class="start-training-btn">Enter station</button>
         </div>
       </section>
 
       <section id="trainingScreen" class="training-screen" hidden>
-        <header class="station-panel">
-          <div>
-            <p class="eyebrow">Clinical Station</p>
-            <h1>Patient Interview</h1>
+        <header class="station-panel station-panel-v2">
+          <div class="station-heading">
+            <div class="station-kicker-row">
+              <span class="live-dot" aria-hidden="true"></span>
+              <p class="eyebrow">Clinical Encounter</p>
+            </div>
+            <h1>Patient Assessment</h1>
             <p id="stationBrief" class="station-brief"></p>
           </div>
           <div class="station-actions">
@@ -57,41 +78,138 @@
           </div>
         </header>
 
-        <main class="training-layout">
-          <aside class="avatar-card">
-            <div class="avatar-stage">
-              <div id="avatarMount" class="avatar-mount" aria-label="Animated patient avatar"></div>
-              <div id="avatarFallback" class="avatar-fallback">Pt</div>
-            </div>
-            <section id="patientMeta" class="patient-meta"></section>
+        <nav class="encounter-stepbar" aria-label="Clinical encounter workspace">
+          <button type="button" class="encounter-step active" data-workspace-target="interview">
+            <span class="step-number">1</span><span><strong>Interview</strong><small>History & communication</small></span>
+          </button>
+          <button id="openExamBtn" type="button" class="encounter-step" data-workspace-target="examination">
+            <span class="step-number">2</span><span><strong>Examine</strong><small><b id="examNavCount">0</b> actions performed</small></span>
+          </button>
+          <button type="button" class="encounter-step" data-workspace-target="investigations">
+            <span class="step-number">3</span><span><strong>Investigations</strong><small><b id="testsNavCount">0</b> results/actions</small></span>
+          </button>
+          <button type="button" class="encounter-step" data-workspace-target="reasoning">
+            <span class="step-number">4</span><span><strong>Reasoning</strong><small><b id="reasoningNavCount">0</b> differentials</small></span>
+          </button>
+          <button id="finishBtn" type="button" class="encounter-step encounter-step-final" data-workspace-target="handover">
+            <span class="step-number">5</span><span><strong>Handover</strong><small>Present & submit</small></span>
+          </button>
+        </nav>
+
+        <main class="station-workspace-layout">
+          <aside class="patient-rail">
+            <section class="patient-window">
+              <div class="window-titlebar"><span>Patient</span><span class="window-status">In station</span></div>
+              <div class="avatar-stage compact-avatar-stage">
+                <div id="avatarMount" class="avatar-mount" aria-label="Animated patient avatar"></div>
+                <div id="avatarFallback" class="avatar-fallback">Pt</div>
+              </div>
+              <section id="patientMeta" class="patient-meta"></section>
+            </section>
+
+            <section class="clinical-mini-window objective-shortcuts">
+              <div class="mini-window-heading"><strong>Objective data</strong><span>Open when clinically indicated</span></div>
+              <div class="quick-action-grid">
+                <button id="openVitalsBtn" type="button" class="secondary quick-clinical-action"><span class="quick-icon">♥</span><span><strong>Monitor</strong><small>Live vital signs</small></span></button>
+                <button id="openEcgBtn" type="button" class="secondary quick-clinical-action"><span class="quick-icon">⌁</span><span><strong>12-lead ECG</strong><small>Case recording</small></span></button>
+                <button id="orderLabsBtn" type="button" class="secondary quick-clinical-action"><span class="quick-icon">∴</span><span><strong>Laboratory</strong><small>Order tests</small></span></button>
+                <button id="administerMedicationBtn" type="button" class="secondary quick-clinical-action"><span class="quick-icon">+</span><span><strong>Management</strong><small>Record actions</small></span></button>
+              </div>
+            </section>
+
+            <section class="clinical-mini-window encounter-overview-window">
+              <div class="mini-window-heading"><strong>Encounter overview</strong><span>Working progress</span></div>
+              <div id="encounterOverview" class="encounter-overview"></div>
+            </section>
           </aside>
 
-          <section class="chat-card">
-            <div id="chatLog" class="chat-log empty-chat" aria-live="polite">
-              <div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>
-            </div>
-            <div id="terminologyHint" class="terminology-hint" aria-live="polite"></div>
-            <form id="questionForm" class="question-form" aria-label="Ask the patient">
-              <div class="input-wrap">
-                <input id="questionInput" type="text" autocomplete="off" placeholder="Ask the patient a free-text anamnesis question..." />
-                <button id="voiceInputBtn" type="button" class="icon-button mic-button" aria-label="Start voice input" title="Start voice input">Mic</button>
+          <section class="workspace-window">
+            <section class="workspace-panel active" data-workspace-panel="interview">
+              <header class="workspace-panel-header">
+                <div><p class="eyebrow">Interview</p><h2>Talk to the patient</h2><p>Ask naturally. The case facts stay hidden until your question earns them.</p></div>
+                <label class="voice-toggle"><input id="voiceToggle" type="checkbox" /> Speak patient replies</label>
+              </header>
+              <div id="chatLog" class="chat-log empty-chat" aria-live="polite">
+                <div class="empty-chat-note"><strong>Begin the encounter.</strong><span>Introduce yourself, confirm the patient, and start with an open question.</span></div>
               </div>
-              <button id="sendQuestionBtn" type="submit">Ask</button>
-            </form>
-            <div id="voiceInputStatus" class="voice-input-status" aria-live="polite"></div>
-            <div class="interview-actions" aria-label="Clinical actions">
-              <button id="openVitalsBtn" type="button" class="secondary monitor-btn">Show Monitor</button>
-              <button id="openEcgBtn" type="button" class="secondary monitor-btn">Show ECG</button>
-              <button id="orderLabsBtn" type="button" class="secondary">Order Labs</button>
-              <button id="administerMedicationBtn" type="button" class="secondary">Administer Medication</button>
-              <button id="finishBtn" type="button" class="secondary">Finish Anamnesis</button>
-              <label class="voice-toggle"><input id="voiceToggle" type="checkbox" /> Speak replies</label>
-            </div>
+              <div id="terminologyHint" class="terminology-hint" aria-live="polite"></div>
+              <form id="questionForm" class="question-form" aria-label="Ask the patient">
+                <div class="input-wrap">
+                  <input id="questionInput" type="text" autocomplete="off" placeholder="Ask the patient a free-text anamnesis question..." />
+                  <button id="voiceInputBtn" type="button" class="icon-button mic-button" aria-label="Start voice input" title="Start voice input">Mic</button>
+                </div>
+                <button id="sendQuestionBtn" type="submit">Ask</button>
+              </form>
+              <div id="voiceInputStatus" class="voice-input-status" aria-live="polite"></div>
+            </section>
+
+            <section class="workspace-panel" data-workspace-panel="examination">
+              <header class="workspace-panel-header">
+                <div><p class="eyebrow">Physical examination</p><h2>Choose what you examine</h2><p>Findings are deterministic and remain hidden until you perform the relevant examination.</p></div>
+              </header>
+              <div id="examinationPanel" class="workspace-scroll-panel"></div>
+            </section>
+
+            <section class="workspace-panel" data-workspace-panel="investigations">
+              <header class="workspace-panel-header">
+                <div><p class="eyebrow">Investigations & management</p><h2>Objective clinical workspace</h2><p>Review monitoring, open the ECG, order targeted laboratory tests and record immediate management decisions.</p></div>
+              </header>
+              <div class="investigation-grid">
+                <section class="clinical-subwindow objective-window">
+                  <div class="subwindow-title"><div><span>Bedside</span><strong>Immediate objective data</strong></div></div>
+                  <div class="objective-card-grid">
+                    <button type="button" class="objective-card" data-objective-action="vitals"><span class="objective-symbol">♥</span><strong>Live monitor</strong><small>BP · HR · RR · SpO₂ · temperature</small></button>
+                    <button type="button" class="objective-card" data-objective-action="ecg"><span class="objective-symbol">⌁</span><strong>12-lead ECG</strong><small id="ecgAvailabilityText">Recording availability</small></button>
+                  </div>
+                </section>
+
+                <section class="clinical-subwindow laboratory-window">
+                  <div class="subwindow-title"><div><span>Laboratory</span><strong>Order targeted tests</strong></div><small>Only selected results are revealed</small></div>
+                  <div id="labsPanel" class="order-panel"></div>
+                </section>
+
+                <section class="clinical-subwindow management-window">
+                  <div class="subwindow-title"><div><span>Management</span><strong>Record clinical actions</strong></div><small>Physiological effects arrive in Phase 2</small></div>
+                  <div id="medicationPanel" class="order-panel"></div>
+                </section>
+
+                <section class="clinical-subwindow action-history-window">
+                  <div class="subwindow-title"><div><span>Timeline</span><strong>Actions this attempt</strong></div></div>
+                  <div id="actionHistoryPanel" class="action-history-panel"></div>
+                </section>
+              </div>
+            </section>
+
+            <section class="workspace-panel" data-workspace-panel="reasoning">
+              <header class="workspace-panel-header">
+                <div><p class="eyebrow">Clinical reasoning</p><h2>Build your working picture</h2><p>Keep private notes and rank your differential without receiving correctness hints before submission.</p></div>
+              </header>
+              <div class="reasoning-grid">
+                <section class="clinical-subwindow reasoning-notes-window">
+                  <div class="subwindow-title"><div><span>Workspace</span><strong>Clinical notes</strong></div><button id="openNotesBtn" type="button" class="secondary compact">Focus notes</button></div>
+                  <div id="clinicalNotesPanel"></div>
+                </section>
+                <section class="clinical-subwindow differential-window">
+                  <div class="subwindow-title"><div><span>Reasoning</span><strong>Working differential</strong></div><button id="openDifferentialBtn" type="button" class="secondary compact">Focus board</button></div>
+                  <div id="differentialPanel"></div>
+                </section>
+              </div>
+            </section>
+
+            <section class="workspace-panel" data-workspace-panel="handover">
+              <header class="workspace-panel-header handover-header">
+                <div><p class="eyebrow">End of station</p><h2>Present the patient and commit to a plan</h2><p>This is the point where the encounter becomes clinical reasoning rather than an elaborate collection of questions.</p></div>
+              </header>
+              <div id="closingPanel" class="handover-panel"></div>
+            </section>
           </section>
 
-          <aside class="feedback-card" aria-label="Mode-specific training panel">
-            <div id="modePanel" class="mode-panel"></div>
-            <section id="detailsPanel" class="details-panel"></section>
+          <aside class="coach-rail" aria-label="Mode-specific training panel">
+            <section class="coach-window">
+              <header class="coach-window-header"><div><p class="eyebrow">Learning support</p><h2 id="coachWindowTitle">Practice coach</h2></div><span class="coach-mode-dot"></span></header>
+              <div id="modePanel" class="mode-panel"></div>
+              <section id="detailsPanel" class="details-panel"></section>
+            </section>
           </aside>
         </main>
       </section>
@@ -101,48 +219,13 @@
       <div class="clinical-modal-backdrop" data-close="vitals"></div>
       <section class="clinical-modal-card vitals-monitor-card" role="dialog" aria-modal="true" aria-labelledby="vitalsMonitorTitle">
         <header class="clinical-modal-header">
-          <div>
-            <p class="eyebrow">Objective View</p>
-            <h2 id="vitalsMonitorTitle">Live vitals monitor</h2>
-          </div>
+          <div><p class="eyebrow">Objective View</p><h2 id="vitalsMonitorTitle">Live vitals monitor</h2></div>
           <button id="closeVitalsBtn" type="button" class="secondary">Close</button>
         </header>
         <div class="monitor-layout monitor-layout-full">
           <canvas id="vitalsMonitorCanvas" class="vitals-monitor-canvas monitor-pro-canvas" width="1280" height="720"></canvas>
-          <aside class="vitals-side-panel visually-hidden-monitor-panel">
-            <h3>Current Values</h3>
-            <div id="vitalsValues" class="vitals-values"></div>
-            <p id="vitalsClinicalNote" class="clinical-note"></p>
-          </aside>
+          <aside class="vitals-side-panel visually-hidden-monitor-panel"><h3>Current Values</h3><div id="vitalsValues" class="vitals-values"></div><p id="vitalsClinicalNote" class="clinical-note"></p></aside>
         </div>
-      </section>
-    </div>
-
-    <div id="labsModal" class="clinical-modal" aria-hidden="true">
-      <div class="clinical-modal-backdrop" data-close="labs"></div>
-      <section class="clinical-modal-card light-modal-card" role="dialog" aria-modal="true" aria-labelledby="labsModalTitle">
-        <header class="clinical-modal-header light-modal-header">
-          <div>
-            <p class="eyebrow">Orders</p>
-            <h2 id="labsModalTitle">Order laboratory tests</h2>
-          </div>
-          <button id="closeLabsBtn" type="button" class="secondary">Close</button>
-        </header>
-        <div id="labsPanel" class="order-panel"></div>
-      </section>
-    </div>
-
-    <div id="medicationModal" class="clinical-modal" aria-hidden="true">
-      <div class="clinical-modal-backdrop" data-close="medication"></div>
-      <section class="clinical-modal-card light-modal-card" role="dialog" aria-modal="true" aria-labelledby="medicationModalTitle">
-        <header class="clinical-modal-header light-modal-header">
-          <div>
-            <p class="eyebrow">Treatment Action</p>
-            <h2 id="medicationModalTitle">Administer medication</h2>
-          </div>
-          <button id="closeMedicationBtn" type="button" class="secondary">Close</button>
-        </header>
-        <div id="medicationPanel" class="order-panel"></div>
       </section>
     </div>
 
@@ -150,18 +233,12 @@
       <div class="clinical-modal-backdrop" data-close="ecg"></div>
       <section class="clinical-modal-card ecg-card" role="dialog" aria-modal="true" aria-labelledby="ecgViewerTitle">
         <header class="clinical-modal-header">
-          <div>
-            <p class="eyebrow">Objective View</p>
-            <h2 id="ecgViewerTitle">ECG recording</h2>
-          </div>
+          <div><p class="eyebrow">Objective View</p><h2 id="ecgViewerTitle">ECG recording</h2></div>
           <button id="closeEcgBtn" type="button" class="secondary">Close</button>
         </header>
         <div class="ecg-viewer-frame">
           <img id="ecgRecordingImage" alt="Attached ECG recording" />
-          <div id="ecgRecordingFallback" class="ecg-fallback" hidden>
-            <h3>No ECG recording file found</h3>
-            <p>For Peter Novak, place the ECG at <code>public/ECGs/peter_novak_ecg.png</code>. Generic fallbacks are also supported: <code>ecg-recording.svg</code>, <code>ecg-recording.png</code>, or <code>ecg-recording.jpg</code>.</p>
-          </div>
+          <div id="ecgRecordingFallback" class="ecg-fallback" hidden><h3>No ECG recording file found</h3><p>No case-specific recording is available.</p></div>
         </div>
       </section>
     </div>
@@ -170,6 +247,6 @@
       window.ANAMNESIS_AI_ENABLED = true;
       window.ANAMNESIS_API_BASE_URL = "https://medical-dictionary-jlf.vercel.app";
     </script>
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/main.js?v=110"></script>
   </body>
 </html>

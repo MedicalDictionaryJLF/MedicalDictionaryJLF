@@ -99,11 +99,12 @@ export const INTENTS = {
 export const PATIENT_CASES = [
   {
     id: 'chest_pain_acs_risk',
-    title: 'Case 1',
+    title: 'Acute chest discomfort',
     difficulty: 'Intermediate',
     patientCard: '58-year-old man, anxious, sitting upright, complaining of chest discomfort.',
+    stationBrief: { location: 'Emergency Department acute assessment bay', time: '09:20 simulated hospital time', task: 'Assess a patient with ongoing chest discomfort. Take a focused history, identify immediately important risks and red flags, perform a targeted examination, choose investigations, form a differential, and hand over your plan.' },
     openingLine: 'I have this heavy pressure in my chest and it really scared me.',
-    ecg: { available: true, label: '12 Lead ECG', imagePath: new URL('../ECGs/peter_novak_ecg.png', import.meta.url).href },
+    ecg: { available: true, label: '12-lead ECG · Peter Novak', imagePath: new URL('../ECGs/peter_novak_ecg.png', import.meta.url).href, interpretation: 'ST-segment elevation in the inferior leads with reciprocal change in aVL, compatible with an acute inferior STEMI.' },
     administrative: { admissionTime: 'I came to the hospital today around 9 AM.', arrivalMethod: 'My wife drove me here. I did not come by ambulance.', arrivalMode: 'My wife drove me here. I did not come by ambulance.' },
     personality: { baselineRapport: 68, talkativeness: 0.48, anxiety: 0.75, healthLiteracy: 0.45, guardedness: 0.25 },
     identity: { name: 'My name is Peter Novak.', age: 'I am 58 years old.', dob: 'I was born in 1968.', sex: 'I am male.', residence: 'I live in Martin.', occupation: 'I work as a bus driver.' },
@@ -116,8 +117,37 @@ export const PATIENT_CASES = [
     allergies: 'No known drug allergies.', allergyDetails: { foodEnvironment: 'No food or environmental allergies that I know of.', pollen: 'No, I do not have a pollen allergy.', reaction: 'I have not had an allergy reaction that I know of.' }, transfusions: 'No previous blood transfusions.',
     medication: { regular: 'If I remember correctly, ramipril 5 mg once daily. Atorvastatin 20 mg at night, though I sometimes forget it. Occasional ibuprofen for back pain.', nitroglycerinPrevious: 'No, I have never used nitroglycerin before.', otcSupplements: 'Occasional ibuprofen for back pain. No supplements.', adherence: 'I took ramipril today. I sometimes forget atorvastatin.' },
     gynHistory: 'That does not apply to me.', familyHistory: 'My father died of a heart attack at 62. My mother has diabetes and high blood pressure.', epidemiology: 'No recent travel, no sick contacts, no pets. I had COVID two years ago and I am vaccinated twice.', social: { living: 'I am married and live with my wife in an apartment on the third floor, with an elevator.', independence: 'I am independent in daily activities and walk without aids.' }, substances: { smoking: 'I smoke about 15 cigarettes a day, for around 35 years.', alcohol: 'I drink beer on weekends, maybe two or three beers.', caffeine: 'Two coffees a day, sometimes black tea.', drugs: 'No recreational drugs.' },
-    vitals: { bp: 'His blood pressure is 155/95 mmHg.', hr: 'His heart rate is 96 per minute.', rr: 'His respiratory rate is 20 per minute.', spo2: 'Oxygen saturation is 96 percent on room air.', temperature: 'Temperature is 36.8 °C.' }, exam: { lungs: 'On examination, the lungs are clear with no wheezes or crackles.', heart: 'Heart sounds S1 and S2 are present. Rhythm is regular, no clear murmur.', abdomen: 'The abdomen is soft and non-tender.', bowelSounds: 'Bowel sounds are present.' }, labs: { wbc: 'WBC is 8.5 ×10⁹/L.', crp: 'CRP is 4 mg/L.', creatinine: 'Creatinine is 88 µmol/L.', potassium: 'Potassium is 4.3 mmol/L.', glucose: 'Glucose is 6.1 mmol/L.', tsh: 'TSH is within the reference range.' },
-    redFlags: ['Chest pain radiating to left arm/jaw', 'Dyspnea, sweating, and nausea with chest pain', 'Cardiovascular risk factors: smoking, hypertension, dyslipidemia, positive family history'], expectedDiagnosisIdea: 'Possible acute coronary syndrome or unstable angina. Requires urgent ECG, troponins, vitals, and senior review.'
+    vitals: { bp: 'Blood pressure is 154/94 mmHg in the right arm and 152/92 mmHg in the left arm.', hr: 'Heart rate is 96 per minute and regular.', rr: 'Respiratory rate is 20 per minute.', spo2: 'Oxygen saturation is 96 percent on room air.', temperature: 'Temperature is 36.8 °C.' },
+    exam: {
+      general: 'The patient looks worried and mildly distressed by ongoing pain. He is slightly clammy but alert and fully oriented.',
+      heart: 'Heart sounds S1 and S2 are present. Rhythm is regular. No new murmur, gallop, or pericardial rub is heard.',
+      lungs: 'Air entry is equal bilaterally. The lungs are clear with no wheeze or basal crackles.',
+      perfusion: 'Hands are warm. Capillary refill is about 2 seconds. There is no peripheral cyanosis.',
+      pulses: 'Radial and peripheral pulses are palpable and symmetrical. There is no pulse deficit.',
+      jvp: 'JVP is not elevated at 45 degrees.',
+      chestWall: 'Palpation of the chest wall does not reproduce the pain.',
+      legs: 'There is no unilateral calf swelling or tenderness and no clinically significant pitting oedema.',
+      abdomen: 'The abdomen is soft and non-tender with no pulsatile abdominal mass.',
+      bowelSounds: 'Bowel sounds are present.'
+    },
+    labs: {
+      hsTroponinT: 'High-sensitivity troponin T is 184 ng/L and above the laboratory reference limit.',
+      wbc: 'WBC is 9.2 ×10⁹/L.',
+      hemoglobin: 'Haemoglobin is 146 g/L.',
+      platelets: 'Platelets are 248 ×10⁹/L.',
+      crp: 'CRP is 4 mg/L.',
+      creatinine: 'Creatinine is 88 µmol/L.',
+      egfr: 'Estimated GFR is 86 mL/min/1.73 m².',
+      sodium: 'Sodium is 139 mmol/L.',
+      potassium: 'Potassium is 4.3 mmol/L.',
+      magnesium: 'Magnesium is 0.84 mmol/L.',
+      glucose: 'Glucose is 6.1 mmol/L.',
+      inr: 'INR is 1.0.',
+      aptt: 'aPTT is 29 seconds.',
+      ldl: 'LDL cholesterol is 3.4 mmol/L.'
+    },
+    redFlags: ['Ongoing pressure-like retrosternal pain lasting more than 20 minutes', 'Radiation to the left arm and jaw', 'Dyspnoea, diaphoresis and nausea accompanying the pain', 'Major cardiovascular risk factors: smoking, hypertension, dyslipidaemia and positive family history'],
+    expectedDiagnosisIdea: 'Acute coronary syndrome with an ECG pattern compatible with an inferior STEMI. This requires immediate STEMI-pathway escalation, continuous monitoring, antiplatelet therapy according to protocol, appropriate antithrombotic/reperfusion planning, and urgent cardiology/catheterization-laboratory involvement.'
   },
   {
     id: 'abdominal_pain_cholecystitis',
@@ -136,7 +166,7 @@ export const PATIENT_CASES = [
     pmh: { chronicDiseases: 'I have high cholesterol. No diabetes or hypertension.', cardiovascularDisease: 'No known heart disease.', specialists: 'No regular specialist follow-up.', hospitalizations: 'Only for childbirth.', operations: 'No operations.', operationDetails: { date: 'No previous operation date because I have not had surgery.', approach: 'No previous operation approach because I have not had surgery.' }, previousExams: 'I had an abdominal ultrasound two years ago and they mentioned gallstones.' },
     allergies: 'I am allergic to penicillin. I had a rash as a child.', allergyDetails: { foodEnvironment: 'No food or environmental allergies that I know of.', pollen: 'No pollen allergy.', reaction: 'With penicillin I had a rash as a child.' }, transfusions: 'No transfusions.',
     medication: { regular: 'I do not take regular prescribed medicines.', nitroglycerinPrevious: 'No, I have never used nitroglycerin.', otcSupplements: 'Sometimes paracetamol. No supplements.', adherence: 'No regular medication.' }, gynHistory: 'My periods are regular. Last menstrual period was about two weeks ago. I am not pregnant as far as I know. I have two children, both vaginal deliveries. No miscarriages.', familyHistory: 'My mother had gallbladder surgery. Father has hypertension.', epidemiology: 'No travel, no sick contacts, no farm animals. We have a cat. No tick bite recently.', social: { living: 'I am married and live with my husband and children in a house.', independence: 'I am independent in all daily activities.' }, substances: { smoking: 'I do not smoke.', alcohol: 'Rarely, maybe a glass of wine once a month.', caffeine: 'One coffee a day.', drugs: 'No recreational drugs.' },
-    vitals: { bp: 'Her blood pressure is 130/80 mmHg.', hr: 'Heart rate is 104 per minute.', rr: 'Respiratory rate is 18 per minute.', spo2: 'Oxygen saturation is 98 percent on room air.', temperature: 'Temperature is 38.1 °C.' }, exam: { lungs: 'Lungs are clear.', heart: 'Heart rhythm is regular with no murmur.', abdomen: 'Right upper quadrant tenderness is present. Murphy sign is positive. There is no generalized guarding.', bowelSounds: 'Bowel sounds are present.' }, labs: { wbc: 'WBC is 13.2 ×10⁹/L.', crp: 'CRP is 68 mg/L.', creatinine: 'Creatinine is 70 µmol/L.', potassium: 'Potassium is 4.0 mmol/L.', glucose: 'Glucose is 5.2 mmol/L.', tsh: 'TSH was not measured.' },
+    vitals: { bp: 'Her blood pressure is 130/80 mmHg.', hr: 'Heart rate is 104 per minute.', rr: 'Respiratory rate is 18 per minute.', spo2: 'Oxygen saturation is 98 percent on room air.', temperature: 'Temperature is 38.1 °C.' }, exam: { general: 'The patient appears uncomfortable because of abdominal pain and is febrile.', lungs: 'Lungs are clear.', heart: 'Heart rhythm is regular with no murmur.', abdomen: 'Right upper quadrant tenderness is present. Murphy sign is positive. There is no generalized guarding.', bowelSounds: 'Bowel sounds are present.' }, labs: { wbc: 'WBC is 13.2 ×10⁹/L.', crp: 'CRP is 68 mg/L.', creatinine: 'Creatinine is 70 µmol/L.', potassium: 'Potassium is 4.0 mmol/L.', glucose: 'Glucose is 5.2 mmol/L.', tsh: 'TSH was not measured.' },
     redFlags: ['Right upper quadrant pain with vomiting and chills', 'Known gallstones', 'Possible jaundice reported by family'], expectedDiagnosisIdea: 'Possible acute cholecystitis or biliary obstruction. Needs abdominal exam, inflammatory markers, liver tests, bilirubin, ultrasound, and surgical review.'
   }
 ];

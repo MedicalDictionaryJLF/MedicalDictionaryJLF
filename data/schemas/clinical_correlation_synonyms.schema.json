@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medicaldictionaryjlf.local/schemas/clinical-correlation-synonyms.schema.json",
+  "title": "Clinical Correlation Synonyms and Fuzzy Search Support",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "global_synonyms",
+    "common_misspellings",
+    "relation_synonyms",
+    "correlation_query_support"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "dataset_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "global_synonyms": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "common_misspellings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "relation_synonyms": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "stopwords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "critical_term_rules": {
+      "type": "object"
+    },
+    "correlation_query_support": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "correlation_id",
+          "canonical_terms",
+          "direct_synonyms",
+          "common_misspellings",
+          "abbreviations",
+          "relation_phrases",
+          "negative_traps",
+          "search_boosts"
+        ],
+        "properties": {
+          "correlation_id": {
+            "type": "string"
+          },
+          "canonical_terms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "direct_synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "common_misspellings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "abbreviations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relation_phrases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "negative_traps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "search_boosts": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

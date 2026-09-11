@@ -1,6 +1,7 @@
 "use strict";
 
 const { applyCors, handleOptions } = require("./_cors");
+const { consumeAiQuota, sendQuotaExceeded } = require("./_ai-limit");
 const { callGemini, confidence, logAi, readBody, sendJson, text } = require("./_gemini");
 
 const schema = {
@@ -44,6 +45,9 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 400, { success: false, error: "question is required." });
   }
 
+  const quotaState = await consumeAiQuota({ req, body, aiCallType });
+  if (!quotaState.allowed) return sendQuotaExceeded(res, sendJson, quotaState.quota);
+
   try {
     const result = await callGemini({
       systemInstruction: "Resolve the final contextual follow-up question. Rewrite it as a standalone question and select only one supplied intent id when a supplied intent clearly fits. Otherwise return intent as an empty string. Preserve meaning. Do not answer the question and do not add facts.",
@@ -54,10 +58,10 @@ module.exports = async function handler(req, res) {
     const finalIntent = intents.some(item => item.id === result.intent) ? result.intent : null;
     const aiConfidence = confidence(result.confidence);
     logAi({ aiCallType, aiConfidence, finalIntent, success: true });
-    return sendJson(res, 200, { success: true, resolvedQuestion: resolvedQuestion || question, intent: finalIntent, confidence: aiConfidence });
+    return sendJson(res, 200, { success: true, resolvedQuestion: resolvedQuestion || question, intent: finalIntent, confidence: aiConfidence, quota: quotaState.quota });
   } catch (error) {
     console.error(error);
     logAi({ aiCallType, success: false });
-    return sendJson(res, 503, { success: false, error: "Context resolution is temporarily unavailable." });
+    return sendJson(res, 503, { success: false, error: "Context resolution is temporarily unavailable.", quota: quotaState.quota });
   }
 };

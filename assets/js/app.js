@@ -33,6 +33,34 @@ import { createSearchService } from "./services/search-service.js";
 import { createQuizEngine } from "./services/quiz-service.js";
 import { createPharmacologyService } from "./pharmacology/pharmacology-service.js?v=2";
 import { createPharmacologyUi } from "./pharmacology/pharmacology-ui.js?v=4";
+import {
+  buildClinicalCorrelationIndex,
+  formatClinicalCorrelationAnswer,
+  searchClinicalCorrelations
+} from "./anatomy/clinical-correlation-search.js?v=1";
+import {
+  anatomyMuscleToLegacyRows,
+  buildAnatomyStructureIndex,
+  findRelatedClinicalCorrelations,
+  getStructureAliases,
+  getStructureRelations,
+  getStructureTerm,
+  normalizeAnatomyText,
+  searchAnatomyStructures
+} from "./anatomy/anatomy-structure-service.js?v=1";
+import { createClinicalCorrelationService } from "./anatomy/clinical-correlation-service.js?v=1";
+import {
+  answerSearchQuestion,
+  clearAiSessionToken,
+  establishAiSession
+} from "../../src/ai/client.js?v=2";
+import {
+  buildRelaxedPharmacologyQuery,
+  looksLikeSmartQuestion,
+  resolveAnatomyCollectionQuestion,
+  resolveMuscleActionQuestion,
+  resolvePharmacologyListQuestion
+} from "./search/smart-search.js?v=1";
 
 // ================================
 // Google Drive Authentication
@@ -75,7 +103,7 @@ let appReadyPromise = null;
 const IDB_NAME = "mdict_cache";
 const IDB_STORE = "files";
 const IDB_VERSION = 1;
-const BUNDLED_DATA_CACHE_VERSION = "2026-06-10-pharmacology-database-v1";
+const BUNDLED_DATA_CACHE_VERSION = "2026-08-24-anatomy-v2.3-deep-graph-questions-v1";
 const ATTACHMENTS_DB_NAME = "medical_dictionary_db";
 const ATTACHMENTS_DB_VERSION = 1;
 const ATTACHMENTS_STORE = "attachments";
@@ -436,6 +464,22 @@ function setFeatureStatus(containerId, text, tone = "loading"){
   el.innerHTML = `<p class="feature-status" data-status-tone="${escapeHTML(tone)}">${escapeHTML(text)}</p>`;
 }
 
+function openSyncAccountRequiredModal(){
+  const overlay = document.getElementById("sync-account-required-overlay");
+  if(!overlay) return;
+  overlay.classList.remove("hidden");
+  overlay.setAttribute("aria-hidden", "false");
+  const primary = document.getElementById("sync-account-connect");
+  window.setTimeout(()=> primary?.focus(), 0);
+}
+
+function closeSyncAccountRequiredModal(){
+  const overlay = document.getElementById("sync-account-required-overlay");
+  if(!overlay) return;
+  overlay.classList.add("hidden");
+  overlay.setAttribute("aria-hidden", "true");
+}
+
 function refreshStorageSyncUI(){
   const mode = getAttachmentSyncMode();
   const localRadio = document.getElementById("storage-mode-local");
@@ -475,10 +519,12 @@ function refreshStorageSyncUI(){
     entrySyncBtn.disabled = attachmentsSyncInFlight || syncSummary.pendingCount <= 0;
   }
   if(settingsSyncBtn){
-    settingsSyncBtn.disabled = driveManualSyncInFlight || attachmentsSyncInFlight || mode !== STORAGE_MODE_DRIVE || !loggedIn || cooldownRemaining > 0;
-    settingsSyncBtn.title = cooldownRemaining > 0
-      ? `${tOr("next_sync", "Next sync")}: ${formatSyncCooldown(cooldownRemaining)}`
-      : "";
+    settingsSyncBtn.disabled = driveManualSyncInFlight || attachmentsSyncInFlight || mode !== STORAGE_MODE_DRIVE || cooldownRemaining > 0;
+    settingsSyncBtn.title = !loggedIn
+      ? tOr("sync_sign_in_required_title", "Google account required")
+      : cooldownRemaining > 0
+        ? `${tOr("next_sync", "Next sync")}: ${formatSyncCooldown(cooldownRemaining)}`
+        : "";
   }
   scheduleStorageSyncCooldownRefresh(cooldownRemaining);
 }
@@ -966,6 +1012,13 @@ async function applyAttachmentSyncMode(mode){
 
 async function syncDriveProfileAndAttachmentsFromSettings(){
   if(driveManualSyncInFlight) return;
+  const loggedIn = !!state.currentUser || isProfileSessionActive();
+  if(!loggedIn){
+    openSyncAccountRequiredModal();
+    setLoginStatus(tOr("sync_sign_in_required_desc", "Sign in with Google before synchronizing."), "error");
+    refreshStorageSyncUI();
+    return;
+  }
   if(!isDriveSyncEnabled()){
     setLoginStatus(tOr("attachment_drive_sync_disabled", "Drive sync is disabled. Select Google Drive sync in Settings."), "error");
     refreshStorageSyncUI();
@@ -986,7 +1039,7 @@ async function syncDriveProfileAndAttachmentsFromSettings(){
 
   driveManualSyncInFlight = true;
   refreshStorageSyncUI();
-  setSyncLoadingScreen(true, "Synchronizing progress and attachments with Google Drive...");
+  setSyncLoadingScreen(true, tOr("sync_progress_and_attachments_drive", "Synchronizing progress and attachments with Google Drive..."));
   try{
     if(!profileFileId || !userProfile){
       await loadOrCreateDriveProfile();
@@ -1048,6 +1101,9 @@ async function initAttachmentsFeature(){
   const connectBtn = document.getElementById("drive-connect-btn");
   const settingsSyncBtn = document.getElementById("drive-sync-now-btn");
   const entrySyncBtn = document.getElementById("entry-sync-now-btn");
+  const syncAccountOverlay = document.getElementById("sync-account-required-overlay");
+  const syncAccountClose = document.getElementById("sync-account-close");
+  const syncAccountConnect = document.getElementById("sync-account-connect");
 
   if(uploadBtn && fileInput){
     uploadBtn.addEventListener("click", ()=> fileInput.click());
@@ -1125,6 +1181,25 @@ async function initAttachmentsFeature(){
   }
   if(settingsSyncBtn){
     settingsSyncBtn.addEventListener("click", async ()=>{ await syncDriveProfileAndAttachmentsFromSettings(); });
+  }
+  if(syncAccountClose){
+    syncAccountClose.addEventListener("click", closeSyncAccountRequiredModal);
+  }
+  if(syncAccountOverlay){
+    syncAccountOverlay.addEventListener("click", (event)=>{
+      if(event.target === syncAccountOverlay) closeSyncAccountRequiredModal();
+    });
+    document.addEventListener("keydown", (event)=>{
+      if(event.key === "Escape" && !syncAccountOverlay.classList.contains("hidden")){
+        closeSyncAccountRequiredModal();
+      }
+    });
+  }
+  if(syncAccountConnect){
+    syncAccountConnect.addEventListener("click", async ()=>{
+      closeSyncAccountRequiredModal();
+      await requestGoogleAccessTokenFromClick();
+    });
   }
   if(entrySyncBtn){
     entrySyncBtn.addEventListener("click", async ()=>{ await syncAllAttachments(); });
@@ -2019,7 +2094,7 @@ async function handleGoogleTokenResponse(resp){
   const expiresIn = Number(resp && resp.expires_in || 0);
   gTokenExpiresAt = expiresIn > 0 ? (Date.now() + expiresIn * 1000) : 0;
   try{
-    setSyncLoadingScreen(true, "Synchronizing study progress with Google Drive...");
+    setSyncLoadingScreen(true, tOr("sync_progress_drive", "Synchronizing study progress with Google Drive..."));
     console.log("[AUTH] got access token, loading Drive profile...");
     await loadOrCreateDriveProfile();
     syncLatinCourseProgressWithProfile();
@@ -2046,9 +2121,10 @@ async function handleGoogleTokenResponse(resp){
     syncTextSizeForViewport({ force: true });
     applyTheme(profileTheme, { persist: true });
     const sizeSlider = document.getElementById("text-size-slider");
-    if(sizeSlider) sizeSlider.value = isPhoneTextSizeViewport() ? String(PHONE_TEXT_SIZE_STEP) : profileTextSize;
+    if(sizeSlider) sizeSlider.value = profileTextSize;
     state.currentUser = about.displayName || about.emailAddress || tOr("auth_google_user", "Google user");
     state.currentUserEmail = about.emailAddress || "";
+    establishAiSession(gAccessToken).catch(error => console.warn("AI quota session could not be established:", error?.message || error));
     updateAuthUI();
     refreshStorageSyncUI();
     startProfileAutosave();
@@ -2150,6 +2226,7 @@ async function signOutGoogleDrive(){
   stopProfileAutosave();
   state.currentUser = null;
   state.currentUserEmail = null;
+  clearAiSessionToken();
   if(typeof quizLastFinishedState !== "undefined") quizLastFinishedState = null;
   if(typeof flashcardsV2State !== "undefined" && flashcardsV2State && flashcardsV2State.session){
     flashcardsV2State.session.deck = [];
@@ -2677,9 +2754,15 @@ async function openPharmacologyScreen(){
   }
 }
 
-// --- Muscles loader ---
+// --- Anatomy / muscles loaders ---
 let muscleTerms = [];
 let anatomyTerms = [];
+let anatomyStructureDataset = null;
+let anatomyStructureIndex = null;
+let anatomyStructureQuestionBank = [];
+let anatomyStructureGeneratedQuestionBank = [];
+let anatomyStructureOralRubrics = [];
+let anatomyStructureClinicalBridges = [];
 const ANATOMY_DATASET_SELECT_KEY = "anatomy_dataset_select";
 const musclesLoadState = {
   loaded: false,
@@ -2691,16 +2774,57 @@ const anatomyLoadState = {
   failed: false,
   loadPromise: null
 };
+let clinicalCorrelationDataset = null;
+let clinicalCorrelations = [];
+let clinicalCorrelationSynonyms = {};
+let clinicalCorrelationIndex = [];
+const clinicalCorrelationSelectedCategories = new Set();
+const clinicalCorrelationService = createClinicalCorrelationService({ loadText: loadBaseFile });
+const clinicalCorrelationLoadState = {
+  loaded: false,
+  failed: false,
+  loadPromise: null
+};
+
+function arrayValue(value){
+  return Array.isArray(value) ? value : (value === null || value === undefined || value === '' ? [] : [value]);
+}
+
+function flattenAnatomyStructure(record){
+  const relationships = getStructureRelations(record?.id, anatomyStructureIndex);
+  const relationNames = relationships.map(rel => getStructureTerm(rel.other, 'en') || getStructureTerm(rel.other, 'la') || rel.otherId).filter(Boolean);
+  const learning = record?.learning || {};
+  return {
+    id: String(record?.id || ''),
+    type: String(record?.type || ''),
+    system: arrayValue(record?.system).join('; '),
+    region: arrayValue(record?.region).join('; '),
+    english_term: getStructureTerm(record, 'en'),
+    latin_term: getStructureTerm(record, 'la'),
+    german_term: getStructureTerm(record, 'de'),
+    synonyms: getStructureAliases(record).join('; '),
+    related_structures: [...new Set(relationNames)].join('; '),
+    key_features: arrayValue(record?.key_features).join('; '),
+    clinical_notes: arrayValue(record?.clinical_notes).join('; '),
+    course_tags: arrayValue(record?.course_tags).join('; '),
+    exam_importance: String(learning.exam_importance || ''),
+    notes: [...arrayValue(record?.key_features), ...arrayValue(record?.clinical_notes)].join('; '),
+    __structure: record
+  };
+}
+
 async function loadMuscles() {
   try {
-    const txt = await loadBaseFile('terminology/muscles.csv');
-    const rows = parseCSVLines(txt);
-    if(rows.length < 1) throw new Error('No data in muscles file');
-    muscleTerms = rowsToObjects(rows);
+    await ensureAnatomyTermsLoaded();
+    const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
+    muscleTerms = structures
+      .filter(record => String(record?.type || '') === 'muscle')
+      .flatMap(record => anatomyMuscleToLegacyRows(record));
+    if(!muscleTerms.length) throw new Error('No integrated muscle concepts in Anatomy v2.3');
     musclesLoadState.loaded = true;
     musclesLoadState.failed = false;
   } catch(e) {
-    console.warn('Muscles load failed:', e.message);
+    console.warn('Integrated muscle load failed:', e.message);
     muscleTerms = [];
     musclesLoadState.loaded = false;
     musclesLoadState.failed = true;
@@ -2719,13 +2843,33 @@ async function ensureMusclesLoaded(){
 
 async function loadAnatomyTerms() {
   try {
-    const txt = await loadBaseFile('terminology/anatomy.csv');
-    const rows = parseCSVLines(txt);
-    anatomyTerms = rows.length > 1 ? rowsToObjects(rows) : [];
+    const [coreText, questionText, generatedQuestionText, rubricText, bridgeText] = await Promise.all([
+      loadBaseFile('anatomy/anatomy_structures_core_elaborated.json'),
+      loadBaseFile('anatomy/anatomy_structures_question_bank_seed.json'),
+      loadBaseFile('anatomy/anatomy_structures_question_bank_generated.json'),
+      loadBaseFile('anatomy/anatomy_structures_oral_rubrics_seed.json'),
+      loadBaseFile('anatomy/anatomy_structures_clinical_bridges_seed.json')
+    ]);
+    anatomyStructureDataset = JSON.parse(coreText);
+    anatomyStructureIndex = buildAnatomyStructureIndex(anatomyStructureDataset);
+    anatomyStructureQuestionBank = JSON.parse(questionText)?.questions || [];
+    anatomyStructureGeneratedQuestionBank = JSON.parse(generatedQuestionText)?.questions || [];
+    anatomyStructureOralRubrics = JSON.parse(rubricText)?.rubrics || [];
+    anatomyStructureClinicalBridges = JSON.parse(bridgeText)?.cases || [];
+    const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
+    const expectedCount = Number(anatomyStructureDataset?.dataset?.record_count || 0);
+    if(expectedCount && structures.length !== expectedCount) throw new Error(`Expected ${expectedCount} anatomy structures, received ${structures.length}`);
+    anatomyTerms = structures.map(flattenAnatomyStructure);
     anatomyLoadState.loaded = true;
     anatomyLoadState.failed = false;
   } catch(e) {
-    console.warn('Anatomy load failed:', e.message);
+    console.warn('Anatomy structures v2 load failed:', e.message);
+    anatomyStructureDataset = null;
+    anatomyStructureIndex = null;
+    anatomyStructureQuestionBank = [];
+    anatomyStructureGeneratedQuestionBank = [];
+    anatomyStructureOralRubrics = [];
+    anatomyStructureClinicalBridges = [];
     anatomyTerms = [];
     anatomyLoadState.loaded = false;
     anatomyLoadState.failed = true;
@@ -2740,6 +2884,37 @@ async function ensureAnatomyTermsLoaded(){
   });
   await anatomyLoadState.loadPromise;
   return anatomyTerms;
+}
+
+async function loadClinicalCorrelations(){
+  try{
+    await clinicalCorrelationService.ensureLoaded();
+    clinicalCorrelationDataset = clinicalCorrelationService.dataset;
+    clinicalCorrelations = clinicalCorrelationService.getAll();
+    clinicalCorrelationSynonyms = clinicalCorrelationService.synonyms || {};
+    clinicalCorrelationIndex = clinicalCorrelationService.index || [];
+    clinicalCorrelationLoadState.loaded = true;
+    clinicalCorrelationLoadState.failed = false;
+  }catch(error){
+    console.warn('Clinical correlations load failed:', error?.message || error);
+    clinicalCorrelationDataset = null;
+    clinicalCorrelations = [];
+    clinicalCorrelationSynonyms = {};
+    clinicalCorrelationIndex = [];
+    clinicalCorrelationLoadState.loaded = false;
+    clinicalCorrelationLoadState.failed = true;
+    throw error;
+  }
+}
+
+async function ensureClinicalCorrelationsLoaded(){
+  if(clinicalCorrelationLoadState.loaded) return clinicalCorrelations;
+  if(clinicalCorrelationLoadState.loadPromise) return clinicalCorrelationLoadState.loadPromise;
+  clinicalCorrelationLoadState.loadPromise = loadClinicalCorrelations().finally(()=>{
+    clinicalCorrelationLoadState.loadPromise = null;
+  });
+  await clinicalCorrelationLoadState.loadPromise;
+  return clinicalCorrelations;
 }
 
 // --- Biophysics True/False loader ---
@@ -4026,23 +4201,20 @@ function refreshLabParametersUI(){
 
 function renderLabStaticText(){
   const map = {
-    "to-lab-parameters": ["laboratory_parameters", "menuButton"],
     "lab-parameters-title": ["laboratory_parameters", "pageTitle"],
     "lab-tags-filter-label": ["tags", "tagsLabel"],
     "lab-parameters-clear-filters": ["clear_filters", "clearFilters"],
     "lab-parameters-back": ["back", "back"]
   };
+  const launcher = document.getElementById("to-lab-parameters");
+  if(launcher){
+    const label = launcher.querySelector(".home-tool-label, strong, .menu-label");
+    if(label) label.textContent = tOr("laboratory_short", "Laboratory");
+  }
   for(const [id, [translationKey, fallbackKey]] of Object.entries(map)){
     const el = document.getElementById(id);
     if(!el) continue;
-    const value = tOr(translationKey, labText(fallbackKey));
-    if(id === "to-lab-parameters"){
-      const label = el.querySelector(".menu-label");
-      if(label) label.textContent = value;
-      else el.textContent = value;
-      continue;
-    }
-    el.textContent = value;
+    el.textContent = tOr(translationKey, labText(fallbackKey));
   }
   const searchInput = document.getElementById("lab-parameters-search-input");
   if(searchInput){
@@ -4082,6 +4254,7 @@ function mapUserFieldFromBase(baseField){
 async function setLanguage(lang){
   const canonical = normalizeLanguage(lang);
   state.language = canonical;
+  document.documentElement.lang = canonical === "Slovensky" ? "sk" : canonical === "Deutsch" ? "de" : "en";
   localStorage.setItem('app_language', canonical);
   if(isProfileSessionActive()){
     userProfile.settings.app_language = canonical;
@@ -4178,6 +4351,7 @@ let muscleQuizSelectedRegions = new Set();
 let muscleQuizSelectedCategories = new Set();
 let anatomySelectedSystems = new Set();
 let anatomySelectedRegions = new Set();
+let anatomySelectedTypes = new Set();
 let muscleQuizPersistentFields = new Set();
 let muscleQuizTempFields = new Set();
 let latinQuizPool = [];
@@ -4379,56 +4553,409 @@ function addMuscleField(container, label, value, key, showToggles, highlightQuer
 }
 
 function getAnatomyDatasetMode(){
-  const select = document.getElementById('anatomy-dataset-select');
-  const value = String((select && select.value) || 'muscles').trim().toLowerCase();
-  return value === 'anatomy' ? 'anatomy' : 'muscles';
+  // Anatomy is intentionally presented as one unified browser. The implementation
+  // merges the structured anatomy package with the dedicated muscle dataset.
+  return 'anatomy';
 }
 
 function getAnatomyTermsForScreen(){
-  return getAnatomyDatasetMode() === 'anatomy' ? anatomyTerms : muscleTerms;
+  return anatomyTerms.slice();
 }
 
 function populateAnatomySearchFieldOptions(){
   const fieldSel = document.getElementById('muscle-search-field');
   if(!fieldSel) return;
-  const dataset = getAnatomyDatasetMode();
   const previous = fieldSel.value || 'any';
-  const options = dataset === 'anatomy'
-    ? [
-        ['any', 'Any'],
-        ['system', 'System'],
-        ['region', 'Region'],
-        ['latin_term', 'Latin name'],
-        ['english_term', 'English name'],
-        ['german_term', 'German name'],
-        ['slovak_term', 'Slovak name'],
-        ['synonyms', 'Synonyms'],
-        ['related_structures', 'Related structures'],
-        ['notes', 'Notes']
-      ]
-    : [
-        ['any', tOr('any', 'Any')],
-        ['region', tOr('muscle_search_region', 'Region')],
-        ['category', tOr('muscle_search_category', 'Category')],
-        ['latin_muscle_name', tOr('muscle_search_latin_name', 'Latin name')],
-        ['english_muscle_name', tOr('muscle_search_english_name', 'English name')],
-        ['origo', tOr('muscle_search_origo', 'Origo')],
-        ['insercio', tOr('muscle_search_insercio', 'Insercio')],
-        ['blood_supply', tOr('muscle_search_blood_supply', 'Blood supply')],
-        ['innervation', tOr('muscle_search_innervation', 'Innervation')],
-        ['movement_function', tOr('muscle_search_type_of_movement', 'Type of movement')]
-      ];
+  const options = [
+    ['any', tOr('any', 'Any')],
+    ['name', tOr('anatomy_name', 'Name')],
+    ['region', tOr('muscle_search_region', 'Region')],
+    ['system', tOr('field_system', 'System')],
+    ['details', tOr('anatomy_details', 'Details')]
+  ];
   fieldSel.innerHTML = options.map(([value, label]) => `<option value="${escapeHTML(value)}">${escapeHTML(label)}</option>`).join('');
-  if(options.some(([value]) => value === previous)){
-    fieldSel.value = previous;
-  }
+  fieldSel.disabled = false;
+  if(options.some(([value]) => value === previous)) fieldSel.value = previous;
 }
 
 function syncAnatomySearchPlaceholder(){
   const input = document.getElementById('muscle-search-input');
-  if(!input) return;
-  const isAnatomy = getAnatomyDatasetMode() === 'anatomy';
-  input.placeholder = isAnatomy ? 'Search anatomy term (min 2 chars)' : tOr('search_muscle_text', 'Search muscle name (min 2 chars)');
+  if(input) input.placeholder = tOr('anatomy_unified_search_placeholder', 'Search muscles, bones, nerves, vessels and other structures');
+}
+
+function syncAnatomyDatasetCopy(){
+  const selectionCopy = document.getElementById('anatomy-selection-copy');
+  const filterTitle = document.getElementById('anatomy-filter-title');
+  const searchCopy = document.getElementById('anatomy-search-copy');
+  if(selectionCopy) selectionCopy.textContent = tOr('anatomy_unified_selection_copy', 'Filter the complete anatomy library by structure type, system or region.');
+  if(filterTitle) filterTitle.textContent = tOr('anatomy_structure_filters', 'Structure filters');
+  if(searchCopy) searchCopy.textContent = tOr('anatomy_unified_search_copy', 'Search names, regions, systems, OINA fields, relationships and structured notes.');
+}
+
+function humanizeClinicalCategory(value){
+  return String(value || '')
+    .trim()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function appendClinicalCorrelationList(container, label, items, className = ''){
+  const values = (Array.isArray(items) ? items : [items]).map(v => String(v || '').trim()).filter(Boolean);
+  if(values.length === 0) return;
+  const section = document.createElement('section');
+  section.className = `clinical-correlation-section ${className}`.trim();
+  const heading = document.createElement('h4');
+  heading.textContent = label;
+  section.appendChild(heading);
+  const list = document.createElement('ul');
+  values.forEach(value => {
+    const li = document.createElement('li');
+    li.textContent = value;
+    list.appendChild(li);
+  });
+  section.appendChild(list);
+  container.appendChild(section);
+}
+
+function renderClinicalCorrelationSearchResults(rawQuery, results){
+  const container = document.getElementById('muscle-search-results');
+  if(!container) return;
+  container.innerHTML = '';
+  const categoryFiltered = clinicalCorrelationSelectedCategories.size > 0
+    ? results.filter(result => clinicalCorrelationSelectedCategories.has(String(result.record?.category || '')))
+    : results;
+
+  if(categoryFiltered.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'clinical-correlation-empty';
+    const title = document.createElement('strong');
+    title.textContent = tOr('clinical_no_results', 'No safe clinical-correlation match was found. Try another anatomical clue or spelling.');
+    empty.appendChild(title);
+    container.appendChild(empty);
+    return;
+  }
+
+  if(categoryFiltered[0]?.ambiguous){
+    const warning = document.createElement('div');
+    warning.className = 'clinical-correlation-ambiguity';
+    warning.textContent = tOr('clinical_ambiguous_results', 'Several close matches were found. Review the ranked suggestions instead of relying on a single direct answer.');
+    container.appendChild(warning);
+  }
+
+  categoryFiltered.forEach((result, index) => {
+    const formatted = formatClinicalCorrelationAnswer(result);
+    const record = result.record || {};
+    if(!formatted) return;
+    const card = document.createElement('article');
+    card.className = 'clinical-correlation-result';
+
+    const head = document.createElement('div');
+    head.className = 'clinical-correlation-head';
+    const titleWrap = document.createElement('div');
+    const eyebrow = document.createElement('div');
+    eyebrow.className = 'clinical-correlation-eyebrow';
+    eyebrow.textContent = humanizeClinicalCategory(record.category);
+    const title = document.createElement('h3');
+    title.textContent = formatted.title;
+    titleWrap.appendChild(eyebrow);
+    titleWrap.appendChild(title);
+    head.appendChild(titleWrap);
+
+    const badges = document.createElement('div');
+    badges.className = 'clinical-correlation-badges';
+    const confidence = document.createElement('span');
+    confidence.className = 'clinical-correlation-badge';
+    confidence.textContent = `${tOr('confidence', 'Confidence')}: ${Math.max(0, Math.min(100, Number(result.score || 0)))}%`;
+    badges.appendChild(confidence);
+    const answerMode = document.createElement('span');
+    const direct = result.directAnswerAllowed && !result.ambiguous;
+    answerMode.className = `clinical-correlation-badge ${direct ? 'is-direct' : 'is-suggestion'}`;
+    answerMode.textContent = direct ? tOr('clinical_direct_answer', 'Direct answer') : tOr('clinical_suggestion', 'Suggestion');
+    badges.appendChild(answerMode);
+    head.appendChild(badges);
+    card.appendChild(head);
+
+    const answer = document.createElement('p');
+    answer.className = 'clinical-correlation-answer';
+    answer.textContent = formatted.answer || '';
+    card.appendChild(answer);
+
+    appendClinicalCorrelationList(card, tOr('clinical_relevance', 'Clinical relevance'), formatted.clinicalRelevance, 'is-clinical');
+    appendClinicalCorrelationList(card, tOr('exam_traps', 'Exam traps'), formatted.examTraps, 'is-trap');
+
+    const footer = document.createElement('div');
+    footer.className = 'clinical-correlation-footer';
+    const matched = document.createElement('span');
+    const matchedFields = (formatted.matchedFields || []).filter(field => field !== 'safety_penalty');
+    matched.textContent = `${tOr('matched_in', 'Matched in')}: ${matchedFields.join(', ') || 'record'}`;
+    footer.appendChild(matched);
+    const review = document.createElement('span');
+    review.className = 'clinical-correlation-review';
+    review.textContent = tOr('clinical_seed_review', 'Seed record – review recommended');
+    footer.appendChild(review);
+    card.appendChild(footer);
+    container.appendChild(card);
+  });
+}
+
+function appendAnatomyListSection(container, label, values, className = ''){
+  const listValues = arrayValue(values).map(value => String(value || '').trim()).filter(Boolean);
+  if(!listValues.length) return;
+  const section = document.createElement('section');
+  section.className = `anatomy-structure-section ${className}`.trim();
+  const title = document.createElement('h4');
+  title.textContent = label;
+  section.appendChild(title);
+  const ul = document.createElement('ul');
+  listValues.forEach(value => { const li = document.createElement('li'); li.textContent = value; ul.appendChild(li); });
+  section.appendChild(ul);
+  container.appendChild(section);
+}
+
+function appendAnatomyDetails(container, details){
+  if(!details || typeof details !== 'object' || Array.isArray(details) || !Object.keys(details).length) return;
+  const section = document.createElement('section');
+  section.className = 'anatomy-structure-section';
+  const title = document.createElement('h4');
+  title.textContent = tOr('anatomy_details', 'Details');
+  section.appendChild(title);
+  const grid = document.createElement('div');
+  grid.className = 'anatomy-structure-detail-grid';
+
+  const addRow = (key, value)=>{
+    let rendered = '';
+    if(Array.isArray(value)) rendered = value.map(item=>String(item || '').trim()).filter(Boolean).join('; ');
+    else if(value && typeof value === 'object') rendered = Object.entries(value).map(([k,v])=>`${formatHeaderLabel(k)}: ${Array.isArray(v) ? v.join('; ') : String(v ?? '')}`).filter(Boolean).join(' | ');
+    else rendered = String(value || '').trim();
+    if(!rendered) return;
+    const k = document.createElement('div'); k.className = 'k'; k.textContent = formatHeaderLabel(key);
+    const v = document.createElement('div'); v.className = 'v'; v.textContent = rendered;
+    grid.appendChild(k); grid.appendChild(v);
+  };
+
+  const muscle = details.muscle && typeof details.muscle === 'object' ? details.muscle : null;
+  if(muscle){
+    const classifications = arrayValue(muscle.classifications).map(item=>{
+      const region = item?.region?.en || '';
+      const category = item?.category?.en || '';
+      return [region, category].filter(Boolean).join(' / ');
+    }).filter(Boolean);
+    addRow('classification', classifications);
+    addRow('parts', muscle.parts);
+    addRow('origin', muscle.origin);
+    addRow('insertion', muscle.insertion);
+    addRow('innervation', muscle.innervation);
+    addRow('blood_supply', muscle.blood_supply);
+    addRow('actions', muscle.actions);
+  }
+  Object.entries(details).filter(([key])=>key !== 'muscle').forEach(([key,value])=>addRow(key,value));
+  if(grid.childElementCount){ section.appendChild(grid); container.appendChild(section); }
+}
+
+function openRelatedAnatomyStructure(record){
+  const input = document.getElementById('muscle-search-input');
+  if(!input || !record) return;
+  input.value = getStructureTerm(record, 'en') || getStructureTerm(record, 'la') || String(record.id || '');
+  renderMuscleSearchResults();
+  input.focus({ preventScroll: true });
+}
+
+function renderAnatomyStructureCard(hit, highlightQuery){
+  const record = hit?.record || hit?.__structure || hit;
+  if(!record) return null;
+  const card = document.createElement('article');
+  card.className = 'anatomy-structure-result';
+  const head = document.createElement('div');
+  head.className = 'anatomy-structure-head';
+  const titleWrap = document.createElement('div');
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'anatomy-structure-eyebrow';
+  eyebrow.textContent = humanizeClinicalCategory(record.type || 'structure');
+  const title = document.createElement('h3');
+  appendHighlightedText(title, getStructureTerm(record, 'en') || getStructureTerm(record, 'la') || record.id, highlightQuery);
+  titleWrap.appendChild(eyebrow); titleWrap.appendChild(title);
+  const latin = getStructureTerm(record, 'la');
+  if(latin){ const subtitle = document.createElement('div'); subtitle.className='anatomy-structure-latin'; subtitle.textContent=latin; titleWrap.appendChild(subtitle); }
+  head.appendChild(titleWrap);
+  const badges = document.createElement('div'); badges.className='anatomy-structure-badges';
+  [...(record.system || []), ...(record.region || [])].filter(Boolean).slice(0,4).forEach(value=>{
+    const badge=document.createElement('span'); badge.className='anatomy-structure-badge'; badge.textContent=humanizeClinicalCategory(value); badges.appendChild(badge);
+  });
+  head.appendChild(badges); card.appendChild(head);
+
+  const review=document.createElement('div'); review.className='anatomy-structure-review'; review.textContent=tOr('anatomy_seed_review','Seed anatomy record – review recommended'); card.appendChild(review);
+
+  const names=document.createElement('div'); names.className='anatomy-structure-names';
+  [['English',getStructureTerm(record,'en')],['Latin',getStructureTerm(record,'la')],['German',getStructureTerm(record,'de')]].forEach(([label,value])=>{
+    if(!value) return; const row=document.createElement('div'); row.className='anatomy-structure-name-row'; const l=document.createElement('strong'); l.textContent=label; const v=document.createElement('span'); v.textContent=value; row.append(l,v); names.appendChild(row);
+  });
+  if(names.childElementCount) card.appendChild(names);
+  appendAnatomyListSection(card, tOr('anatomy_synonyms','Synonyms'), getStructureAliases(record));
+  appendAnatomyListSection(card, tOr('anatomy_key_features','Key features'), record.key_features, 'is-key');
+  appendAnatomyDetails(card, record.details);
+  appendAnatomyListSection(card, tOr('clinical_relevance','Clinical relevance'), record.clinical_notes, 'is-clinical');
+
+  const relations=getStructureRelations(record.id, anatomyStructureIndex);
+  if(relations.length){
+    const section=document.createElement('section'); section.className='anatomy-structure-section';
+    const h=document.createElement('h4'); h.textContent=tOr('anatomy_relationships','Relationships'); section.appendChild(h);
+    const wrap=document.createElement('div'); wrap.className='anatomy-relationship-list';
+    relations.slice(0,16).forEach(rel=>{
+      const btn=document.createElement('button'); btn.type='button'; btn.className='anatomy-relationship-chip';
+      const otherName=getStructureTerm(rel.other,'en') || getStructureTerm(rel.other,'la') || rel.otherId;
+      const arrow=rel.direction==='out'?'→':'←';
+      btn.textContent=`${humanizeClinicalCategory(rel.relation_type)} ${arrow} ${otherName}`;
+      if(rel.other) btn.addEventListener('click',()=>openRelatedAnatomyStructure(rel.other)); else btn.disabled=true;
+      wrap.appendChild(btn);
+    });
+    section.appendChild(wrap); card.appendChild(section);
+  }
+
+  appendAnatomyListSection(card, tOr('anatomy_oral_prompts','Oral exam prompts'), record.learning?.oral_exam_prompts, 'is-oral');
+  appendAnatomyListSection(card, tOr('anatomy_common_confusions','Common confusions'), record.learning?.common_confusions, 'is-trap');
+
+  const rubrics=anatomyStructureOralRubrics.filter(r=>String(r.concept_id||'')===String(record.id||''));
+  rubrics.forEach(rubric=>{
+    appendAnatomyListSection(card, rubric.title || tOr('anatomy_oral_rubric','Oral exam rubric'), rubric.must_include, 'is-oral');
+    appendAnatomyListSection(card, tOr('anatomy_critical_misses','Critical misses'), rubric.critical_misses, 'is-trap');
+  });
+
+  const graphQuestions=anatomyStructureGeneratedQuestionBank.filter(q=>q.origin === 'anatomy_graph' && q.quiz_eligible === true && (q.concept_ids||[]).includes(record.id));
+  if(graphQuestions.length){
+    const section=document.createElement('section'); section.className='anatomy-structure-section';
+    const h=document.createElement('h4'); h.textContent=tOr('anatomy_graph_questions','Graph-generated review questions'); section.appendChild(h);
+    graphQuestions.slice(0,4).forEach(question=>{
+      const details=document.createElement('details'); details.className='anatomy-seed-question';
+      const summary=document.createElement('summary'); summary.textContent=question.prompt; details.appendChild(summary);
+      const answer=document.createElement('p');
+      const latinAnswer=String(question.correct_answer_latin||'').trim();
+      answer.innerHTML=`<strong>${escapeHTML(tOr('answer','Answer'))}:</strong> ${escapeHTML(question.correct_answer||'')}${latinAnswer && latinAnswer !== question.correct_answer ? ` <span class=\"muted\">(${escapeHTML(latinAnswer)})</span>` : ''}`;
+      details.appendChild(answer);
+      if(question.explanation){ const explanation=document.createElement('p'); explanation.textContent=question.explanation; details.appendChild(explanation); }
+      const provenance=document.createElement('div'); provenance.className='muted'; provenance.textContent=`${question.relation_type || 'relation'} · ${question.evidence_status || 'review pending'}`; details.appendChild(provenance);
+      section.appendChild(details);
+    });
+    card.appendChild(section);
+  }
+
+  const questions=anatomyStructureQuestionBank.filter(q=>(q.concept_ids||[]).includes(record.id));
+  if(questions.length){
+    const section=document.createElement('section'); section.className='anatomy-structure-section';
+    const h=document.createElement('h4'); h.textContent=tOr('anatomy_seed_questions','Seed quiz questions'); section.appendChild(h);
+    questions.slice(0,3).forEach(question=>{
+      const details=document.createElement('details'); details.className='anatomy-seed-question';
+      const summary=document.createElement('summary'); summary.textContent=question.prompt; details.appendChild(summary);
+      const answer=document.createElement('p'); answer.innerHTML=`<strong>${escapeHTML(tOr('answer','Answer'))}:</strong> ${escapeHTML(question.correct_answer||'')}`; details.appendChild(answer);
+      if(question.explanation){ const explanation=document.createElement('p'); explanation.textContent=question.explanation; details.appendChild(explanation); }
+      section.appendChild(details);
+    });
+    card.appendChild(section);
+  }
+
+  const bridges=anatomyStructureClinicalBridges.filter(c=>(c.linked_concept_ids||[]).includes(record.id));
+  bridges.forEach(bridge=>{
+    const section=document.createElement('section'); section.className='anatomy-structure-section is-clinical';
+    const h=document.createElement('h4'); h.textContent=bridge.title || tOr('anatomy_clinical_bridge','Clinical bridge'); section.appendChild(h);
+    const p=document.createElement('p'); p.textContent=bridge.prompt || ''; section.appendChild(p);
+    appendAnatomyListSection(section, tOr('anatomy_expected_points','Expected points'), bridge.expected_points || []);
+    card.appendChild(section);
+  });
+
+  return card;
+}
+
+function getLocalizedMuscleName(row){
+  const lang = normalizeLanguage(state.language);
+  if(lang === 'Deutsch') return String(row?.german_muscle_name || row?.english_muscle_name || row?.latin_muscle_name || '').trim();
+  if(lang === 'Slovensky') return String(row?.latin_muscle_name || row?.english_muscle_name || '').trim();
+  return String(row?.english_muscle_name || row?.latin_muscle_name || '').trim();
+}
+
+function getUnifiedMuscleRegion(row){
+  return String(row?.muscle_region_en || row?.muscle_region_sk || row?.muscle_region_ge || '').trim();
+}
+
+function getUnifiedMuscleCategory(row){
+  return String(row?.muscle_category_en || row?.muscle_category_sk || row?.muscle_category_ge || '').trim();
+}
+
+function muscleMatchesUnifiedFilters(row){
+  if(anatomySelectedTypes.size && !anatomySelectedTypes.has('muscle')) return false;
+  if(anatomySelectedSystems.size && !anatomySelectedSystems.has('muscular_system')) return false;
+  if(anatomySelectedRegions.size && !anatomySelectedRegions.has(getUnifiedMuscleRegion(row))) return false;
+  return true;
+}
+
+function anatomyRecordMatchesUnifiedFilters(record){
+  if(!record) return false;
+  if(anatomySelectedTypes.size && !anatomySelectedTypes.has(String(record.type || ''))) return false;
+  if(anatomySelectedSystems.size && !arrayValue(record.system).some(value=>anatomySelectedSystems.has(String(value)))) return false;
+  if(anatomySelectedRegions.size && !arrayValue(record.region).some(value=>anatomySelectedRegions.has(String(value)))) return false;
+  return true;
+}
+
+function scoreUnifiedMuscle(row, rawQuery, mode = 'any'){
+  const q = normalizeSearchText(rawQuery);
+  if(!q) return 1;
+  const fields = {
+    name: [row?.english_muscle_name, row?.latin_muscle_name, row?.german_muscle_name],
+    region: [getUnifiedMuscleRegion(row), getUnifiedMuscleCategory(row)],
+    system: ['muscular system'],
+    details: [row?.movement_function, row?.innervation, row?.blood_supply, row?.origo, row?.insercio, row?.muscle_part]
+  };
+  const chosen = mode === 'any' ? Object.values(fields).flat() : (fields[mode] || Object.values(fields).flat());
+  let score = 0;
+  chosen.forEach((value, index)=>{
+    const text = normalizeSearchText(value);
+    if(!text) return;
+    const weight = mode === 'any' && index < 2 ? 10 : 0;
+    if(text === q) score = Math.max(score, 110 + weight);
+    else if(text.startsWith(q)) score = Math.max(score, 96 + weight);
+    else if(text.includes(q)) score = Math.max(score, 78 + weight);
+    else {
+      const tokens = q.split(' ').filter(Boolean);
+      if(tokens.length && tokens.every(token=>text.includes(token))) score = Math.max(score, 68 + weight);
+    }
+  });
+  return score;
+}
+
+function renderUnifiedMuscleCard(row, highlightQuery){
+  const card = document.createElement('article');
+  card.className = 'anatomy-structure-result anatomy-muscle-result';
+  const head = document.createElement('div');
+  head.className = 'anatomy-structure-head';
+  const titleWrap = document.createElement('div');
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'anatomy-structure-eyebrow';
+  eyebrow.textContent = tOr('muscle', 'Muscle');
+  const title = document.createElement('h3');
+  appendHighlightedText(title, getLocalizedMuscleName(row) || tOr('muscle', 'Muscle'), highlightQuery);
+  titleWrap.append(eyebrow, title);
+  if(row?.latin_muscle_name){
+    const latin = document.createElement('div');
+    latin.className = 'anatomy-structure-latin';
+    latin.textContent = row.latin_muscle_name;
+    titleWrap.appendChild(latin);
+  }
+  head.appendChild(titleWrap);
+  const badges = document.createElement('div');
+  badges.className = 'anatomy-structure-badges';
+  [getUnifiedMuscleRegion(row), getUnifiedMuscleCategory(row)].filter(Boolean).forEach(value=>{
+    const badge = document.createElement('span');
+    badge.className = 'anatomy-structure-badge';
+    badge.textContent = value;
+    badges.appendChild(badge);
+  });
+  head.appendChild(badges);
+  card.appendChild(head);
+  addMuscleField(card, tOr('muscle_search_origo', 'Origo'), row?.origo, null, false);
+  addMuscleField(card, tOr('muscle_search_insercio', 'Insercio'), row?.insercio, null, false);
+  addMuscleField(card, tOr('muscle_search_innervation', 'Innervation'), row?.innervation, null, false);
+  addMuscleField(card, tOr('muscle_search_blood_supply', 'Blood supply'), row?.blood_supply, null, false);
+  addMuscleField(card, tOr('muscle_type_of_movement', 'Movement'), row?.movement_function, null, false);
+  if(row?.muscle_part) addMuscleField(card, tOr('muscle_search_muscle_part', 'Parts of muscle'), row.muscle_part, null, false);
+  return card;
 }
 
 function renderMuscleSearchResults(){
@@ -4436,411 +4963,175 @@ function renderMuscleSearchResults(){
   const fieldSel = document.getElementById('muscle-search-field');
   const results = document.getElementById('muscle-search-results');
   if(!input || !results) return;
-  const dataset = getAnatomyDatasetMode();
-  const q = input.value.trim().toLowerCase();
+  const rawQuery = input.value.trim();
+  const mode = fieldSel?.value || 'any';
+  const hasFilters = anatomySelectedSystems.size || anatomySelectedRegions.size || anatomySelectedTypes.size;
   results.innerHTML = '';
-  if(q.length < 2) return;
 
-  if(dataset === 'anatomy'){
-    const matches = anatomyTerms.filter(r => {
-      if(fieldSel && fieldSel.value !== 'any'){
-        return includesQuery(r[fieldSel.value], q);
+  if(rawQuery.length < 2 && !hasFilters){
+    const empty = document.createElement('div');
+    empty.className = 'anatomy-structure-empty';
+    const title = document.createElement('strong');
+    title.textContent = tOr('anatomy_unified_empty_title', 'Browse the anatomy library');
+    const copy = document.createElement('span');
+    copy.textContent = tOr('anatomy_unified_empty_copy', 'Choose a structure type, system or region, or search muscles, bones, nerves, vessels and other structures.');
+    empty.append(title, copy);
+    results.appendChild(empty);
+    return;
+  }
+
+  let structureHits = [];
+  if(rawQuery.length >= 2){
+    structureHits = searchAnatomyStructures(rawQuery, anatomyStructureIndex, {
+      maxResults: 220,
+      filters: {
+        types: anatomySelectedTypes,
+        systems: anatomySelectedSystems,
+        regions: anatomySelectedRegions
       }
-      return (
-        includesQuery(r.system, q) ||
-        includesQuery(r.region, q) ||
-        includesQuery(r.latin_term, q) ||
-        includesQuery(r.english_term, q) ||
-        includesQuery(r.german_term, q) ||
-        includesQuery(r.slovak_term, q) ||
-        includesQuery(r.synonyms, q) ||
-        includesQuery(r.related_structures, q) ||
-        includesQuery(r.notes, q)
-      );
     });
-    const sortedMatches = [...matches].sort((a, b) => {
-      const aName = String(a.english_term || a.latin_term || '').trim();
-      const bName = String(b.english_term || b.latin_term || '').trim();
-      return aName.localeCompare(bName, undefined, { sensitivity: 'base' });
-    });
-    if(sortedMatches.length === 0){
-      results.textContent = 'No anatomy results found.';
-      return;
+    if(mode !== 'any'){
+      structureHits = structureHits.filter(hit=>{
+        const flat = anatomyTerms.find(row=>row.id === hit.id) || {};
+        if(mode === 'name') return [flat.english_term, flat.latin_term, flat.german_term, flat.synonyms].some(value=>includesQuery(value, rawQuery));
+        if(mode === 'region') return includesQuery(flat.region, rawQuery);
+        if(mode === 'system') return includesQuery(flat.system, rawQuery);
+        if(mode === 'details') return [flat.related_structures, flat.key_features, flat.clinical_notes, flat.notes, JSON.stringify(flat.__structure?.details || {})].some(value=>includesQuery(value, rawQuery));
+        return true;
+      });
     }
-    const limit = 50;
-    sortedMatches.slice(0, limit).forEach(r => {
-      const card = document.createElement('div');
-      card.className = 'muscle-result';
-      addMuscleField(card, 'System', r.system, null, false, fieldSel && fieldSel.value === 'system' ? q : null);
-      addMuscleField(card, 'Region', r.region, null, false, fieldSel && fieldSel.value === 'region' ? q : null);
-      addMuscleField(card, 'Latin name', r.latin_term, null, false, fieldSel && fieldSel.value === 'latin_term' ? q : null);
-      addMuscleField(card, 'English name', r.english_term, null, false, fieldSel && fieldSel.value === 'english_term' ? q : null);
-      addMuscleField(card, 'German name', r.german_term, null, false, fieldSel && fieldSel.value === 'german_term' ? q : null);
-      addMuscleField(card, 'Slovak name', r.slovak_term, null, false, fieldSel && fieldSel.value === 'slovak_term' ? q : null);
-      addMuscleField(card, 'Synonyms', r.synonyms, null, false, fieldSel && fieldSel.value === 'synonyms' ? q : null);
-      addMuscleField(card, 'Related structures', r.related_structures, null, false, fieldSel && fieldSel.value === 'related_structures' ? q : null);
-      addMuscleField(card, 'Notes', r.notes, null, false, fieldSel && fieldSel.value === 'notes' ? q : null);
-      results.appendChild(card);
-    });
-    if(sortedMatches.length > limit){
-      const note = document.createElement('div');
-      note.className = 'muted';
-      note.textContent = `Showing first ${limit} results.`;
-      results.appendChild(note);
-    }
+  }else{
+    structureHits = (anatomyStructureIndex?.rows || [])
+      .filter(item=>anatomyRecordMatchesUnifiedFilters(item.record))
+      .map(item=>({ id:item.id, record:item.record, score:1, matchedFields:['filter'] }));
+  }
+
+  if(hasFilters){
+    structureHits.sort((a,b)=>String(getStructureTerm(a.record,'en') || getStructureTerm(a.record,'la') || a.id).localeCompare(String(getStructureTerm(b.record,'en') || getStructureTerm(b.record,'la') || b.id), undefined, { sensitivity:'base' }));
+  }
+
+  if(!structureHits.length){
+    results.textContent = tOr('anatomy_no_results','No anatomy structures found.');
     return;
   }
 
-  const regionField = getMuscleRegionField();
-  const categoryField = getMuscleCategoryField();
-  const mode = fieldSel ? fieldSel.value : 'any';
-  const matches = muscleTerms.filter(r => {
-    if(mode === 'region') return includesQuery(r[regionField], q);
-    if(mode === 'category') return includesQuery(r[categoryField], q);
-    if(mode === 'english_muscle_name') return includesQuery(r.english_muscle_name, q);
-    if(mode === 'latin_muscle_name') return includesQuery(r.latin_muscle_name, q);
-    if(mode === 'movement_function' || mode === 'type_of_movement') return includesQuery(getMuscleMovementFunction(r), q);
-    if(mode === 'insercio') return includesQuery(r.insercio, q);
-    if(mode === 'origo') return includesQuery(r.origo, q);
-    if(mode === 'blood_supply') return includesQuery(r.blood_supply, q);
-    if(mode === 'innervation') return includesQuery(r.innervation, q);
-    return (
-      includesQuery(r.english_muscle_name, q) ||
-      includesQuery(r.latin_muscle_name, q) ||
-      includesQuery(r[regionField], q) ||
-      includesQuery(r[categoryField], q) ||
-      includesQuery(r.muscle_part, q) ||
-      includesQuery(getMuscleMovementFunction(r), q) ||
-      includesQuery(r.innervation, q) ||
-      includesQuery(r.blood_supply, q) ||
-      includesQuery(r.origo, q) ||
-      includesQuery(r.insercio, q)
-    );
+  const limit = 80;
+  structureHits.slice(0, limit).forEach(hit=>{
+    const card = renderAnatomyStructureCard(hit, rawQuery);
+    if(card) results.appendChild(card);
   });
-  const sortedMatches = mode === 'any' ? matches : [...matches].sort((a, b)=>{
-    const aName = String(a.english_muscle_name || a.latin_muscle_name || '').trim();
-    const bName = String(b.english_muscle_name || b.latin_muscle_name || '').trim();
-    return aName.localeCompare(bName, undefined, { sensitivity: 'base' });
-  });
-
-  if(sortedMatches.length === 0){
-    results.textContent = 'No muscles found.';
-    return;
-  }
-
-  const limit = 50;
-  sortedMatches.slice(0, limit).forEach(r=>{
-    const card = document.createElement('div');
-    card.className = 'muscle-result';
-    addMuscleField(card, tOr('muscle_search_region', 'Region'), getMuscleRegionLabel(r), null, false, mode === 'region' ? q : null);
-    addMuscleField(card, tOr('muscle_search_category', 'Category'), getMuscleCategoryLabel(r), null, false, mode === 'category' ? q : null);
-    addMuscleField(card, tOr('muscle_search_latin_name', 'Latin name'), r.latin_muscle_name, null, false, mode === 'latin_muscle_name' ? q : null);
-    addMuscleField(card, tOr('muscle_search_english_name', 'English name'), r.english_muscle_name, null, false, mode === 'english_muscle_name' ? q : null);
-    addMuscleField(card, tOr('muscle_search_muscle_part', 'Parts of muscle'), r.muscle_part, null, false);
-    addMuscleField(card, tOr('muscle_search_origo', 'Origo'), r.origo, null, false, mode === 'origo' ? q : null);
-    addMuscleField(card, tOr('muscle_search_insercio', 'Insercio'), r.insercio, null, false, mode === 'insercio' ? q : null);
-    addMuscleField(card, tOr('muscle_search_blood_supply', 'Blood supply'), r.blood_supply, null, false, mode === 'blood_supply' ? q : null);
-    addMuscleField(card, tOr('muscle_search_innervation', 'Innervation'), r.innervation, null, false, mode === 'innervation' ? q : null);
-    addMuscleField(card, tOr('muscle_type_of_movement', 'Movement'), getMuscleMovementFunction(r), null, false, (mode === 'movement_function' || mode === 'type_of_movement') ? q : null);
-    results.appendChild(card);
-  });
-  if(sortedMatches.length > limit){
+  if(structureHits.length > limit){
     const note = document.createElement('div');
     note.className = 'muted';
-    note.textContent = `Showing first ${limit} results.`;
+    note.textContent = `${tOr('showing_first','Showing first')} ${limit} ${tOr('results','results')}.`;
     results.appendChild(note);
   }
 }
 
+function addAnatomyActiveFilterChip(container, label, value, targetSet){
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = 'anatomy-active-filter';
+  chip.innerHTML = `<span>${escapeHTML(label)}</span><b aria-hidden="true">×</b>`;
+  chip.addEventListener('click', ()=>{
+    targetSet.delete(value);
+    renderMuscleRegionList();
+    renderMuscleSearchResults();
+  });
+  container.appendChild(chip);
+}
+
 function renderMuscleRegionList(){
-  if(getAnatomyDatasetMode() === 'anatomy'){
-    const list = document.getElementById('muscle-region-list');
-    if(!list) return;
-    const systems = new Map();
-    for(const row of anatomyTerms){
-      const systemKey = String(row.system || '').trim();
-      const regionKey = String(row.region || '').trim();
-      if(!systemKey) continue;
-      if(!systems.has(systemKey)){
-        systems.set(systemKey, new Set());
-      }
-      if(regionKey) systems.get(systemKey).add(regionKey);
-    }
-    const systemKeys = [...systems.keys()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    list.innerHTML = '';
-    if(systemKeys.length === 0){
-      const empty = document.createElement('div');
-      empty.className = 'muted';
-      empty.textContent = 'No anatomy systems available.';
-      list.appendChild(empty);
-      return;
-    }
-    const controls = document.createElement('div');
-    controls.className = 'muscle-region-controls';
-    const clearAllBtn = document.createElement('button');
-    clearAllBtn.type = 'button';
-    clearAllBtn.className = 'muscle-region-action-btn danger';
-    clearAllBtn.textContent = 'Clear all';
-    clearAllBtn.disabled = anatomySelectedSystems.size === 0 && anatomySelectedRegions.size === 0;
-    clearAllBtn.addEventListener('click', ()=>{
-      if(!window.confirm('Clear all selected systems and regions?')) return;
-      anatomySelectedSystems.clear();
-      anatomySelectedRegions.clear();
-      renderMuscleRegionList();
-    });
-    controls.appendChild(clearAllBtn);
-    list.appendChild(controls);
-
-    systemKeys.forEach(systemKey => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'muscle-region-item';
-      const header = document.createElement('div');
-      header.className = 'muscle-region-header';
-      const systemCb = document.createElement('input');
-      systemCb.type = 'checkbox';
-      systemCb.checked = anatomySelectedSystems.has(systemKey);
-      const label = document.createElement('span');
-      label.textContent = systemKey;
-      const actions = document.createElement('div');
-      actions.className = 'muscle-region-actions';
-      const allBtn = document.createElement('button');
-      allBtn.type = 'button';
-      allBtn.className = 'muscle-region-action-btn';
-      allBtn.textContent = 'All';
-      const clearBtn = document.createElement('button');
-      clearBtn.type = 'button';
-      clearBtn.className = 'muscle-region-action-btn';
-      clearBtn.textContent = 'Clear';
-      actions.appendChild(allBtn);
-      actions.appendChild(clearBtn);
-      header.appendChild(systemCb);
-      header.appendChild(label);
-      header.appendChild(actions);
-      wrapper.appendChild(header);
-
-      const regionWrap = document.createElement('div');
-      regionWrap.className = 'muscle-region-categories checkbox-grid';
-      if(!systemCb.checked) regionWrap.classList.add('hidden');
-      const regionKeys = [...systems.get(systemKey)].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-      if(regionKeys.length === 0){
-        const none = document.createElement('div');
-        none.className = 'muted';
-        none.textContent = 'No regions for this system.';
-        regionWrap.appendChild(none);
-      } else {
-        regionKeys.forEach(regionKey => {
-          const item = document.createElement('label');
-          item.className = 'checkbox-item';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          const key = `${systemKey}||${regionKey}`;
-          cb.value = key;
-          cb.checked = anatomySelectedRegions.has(key);
-          cb.addEventListener('change', ()=>{
-            if(cb.checked){
-              anatomySelectedRegions.add(key);
-              anatomySelectedSystems.add(systemKey);
-              systemCb.checked = true;
-              regionWrap.classList.remove('hidden');
-            } else {
-              anatomySelectedRegions.delete(key);
-            }
-          });
-          const span = document.createElement('span');
-          span.textContent = regionKey;
-          item.appendChild(cb);
-          item.appendChild(span);
-          regionWrap.appendChild(item);
-        });
-      }
-      const regionCbs = ()=> [...regionWrap.querySelectorAll('input[type="checkbox"]')];
-      allBtn.disabled = regionKeys.length === 0;
-      clearBtn.disabled = regionKeys.length === 0;
-      allBtn.addEventListener('click', ()=>{
-        anatomySelectedSystems.add(systemKey);
-        systemCb.checked = true;
-        regionWrap.classList.remove('hidden');
-        regionCbs().forEach(cb => {
-          cb.checked = true;
-          anatomySelectedRegions.add(cb.value);
-        });
-      });
-      clearBtn.addEventListener('click', ()=>{
-        anatomySelectedSystems.delete(systemKey);
-        systemCb.checked = false;
-        regionCbs().forEach(cb => {
-          cb.checked = false;
-          anatomySelectedRegions.delete(cb.value);
-        });
-        regionWrap.classList.add('hidden');
-      });
-      systemCb.addEventListener('change', ()=>{
-        if(systemCb.checked){
-          anatomySelectedSystems.add(systemKey);
-          regionWrap.classList.remove('hidden');
-        } else {
-          anatomySelectedSystems.delete(systemKey);
-          regionWrap.classList.add('hidden');
-          regionCbs().forEach(cb => {
-            cb.checked = false;
-            anatomySelectedRegions.delete(cb.value);
-          });
-        }
-      });
-      wrapper.appendChild(regionWrap);
-      list.appendChild(wrapper);
-    });
-    return;
-  }
-
   const list = document.getElementById('muscle-region-list');
   if(!list) return;
-  const regionField = getMuscleRegionField();
-  const categoryField = getMuscleCategoryField();
-  const regions = new Map();
-  for(const r of muscleTerms){
-    const key = getMuscleRegionKey(r);
-    if(!key) continue;
-    const label = (r[regionField] || r.muscle_region_en || key).trim();
-    if(!regions.has(key)){
-      regions.set(key, { label: label || key, categories: new Map() });
-    }
-    const catKey = getMuscleCategoryKey(r);
-    if(!catKey) continue;
-    const catLabel = (r[categoryField] || r.muscle_category_en || catKey).trim();
-    regions.get(key).categories.set(catKey, catLabel || catKey);
-  }
-  const keys = [...regions.keys()].sort(compareMuscleRegionKeys);
   list.innerHTML = '';
-  if(keys.length === 0){
-    const empty = document.createElement('div');
-    empty.className = 'muted';
-    empty.textContent = 'No regions available.';
-    list.appendChild(empty);
-    return;
-  }
-  const controls = document.createElement('div');
-  controls.className = 'muscle-region-controls';
-  const clearAllBtn = document.createElement('button');
-  clearAllBtn.type = 'button';
-  clearAllBtn.className = 'muscle-region-action-btn danger';
-  clearAllBtn.textContent = tOr('muscle_clear_all', 'Clear all');
-  const hasSelections = muscleQuizSelectedRegions.size > 0 || muscleQuizSelectedCategories.size > 0;
-  clearAllBtn.disabled = !hasSelections;
-  clearAllBtn.addEventListener('click', ()=>{
-    const confirmText = tOr('muscle_clear_all_confirm', 'Clear all selected regions and categories?');
-    if(!window.confirm(confirmText)) return;
-    muscleQuizSelectedRegions.clear();
-    muscleQuizSelectedCategories.clear();
+  const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
+
+  const counts = (values)=>{
+    const map = new Map();
+    values.forEach(raw=>{
+      const value = String(raw || '').trim();
+      if(value) map.set(value, (map.get(value) || 0) + 1);
+    });
+    return [...map.entries()].sort((a,b)=>humanizeClinicalCategory(a[0]).localeCompare(humanizeClinicalCategory(b[0]), undefined, { sensitivity:'base' }));
+  };
+
+  const typeValues = structures.map(record=>record.type);
+  const systemValues = structures.flatMap(record=>arrayValue(record.system));
+  const regionValues = structures.flatMap(record=>arrayValue(record.region));
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'anatomy-filter-toolbar';
+  const toolbarTop = document.createElement('div');
+  toolbarTop.className = 'anatomy-filter-toolbar-top';
+  const status = document.createElement('strong');
+  const selectedCount = anatomySelectedTypes.size + anatomySelectedSystems.size + anatomySelectedRegions.size;
+  status.textContent = selectedCount
+    ? `${tOr('active_filters','Active filters')}: ${selectedCount}`
+    : tOr('anatomy_no_active_filters','No filters selected');
+  const clear = document.createElement('button');
+  clear.type = 'button';
+  clear.className = 'anatomy-filter-clear';
+  clear.textContent = tOr('clear_filters','Clear filters');
+  clear.disabled = selectedCount === 0;
+  clear.addEventListener('click', ()=>{
+    anatomySelectedTypes.clear();
+    anatomySelectedSystems.clear();
+    anatomySelectedRegions.clear();
     renderMuscleRegionList();
+    renderMuscleSearchResults();
   });
-  controls.appendChild(clearAllBtn);
-  list.appendChild(controls);
+  toolbarTop.append(status, clear);
+  toolbar.appendChild(toolbarTop);
+  if(selectedCount){
+    const active = document.createElement('div');
+    active.className = 'anatomy-active-filters';
+    anatomySelectedTypes.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedTypes));
+    anatomySelectedSystems.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedSystems));
+    anatomySelectedRegions.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedRegions));
+    toolbar.appendChild(active);
+  }
+  list.appendChild(toolbar);
 
-  keys.forEach(regionKey=>{
-    const regionData = regions.get(regionKey);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'muscle-region-item';
+  const specs = [
+    { title:tOr('anatomy_type','Structure type'), values:counts(typeValues), selected:anatomySelectedTypes, open:true },
+    { title:tOr('field_system','System'), values:counts(systemValues), selected:anatomySelectedSystems, open:anatomySelectedSystems.size>0 },
+    { title:tOr('muscle_search_region','Region'), values:counts(regionValues), selected:anatomySelectedRegions, open:anatomySelectedRegions.size>0 }
+  ];
 
-    const header = document.createElement('div');
-    header.className = 'muscle-region-header';
-    const regionCb = document.createElement('input');
-    regionCb.type = 'checkbox';
-    regionCb.checked = muscleQuizSelectedRegions.has(regionKey);
-    const label = document.createElement('span');
-    label.textContent = regionData.label;
-    const actions = document.createElement('div');
-    actions.className = 'muscle-region-actions';
-    const allBtn = document.createElement('button');
-    allBtn.type = 'button';
-    allBtn.className = 'muscle-region-action-btn';
-    allBtn.textContent = tOr('muscle_region_all', 'All');
-    const clearBtn = document.createElement('button');
-    clearBtn.type = 'button';
-    clearBtn.className = 'muscle-region-action-btn';
-    clearBtn.textContent = tOr('muscle_region_clear', 'Clear');
-    actions.appendChild(allBtn);
-    actions.appendChild(clearBtn);
-    header.appendChild(regionCb);
-    header.appendChild(label);
-    header.appendChild(actions);
-    wrapper.appendChild(header);
-
-    const catWrap = document.createElement('div');
-    catWrap.className = 'muscle-region-categories checkbox-grid';
-    if(!regionCb.checked) catWrap.classList.add('hidden');
-
-    const catKeys = [...regionData.categories.keys()].sort((a,b)=>a.localeCompare(b));
-    if(catKeys.length === 0){
-      const none = document.createElement('div');
-      none.className = 'muted';
-      none.textContent = 'No categories for this region.';
-      catWrap.appendChild(none);
-    }else{
-      catKeys.forEach(catKey=>{
-        const catLabel = regionData.categories.get(catKey);
-        const item = document.createElement('label');
-        item.className = 'checkbox-item';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        const key = `${regionKey}||${catKey}`;
-        cb.value = key;
-        cb.checked = muscleQuizSelectedCategories.has(key);
-        cb.addEventListener('change', ()=>{
-          if(cb.checked){
-            muscleQuizSelectedCategories.add(key);
-            muscleQuizSelectedRegions.add(regionKey);
-            regionCb.checked = true;
-            catWrap.classList.remove('hidden');
-          } else {
-            muscleQuizSelectedCategories.delete(key);
-          }
-        });
-        const span = document.createElement('span');
-        span.textContent = catLabel;
-        item.appendChild(cb);
-        item.appendChild(span);
-        catWrap.appendChild(item);
+  specs.forEach(spec=>{
+    const group = document.createElement('details');
+    group.className = 'anatomy-filter-group anatomy-filter-group-clean';
+    group.open = spec.open || spec.selected.size > 0;
+    const summary = document.createElement('summary');
+    const summaryLabel = document.createElement('span');
+    summaryLabel.textContent = spec.title;
+    const summaryCount = document.createElement('small');
+    summaryCount.textContent = spec.selected.size ? `${spec.selected.size} ${tOr('selected','selected')}` : `${spec.values.length}`;
+    summary.append(summaryLabel, summaryCount);
+    group.appendChild(summary);
+    const options = document.createElement('div');
+    options.className = 'anatomy-filter-chip-grid';
+    spec.values.forEach(([value,count])=>{
+      const button = document.createElement('button');
+      button.type = 'button';
+      const active = spec.selected.has(value);
+      button.className = `anatomy-filter-option${active ? ' is-active' : ''}`;
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      const label = document.createElement('span');
+      label.textContent = humanizeClinicalCategory(value);
+      const number = document.createElement('small');
+      number.textContent = String(count);
+      button.append(label, number);
+      button.addEventListener('click', ()=>{
+        if(spec.selected.has(value)) spec.selected.delete(value); else spec.selected.add(value);
+        renderMuscleRegionList();
+        renderMuscleSearchResults();
       });
-    }
-    const categoryCbs = ()=> [...catWrap.querySelectorAll('input[type="checkbox"]')];
-    allBtn.disabled = catKeys.length === 0;
-    clearBtn.disabled = catKeys.length === 0;
-    allBtn.addEventListener('click', ()=>{
-      muscleQuizSelectedRegions.add(regionKey);
-      regionCb.checked = true;
-      catWrap.classList.remove('hidden');
-      categoryCbs().forEach(cb=>{
-        cb.checked = true;
-        muscleQuizSelectedCategories.add(cb.value);
-      });
+      options.appendChild(button);
     });
-    clearBtn.addEventListener('click', ()=>{
-      muscleQuizSelectedRegions.delete(regionKey);
-      regionCb.checked = false;
-      categoryCbs().forEach(cb=>{
-        cb.checked = false;
-        muscleQuizSelectedCategories.delete(cb.value);
-      });
-      catWrap.classList.add('hidden');
-    });
-
-    regionCb.addEventListener('change', ()=>{
-      if(regionCb.checked){
-        muscleQuizSelectedRegions.add(regionKey);
-        catWrap.classList.remove('hidden');
-      } else {
-        muscleQuizSelectedRegions.delete(regionKey);
-        catWrap.classList.add('hidden');
-        [...catWrap.querySelectorAll('input[type="checkbox"]')].forEach(cb=>{
-          cb.checked = false;
-          muscleQuizSelectedCategories.delete(cb.value);
-        });
-      }
-    });
-
-    wrapper.appendChild(catWrap);
-    list.appendChild(wrapper);
+    group.appendChild(options);
+    list.appendChild(group);
   });
 }
 
@@ -4882,6 +5173,7 @@ function renderMuscleQuizFields(){
   addMuscleField(fields, tOr('muscle_search_category', 'Category'), v(getMuscleCategoryLabel(muscleQuizCurrent), 'category'), 'category', true);
   addMuscleField(fields, tOr('muscle_search_latin_name', 'Latin name'), v(muscleQuizCurrent.latin_muscle_name, 'latin'), 'latin', true);
   addMuscleField(fields, tOr('muscle_search_english_name', 'English name'), v(muscleQuizCurrent.english_muscle_name, 'english'), 'english', true);
+  if(normalizeLanguage(state.language) === 'Deutsch') addMuscleField(fields, 'Deutscher Name', v(muscleQuizCurrent.german_muscle_name, 'german'), 'german', true);
   addMuscleField(fields, tOr('muscle_search_muscle_part', 'Parts of muscle'), v(muscleQuizCurrent.muscle_part, 'part'), 'part', true);
   addMuscleField(fields, tOr('muscle_search_origo', 'Origo'), v(muscleQuizCurrent.origo, 'origo'), 'origo', true);
   addMuscleField(fields, tOr('muscle_search_insercio', 'Insercio'), v(muscleQuizCurrent.insercio, 'insercio'), 'insercio', true);
@@ -4928,19 +5220,15 @@ function startMuscleQuiz(){
 function refreshMuscleTrainingUI(){
   populateAnatomySearchFieldOptions();
   syncAnatomySearchPlaceholder();
+  syncAnatomyDatasetCopy();
   renderMuscleRegionList();
   renderMuscleQuizFields();
-  const input = document.getElementById('muscle-search-input');
-  if(input && input.value.trim().length >= 2) renderMuscleSearchResults();
+  renderMuscleSearchResults();
 }
 
 async function ensureAnatomyWorkspaceDatasetLoaded(){
-  if(getAnatomyDatasetMode() === 'anatomy'){
-    await ensureAnatomyTermsLoaded();
-    return anatomyTerms;
-  }
-  await ensureMusclesLoaded();
-  return muscleTerms;
+  await Promise.all([ensureAnatomyTermsLoaded(), ensureMusclesLoaded()]);
+  return { structures: anatomyTerms, muscles: muscleTerms };
 }
 
 function getLatinTerms(){
@@ -7418,6 +7706,7 @@ function resetLatinCourseProgress(){
 
 // --- Anamnesis helpers ---
 let anamnesisSaveTimer = null;
+let pendingAnamnesisTypeSwitch = null;
 const ANAMNESIS_NOTES_BULLETS_KEY = "anamnesis_notes_bullets";
 let psychiatryAnamnesisRows = null;
 const psychiatryTermExplanations = new Map();
@@ -7810,6 +8099,54 @@ function updateHpiRadiationVisibility(){
   if(wrap) wrap.classList.toggle("hidden", !(yes && yes.checked));
 }
 
+function setAnamnesisNotesDrawerOpen(open){
+  const toggle = document.getElementById("anamnesis-notes-toggle");
+  const drawer = document.getElementById("anamnesis-notes-drawer");
+  if(!drawer) return;
+  const screen = document.getElementById("screen-anamnesis");
+  const next = !!open && !!(screen && screen.classList.contains("anamnesis-record-open"));
+  drawer.classList.toggle("open", next);
+  drawer.setAttribute("aria-hidden", next ? "false" : "true");
+  if(toggle) toggle.setAttribute("aria-expanded", next ? "true" : "false");
+}
+
+function setAnamnesisSectionsDrawerOpen(open){
+  const toggle = document.getElementById("anamnesis-sections-toggle");
+  const drawer = document.getElementById("anamnesis-section-nav");
+  if(!drawer) return;
+  const screen = document.getElementById("screen-anamnesis");
+  const next = !!open && !!(screen && screen.classList.contains("anamnesis-record-open"));
+  drawer.classList.toggle("open", next);
+  drawer.setAttribute("aria-hidden", next ? "false" : "true");
+  if(toggle) toggle.setAttribute("aria-expanded", next ? "true" : "false");
+}
+
+function closeAnamnesisSideDrawers(){
+  setAnamnesisNotesDrawerOpen(false);
+  setAnamnesisSectionsDrawerOpen(false);
+}
+
+function initAnamnesisSectionsDrawer(){
+  const toggle = document.getElementById("anamnesis-sections-toggle");
+  const drawer = document.getElementById("anamnesis-section-nav");
+  const close = document.getElementById("anamnesis-sections-close");
+  const edge = document.getElementById("anamnesis-sections-edge");
+  if(!toggle || !drawer || !close || !edge) return;
+
+  toggle.addEventListener("click", ()=>{
+    const willOpen = !drawer.classList.contains("open");
+    setAnamnesisNotesDrawerOpen(false);
+    setAnamnesisSectionsDrawerOpen(willOpen);
+  });
+  close.addEventListener("click", ()=> setAnamnesisSectionsDrawerOpen(false));
+  edge.addEventListener("click", ()=> setAnamnesisSectionsDrawerOpen(false));
+  document.addEventListener("keydown", (event)=>{
+    if(event.key === "Escape" && drawer.classList.contains("open")){
+      setAnamnesisSectionsDrawerOpen(false);
+    }
+  });
+}
+
 function initAnamnesisNotesDrawer(){
   const toggle = document.getElementById("anamnesis-notes-toggle");
   const drawer = document.getElementById("anamnesis-notes-drawer");
@@ -7824,9 +8161,13 @@ function initAnamnesisNotesDrawer(){
     try{ localStorage.setItem(ANAMNESIS_NOTES_BULLETS_KEY, bullets.checked ? "1" : "0"); }catch(e){}
   });
 
-  toggle.addEventListener("click", ()=> drawer.classList.add("open"));
-  close.addEventListener("click", ()=> drawer.classList.remove("open"));
-  edge.addEventListener("click", ()=> drawer.classList.remove("open"));
+  toggle.addEventListener("click", ()=>{
+    const willOpen = !drawer.classList.contains("open");
+    setAnamnesisSectionsDrawerOpen(false);
+    setAnamnesisNotesDrawerOpen(willOpen);
+  });
+  close.addEventListener("click", ()=> setAnamnesisNotesDrawerOpen(false));
+  edge.addEventListener("click", ()=> setAnamnesisNotesDrawerOpen(false));
 
   notes.addEventListener("keydown", (e)=>{
     if(e.key !== "Enter" || !bullets.checked) return;
@@ -8020,6 +8361,12 @@ function focusAnamnesisRegistryList(){
 
 function showAnamnesisPatientListView(opts = {}){
   const { focus = true } = opts;
+  const record = getActiveAnamnesisPatientRecord();
+  if(record && !anamnesisPhoneRegistryVisible){
+    clearTimeout(anamnesisSaveTimer);
+    anamnesisSaveTimer = null;
+    saveAnamnesisForm({ silent: true });
+  }
   anamnesisPhoneRegistryVisible = true;
   setAnamnesisPhoneToolsOpen(false);
   updateAnamnesisEditorChrome(getActiveAnamnesisPatientRecord());
@@ -8243,7 +8590,67 @@ function getAnamnesisTypeLabel(type){
   const normalized = normalizeAnamnesisType(type);
   if(normalized === "psychiatric") return tOr("anamnesis_type_psychiatric", "Psychiatric");
   if(normalized === "pediatrics") return tOr("anamnesis_type_pediatrics", "Pediatrics");
-  return tOr("anamnesis_type_internal", "Internal");
+  return tOr("anamnesis_type_internal", "Internal/Surgery");
+}
+
+function isMeaningfulAnamnesisControlValue(control){
+  if(!control || control.disabled || !control.name) return false;
+  if(control.type === "hidden") return false;
+  if(control.type === "checkbox" || control.type === "radio") return !!control.checked;
+  return String(control.value ?? "").trim() !== "";
+}
+
+function hasNonSharedAnamnesisContent(form){
+  if(!form) return false;
+  const controls = form.querySelectorAll("input, textarea, select");
+  for(const control of controls){
+    if(ANAMNESIS_SHARED_FIELD_NAMES.includes(String(control.name || ""))) continue;
+    if(isMeaningfulAnamnesisControlValue(control)) return true;
+  }
+  const notes = document.getElementById("anamnesis-notes-text");
+  return !!(notes && String(notes.value || "").trim());
+}
+
+function settleAnamnesisTypeSwitchConfirmation(accepted){
+  const pending = pendingAnamnesisTypeSwitch;
+  if(!pending) return;
+  pendingAnamnesisTypeSwitch = null;
+  const modal = document.getElementById("anamnesis-type-switch-modal");
+  if(modal){
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+  }
+  const typeInput = document.getElementById("anamnesis-patient-type");
+  if(typeInput) typeInput.disabled = false;
+  pending.resolve(!!accepted);
+}
+
+function requestAnamnesisTypeSwitchConfirmation(previousType, nextType){
+  if(pendingAnamnesisTypeSwitch){
+    settleAnamnesisTypeSwitchConfirmation(false);
+  }
+  const modal = document.getElementById("anamnesis-type-switch-modal");
+  if(!modal) return Promise.resolve(window.confirm(tOr(
+    "anamnesis_switch_workflow_warning",
+    "Switching anamnesis type will keep Identification and Chief Complaint but clear the remaining answers and notes."
+  )));
+
+  const fromEl = document.getElementById("anamnesis-type-switch-from");
+  const toEl = document.getElementById("anamnesis-type-switch-to");
+  if(fromEl) fromEl.textContent = getAnamnesisTypeLabel(previousType);
+  if(toEl) toEl.textContent = getAnamnesisTypeLabel(nextType);
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  const typeInput = document.getElementById("anamnesis-patient-type");
+  if(typeInput) typeInput.disabled = true;
+
+  return new Promise(resolve => {
+    pendingAnamnesisTypeSwitch = { resolve, previousType, nextType };
+    requestAnimationFrame(()=>{
+      const proceed = document.getElementById("anamnesis-type-switch-proceed");
+      if(proceed && typeof proceed.focus === "function") proceed.focus();
+    });
+  });
 }
 
 const SHARED_PSYCHIATRY_FIELD_IDS = new Set([
@@ -8878,7 +9285,7 @@ function buildPsychiatryCheckboxLabel(field, opts = {}){
   return label;
 }
 
-function buildPsychiatryAnamnesisField(field){
+function buildPsychiatryAnamnesisField(field, opts = {}){
   const type = normalizePsychiatryFieldType(field.field_type) || "text";
   const name = String(field.field_id || "").trim();
   const labelText = String(field.field_label || name || "").trim();
@@ -8886,22 +9293,27 @@ function buildPsychiatryAnamnesisField(field){
   const options = parsePsychiatryOptions(field.options);
 
   const wrap = document.createElement("div");
-  wrap.className = "anam-field";
+  wrap.className = "anam-field anam-psych-field";
+  if(opts.compact) wrap.classList.add("anam-psych-field-compact");
 
   const clinician = isClinicianRole(field);
 
   if(type === "checkbox"){
+    wrap.classList.add("anam-psych-checkbox-field");
+    wrap.appendChild(buildPsychiatryCheckboxLabel(field, { clinician }));
+    return wrap;
+  }
+
+  const visibleLabel = document.createElement("div");
+  visibleLabel.className = "anam-psych-field-label";
+  const helpDescription = description && !normalizePsychiatryRole(description) ? description : "";
+  visibleLabel.appendChild(renderTermWithHelp(labelText, { description: helpDescription }));
+  if(clinician) visibleLabel.classList.add("anam-psych-clinician");
+  wrap.appendChild(visibleLabel);
+
+  if(type === "radio"){
     const row = document.createElement("div");
-    row.className = "anam-row";
-    row.appendChild(buildPsychiatryCheckboxLabel(field, { clinician }));
-    wrap.appendChild(row);
-  } else if(type === "radio"){
-    const row = document.createElement("div");
-    row.className = "anam-row";
-    const title = document.createElement("span");
-    title.appendChild(renderTermWithHelp(labelText));
-    if(clinician) title.classList.add("anam-psych-clinician");
-    row.appendChild(title);
+    row.className = "anam-row anam-psych-radio-row";
     const radioOptions = options.length > 0 ? options : ["yes", "no"];
     for(const option of radioOptions){
       const label = document.createElement("label");
@@ -8921,7 +9333,7 @@ function buildPsychiatryAnamnesisField(field){
     select.name = name;
     const empty = document.createElement("option");
     empty.value = "";
-    empty.textContent = labelText;
+    empty.textContent = "Select...";
     select.appendChild(empty);
     if(clinician) select.classList.add("anam-psych-clinician");
     for(const option of options){
@@ -8934,7 +9346,7 @@ function buildPsychiatryAnamnesisField(field){
   } else if(type === "textarea"){
     const input = document.createElement("textarea");
     input.name = name;
-    input.placeholder = labelText;
+    input.placeholder = opts.prompt ? "Optional response notes" : "Add notes...";
     if(clinician) input.classList.add("anam-psych-clinician");
     wrap.appendChild(input);
     wrap.classList.add("anam-psych-full");
@@ -8942,16 +9354,9 @@ function buildPsychiatryAnamnesisField(field){
     const input = document.createElement("input");
     input.type = "text";
     input.name = name;
-    input.placeholder = labelText;
+    input.placeholder = opts.prompt ? "Optional response notes" : "Enter value...";
     if(clinician) input.classList.add("anam-psych-clinician");
     wrap.appendChild(input);
-  }
-
-  if(description && !normalizePsychiatryRole(description)){
-    const desc = document.createElement("div");
-    desc.className = "anam-field-desc";
-    desc.textContent = description;
-    wrap.appendChild(desc);
   }
 
   return wrap;
@@ -9472,10 +9877,231 @@ function renderPediatricsAnamnesisForm(){
   form.appendChild(buildPediatricsReferenceSection());
 }
 
+function createPsychiatrySection(number, title, caption = ""){
+  const section = document.createElement("div");
+  section.className = "anam-section anam-psych-section";
+
+  const heading = document.createElement("h3");
+  heading.appendChild(document.createTextNode(`${number}. `));
+  heading.appendChild(renderTermWithHelp(title));
+  section.appendChild(heading);
+
+  if(caption){
+    const intro = document.createElement("p");
+    intro.className = "anam-psych-section-intro";
+    intro.textContent = caption;
+    section.appendChild(intro);
+  }
+  return section;
+}
+
+function getPsychiatryFields(fields, sectionId, groupIds = null){
+  const groupSet = Array.isArray(groupIds) ? new Set(groupIds) : null;
+  return fields.filter(field => {
+    if(String(field.section_id || "") !== sectionId) return false;
+    if(groupSet && !groupSet.has(String(field.group_id || ""))) return false;
+    const fieldId = String(field.field_id || "").trim();
+    return fieldId && !SHARED_PSYCHIATRY_FIELD_IDS.has(fieldId);
+  });
+}
+
+function groupPsychiatryFields(fields){
+  const groups = [];
+  let current = null;
+  for(const field of fields){
+    const id = String(field.group_id || "").trim() || "group";
+    const name = String(field.group_name || "").trim() || "Details";
+    if(!current || current.id !== id || current.name !== name){
+      current = { id, name, fields: [] };
+      groups.push(current);
+    }
+    current.fields.push(field);
+  }
+  return groups;
+}
+
+function appendPsychiatryGroup(parent, group, opts = {}){
+  if(!group || !Array.isArray(group.fields) || group.fields.length === 0) return;
+  const groupEl = document.createElement("div");
+  groupEl.className = "anam-group anam-psych-group";
+  if(opts.compact) groupEl.classList.add("anam-psych-group-compact");
+
+  if(group.name){
+    const title = document.createElement("strong");
+    title.className = "anam-group-title";
+    title.appendChild(renderTermWithHelp(group.name));
+    groupEl.appendChild(title);
+  }
+
+  const checkboxFields = group.fields.filter(field => (normalizePsychiatryFieldType(field.field_type) || "text") === "checkbox");
+  const otherFields = group.fields.filter(field => (normalizePsychiatryFieldType(field.field_type) || "text") !== "checkbox");
+
+  if(checkboxFields.length > 0){
+    const choices = document.createElement("div");
+    choices.className = "anam-psych-choice-grid";
+    for(const field of checkboxFields){
+      choices.appendChild(buildPsychiatryCheckboxLabel(field, { clinician: isClinicianRole(field) }));
+    }
+    groupEl.appendChild(choices);
+  }
+
+  if(otherFields.length > 0){
+    const grid = document.createElement("div");
+    grid.className = "anam-grid anam-psych-field-grid";
+    for(const field of otherFields){
+      grid.appendChild(buildPsychiatryAnamnesisField(field, { compact: !!opts.compact }));
+    }
+    groupEl.appendChild(grid);
+  }
+
+  parent.appendChild(groupEl);
+}
+
+function appendPsychiatryFieldGroups(parent, fields, opts = {}){
+  for(const group of groupPsychiatryFields(fields)){
+    appendPsychiatryGroup(parent, group, opts);
+  }
+}
+
+function appendPsychiatryFlatFields(parent, fields, opts = {}){
+  if(!Array.isArray(fields) || fields.length === 0) return;
+  const grid = document.createElement("div");
+  grid.className = "anam-grid anam-psych-field-grid anam-psych-flat-grid";
+  for(const field of fields){
+    grid.appendChild(buildPsychiatryAnamnesisField(field, { compact: !!opts.compact }));
+  }
+  parent.appendChild(grid);
+}
+
+function appendPsychiatryPromptGuide(parent, promptFields, title = "Interview prompts"){
+  if(!Array.isArray(promptFields) || promptFields.length === 0) return;
+  const details = document.createElement("details");
+  details.className = "anam-psych-prompts anam-psych-guidance";
+
+  const summary = document.createElement("summary");
+  const summaryTitle = document.createElement("span");
+  summaryTitle.className = "anam-psych-prompt-summary-title";
+  const icon = document.createElement("span");
+  icon.className = "anam-psych-prompt-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "↳";
+  const titleText = document.createElement("strong");
+  titleText.textContent = title;
+  summaryTitle.append(icon, titleText);
+  const count = document.createElement("span");
+  count.className = "anam-psych-summary-count";
+  count.textContent = `${promptFields.length} ${promptFields.length === 1 ? "question" : "questions"}`;
+  summary.append(summaryTitle, count);
+  details.appendChild(summary);
+
+  const note = document.createElement("p");
+  note.className = "anam-psych-details-note";
+  note.textContent = "Suggested wording only. Ask what is relevant, then document the patient's answer in the clinical field above.";
+  details.appendChild(note);
+
+  const list = document.createElement("ul");
+  list.className = "anam-psych-prompt-list";
+  for(const field of promptFields){
+    const question = String(field && field.field_label || "").trim();
+    if(!question) continue;
+    const item = document.createElement("li");
+    item.className = "anam-psych-prompt-line";
+    item.textContent = question;
+    list.appendChild(item);
+  }
+  details.appendChild(list);
+  parent.appendChild(details);
+}
+
+function appendPsychiatryStudentSummaryBlock(parent, opts = {}){
+  const wrap = document.createElement("div");
+  wrap.className = "anam-psych-student-block";
+
+  const label = document.createElement("div");
+  label.className = "anam-psych-field-label anam-psych-student-block-title";
+  label.appendChild(renderTermWithHelp(opts.label || "Clinical findings", { description: opts.description || "" }));
+  wrap.appendChild(label);
+
+  const textarea = document.createElement("textarea");
+  textarea.name = opts.name || "";
+  textarea.placeholder = opts.placeholder || "Document relevant positives, negatives and the patient's description.";
+  textarea.className = "anam-psych-student-summary";
+  wrap.appendChild(textarea);
+
+  appendPsychiatryPromptGuide(wrap, opts.prompts || [], opts.promptTitle || "Interview prompts");
+  parent.appendChild(wrap);
+  return wrap;
+}
+
+function appendPsychiatryAdvancedDetails(parent, advancedFields){
+  if(!Array.isArray(advancedFields) || advancedFields.length === 0) return;
+  const details = document.createElement("details");
+  details.className = "anam-psych-advanced";
+
+  const summary = document.createElement("summary");
+  const title = document.createElement("strong");
+  title.textContent = "Advanced psychopathology terminology";
+  const count = document.createElement("span");
+  count.className = "anam-psych-summary-count";
+  count.textContent = `${advancedFields.length} terms`;
+  summary.append(title, count);
+  details.appendChild(summary);
+
+  const note = document.createElement("p");
+  note.className = "anam-psych-details-note";
+  note.textContent = "Optional clinician-level descriptors. Complex terms retain the ? explanations and are kept outside the routine interview flow.";
+  details.appendChild(note);
+
+  const bySection = [];
+  let currentSection = null;
+  for(const field of advancedFields){
+    const sectionId = String(field.section_id || "");
+    const sectionName = String(field.section_name || sectionId || "Psychopathology");
+    if(!currentSection || currentSection.id !== sectionId || currentSection.name !== sectionName){
+      currentSection = { id: sectionId, name: sectionName, fields: [] };
+      bySection.push(currentSection);
+    }
+    currentSection.fields.push(field);
+  }
+
+  for(const section of bySection){
+    const block = document.createElement("div");
+    block.className = "anam-psych-advanced-block";
+    const heading = document.createElement("h4");
+    heading.appendChild(renderTermWithHelp(section.name));
+    block.appendChild(heading);
+    appendPsychiatryFieldGroups(block, section.fields, { compact: true });
+    details.appendChild(block);
+  }
+
+  parent.appendChild(details);
+}
+
+function appendPsychiatrySyndromeDetails(parent, syndromeFields){
+  if(!Array.isArray(syndromeFields) || syndromeFields.length === 0) return;
+  const details = document.createElement("details");
+  details.className = "anam-psych-advanced anam-psych-syndromes";
+  const summary = document.createElement("summary");
+  const title = document.createElement("strong");
+  title.textContent = "Syndromological classification (optional)";
+  const count = document.createElement("span");
+  count.className = "anam-psych-summary-count";
+  count.textContent = `${syndromeFields.length} items`;
+  summary.append(title, count);
+  details.appendChild(summary);
+  const note = document.createElement("p");
+  note.className = "anam-psych-details-note";
+  note.textContent = "Keep this for teaching and formal psychiatric description; it is no longer part of the routine history-taking path.";
+  details.appendChild(note);
+  appendPsychiatryFieldGroups(details, syndromeFields, { compact: true });
+  parent.appendChild(details);
+}
+
 function renderPsychiatryAnamnesisForm(fields){
   const form = document.getElementById("anamnesis-psychiatry-form");
   if(!form) return;
   form.innerHTML = "";
+  form.classList.add("anam-psych-form-v2");
   if(!Array.isArray(fields) || fields.length === 0){
     const empty = document.createElement("p");
     empty.className = "muted";
@@ -9484,100 +10110,222 @@ function renderPsychiatryAnamnesisForm(fields){
     return;
   }
 
+  // Keep the first two sections identical to the other anamnesis workflows so
+  // they can be transferred safely when the user switches form type.
   form.appendChild(buildSharedIdentificationSection());
   form.appendChild(buildSharedChiefComplaintSection());
 
-  const sections = [];
-  let currentSection = null;
-  let currentGroup = null;
-  for(const field of fields){
-    if(!String(field.field_id || "").trim()) continue;
-    if(SHARED_PSYCHIATRY_FIELD_IDS.has(String(field.field_id || "").trim())) continue;
-    if(!currentSection || currentSection.id !== field.section_id){
-      const sectionNo = parsePsychiatrySectionNumber(field.section_id);
-      const adjustedSectionNo = Number.isFinite(sectionNo) ? sectionNo + 2 : (sections.length + 3);
-      currentSection = {
-        id: field.section_id,
-        no: adjustedSectionNo,
-        name: field.section_name || field.section_id || "Section",
-        groups: []
-      };
-      sections.push(currentSection);
-      currentGroup = null;
-    }
-    if(!currentGroup || currentGroup.id !== field.group_id){
-      currentGroup = {
-        id: field.group_id,
-        name: field.group_name || field.group_id || "",
-        fields: []
-      };
-      currentSection.groups.push(currentGroup);
-    }
-    currentGroup.fields.push(field);
-  }
+  const coreScreenGroups = {
+    psych_03: new Set(["core_questions", "manic_questions", "anxiety_questions"]),
+    psych_04: new Set(["formal_questions", "content_questions", "ocd_questions"]),
+    psych_05: new Set(["questions"]),
+    psych_06: new Set(["questions"]),
+    psych_08: new Set(["questions"])
+  };
 
-  for(const section of sections){
-    const sectionEl = document.createElement("div");
-    sectionEl.className = "anam-section";
-    const h3 = document.createElement("h3");
-    h3.appendChild(document.createTextNode(`${section.no}. `));
-    h3.appendChild(renderTermWithHelp(section.name));
-    sectionEl.appendChild(h3);
+  const advancedFields = fields.filter(field => {
+    const sectionId = String(field.section_id || "");
+    const groupId = String(field.group_id || "");
+    if(sectionId === "psych_07") return true;
+    if(sectionId === "psych_09" && groupId === "personality_list") return true;
+    const coreGroups = coreScreenGroups[sectionId];
+    if(!coreGroups) return false;
+    return !coreGroups.has(groupId);
+  });
 
-    for(const group of section.groups){
-      const groupEl = document.createElement("div");
-      groupEl.className = "anam-group";
-      const title = document.createElement("strong");
-      title.className = "anam-group-title";
-      title.appendChild(renderTermWithHelp(group.name));
-      groupEl.appendChild(title);
+  // 3. History of present illness
+  const hpi = createPsychiatrySection(
+    3,
+    "History of Present Illness",
+    "Build the chronology in the patient's own words: onset, course, context, modifiers, functional impact and previous similar episodes."
+  );
+  appendPsychiatryFieldGroups(hpi, getPsychiatryFields(fields, "psych_02"));
+  appendPsychiatryPromptGuide(
+    hpi,
+    getPsychiatryFields(fields, "psych_21", ["open_hpi", "open_probe"]),
+    "History-taking prompts"
+  );
+  form.appendChild(hpi);
 
-      const checkboxFields = group.fields.filter(f => (normalizePsychiatryFieldType(f.field_type) || "text") === "checkbox");
-      const otherFields = group.fields.filter(f => (normalizePsychiatryFieldType(f.field_type) || "text") !== "checkbox");
+  // 4. Current psychiatric symptoms. The student's documentation stays compact;
+  // question banks are teaching aids only and therefore never become patient data.
+  const currentSymptoms = createPsychiatrySection(
+    4,
+    "Current Psychiatric Symptoms",
+    "Document the important findings in your own words. Open the suggested questions only when you need help exploring a symptom domain."
+  );
+  const symptomScreen = document.createElement("div");
+  symptomScreen.className = "anam-psych-screening anam-psych-student-screening";
+  const screenTitle = document.createElement("h4");
+  screenTitle.textContent = "Focused symptom documentation";
+  symptomScreen.appendChild(screenTitle);
 
-      if(checkboxFields.length > 0){
-        const patientBoxes = checkboxFields.filter(f => !isClinicianRole(f));
-        const clinicianBoxes = checkboxFields.filter(f => isClinicianRole(f));
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_mood_biological",
+    label: "Mood & biological symptoms",
+    placeholder: "Mood, enjoyment, sleep, appetite, energy, psychomotor change and functional impact...",
+    promptTitle: "Mood & biological interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_03", ["core_questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_mood", "open_biological"])
+    ]
+  });
 
-        if(patientBoxes.length > 0){
-          const row = document.createElement("div");
-          row.className = "anam-row";
-          const lead = document.createElement("strong");
-          lead.textContent = "Patient";
-          row.appendChild(lead);
-          for(const field of patientBoxes){
-            row.appendChild(buildPsychiatryCheckboxLabel(field));
-          }
-          groupEl.appendChild(row);
-        }
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_anxiety",
+    label: "Anxiety symptoms",
+    placeholder: "Worry, panic, phobic avoidance, tension, compulsive behaviour and relevant triggers...",
+    promptTitle: "Anxiety interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_03", ["anxiety_questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_anxiety"])
+    ]
+  });
 
-        if(clinicianBoxes.length > 0){
-          const row = document.createElement("div");
-          row.className = "anam-row";
-          const lead = document.createElement("strong");
-          lead.className = "anam-psych-clinician";
-          lead.textContent = "Clinician";
-          row.appendChild(lead);
-          for(const field of clinicianBoxes){
-            row.appendChild(buildPsychiatryCheckboxLabel(field, { clinician: true }));
-          }
-          groupEl.appendChild(row);
-        }
-      }
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_activation",
+    label: "Elevated / irritable mood & activation",
+    placeholder: "Periods of elevated or irritable mood, reduced need for sleep, increased activity, confidence or risky behaviour...",
+    promptTitle: "Elevated mood interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_03", ["manic_questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_mania"])
+    ]
+  });
 
-      if(otherFields.length > 0){
-        const grid = document.createElement("div");
-        grid.className = "anam-grid";
-        for(const field of otherFields){
-          grid.appendChild(buildPsychiatryAnamnesisField(field));
-        }
-        groupEl.appendChild(grid);
-      }
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_thought",
+    label: "Thought form & content",
+    description: "Thought form describes how ideas are organised and connected; thought content describes what the patient is thinking about, such as delusions, obsessions or preoccupations.",
+    placeholder: "Organisation and flow of thought, unusual beliefs, obsessions, preoccupations or thought interference...",
+    promptTitle: "Thought interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_04", ["formal_questions", "content_questions", "ocd_questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_thought_process"])
+    ]
+  });
 
-      sectionEl.appendChild(groupEl);
-    }
-    form.appendChild(sectionEl);
-  }
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_perception_psychosis",
+    label: "Perception & psychotic symptoms",
+    description: "Perceptual symptoms include hallucinations and illusions. Psychotic symptoms may also include fixed false beliefs or experiences of external influence.",
+    placeholder: "Hallucinations, illusions, suspiciousness, unusual beliefs, experiences of control or other psychotic symptoms...",
+    promptTitle: "Perception & psychosis interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_05", ["questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_psychosis"])
+    ]
+  });
+
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_cognition_behaviour",
+    label: "Cognition, motivation & behaviour",
+    placeholder: "Attention, memory, orientation, motivation, activity, withdrawal, impulsivity or behavioural change...",
+    promptTitle: "Cognition & behaviour interview prompts",
+    prompts: [
+      ...getPsychiatryFields(fields, "psych_06", ["questions"]),
+      ...getPsychiatryFields(fields, "psych_08", ["questions"]),
+      ...getPsychiatryFields(fields, "psych_21", ["open_cognition", "open_motivation"])
+    ]
+  });
+
+  currentSymptoms.appendChild(symptomScreen);
+  appendPsychiatryAdvancedDetails(currentSymptoms, advancedFields);
+  form.appendChild(currentSymptoms);
+
+  // 5. Past psychiatric history
+  const pastPsych = createPsychiatrySection(
+    5,
+    "Past Psychiatric History",
+    "Previous episodes, admissions, treatment response, adherence, self-harm and relevant legal history."
+  );
+  appendPsychiatryFieldGroups(pastPsych, getPsychiatryFields(fields, "psych_11"));
+  appendPsychiatryPromptGuide(pastPsych, getPsychiatryFields(fields, "psych_21", ["open_pph"]));
+  form.appendChild(pastPsych);
+
+  // 6. Medical history, medication and allergies
+  const medical = createPsychiatrySection(
+    6,
+    "Medical History, Medication & Allergies",
+    "Record organic contributors and treatments that may explain, worsen or mimic psychiatric symptoms."
+  );
+  appendPsychiatryFlatFields(medical, getPsychiatryFields(fields, "psych_12"), { compact: true });
+  appendPsychiatryPromptGuide(medical, getPsychiatryFields(fields, "psych_21", ["open_medical"]));
+  form.appendChild(medical);
+
+  // 7. Substance use
+  const substance = createPsychiatrySection(
+    7,
+    "Substance Use",
+    "Document substance, pattern, amount, timing, intoxication or withdrawal, and relationship to symptoms."
+  );
+  appendPsychiatryFlatFields(substance, getPsychiatryFields(fields, "psych_13"), { compact: true });
+  appendPsychiatryPromptGuide(substance, getPsychiatryFields(fields, "psych_21", ["open_substance"]));
+  form.appendChild(substance);
+
+  // 8. Family history
+  const family = createPsychiatrySection(
+    8,
+    "Family History",
+    "Psychiatric illness, suicide or self-harm, substance use, neurodevelopmental conditions and relevant family dynamics."
+  );
+  appendPsychiatryFlatFields(family, getPsychiatryFields(fields, "psych_14"), { compact: true });
+  appendPsychiatryPromptGuide(family, getPsychiatryFields(fields, "psych_21", ["open_family"]));
+  form.appendChild(family);
+
+  // 9. Personal, premorbid and social history
+  const personal = createPsychiatrySection(
+    9,
+    "Personal, Premorbid & Social History",
+    "Baseline personality and functioning, living situation, work or education, relationships, trauma, supports and legal context."
+  );
+  const basicPersonal = getPsychiatryFields(fields, "psych_01");
+  appendPsychiatryFlatFields(personal, basicPersonal, { compact: true });
+  appendPsychiatryFieldGroups(personal, getPsychiatryFields(fields, "psych_09", ["premorbid"]));
+  appendPsychiatryFlatFields(personal, getPsychiatryFields(fields, "psych_15"), { compact: true });
+  appendPsychiatryPromptGuide(personal, getPsychiatryFields(fields, "psych_21", ["open_social"]));
+  form.appendChild(personal);
+
+  // 10. Risk assessment
+  const risk = createPsychiatrySection(
+    10,
+    "Risk Assessment",
+    "Current and recent risk to self or others, self-neglect, vulnerability, access to means and immediate safety concerns."
+  );
+  appendPsychiatryFieldGroups(risk, getPsychiatryFields(fields, "psych_10"));
+  appendPsychiatryPromptGuide(risk, getPsychiatryFields(fields, "psych_21", ["open_risk", "open_risk_aggression"]));
+  form.appendChild(risk);
+
+  // 11. MSE
+  const mse = createPsychiatrySection(
+    11,
+    "Status Praesens Psychicus (Mental State Examination)",
+    "A concise objective snapshot of the patient's mental state during the interview."
+  );
+  appendPsychiatryFlatFields(mse, getPsychiatryFields(fields, "psych_16"), { compact: true });
+  appendPsychiatryPromptGuide(mse, getPsychiatryFields(fields, "psych_21", ["open_insight"]), "Insight interview prompts");
+  form.appendChild(mse);
+
+  // 12. Physical / neurological screen
+  const physical = createPsychiatrySection(
+    12,
+    "Physical & Neurological Screening",
+    "Brief somatic screening for organic causes, intoxication or withdrawal, medication effects and urgent medical problems."
+  );
+  appendPsychiatryFlatFields(physical, getPsychiatryFields(fields, "psych_17"), { compact: true });
+  form.appendChild(physical);
+
+  // 13. Clinical formulation
+  const formulation = createPsychiatrySection(
+    13,
+    "Clinical Formulation",
+    "Summarize the working diagnosis and a focused differential after the history and examination are complete."
+  );
+  appendPsychiatryFlatFields(formulation, getPsychiatryFields(fields, "psych_18"));
+  appendPsychiatryFlatFields(formulation, getPsychiatryFields(fields, "psych_20"), { compact: true });
+  appendPsychiatrySyndromeDetails(formulation, getPsychiatryFields(fields, "psych_19"));
+  form.appendChild(formulation);
+
   refreshAnamnesisInputMode();
 }
 
@@ -9681,7 +10429,279 @@ function applyAnamnesisData(form, data){
   });
 }
 
+function normalizeAnamnesisReportText(value){
+  return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function getAnamnesisReportTextWithoutControls(node){
+  if(!node) return "";
+  const clone = node.cloneNode(true);
+  clone.querySelectorAll("input, textarea, select, button, .help-icon").forEach(el => el.remove());
+  return normalizeAnamnesisReportText(clone.textContent || "");
+}
+
+function humanizeAnamnesisFieldName(name){
+  return String(name || "")
+    .replace(/^(?:ped_|psych_)/, "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase())
+    .trim();
+}
+
+function getAnamnesisReportTableLabel(control){
+  const cell = control && control.closest ? control.closest("td") : null;
+  const row = cell ? cell.closest("tr") : null;
+  const table = row ? row.closest("table") : null;
+  if(!cell || !row || !table) return "";
+  const cells = [...row.children];
+  const columnIndex = cells.indexOf(cell);
+  const rowLabel = cells.length > 0 && cells[0] !== cell ? getAnamnesisReportTextWithoutControls(cells[0]) : "";
+  const headerCells = [...table.querySelectorAll("thead tr:last-child th")];
+  const columnLabel = columnIndex >= 0 && headerCells[columnIndex]
+    ? getAnamnesisReportTextWithoutControls(headerCells[columnIndex])
+    : "";
+  if(rowLabel && columnLabel && !/^(yes|no)$/i.test(columnLabel)) return `${rowLabel} — ${columnLabel}`;
+  return rowLabel || columnLabel;
+}
+
+function getAnamnesisReportOptionLabel(control){
+  const label = control && control.closest ? control.closest("label") : null;
+  const text = getAnamnesisReportTextWithoutControls(label);
+  return text || normalizeAnamnesisReportText(control && control.value);
+}
+
+function getAnamnesisReportContextLabel(control){
+  if(!control) return "";
+  const tableLabel = getAnamnesisReportTableLabel(control);
+  if(tableLabel) return tableLabel;
+
+  const psychField = control.closest(".anam-psych-field");
+  if(psychField){
+    const label = psychField.querySelector(":scope > .anam-psych-field-label");
+    const text = getAnamnesisReportTextWithoutControls(label);
+    if(text) return text;
+  }
+
+  const row = control.closest(".anam-row");
+  if(row){
+    const directHeading = [...row.children].find(el => el.matches && el.matches("span, strong, b"));
+    const text = getAnamnesisReportTextWithoutControls(directHeading);
+    if(text) return text;
+  }
+
+  const parent = control.parentElement;
+  if(parent && !parent.matches("label")){
+    const directHeading = [...parent.children].find(el => el !== control && el.matches && el.matches("strong, b, span"));
+    const text = getAnamnesisReportTextWithoutControls(directHeading);
+    if(text){
+      const placeholder = normalizeAnamnesisReportText(control.getAttribute && control.getAttribute("placeholder"));
+      if(placeholder && /notes?|details?|other/i.test(placeholder) && !text.toLowerCase().includes(placeholder.toLowerCase())){
+        return `${text} — ${placeholder}`;
+      }
+      return text;
+    }
+  }
+
+  const placeholder = normalizeAnamnesisReportText(control.getAttribute && control.getAttribute("placeholder"));
+  if(placeholder && !/^(enter value|add notes|optional response notes)$/i.test(placeholder)) return placeholder;
+  return humanizeAnamnesisFieldName(control.name);
+}
+
+function getAnamnesisReportControlValue(control){
+  if(!control) return "";
+  if(control.tagName === "SELECT"){
+    const option = control.options && control.selectedIndex >= 0 ? control.options[control.selectedIndex] : null;
+    return normalizeAnamnesisReportText(option ? option.textContent : control.value);
+  }
+  return normalizeAnamnesisReportText(control.value);
+}
+
+function isAnamnesisReportControlEligible(control){
+  if(!control || !control.name || control.disabled || control.type === "hidden") return false;
+  if(control.closest(".hidden, [hidden]")) return false;
+  if(control.closest(".anam-psych-prompts")) return false;
+  return true;
+}
+
+function getAnamnesisReportSectionTitle(section){
+  if(!section) return "";
+  const title = section.querySelector(":scope > summary strong, :scope > summary, :scope > h3");
+  const text = getAnamnesisReportTextWithoutControls(title);
+  return text.replace(/^\s*\d+\s*[.)-]?\s*/, "").trim();
+}
+
+function collectAnamnesisReportSectionEntries(section){
+  if(!section) return [];
+  const controls = [...section.querySelectorAll("input[name], textarea[name], select[name]")].filter(isAnamnesisReportControlEligible);
+  const entries = [];
+  const processedRadios = new Set();
+  const groupedCheckboxes = new Map();
+
+  for(const control of controls){
+    if(control.type === "radio"){
+      if(processedRadios.has(control.name)) continue;
+      processedRadios.add(control.name);
+      const selected = controls.find(item => item.type === "radio" && item.name === control.name && item.checked);
+      if(!selected) continue;
+      const label = getAnamnesisReportContextLabel(selected) || humanizeAnamnesisFieldName(selected.name);
+      const option = getAnamnesisReportOptionLabel(selected);
+      entries.push({ label, value: option });
+      continue;
+    }
+
+    if(control.type === "checkbox"){
+      if(!control.checked) continue;
+      const option = getAnamnesisReportOptionLabel(control) || humanizeAnamnesisFieldName(control.name);
+      const row = control.closest(".anam-row");
+      const rowHeading = row
+        ? getAnamnesisReportTextWithoutControls([...row.children].find(el => el.matches && el.matches("span, strong, b")))
+        : "";
+      if(rowHeading){
+        const key = rowHeading.toLocaleLowerCase();
+        if(!groupedCheckboxes.has(key)) groupedCheckboxes.set(key, { label: rowHeading, values: [] });
+        groupedCheckboxes.get(key).values.push(option);
+      } else {
+        entries.push({ label: option, value: "" });
+      }
+      continue;
+    }
+
+    const value = getAnamnesisReportControlValue(control);
+    if(!value) continue;
+    const label = getAnamnesisReportContextLabel(control) || humanizeAnamnesisFieldName(control.name);
+    entries.push({ label, value });
+  }
+
+  for(const group of groupedCheckboxes.values()){
+    if(group.values.length) entries.push({ label: group.label, value: group.values.join(", ") });
+  }
+  return entries;
+}
+
+function getAnamnesisReportFormValue(form, name){
+  if(!form || !name) return "";
+  const controls = [...form.querySelectorAll(`[name="${name}"]`)];
+  if(controls.length === 0) return "";
+  const first = controls[0];
+  if(first.type === "radio"){
+    const selected = controls.find(control => control.checked);
+    return selected ? getAnamnesisReportOptionLabel(selected) : "";
+  }
+  if(first.type === "checkbox") return first.checked ? getAnamnesisReportOptionLabel(first) : "";
+  return getAnamnesisReportControlValue(first);
+}
+
+function buildStructuredAnamnesisReport(){
+  const record = getActiveAnamnesisPatientRecord();
+  const form = getActiveAnamnesisForm();
+  if(!record || !form) return "";
+
+  const type = normalizeAnamnesisType(record.anamnesisType);
+  const typeLabel = getAnamnesisTypeLabel(type);
+  const title = tOr("anamnesis_structured_report", "Structured report");
+  const patientLabel = tOr("anamnesis_report_patient", "Patient");
+  const workflowLabel = tOr("anamnesis_report_workflow", "Workflow");
+  const admittedLabel = tOr("anamnesis_report_admitted", "Admitted");
+  const chiefLabel = tOr("anamnesis_report_chief_complaint", "Chief complaint");
+  const notesLabel = tOr("anamnesis_report_general_notes", "General notes");
+
+  const name = getAnamnesisReportFormValue(form, "ident_full_name") || normalizeAnamnesisReportText(record.name) || tOr("anamnesis_unnamed_patient", "Unnamed patient");
+  const age = getAnamnesisReportFormValue(form, "ident_age");
+  const sex = getAnamnesisReportFormValue(form, "ident_sex");
+  const dob = getAnamnesisReportFormValue(form, "ident_dob");
+  const city = getAnamnesisReportFormValue(form, "ident_city");
+  const admitted = getAnamnesisReportFormValue(form, "ident_admitted");
+  const complaint = getAnamnesisReportFormValue(form, "chief_complaint") || normalizeAnamnesisReportText(record.chiefComplaint);
+
+  const patientBits = [name];
+  if(age) patientBits.push(`${age} y`);
+  if(sex) patientBits.push(sex);
+  if(dob) patientBits.push(`DOB ${dob}`);
+  if(city) patientBits.push(city);
+
+  const lines = [
+    `${typeLabel} — ${title}`,
+    `${patientLabel}: ${patientBits.join(" | ")}`,
+    `${workflowLabel}: ${typeLabel}`
+  ];
+  if(admitted) lines.push(`${admittedLabel}: ${admitted}`);
+  if(complaint) lines.push(`${chiefLabel}: ${complaint}`);
+
+  const sections = [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section"));
+  sections.slice(2).forEach(section => {
+    const entries = collectAnamnesisReportSectionEntries(section);
+    if(entries.length === 0) return;
+    const sectionTitle = getAnamnesisReportSectionTitle(section) || tOr("anamnesis_report_section", "Section");
+    lines.push("", sectionTitle.toUpperCase());
+    entries.forEach(entry => {
+      lines.push(entry.value ? `• ${entry.label}: ${entry.value}` : `• ${entry.label}`);
+    });
+  });
+
+  const notes = normalizeAnamnesisReportText(document.getElementById("anamnesis-notes-text")?.value || record.notes);
+  if(notes){
+    lines.push("", notesLabel.toUpperCase(), `• ${notes}`);
+  }
+
+  if(lines.length <= 3 && !complaint){
+    lines.push("", tOr("anamnesis_report_no_data", "No clinical information has been documented yet."));
+  }
+  return lines.join("\n").trim();
+}
+
+function setAnamnesisReportModalOpen(open){
+  const modal = document.getElementById("anamnesis-report-modal");
+  if(!modal) return;
+  const willOpen = !!open;
+  modal.classList.toggle("hidden", !willOpen);
+  modal.setAttribute("aria-hidden", willOpen ? "false" : "true");
+  if(willOpen){
+    const output = document.getElementById("anamnesis-report-output");
+    if(output){
+      output.value = buildStructuredAnamnesisReport();
+      output.scrollTop = 0;
+    }
+    const copyStatus = document.getElementById("anamnesis-report-copy-status");
+    if(copyStatus) copyStatus.textContent = "";
+  }
+}
+
+function openStructuredAnamnesisReport(){
+  const record = getActiveAnamnesisPatientRecord();
+  if(!record) return;
+  clearTimeout(anamnesisSaveTimer);
+  anamnesisSaveTimer = null;
+  saveAnamnesisForm({ silent: true });
+  setAnamnesisReportModalOpen(true);
+}
+
+async function copyStructuredAnamnesisReport(){
+  const output = document.getElementById("anamnesis-report-output");
+  if(!output) return;
+  const text = String(output.value || "");
+  if(!text) return;
+  let copied = false;
+  try{
+    await navigator.clipboard.writeText(text);
+    copied = true;
+  }catch(e){
+    try{
+      output.focus();
+      output.select();
+      copied = document.execCommand("copy");
+    }catch{}
+  }
+  const status = document.getElementById("anamnesis-report-copy-status");
+  if(status){
+    status.textContent = copied
+      ? tOr("anamnesis_report_copied", "Copied to clipboard.")
+      : tOr("anamnesis_report_copy_failed", "Copy failed. Select the report text and copy it manually.");
+  }
+}
+
 function scheduleAnamnesisSave(){
+  markAnamnesisSaveState("saving");
+  updateAnamnesisDocumentationProgress();
   clearTimeout(anamnesisSaveTimer);
   anamnesisSaveTimer = setTimeout(saveAnamnesisForm, 300);
 }
@@ -9795,19 +10815,253 @@ function loadAnamnesisRegistryFromStorage(){
   }
 }
 
+
+const anamnesisWorkspaceUiState = {
+  sectionObserver: null,
+  activeSectionId: ""
+};
+
+function formatAnamnesisRegistryDate(rawDate){
+  const date = new Date(rawDate || "");
+  if(Number.isNaN(date.getTime())) return "—";
+  try{
+    return date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+  }catch(e){
+    return date.toLocaleDateString();
+  }
+}
+
+function updateAnamnesisRegistryOverview(){
+  const count = document.getElementById("anamnesis-record-count");
+  const latest = document.getElementById("anamnesis-last-updated");
+  if(count) count.textContent = String(anamnesisPatientRecords.length);
+  if(latest){
+    const newest = anamnesisPatientRecords[0];
+    latest.textContent = newest ? formatAnamnesisRegistryDate(newest.updatedAt || newest.createdAt) : "—";
+  }
+}
+
+function getAnamnesisPatientSearchTerm(){
+  const input = document.getElementById("anamnesis-patient-search");
+  return String(input && input.value || "").trim().toLocaleLowerCase();
+}
+
+function getAnamnesisPatientInitials(record){
+  const name = getAnamnesisRecordDisplayName(record);
+  const words = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if(words.length === 0) return "PT";
+  if(words.length === 1) return words[0].slice(0, 2).toLocaleUpperCase();
+  return `${words[0][0] || ""}${words[words.length - 1][0] || ""}`.toLocaleUpperCase();
+}
+
+function getAnamnesisSectionTitle(section){
+  if(!section) return "";
+  const title = section.querySelector(":scope > summary strong, :scope > summary, :scope > h3");
+  return normalizeAnamnesisText(title ? title.textContent : "");
+}
+
+function isAnamnesisSectionVisible(section){
+  if(!section || section.classList.contains("hidden")) return false;
+  return true;
+}
+
+function isAnamnesisFieldAnswered(el){
+  if(!el || el.disabled || !el.name || el.type === "hidden") return false;
+  const hiddenParent = el.closest(".hidden");
+  if(hiddenParent) return false;
+  if(el.type === "checkbox" || el.type === "radio") return !!el.checked;
+  return String(el.value || "").trim().length > 0;
+}
+
+function isAnamnesisSectionStarted(section){
+  if(!isAnamnesisSectionVisible(section)) return false;
+  return [...section.querySelectorAll("input[name], textarea[name], select[name]")].some(isAnamnesisFieldAnswered);
+}
+
+function getActiveAnamnesisSections(){
+  const form = getActiveAnamnesisForm();
+  if(!form) return [];
+  return [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section") && isAnamnesisSectionVisible(el));
+}
+
+function markAnamnesisSaveState(state = "saved"){
+  const host = document.getElementById("anamnesis-save-state");
+  if(!host) return;
+  const normalized = state === "saving" ? "saving" : "saved";
+  host.dataset.state = normalized;
+  const copy = host.querySelector("span:last-child");
+  if(copy){
+    copy.textContent = normalized === "saving"
+      ? tOr("anamnesis_saving_state", "Saving changes…")
+      : tOr("anamnesis_saved_locally_state", "Saved locally");
+  }
+}
+
+function setActiveAnamnesisSection(sectionId){
+  const nextId = String(sectionId || "");
+  anamnesisWorkspaceUiState.activeSectionId = nextId;
+  document.querySelectorAll("#anamnesis-section-nav-list .anamnesis-section-nav-item").forEach(btn=>{
+    const active = btn.dataset.sectionTarget === nextId;
+    btn.classList.toggle("is-active", active);
+    if(active) btn.setAttribute("aria-current", "step");
+    else btn.removeAttribute("aria-current");
+  });
+}
+
+function updateAnamnesisDocumentationProgress(){
+  const sections = getActiveAnamnesisSections();
+  const progressFill = document.getElementById("anamnesis-progress-fill");
+  const progressLabel = document.getElementById("anamnesis-progress-label");
+  const detail = document.getElementById("anamnesis-progress-detail");
+  const count = document.getElementById("anamnesis-section-count");
+  const started = sections.filter(isAnamnesisSectionStarted);
+  const percent = sections.length ? Math.round((started.length / sections.length) * 100) : 0;
+
+  if(progressFill) progressFill.style.width = `${percent}%`;
+  if(progressLabel) progressLabel.textContent = `${percent}% ${tOr("anamnesis_documented", "documented")}`;
+  if(detail){
+    detail.textContent = sections.length
+      ? `${started.length} ${tOr("anamnesis_of", "of")} ${sections.length} ${tOr("anamnesis_sections_started", "sections contain information")}.`
+      : tOr("anamnesis_start_hint", "Start with identification and the chief complaint.");
+  }
+  if(count) count.textContent = sections.length ? `${started.length}/${sections.length}` : "";
+
+  sections.forEach(section=>{
+    const startedSection = isAnamnesisSectionStarted(section);
+    section.classList.toggle("anamnesis-section-started", startedSection);
+    const btn = [...document.querySelectorAll("#anamnesis-section-nav-list .anamnesis-section-nav-item")]
+      .find(item => item.dataset.sectionTarget === section.id);
+    if(btn){
+      btn.classList.toggle("is-started", startedSection);
+      btn.classList.toggle("is-empty", !startedSection);
+      const status = btn.querySelector(".anamnesis-section-nav-status");
+      if(status){
+        status.setAttribute("aria-label", startedSection
+          ? tOr("anamnesis_section_started", "Section contains information")
+          : tOr("anamnesis_section_empty", "Section is empty"));
+      }
+    }
+  });
+}
+
+function focusAnamnesisSection(section){
+  if(!section) return;
+  if(section.tagName === "DETAILS") section.open = true;
+  setActiveAnamnesisSection(section.id);
+  try{
+    section.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+  }catch(e){
+    section.scrollIntoView();
+  }
+  const focusTarget = section.querySelector("input:not([type=hidden]), textarea, select, summary, h3");
+  if(focusTarget && typeof focusTarget.focus === "function"){
+    setTimeout(()=>{
+      try{ focusTarget.focus({ preventScroll: true }); }catch(e){}
+    }, prefersReducedMotion() ? 0 : 260);
+  }
+}
+
+function rebuildAnamnesisSectionNavigator(){
+  const navList = document.getElementById("anamnesis-section-nav-list");
+  const record = getActiveAnamnesisPatientRecord();
+  if(!navList) return;
+  if(anamnesisWorkspaceUiState.sectionObserver){
+    anamnesisWorkspaceUiState.sectionObserver.disconnect();
+    anamnesisWorkspaceUiState.sectionObserver = null;
+  }
+  navList.innerHTML = "";
+  if(!record){
+    updateAnamnesisDocumentationProgress();
+    return;
+  }
+  const form = getActiveAnamnesisForm();
+  if(!form) return;
+  const allSections = [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section"));
+  let visibleOrdinal = 0;
+  allSections.forEach((section, index)=>{
+    if(!section.id) section.id = `anamnesis-${activeAnamnesisTab}-section-${index + 1}`;
+    if(!isAnamnesisSectionVisible(section)) return;
+    visibleOrdinal += 1;
+    const title = getAnamnesisSectionTitle(section) || `${tOr("anamnesis_section", "Section")} ${visibleOrdinal}`;
+    const compactTitle = title.replace(/^\s*\d+\.?\s*/, "") || title;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "anamnesis-section-nav-item";
+    btn.dataset.sectionTarget = section.id;
+    btn.innerHTML = `<span class="anamnesis-section-nav-number">${String(visibleOrdinal).padStart(2, "0")}</span><span class="anamnesis-section-nav-label"></span><span class="anamnesis-section-nav-status" aria-hidden="true"></span>`;
+    const label = btn.querySelector(".anamnesis-section-nav-label");
+    if(label) label.textContent = compactTitle;
+    btn.addEventListener("click", ()=>{
+      focusAnamnesisSection(section);
+      setAnamnesisSectionsDrawerOpen(false);
+    });
+    navList.appendChild(btn);
+  });
+
+  const visibleSections = getActiveAnamnesisSections();
+  if(visibleSections.length){
+    setActiveAnamnesisSection(visibleSections[0].id);
+    if(typeof IntersectionObserver !== "undefined"){
+      anamnesisWorkspaceUiState.sectionObserver = new IntersectionObserver(entries=>{
+        const intersecting = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b)=> Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+        if(intersecting[0]) setActiveAnamnesisSection(intersecting[0].target.id);
+      }, { root: null, rootMargin: "-18% 0px -68% 0px", threshold: [0, 0.05, 0.25] });
+      visibleSections.forEach(section => anamnesisWorkspaceUiState.sectionObserver.observe(section));
+    }
+  }
+  updateAnamnesisDocumentationProgress();
+}
+
+function jumpToNextIncompleteAnamnesisSection(){
+  const sections = getActiveAnamnesisSections();
+  if(!sections.length) return;
+  const currentIndex = sections.findIndex(section => section.id === anamnesisWorkspaceUiState.activeSectionId);
+  const ordered = currentIndex >= 0
+    ? [...sections.slice(currentIndex + 1), ...sections.slice(0, currentIndex + 1)]
+    : sections;
+  const target = ordered.find(section => !isAnamnesisSectionStarted(section)) || sections[0];
+  focusAnamnesisSection(target);
+}
+
+function setAnamnesisWorkflowPickerValue(value){
+  const normalized = normalizeAnamnesisType(value);
+  const select = document.getElementById("anamnesis-new-type");
+  if(select) select.value = normalized;
+  document.querySelectorAll("[data-anamnesis-workflow]").forEach(btn=>{
+    const selected = normalizeAnamnesisType(btn.dataset.anamnesisWorkflow) === normalized;
+    btn.classList.toggle("is-selected", selected);
+    btn.setAttribute("aria-checked", selected ? "true" : "false");
+  });
+}
+
 function renderAnamnesisPatientList(){
   const list = document.getElementById("anamnesis-patient-list");
   if(!list) return;
+  updateAnamnesisRegistryOverview();
   list.innerHTML = "";
+  const query = getAnamnesisPatientSearchTerm();
+  const visibleRecords = query
+    ? anamnesisPatientRecords.filter(record => getAnamnesisRecordSummary(record).toLocaleLowerCase().includes(query))
+    : anamnesisPatientRecords;
+
   if(anamnesisPatientRecords.length === 0){
     const empty = document.createElement("div");
-    empty.className = "anamnesis-patient-empty muted";
-    empty.textContent = tOr("anamnesis_no_patients_saved", "No patients saved yet.");
+    empty.className = "anamnesis-patient-empty";
+    empty.innerHTML = `<strong>${tOr("anamnesis_no_patients_saved", "No patients saved yet.")}</strong><span class="muted">${tOr("anamnesis_empty_registry_copy", "Create the first record to start a structured patient history.")}</span>`;
+    list.appendChild(empty);
+    return;
+  }
+  if(visibleRecords.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "anamnesis-patient-empty";
+    empty.innerHTML = `<strong>${tOr("anamnesis_no_search_results", "No matching patients")}</strong><span class="muted">${tOr("anamnesis_try_search_again", "Try another name, workflow or chief complaint.")}</span>`;
     list.appendChild(empty);
     return;
   }
 
-  for(const record of anamnesisPatientRecords){
+  for(const record of visibleRecords){
     const row = document.createElement("div");
     row.className = "anamnesis-patient-row";
     if(record.id === activeAnamnesisPatientId) row.classList.add("active");
@@ -9819,16 +11073,37 @@ function renderAnamnesisPatientList(){
     btn.className = "anamnesis-patient-open";
     btn.dataset.patientId = record.id;
 
+    const avatar = document.createElement("span");
+    avatar.className = "anamnesis-patient-avatar";
+    avatar.textContent = getAnamnesisPatientInitials(record);
+
+    const content = document.createElement("span");
+    content.className = "anamnesis-patient-card-copy";
+
+    const heading = document.createElement("span");
+    heading.className = "anamnesis-patient-card-heading";
     const title = document.createElement("strong");
     title.className = "anamnesis-patient-summary";
-    title.textContent = getAnamnesisRecordSummary(record);
-    btn.appendChild(title);
+    title.textContent = getAnamnesisRecordDisplayName(record);
+    const typeBadge = document.createElement("span");
+    typeBadge.className = `anamnesis-patient-type-badge type-${normalizeAnamnesisType(record.anamnesisType)}`;
+    typeBadge.textContent = getAnamnesisTypeLabel(record.anamnesisType);
+    heading.append(title, typeBadge);
+
+    const age = getAnamnesisRecordAgeLabel(record) || tOr("anamnesis_age_na", "Age n/a");
+    const complaint = String(record.chiefComplaint || tOr("anamnesis_no_chief_complaint", "No chief complaint")).trim();
+    const summary = document.createElement("span");
+    summary.className = "anamnesis-patient-card-clinical";
+    summary.innerHTML = `<span>${age}</span><span aria-hidden="true">•</span><span></span>`;
+    const complaintEl = summary.querySelector("span:last-child");
+    if(complaintEl) complaintEl.textContent = complaint;
 
     const meta = document.createElement("span");
     meta.className = "muted anamnesis-patient-updated";
     meta.textContent = `${tOr("anamnesis_updated", "Updated")} ${new Date(record.updatedAt || record.createdAt || nowIso()).toLocaleString()}`;
-    btn.appendChild(meta);
 
+    content.append(heading, summary, meta);
+    btn.append(avatar, content);
     btn.addEventListener("click", async ()=>{
       await openAnamnesisPatientRecord(record.id);
     });
@@ -9845,8 +11120,7 @@ function renderAnamnesisPatientList(){
       await deleteAnamnesisPatientRecord(record.id);
     });
 
-    row.appendChild(btn);
-    row.appendChild(deleteBtn);
+    row.append(btn, deleteBtn);
     list.appendChild(row);
   }
 }
@@ -9855,16 +11129,29 @@ function updateAnamnesisEditorChrome(record){
   const screen = document.getElementById("screen-anamnesis");
   const shell = document.querySelector("#screen-anamnesis .anamnesis-registry-shell");
   const registryCard = document.getElementById("anamnesis-registry-card");
+  const editor = shell ? shell.querySelector(".anamnesis-editor") : null;
   const editorCard = document.getElementById("anamnesis-editor-card");
+  const notesToggle = document.getElementById("anamnesis-notes-toggle");
+  const sectionsToggle = document.getElementById("anamnesis-sections-toggle");
   const hasRecord = !!record;
   const showRegistry = !hasRecord || anamnesisPhoneRegistryVisible;
-  const showEditor = hasRecord && !anamnesisPhoneRegistryVisible;
-  const collapseRegistry = showEditor;
-  if(screen) screen.classList.toggle("anamnesis-record-open", showEditor);
-  if(shell) shell.classList.toggle("is-editor-active", collapseRegistry);
+  const showEditor = hasRecord && !showRegistry;
+
+  // Registry and record are separate views. Never render the patient list and
+  // an anamnesis sheet at the same time.
+  if(screen){
+    screen.classList.toggle("anamnesis-record-open", showEditor);
+    screen.classList.toggle("anamnesis-registry-view", showRegistry);
+  }
+  if(shell) shell.classList.toggle("is-editor-active", showEditor);
   if(registryCard) registryCard.classList.toggle("hidden", !showRegistry);
+  if(editor) editor.classList.toggle("hidden", !showEditor);
   if(editorCard) editorCard.classList.toggle("hidden", !showEditor);
-  updateAnamnesisMobileHeader(record);
+  if(notesToggle) notesToggle.hidden = !showEditor;
+  if(sectionsToggle) sectionsToggle.hidden = !showEditor;
+  if(!showEditor) closeAnamnesisSideDrawers();
+
+  updateAnamnesisMobileHeader(showEditor ? record : null);
   if(!hasRecord){
     anamnesisPhoneRegistryVisible = true;
     setAnamnesisPhoneToolsOpen(false);
@@ -9992,6 +11279,8 @@ async function loadAnamnesisForm(){
     await setAnamnesisFormTab("internal");
     await loadInternalAnamnesisForm(null);
     updateAnamnesisMobileHeaderPreview();
+    rebuildAnamnesisSectionNavigator();
+    markAnamnesisSaveState("saved");
     return;
   }
 
@@ -10010,6 +11299,8 @@ async function loadAnamnesisForm(){
   }
   if(notes) notes.value = record.notes || "";
   updateAnamnesisMobileHeaderPreview();
+  rebuildAnamnesisSectionNavigator();
+  markAnamnesisSaveState("saved");
 }
 
 function upsertAnamnesisRecord(record){
@@ -10027,7 +11318,9 @@ function saveAnamnesisForm(opts = {}){
   const formTab = getAnamnesisFormTabByType(formType);
   const form = formTab === "psychiatry"
     ? document.getElementById("anamnesis-psychiatry-form")
-    : document.getElementById("anamnesis-form");
+    : (formTab === "pediatrics"
+      ? document.getElementById("anamnesis-pediatrics-form")
+      : document.getElementById("anamnesis-form"));
   if(!form) return;
 
   const notes = document.getElementById("anamnesis-notes-text");
@@ -10051,7 +11344,7 @@ function saveAnamnesisForm(opts = {}){
       internal: mergeSharedFieldsIntoData(existingBuckets.internal, sharedFields),
       psychiatric: mergeSharedFieldsIntoData(existingBuckets.psychiatric, sharedFields),
       pediatrics: mergeSharedFieldsIntoData(existingBuckets.pediatrics, sharedFields),
-      [formType]: mergeSharedFieldsIntoData(collected, sharedFields)
+      [formType]: mergeSharedFieldsIntoData({ ...(existingBuckets[formType] || {}), ...collected }, sharedFields)
     }
   });
 
@@ -10070,6 +11363,8 @@ function saveAnamnesisForm(opts = {}){
   persistAnamnesisRegistry();
   renderAnamnesisPatientList();
   updateAnamnesisEditorChrome(nextRecord);
+  markAnamnesisSaveState("saved");
+  updateAnamnesisDocumentationProgress();
   if(!silent){
     const status = document.getElementById("anamnesis-status");
     if(status) status.textContent = t("anam_saved_locally") || "Saved locally.";
@@ -10131,6 +11426,8 @@ function clearAnamnesisForm(){
   upsertAnamnesisRecord(nextRecord);
   persistAnamnesisRegistry();
   renderAnamnesisPatientList();
+  rebuildAnamnesisSectionNavigator();
+  markAnamnesisSaveState("saved");
   const status = document.getElementById("anamnesis-status");
   if(status) status.textContent = t("anam_cleared") || "Cleared.";
 }
@@ -10138,7 +11435,7 @@ function clearAnamnesisForm(){
 async function openAnamnesisPatientRecord(id){
   const record = getAnamnesisPatientRecordById(id);
   if(!record) return;
-  if(activeAnamnesisPatientId && activeAnamnesisPatientId !== id){
+  if(activeAnamnesisPatientId && activeAnamnesisPatientId !== id && !anamnesisPhoneRegistryVisible){
     saveAnamnesisForm({ silent: true });
   }
   anamnesisPhoneRegistryVisible = false;
@@ -10158,17 +11455,17 @@ async function deleteAnamnesisPatientRecord(id){
 
   anamnesisPatientRecords = anamnesisPatientRecords.filter(item => item.id !== id);
   if(activeAnamnesisPatientId === id){
-    activeAnamnesisPatientId = anamnesisPatientRecords[0] ? anamnesisPatientRecords[0].id : "";
+    activeAnamnesisPatientId = "";
   }
+  anamnesisPhoneRegistryVisible = true;
   persistAnamnesisRegistry();
   renderAnamnesisPatientList();
-  updateAnamnesisEditorChrome(getActiveAnamnesisPatientRecord());
   await loadAnamnesisForm();
 }
 
 function closeActiveAnamnesisPatient(){
   saveAnamnesisForm({ silent: true });
-  anamnesisPhoneRegistryVisible = false;
+  anamnesisPhoneRegistryVisible = true;
   setAnamnesisPhoneToolsOpen(false);
   activeAnamnesisPatientId = "";
   persistAnamnesisRegistry();
@@ -10193,7 +11490,10 @@ function initializeAnamnesisRegistry(){
   loadAnamnesisRegistryFromStorage();
   persistAnamnesisRegistry();
   renderAnamnesisPatientList();
-  anamnesisPhoneRegistryVisible = !getActiveAnamnesisPatientRecord();
+  // Every visit to Anamnesis starts at the registry, even if the last active
+  // patient id is still persisted. The patient only opens after an explicit
+  // selection, which prevents the editor from unexpectedly replacing the list.
+  anamnesisPhoneRegistryVisible = true;
   updateAnamnesisEditorChrome(getActiveAnamnesisPatientRecord());
   applyAnamnesisLayoutMode();
   refreshAnamnesisInputMode();
@@ -10202,20 +11502,66 @@ function initializeAnamnesisRegistry(){
 
 async function handleAnamnesisTypeChange(nextType){
   const record = getActiveAnamnesisPatientRecord();
-  if(!record) return;
+  if(!record) return false;
   const normalizedNextType = normalizeAnamnesisType(nextType);
   const previousType = normalizeAnamnesisType(record.anamnesisType);
-  if(previousType === normalizedNextType) return;
+  const typeInput = document.getElementById("anamnesis-patient-type");
+  if(previousType === normalizedNextType){
+    if(typeInput) typeInput.value = previousType;
+    return true;
+  }
+
+  // Keep the currently loaded form authoritative while the user decides.
+  if(typeInput) typeInput.value = previousType;
+  clearTimeout(anamnesisSaveTimer);
+  anamnesisSaveTimer = null;
+
+  const currentForm = getActiveAnamnesisForm();
+  // Persist the current answers first so Cancel is truly non-destructive.
   saveAnamnesisForm({ silent: true, forcedType: previousType });
+  const needsConfirmation = hasNonSharedAnamnesisContent(currentForm);
+  if(needsConfirmation){
+    const accepted = await requestAnamnesisTypeSwitchConfirmation(previousType, normalizedNextType);
+    if(!accepted){
+      if(typeInput) typeInput.value = previousType;
+      updateAnamnesisMobileHeaderPreview();
+      return false;
+    }
+  }
+
+  const currentRecord = getActiveAnamnesisPatientRecord();
+  if(!currentRecord) return false;
+  const collected = currentForm ? collectAnamnesisData(currentForm) : {};
+  const sharedFields = {
+    ...extractSharedAnamnesisFields(currentRecord.sharedFields),
+    ...extractSharedAnamnesisFields(collected)
+  };
+  const sharedOnlyBucket = mergeSharedFieldsIntoData({}, sharedFields);
   const updatedRecord = createPatientAnamnesisRecord({
-    ...getActiveAnamnesisPatientRecord(),
+    ...currentRecord,
+    name: Object.prototype.hasOwnProperty.call(sharedFields, "ident_full_name") ? sharedFields.ident_full_name : currentRecord.name,
+    age: Object.prototype.hasOwnProperty.call(sharedFields, "ident_age") ? sharedFields.ident_age : currentRecord.age,
+    chiefComplaint: Object.prototype.hasOwnProperty.call(sharedFields, "chief_complaint") ? sharedFields.chief_complaint : currentRecord.chiefComplaint,
     anamnesisType: normalizedNextType,
+    notes: "",
+    sharedFields,
+    anamnesisData: {
+      internal: { ...sharedOnlyBucket },
+      psychiatric: { ...sharedOnlyBucket },
+      pediatrics: { ...sharedOnlyBucket }
+    },
     updatedAt: nowIso()
   });
+
   upsertAnamnesisRecord(updatedRecord);
   persistAnamnesisRegistry();
   renderAnamnesisPatientList();
   await loadAnamnesisForm();
+  const status = document.getElementById("anamnesis-status");
+  if(status){
+    status.textContent = tOr("anamnesis_switch_workflow_done", "Anamnesis type changed. Identification and Chief Complaint were kept.");
+  }
+  return true;
 }
 
 async function ensureAnamnesisRegistryReady(){
@@ -10261,10 +11607,9 @@ function syncTextSizeForViewport(opts = {}){
   const isPhone = isPhoneTextSizeViewport();
   if(!force && lastTextSizePhonePreset === isPhone) return;
   const preferred = normalizeTextSizeStep(localStorage.getItem(TEXT_SIZE_KEY) || '4');
-  const effective = isPhone ? String(PHONE_TEXT_SIZE_STEP) : preferred;
-  applyTextSize(effective, { persist: false, syncProfile: false });
+  applyTextSize(preferred, { persist: false, syncProfile: false });
   const sizeSlider = document.getElementById('text-size-slider');
-  if(sizeSlider) sizeSlider.value = effective;
+  if(sizeSlider) sizeSlider.value = preferred;
   lastTextSizePhonePreset = isPhone;
 }
 
@@ -10437,15 +11782,15 @@ function goHeaderBack(){
   const current = String(currentScreenId || "");
   if(current === "screen-menu") return;
   if(current === "screen-submenu"){
-    navStack = [];
-    showScreen("screen-menu", { skipNavStack: true });
+    // Home is the top of the authenticated/guest workspace. The login menu is
+    // only an entry/logout destination, not a normal Back destination.
     return;
   }
   const prev = navStack.length ? navStack.pop() : "";
   if(prev){
     showScreen(prev, { skipNavStack: true });
   } else {
-    showScreen("screen-menu", { skipNavStack: true });
+    showScreen("screen-submenu", { skipNavStack: true });
   }
 }
 
@@ -10806,7 +12151,11 @@ const mainSearchState = {
   debounceTimer: null,
   requestSeq: 0,
   anyWarmupPromise: null,
-  pharmacologyWarmupPromise: null
+  pharmacologyWarmupPromise: null,
+  smartAiTimer: null,
+  smartAiQuery: "",
+  smartAiCache: new Map(),
+  smartAiInFlight: new Map()
 };
 
 function getSearchGroupDefinition(groupKey){
@@ -10836,6 +12185,22 @@ function collectMainSearchResults(query, selectedGroup, langField, userField){
   return mainSearchService.collectMainSearchResults(query, selectedGroup, langField, userField);
 }
 
+
+function renderAnatomyStructureSearchResult(item){
+  const r=item?.record || {};
+  const en=getStructureTerm(r,'en') || getStructureTerm(r,'la') || r.id || 'Anatomy structure';
+  const la=getStructureTerm(r,'la');
+  const meta=[humanizeClinicalCategory(r.type), ...arrayValue(r.region).map(humanizeClinicalCategory)].filter(Boolean).join(' · ');
+  const matched=(item.matchedFields||[]).join(', ');
+  return `<div class="result-head"><span class="result-badge term">Anatomy v2</span><span class="small muted">${escapeHTML(meta)}</span></div><strong>${escapeHTML(en)}</strong>${la && la!==en ? `<div class="small" style="margin-top:4px"><em>${escapeHTML(la)}</em></div>`:''}<div class="small muted" style="margin-top:7px">${escapeHTML((r.key_features||[]).slice(0,2).join(' · '))}</div>${matched?`<div class="small muted" style="margin-top:6px">Matched: ${escapeHTML(matched)}</div>`:''}<div class="small anatomy-search-review">${escapeHTML(tOr('anatomy_seed_review','Seed anatomy record – review recommended'))}</div>`;
+}
+
+function renderClinicalCorrelationGlobalResult(item){
+  const f=formatClinicalCorrelationAnswer(item);
+  if(!f) return '';
+  return `<div class="result-head"><span class="result-badge drug">Clinical correlation</span><span class="small muted">${escapeHTML(humanizeClinicalCategory(f.category))}</span></div><strong>${escapeHTML(f.title)}</strong><div class="muted" style="margin-top:6px">${escapeHTML(f.answer||'')}</div><div class="small" style="margin-top:7px">${escapeHTML(tOr('clinical_seed_review','Seed record – review recommended'))}</div>`;
+}
+
 function renderMainSearchResults(resultsDiv, results, langField, userField, opts = {}){
   const isLoadingMore = !!opts.isLoadingMore;
   const wasTruncated = !!opts.wasTruncated;
@@ -10850,6 +12215,12 @@ function renderMainSearchResults(resultsDiv, results, langField, userField, opts
     }
     if(item.kind === "pharmacology"){
       return `<div class="result">${renderPharmacologyResult(item)}</div>`;
+    }
+    if(item.kind === "anatomy_structure"){
+      return `<div class="result">${renderAnatomyStructureSearchResult(item)}</div>`;
+    }
+    if(item.kind === "clinical_correlation"){
+      return `<div class="result">${renderClinicalCorrelationGlobalResult(item)}</div>`;
     }
     const row = item.row || {};
     const head = (row[userField]||row.latin||row.english||"").trim();
@@ -10898,6 +12269,294 @@ function schedulePharmacologyWarmup(runAfterLoad){
     });
 }
 
+
+function getSmartAnswerContainer(){
+  return document.getElementById('search-smart-answer');
+}
+
+function clearSmartSearchAnswer(){
+  clearTimeout(mainSearchState.smartAiTimer);
+  mainSearchState.smartAiTimer = null;
+  mainSearchState.smartAiQuery = '';
+  const container = getSmartAnswerContainer();
+  if(container){
+    container.innerHTML = '';
+    container.classList.add('hidden');
+    container.classList.remove('is-loading');
+  }
+}
+
+function renderSmartSearchAnswer(answer, rawQuery){
+  const container = getSmartAnswerContainer();
+  if(!container || !answer) return;
+  const isAi = answer.source === 'ai';
+  const items = Array.isArray(answer.items) ? answer.items.filter(item=>item && item.label).slice(0,40) : [];
+  const confidenceValue = Math.round(Math.max(0, Math.min(1, Number(answer.confidence || 0))) * 100);
+  const title = String(answer.title || rawQuery || tOr('smart_search_answer','Answer')).trim();
+  const internalCopy = `${tOr('smart_search_local_found','Found')} ${items.length} ${tOr('smart_search_matching_records','matching records in local medical data')}.`;
+  const answerText = String(isAi ? (answer.answer || '') : ((answer.reason && answer.reason !== 'movement_function' && answer.reason !== 'structure_type_region' && answer.reason !== 'pharmacology_class' && answer.reason !== 'generation_encoded_in_dataset') ? (answer.answer || internalCopy) : internalCopy)).trim();
+  const quota = answer.quota && answer.quota.daily ? answer.quota.daily : null;
+  const badge = isAi ? tOr('smart_search_ai_assisted','AI-assisted') : tOr('smart_search_local_answer','Local answer');
+  const grounding = isAi
+    ? (answer.groundedInContext ? tOr('smart_search_grounded','Uses local records') : tOr('smart_search_ai_knowledge','AI medical knowledge'))
+    : tOr('smart_search_no_ai_used','No AI call used');
+  container.innerHTML = `
+    <article class="smart-answer-card ${isAi ? 'is-ai' : 'is-local'}">
+      <div class="smart-answer-head">
+        <div>
+          <div class="smart-answer-kicker">${escapeHTML(tOr('smart_search_direct_answer','Direct answer'))}</div>
+          <h3>${escapeHTML(title)}</h3>
+        </div>
+        <div class="smart-answer-badges">
+          <span>${escapeHTML(badge)}</span>
+          ${confidenceValue ? `<span>${escapeHTML(tOr('confidence','Confidence'))}: ${confidenceValue}%</span>` : ''}
+        </div>
+      </div>
+      ${answerText ? `<p class="smart-answer-copy">${escapeHTML(answerText)}</p>` : ''}
+      ${items.length ? `<ul class="smart-answer-list">${items.map(item=>`<li><strong>${escapeHTML(item.label)}</strong>${item.detail ? `<span>${escapeHTML(item.detail)}</span>` : ''}</li>`).join('')}</ul>` : ''}
+      <div class="smart-answer-footer">
+        <span>${escapeHTML(grounding)}</span>
+        ${quota ? `<span>${escapeHTML(tOr('smart_search_ai_usage','AI use today'))}: ${Number(quota.used||0)}/${Number(quota.limit||0)}</span>` : ''}
+      </div>
+      ${answer.note ? `<div class="smart-answer-note">${escapeHTML(answer.note)}</div>` : ''}
+    </article>`;
+  container.classList.remove('hidden','is-loading');
+}
+
+function renderSmartSearchLoading(rawQuery){
+  const container = getSmartAnswerContainer();
+  if(!container) return;
+  container.classList.remove('hidden');
+  container.classList.add('is-loading');
+  container.innerHTML = `<div class="smart-answer-loading"><span class="smart-answer-spinner" aria-hidden="true"></span><span>${escapeHTML(tOr('smart_search_ai_checking','Local certainty is low. Checking with AI…'))}</span></div>`;
+  mainSearchState.smartAiQuery = rawQuery;
+}
+
+
+function findBestLoadedMedicalRow(subject, selectedGroup = 'all'){
+  const q = normalizeSearchText(subject);
+  if(!q) return null;
+  const rows = medicalDataRepository.getLoadedSearchRows().filter(row=>medicalDataRepository.isRowInSearchSelection(row, selectedGroup));
+  let best = null;
+  for(const row of rows){
+    const candidates = [
+      row.english_term, row.english_translation, row.english, row.analyte, row.process_name_en,
+      row.latin_term, row.latin_translation, row.abbreviation, row.full_form
+    ].map(value=>String(value || '').trim()).filter(Boolean);
+    let score = 0;
+    candidates.forEach(value=>{
+      const n=normalizeSearchText(value);
+      if(n===q) score=Math.max(score,100);
+      else if(n.startsWith(q)) score=Math.max(score,85);
+      else if(n.includes(q) || q.includes(n)) score=Math.max(score,72);
+    });
+    if(score && (!best || score > best.score)) best={row,score};
+  }
+  return best;
+}
+
+function resolveGenericDatasetQuestion(rawQuery, selectedGroup){
+  const raw = String(rawQuery || '').trim();
+  let match = raw.match(/(?:what\s+is|how\s+do\s+you\s+say|translate)\s+(.+?)\s+(?:in|to)\s+(latin|german|slovak|english)\s*\??$/i);
+  if(match){
+    const subject=match[1].replace(/^(the|a|an)\s+/i,'').trim();
+    const language=match[2].toLowerCase();
+    const best=findBestLoadedMedicalRow(subject, selectedGroup);
+    if(best && best.score>=72){
+      const fields={
+        latin:['latin_translation','latin_term','latin'],
+        german:['german_translation','german_term','german'],
+        slovak:['slovak_translation','slovak_term','slovak'],
+        english:['english_translation','english_term','english','analyte','process_name_en']
+      }[language] || [];
+      const value=fields.map(field=>String(best.row?.[field] || '').trim()).find(Boolean);
+      if(value) return { source:'internal',domain:String(best.row.__group||best.row.__dataset||'terminology'),title:raw,answer:value,items:[{label:value,detail:subject}],confidence:0.96,reason:'translation' };
+    }
+  }
+
+  match = raw.match(/(?:what\s+is\s+)?(?:the\s+)?(?:normal|reference)\s+(?:range|value)\s+(?:of|for)\s+(.+?)\s*\??$/i);
+  if(match){
+    const subject=match[1].trim();
+    const best=findBestLoadedMedicalRow(subject, selectedGroup === 'all' ? 'lab_parameters' : selectedGroup);
+    if(best && best.row?.__dataset === 'lab_parameters' && best.row.normal_range){
+      const label=String(best.row.english_term || best.row.analyte || subject);
+      const value=[best.row.normal_range,best.row.units].filter(Boolean).join(' ');
+      return { source:'internal',domain:'lab_parameters',title:label,answer:value,items:[{label,value,detail:String(best.row.sample_type || '')}],confidence:0.98,reason:'lab_range' };
+    }
+  }
+
+  match = raw.match(/^what\s+is\s+(?:a\s+|an\s+|the\s+)?(.+?)\s*\??$/i);
+  if(match){
+    const subject=match[1].trim();
+    const best=findBestLoadedMedicalRow(subject, selectedGroup);
+    if(best && best.score>=85){
+      const definition=String(best.row.definition_short || best.row.definition || best.row.physiological_role || best.row.notes || '').trim();
+      if(definition) return { source:'internal',domain:String(best.row.__group||best.row.__dataset||'terminology'),title:String(best.row.english_term || best.row.process_name_en || subject),answer:definition,items:[],confidence:0.9,reason:'definition' };
+    }
+  }
+
+  match = raw.match(/^what\s+does\s+([a-z0-9+\-]+)\s+stand\s+for\s*\??$/i);
+  if(match){
+    const best=findBestLoadedMedicalRow(match[1], selectedGroup);
+    if(best && best.score>=85){
+      const expanded=String(best.row.full_form || best.row.english_term || best.row.analyte || best.row.english_translation || '').trim();
+      if(expanded) return { source:'internal',domain:String(best.row.__group||best.row.__dataset||'terminology'),title:match[1].toUpperCase(),answer:expanded,items:[{label:expanded,detail:''}],confidence:0.94,reason:'abbreviation' };
+    }
+  }
+  return null;
+}
+
+function resolveInternalSmartSearch(rawQuery, selectedGroup){
+  const allowAnatomy = selectedGroup === 'all' || selectedGroup === 'anatomy';
+  const allowPharmacology = selectedGroup === 'all' || selectedGroup === 'pharmacology';
+
+  if(allowAnatomy){
+    const muscleAnswer = resolveMuscleActionQuestion(rawQuery, muscleTerms);
+    if(muscleAnswer && muscleAnswer.confidence >= 0.82) return muscleAnswer;
+
+    const clinicalMatches = clinicalCorrelationLoadState.loaded
+      ? searchClinicalCorrelations(rawQuery, clinicalCorrelationIndex, clinicalCorrelationSynonyms, { minScore:45, directAnswerScore:75, ambiguousDelta:8, maxResults:6 })
+      : [];
+    const clinicalTop = clinicalMatches[0];
+    if(clinicalTop && clinicalTop.directAnswerAllowed && !clinicalTop.ambiguous && Number(clinicalTop.score || 0) >= 75){
+      const formatted = formatClinicalCorrelationAnswer(clinicalTop);
+      if(formatted){
+        return {
+          source:'internal',
+          domain:'clinical_correlation',
+          title:formatted.title,
+          answer:formatted.answer,
+          items:[],
+          confidence:Math.min(1, Number(clinicalTop.score || 0) / 100),
+          reason:'clinical_correlation'
+        };
+      }
+    }
+
+    const anatomyAnswer = resolveAnatomyCollectionQuestion(
+      rawQuery,
+      anatomyStructureIndex?.rows || [],
+      muscleTerms,
+      record=>getStructureTerm(record,'en') || getStructureTerm(record,'la') || record?.id || ''
+    );
+    if(anatomyAnswer && anatomyAnswer.confidence >= 0.82) return anatomyAnswer;
+  }
+
+  if(allowPharmacology && pharmacologyState.loaded){
+    const pharmacologyAnswer = resolvePharmacologyListQuestion(rawQuery, searchPharmacology);
+    if(pharmacologyAnswer && pharmacologyAnswer.confidence >= 0.82) return pharmacologyAnswer;
+  }
+  const genericAnswer = resolveGenericDatasetQuestion(rawQuery, selectedGroup);
+  if(genericAnswer && genericAnswer.confidence >= 0.82) return genericAnswer;
+  return null;
+}
+
+function smartContextFromResult(item){
+  if(!item) return null;
+  if(item.kind === 'pharmacology'){
+    const r = item.row || {};
+    const name = r?.names?.english?.source_value || r?.names?.english?.normalized || r?.id || '';
+    const classes = arrayValue(r?.pharmacology?.therapeutic_class).join('; ');
+    const mechanism = arrayValue(r?.pharmacology?.mechanisms_of_action).slice(0,2).map(x=>x?.description || x).filter(Boolean).join('; ');
+    return { kind:'pharmacology', label:String(name), detail:[classes, mechanism, r?.atc?.primary_code].filter(Boolean).join(' | ') };
+  }
+  if(item.kind === 'anatomy_structure'){
+    const r = item.record || {};
+    return {
+      kind:'anatomy',
+      label:getStructureTerm(r,'en') || getStructureTerm(r,'la') || r.id || '',
+      detail:[r.type, arrayValue(r.region).join(', '), arrayValue(r.system).join(', '), arrayValue(r.key_features).slice(0,3).join('; ')].filter(Boolean).join(' | ')
+    };
+  }
+  if(item.kind === 'clinical_correlation'){
+    const formatted = formatClinicalCorrelationAnswer(item);
+    return formatted ? { kind:'clinical_correlation', label:formatted.title, detail:formatted.answer || '' } : null;
+  }
+  if(item.kind === 'base'){
+    const r = item.row || {};
+    const headers = arrayValue(r.__headers).filter(h=>h && !String(h).startsWith('__')).slice(0,12);
+    const label = r.english_translation || r.english || r.latin_translation || r.latin || r.abbreviation || r.__datasetLabel || '';
+    const detail = headers.map(h=>{
+      const value=String(r[h] ?? '').trim();
+      return value ? `${h}: ${value.slice(0,220)}` : '';
+    }).filter(Boolean).join(' | ');
+    return { kind:String(r.__dataset || 'terminology'), label:String(label), detail };
+  }
+  return null;
+}
+
+function buildSmartSearchContext(rawQuery, mergedResults){
+  const context = mergedResults.slice(0,22).map(smartContextFromResult).filter(Boolean);
+  if(pharmacologyState.loaded){
+    const relaxed = buildRelaxedPharmacologyQuery(rawQuery);
+    if(relaxed && relaxed !== normalizeSearchText(rawQuery)){
+      const relaxedHits = searchPharmacology(relaxed).slice(0,35);
+      if(relaxedHits.length){
+        context.push({
+          kind:'pharmacology_candidate_pool',
+          label:`Candidate drugs for: ${relaxed}`,
+          detail:relaxedHits.map(item=>item.row?.names?.english?.source_value || item.row?.names?.english?.normalized || item.row?.id).filter(Boolean).join(', ')
+        });
+      }
+    }
+  }
+  return context.slice(0,40);
+}
+
+function scheduleAiSmartSearch(rawQuery, selectedGroup, mergedResults, requestId){
+  clearTimeout(mainSearchState.smartAiTimer);
+  const normalized = normalizeSearchText(rawQuery);
+  const cacheKey = `${String(state.language || 'English')}|${String(selectedGroup || 'all')}|${normalized}`;
+  const cached = mainSearchState.smartAiCache.get(cacheKey);
+  if(cached){
+    renderSmartSearchAnswer(cached, rawQuery);
+    return;
+  }
+  mainSearchState.smartAiTimer = setTimeout(async ()=>{
+    const liveInput = document.getElementById('search-input');
+    if(!liveInput || normalizeSearchText(liveInput.value) !== normalized) return;
+    if(requestId !== mainSearchState.requestSeq) return;
+    renderSmartSearchLoading(rawQuery);
+    let promise = mainSearchState.smartAiInFlight.get(cacheKey);
+    if(!promise){
+      promise = answerSearchQuestion(rawQuery, buildSmartSearchContext(rawQuery, mergedResults), state.language || 'english', selectedGroup)
+        .finally(()=>mainSearchState.smartAiInFlight.delete(cacheKey));
+      mainSearchState.smartAiInFlight.set(cacheKey, promise);
+    }
+    try{
+      const response = await promise;
+      if(requestId !== mainSearchState.requestSeq) return;
+      const live = document.getElementById('search-input');
+      if(!live || normalizeSearchText(live.value) !== normalized) return;
+      const answer = {
+        source:'ai',
+        title:rawQuery,
+        answer:response.answer || '',
+        items:response.items || [],
+        confidence:Number(response.confidence || 0),
+        domain:response.domain || '',
+        groundedInContext:Boolean(response.groundedInContext),
+        note:response.note || '',
+        quota:response.quota || null
+      };
+      mainSearchState.smartAiCache.set(cacheKey, answer);
+      if(mainSearchState.smartAiCache.size > 40){
+        const first = mainSearchState.smartAiCache.keys().next().value;
+        mainSearchState.smartAiCache.delete(first);
+      }
+      renderSmartSearchAnswer(answer, rawQuery);
+    }catch(error){
+      const container = getSmartAnswerContainer();
+      if(!container) return;
+      const quotaExceeded = Number(error?.details?.status || 0) === 429 || error?.details?.payload?.code === 'AI_QUOTA_EXCEEDED';
+      container.classList.remove('hidden','is-loading');
+      container.innerHTML = `<div class="smart-answer-status ${quotaExceeded ? 'is-limit' : ''}">${escapeHTML(quotaExceeded
+        ? tOr('smart_search_limit_reached','AI assistance limit reached. Local search remains available.')
+        : tOr('smart_search_ai_unavailable','AI assistance is unavailable. Local search results are still shown.'))}</div>`;
+    }
+  }, 900);
+}
+
 async function runMainSearchNow(){
   const searchInput = document.getElementById('search-input');
   const resultsDiv = document.getElementById('search-results');
@@ -10905,10 +12564,11 @@ async function runMainSearchNow(){
   if(!searchInput || !resultsDiv) return;
 
   const requestId = ++mainSearchState.requestSeq;
-  const q = searchInput.value.trim().toLowerCase();
+  const rawQuery = searchInput.value.trim();
+  const q = rawQuery.toLowerCase();
   const selectedGroup = datasetSelect ? datasetSelect.value : "all";
   resultsDiv.innerHTML = "";
-  if(q.length < SEARCH_MIN_QUERY_LEN) return;
+  if(q.length < SEARCH_MIN_QUERY_LEN){ clearSmartSearchAnswer(); return; }
 
   if((selectedGroup === "all" || selectedGroup === "pharmacology") && !pharmacologyState.loaded && !pharmacologyState.failed){
     if(selectedGroup === "pharmacology"){
@@ -10934,12 +12594,41 @@ async function runMainSearchNow(){
 
   const langField = getBaseSearchField();
   const userField = getUserSearchField();
-  const { results, truncated } = collectMainSearchResults(q, selectedGroup, langField, userField);
+  const baseSearch = collectMainSearchResults(q, selectedGroup, langField, userField);
+  let mergedResults = baseSearch.results.slice();
+  let truncated = baseSearch.truncated;
+  if(selectedGroup === "all" || selectedGroup === "anatomy"){
+    try{
+      await Promise.all([ensureAnatomyTermsLoaded(), ensureMusclesLoaded(), ensureClinicalCorrelationsLoaded()]);
+      if(requestId !== mainSearchState.requestSeq) return;
+      const anatomyHits = searchAnatomyStructures(q, anatomyStructureIndex, { maxResults: 20 }).map(hit=>({ kind:"anatomy_structure", ...hit }));
+      const clinicalHits = clinicalCorrelationService.searchLoaded(q, { minScore:45, maxResults:10 }).map(hit=>({ kind:"clinical_correlation", ...hit }));
+      mergedResults.push(...anatomyHits, ...clinicalHits);
+      mergedResults.sort((a,b)=> Number(b.score||0)-Number(a.score||0));
+      if(mergedResults.length > SEARCH_MAX_RESULTS){ truncated = true; mergedResults = mergedResults.slice(0, SEARCH_MAX_RESULTS); }
+    }catch(error){
+      console.warn('Anatomy v2 global search enrichment failed:', error?.message || error);
+    }
+  }
   const loadingMore = selectedGroup === "all" && (!areAllSearchGroupsLoaded() || (!pharmacologyState.loaded && !pharmacologyState.failed));
-  renderMainSearchResults(resultsDiv, results, langField, userField, {
+  renderMainSearchResults(resultsDiv, mergedResults, langField, userField, {
     isLoadingMore: loadingMore,
     wasTruncated: truncated
   });
+
+  if(looksLikeSmartQuestion(rawQuery)){
+    const internalAnswer = resolveInternalSmartSearch(rawQuery, selectedGroup);
+    if(internalAnswer){
+      clearTimeout(mainSearchState.smartAiTimer);
+      renderSmartSearchAnswer(internalAnswer, rawQuery);
+    }else if(!loadingMore){
+      scheduleAiSmartSearch(rawQuery, selectedGroup, mergedResults, requestId);
+    }else{
+      clearSmartSearchAnswer();
+    }
+  }else{
+    clearSmartSearchAnswer();
+  }
 
   if(selectedGroup === "all" && loadingMore){
     scheduleAnySearchWarmup(async ()=>{
@@ -11035,6 +12724,8 @@ async function prepareScreenAfterNavigation(screenId){
   if(id === "screen-anamnesis"){
     await ensureAnamnesisDictionaryLoaded();
     await ensureAnamnesisRegistryReady();
+    showAnamnesisPatientListView({ focus: false });
+    updateAnamnesisRegistryOverview();
     return;
   }
   if(id === "screen-search"){
@@ -11064,8 +12755,8 @@ async function prepareScreenAfterNavigation(screenId){
     return;
   }
   if(id === "screen-muscle-training"){
-    await ensureMusclesLoaded();
-    renderMuscleRegionList();
+    await ensureAnatomyWorkspaceDatasetLoaded();
+    refreshMuscleTrainingUI();
     return;
   }
   if(id === "screen-quiz"){
@@ -11133,6 +12824,7 @@ async function init(){
 
   // Settings sidebar handling
   const settingsBtn = document.getElementById('settings-toggle');
+  const sidebarSettingsBtn = document.getElementById('sidebar-settings');
   const sidebar = document.getElementById('settings-sidebar');
   const overlay = document.getElementById('settings-overlay');
   const settingsClose = document.getElementById('settings-close');
@@ -11161,6 +12853,7 @@ async function init(){
   }
 
   if(settingsBtn) settingsBtn.addEventListener('click', ()=> toggleSettings(settingsBtn));
+  if(sidebarSettingsBtn) sidebarSettingsBtn.addEventListener('click', ()=> toggleSettings(sidebarSettingsBtn));
   if(overlay) overlay.addEventListener('click', closeSettings);
   if(settingsClose) settingsClose.addEventListener('click', closeSettings);
   const headerBackBtn = document.getElementById('header-back');
@@ -11255,7 +12948,7 @@ async function init(){
   applyTextSize(savedSize);
   syncTextSizeForViewport({ force: true });
   if(sizeSlider){
-    sizeSlider.value = isPhoneTextSizeViewport() ? String(PHONE_TEXT_SIZE_STEP) : savedSize;
+    sizeSlider.value = savedSize;
     sizeSlider.addEventListener('input', ()=> applyTextSize(sizeSlider.value));
   }
   const themeLightBtn = document.getElementById("theme-light");
@@ -11284,6 +12977,8 @@ async function init(){
 
   on('continue-guest','click', ()=> openGuestModal());
   on('continue-auth','click', ()=> showScreen('screen-submenu'));
+  const shellHome=document.getElementById('shell-home');
+  if(shellHome){shellHome.addEventListener('shell-home-request',()=>showScreen('screen-submenu'));shellHome.addEventListener('click',()=>showScreen('screen-submenu'));}
   on('settings-feedback-open','click', ()=>{
     closeSettings();
     prefillFeedbackContact();
@@ -11390,6 +13085,8 @@ async function init(){
     showScreen('screen-anamnesis');
     await ensureAnamnesisDictionaryLoaded();
     await ensureAnamnesisRegistryReady();
+    showAnamnesisPatientListView({ focus: false });
+    updateAnamnesisRegistryOverview();
   });
 
   const searchInput = document.getElementById('search-input');
@@ -11430,26 +13127,13 @@ async function init(){
       localStorage.setItem(MUSCLE_SEARCH_FIELD_KEY, muscleSearchField.value);
     });
   }
-  const anatomyDatasetSelect = document.getElementById('anatomy-dataset-select');
-  if(anatomyDatasetSelect){
-    const savedDataset = String(localStorage.getItem(ANATOMY_DATASET_SELECT_KEY) || 'muscles').trim().toLowerCase();
-    anatomyDatasetSelect.value = savedDataset === 'anatomy' ? 'anatomy' : 'muscles';
-    populateAnatomySearchFieldOptions();
-    syncAnatomySearchPlaceholder();
-    if(muscleSearchField){
-      const savedRaw = localStorage.getItem(MUSCLE_SEARCH_FIELD_KEY);
-      const saved = savedRaw === 'type_of_movement' ? 'movement_function' : savedRaw;
-      if(saved && [...muscleSearchField.options].some(o=>o.value === saved)){
-        muscleSearchField.value = saved;
-      }
-    }
-    anatomyDatasetSelect.addEventListener('change', async ()=>{
-      localStorage.setItem(ANATOMY_DATASET_SELECT_KEY, anatomyDatasetSelect.value);
-      populateAnatomySearchFieldOptions();
-      syncAnatomySearchPlaceholder();
-      await ensureAnatomyWorkspaceDatasetLoaded();
-      refreshMuscleTrainingUI();
-    });
+  populateAnatomySearchFieldOptions();
+  syncAnatomySearchPlaceholder();
+  syncAnatomyDatasetCopy();
+  if(muscleSearchField){
+    const savedRaw = localStorage.getItem(MUSCLE_SEARCH_FIELD_KEY);
+    const saved = savedRaw === 'type_of_movement' ? 'details' : savedRaw;
+    if(saved && [...muscleSearchField.options].some(o=>o.value === saved)) muscleSearchField.value = saved;
   }
   onOptional('muscle-quiz-start','click', ()=> startMuscleQuiz());
   onOptional('muscle-quiz-reveal','click', ()=>{ muscleQuizRevealed = true; renderMuscleQuizFields(); });
@@ -11547,6 +13231,7 @@ async function init(){
   if(anamForm){
     initializeAnamnesisRegistry();
     initAnamnesisRepeaters(null);
+    initAnamnesisSectionsDrawer();
     initAnamnesisNotesDrawer();
     syncAnamnesisMobileToolbar();
     updateGynecologicalVisibility(anamForm);
@@ -11573,6 +13258,7 @@ async function init(){
       }
       if(targetName === "ident_sex"){
         updateGynecologicalVisibility(anamForm);
+        rebuildAnamnesisSectionNavigator();
       }
       scheduleAnamnesisSave();
     });
@@ -11580,8 +13266,9 @@ async function init(){
   const anamMetaType = document.getElementById("anamnesis-patient-type");
   if(anamMetaType){
     anamMetaType.addEventListener("change", async ()=>{
+      const requestedType = anamMetaType.value;
+      await handleAnamnesisTypeChange(requestedType);
       updateAnamnesisMobileHeaderPreview();
-      await handleAnamnesisTypeChange(anamMetaType.value);
     });
   }
   const anamLayoutMode = document.getElementById("anamnesis-layout-mode");
@@ -11598,16 +13285,34 @@ async function init(){
       setAnamnesisInputMode(anamInputMode.value);
     });
   }
+  const anamnesisPatientSearch = document.getElementById("anamnesis-patient-search");
+  if(anamnesisPatientSearch){
+    anamnesisPatientSearch.addEventListener("input", renderAnamnesisPatientList);
+  }
+  onOptional('anamnesis-next-incomplete', 'click', jumpToNextIncompleteAnamnesisSection);
+  document.querySelectorAll('[data-anamnesis-workflow]').forEach(btn=>{
+    btn.addEventListener('click', ()=> setAnamnesisWorkflowPickerValue(btn.dataset.anamnesisWorkflow || 'internal'));
+  });
   on('anamnesis-save', 'click', ()=> saveAnamnesisForm());
+  onOptional('anamnesis-report', 'click', openStructuredAnamnesisReport);
+  onOptional('anamnesis-mobile-report', 'click', openStructuredAnamnesisReport);
+  onOptional('anamnesis-report-copy', 'click', copyStructuredAnamnesisReport);
+  onOptional('anamnesis-report-close', 'click', ()=> setAnamnesisReportModalOpen(false));
+  onOptional('anamnesis-report-done', 'click', ()=> setAnamnesisReportModalOpen(false));
   on('anamnesis-show-patients', 'click', ()=> showAnamnesisPatientListView({ focus: true }));
   onOptional('anamnesis-mobile-save', 'click', ()=> saveAnamnesisForm());
   onOptional('anamnesis-mobile-back', 'click', ()=> showAnamnesisPatientListView({ focus: true }));
   on('anamnesis-add-patient', 'click', ()=>{
+    setAnamnesisWorkflowPickerValue("internal");
     const modal = document.getElementById("anamnesis-patient-modal");
     if(modal){
       modal.classList.remove("hidden");
       modal.setAttribute("aria-hidden", "false");
     }
+  });
+  onOptional('anamnesis-empty-create', 'click', ()=>{
+    const addButton = document.getElementById("anamnesis-add-patient");
+    if(addButton) addButton.click();
   });
   on('anamnesis-modal-cancel', 'click', ()=>{
     const modal = document.getElementById("anamnesis-patient-modal");
@@ -11623,21 +13328,38 @@ async function init(){
     });
     [typeEl].forEach(el=>{
       if(!el) return;
-      if(el.tagName && el.tagName.toLowerCase() === "select") el.value = "psychiatric";
+      if(el.tagName && el.tagName.toLowerCase() === "select") el.value = "internal";
       else el.value = "";
     });
+    setAnamnesisWorkflowPickerValue("internal");
     const modal = document.getElementById("anamnesis-patient-modal");
     if(modal){
       modal.classList.add("hidden");
       modal.setAttribute("aria-hidden", "true");
     }
   });
+  const anamnesisReportModal = document.getElementById("anamnesis-report-modal");
+  if(anamnesisReportModal){
+    anamnesisReportModal.addEventListener("click", (event)=>{
+      if(event.target !== anamnesisReportModal) return;
+      setAnamnesisReportModalOpen(false);
+    });
+  }
   const anamnesisPatientModal = document.getElementById("anamnesis-patient-modal");
   if(anamnesisPatientModal){
     anamnesisPatientModal.addEventListener("click", (event)=>{
       if(event.target !== anamnesisPatientModal) return;
       anamnesisPatientModal.classList.add("hidden");
       anamnesisPatientModal.setAttribute("aria-hidden", "true");
+    });
+  }
+  onOptional('anamnesis-type-switch-cancel', 'click', ()=> settleAnamnesisTypeSwitchConfirmation(false));
+  onOptional('anamnesis-type-switch-proceed', 'click', ()=> settleAnamnesisTypeSwitchConfirmation(true));
+  const anamnesisTypeSwitchModal = document.getElementById("anamnesis-type-switch-modal");
+  if(anamnesisTypeSwitchModal){
+    anamnesisTypeSwitchModal.addEventListener("click", (event)=>{
+      if(event.target !== anamnesisTypeSwitchModal) return;
+      settleAnamnesisTypeSwitchConfirmation(false);
     });
   }
   bindAllAnamnesisRepeaterButtons();
@@ -15252,6 +16974,24 @@ const DATASET_ADAPTERS = [
     latin_term: ["latin_term"], latin_genitive: ["latin_genitive"], latin_gender: ["latin_gender"], latin_declension: ["latin_declension"],
     definition: ["notes"], notes: ["notes"]
   }},
+  { key: "anatomy_structures", label: "Anatomy structures v2.3", file: "anatomy/anatomy_structures_core_elaborated_flat.csv", idColumn: "id", columns: {
+    en: ["english"], de: ["german"], la: ["latin"],
+    latin_term: ["latin"], region: ["region"], category: ["type"],
+    definition: ["key_features", "clinical_notes"], notes: ["common_confusions"],
+    system: ["system"], course_tags: ["course_tags"], exam_importance: ["review_status"],
+    origo: ["muscle_origin"], insercio: ["muscle_insertion"], innervation: ["muscle_innervation"],
+    blood_supply: ["muscle_blood_supply"], movement_function: ["muscle_actions"], muscle_category: ["muscle_categories"]
+  }},
+  { key: "anatomy_question_seed", label: "Anatomy seed questions", file: "anatomy/anatomy_structures_question_bank_seed_flat.csv", idColumn: "question_id", columns: {
+    en: ["prompt"], definition: ["correct_answer"], notes: ["explanation"], category: ["type"]
+  }},
+  { key: "anatomy_question_graph", label: "Anatomy graph questions", file: "anatomy/anatomy_structures_question_bank_generated_flat.csv", idColumn: "question_id", rowFilter: row => String(row?.quiz_eligible || "").trim().toLowerCase() === "true", columns: {
+    en: ["prompt"], la: ["correct_answer_latin"], de: ["correct_answer_german"], definition: ["correct_answer"], notes: ["explanation"], category: ["relation_type", "generation_rule"]
+  }},
+  { key: "clinical_correlations", label: "Clinical correlations", file: "anatomy/clinical_correlations_flat.csv", idColumn: "id", columns: {
+    en: ["subject_name"], definition: ["answer"], notes: ["exam_traps"], category: ["category"],
+    system: ["relation_type"], course_tags: ["course_tags"]
+  }},
   { key: "diagnostic_methods", label: "Diagnostic methods", file: "terminology/diagnostic_methods.csv", idColumn: "id", columns: {
     en: ["english_term"], de: ["german_term"], sk: ["slovak_term"], la: ["latin_term"],
     abbreviation: ["abbreviation"], definition: ["what_it_is"], notes: ["notes"]
@@ -15288,13 +17028,6 @@ const DATASET_ADAPTERS = [
   { key: "microorganisms", label: "Microorganisms", file: "terminology/microorganisms.csv", idColumn: "id", columns: {
     en: ["common_english_name"], de: ["german_name"], sk: ["slovak_name"], la: ["scientific_name"],
     latin_term: ["scientific_name"], definition: ["diseases_caused", "diagnostics_key"], notes: ["notes"]
-  }},
-  { key: "muscles", label: "Muscles", file: "terminology/muscles.csv", idColumn: null, columns: {
-    en: ["english_muscle_name"], de: ["muscle_category_ge"], sk: ["muscle_category_sk"], la: ["latin_muscle_name"],
-    region: ["muscle_region_en"], category: ["muscle_category_en"],
-    muscle_latin: ["latin_muscle_name"], muscle_english: ["english_muscle_name"],
-    origo: ["origo"], insercio: ["insercio"], innervation: ["innervation"], blood_supply: ["blood_supply"], movement_function: ["movement_function"],
-    definition: ["movement_function"]
   }},
   { key: "physiology", label: "Physiology", file: "terminology/physiology.csv", idColumn: "id", columns: {
     en: ["process_name_en"], de: ["process_name_de"], sk: ["process_name_sk"],
@@ -15399,20 +17132,40 @@ function getDefaultFieldCatalogForAdapter(adapter){
   add("full_form", "Full form", "full_form");
   add("definition", "Definition", "definition");
   add("notes", "Notes", "notes");
-  if(adapter.key === "muscles"){
-    add("region", "Region", "region");
+  if(adapter.key === "anatomy_question_seed" || adapter.key === "anatomy_question_graph"){
+    add("name_en", "Question", "en");
+    add("definition", "Correct answer", "definition");
+    add("notes", "Explanation", "notes");
+    add("category", "Question type", "category");
+    return fields;
+  }
+  if(adapter.key === "clinical_correlations"){
+    add("name_en", "Clinical relation", "en");
+    add("definition", "Direct answer", "definition");
+    add("notes", "Exam traps", "notes");
     add("category", "Category", "category");
-    add("origo", "Origo", "origo");
-    add("insercio", "Insercio", "insercio");
-    add("innervation", "Innervation", "innervation");
-    add("blood_supply", "Blood supply", "blood_supply");
-    add("movement_function", "Movement function", "movement_function");
-    addBuild("oina_summary", "OINA summary", (row, cols) => [
-      getTrimmed(row, cols.origo) ? `Origo: ${getTrimmed(row, cols.origo)}` : "",
-      getTrimmed(row, cols.insercio) ? `Insercio: ${getTrimmed(row, cols.insercio)}` : "",
+    add("system", "Relation type", "system");
+    add("course_tags", "Course tags", "course_tags");
+    return fields;
+  }
+  if(adapter.key === "anatomy_structures"){
+    add("region", "Region", "region");
+    add("category", "Structure type", "category");
+    add("system", "System", "system");
+    add("definition", "Key features / clinical notes", "definition");
+    add("notes", "Common confusions", "notes");
+    add("course_tags", "Course tags", "course_tags");
+    add("origo", "Muscle origin", "origo");
+    add("insercio", "Muscle insertion", "insercio");
+    add("innervation", "Muscle innervation", "innervation");
+    add("blood_supply", "Muscle blood supply", "blood_supply");
+    add("movement_function", "Muscle action", "movement_function");
+    addBuild("oina_summary", "Muscle OINA summary", (row, cols) => [
+      getTrimmed(row, cols.origo) ? `Origin: ${getTrimmed(row, cols.origo)}` : "",
+      getTrimmed(row, cols.insercio) ? `Insertion: ${getTrimmed(row, cols.insercio)}` : "",
       getTrimmed(row, cols.innervation) ? `Innervation: ${getTrimmed(row, cols.innervation)}` : "",
       getTrimmed(row, cols.blood_supply) ? `Blood supply: ${getTrimmed(row, cols.blood_supply)}` : "",
-      getTrimmed(row, cols.movement_function) ? `Function: ${getTrimmed(row, cols.movement_function)}` : ""
+      getTrimmed(row, cols.movement_function) ? `Action: ${getTrimmed(row, cols.movement_function)}` : ""
     ].filter(Boolean).join(" | "));
   }
   return fields.filter((v, i, arr) => arr.findIndex(x => x.key === v.key) === i);
@@ -15471,6 +17224,7 @@ async function ensureFlashcardsV2DataLoaded(){
         label: spec.label,
         file: spec.file,
         idColumn: spec.idColumn || null,
+        rowFilter: typeof spec.rowFilter === "function" ? spec.rowFilter : null,
         columns: resolvedColumns
       };
       const fieldCatalog = getDefaultFieldCatalogForAdapter(adapterSeed);
@@ -15481,6 +17235,7 @@ async function ensureFlashcardsV2DataLoaded(){
       };
       adapters.push(adapter);
       for(const row of (parsed.objects || [])){
+        if(adapter.rowFilter && !adapter.rowFilter(row)) continue;
         const idFromColumn = adapter.idColumn ? getTrimmed(row, adapter.idColumn) : "";
         const _id = idFromColumn
           ? `${adapter.key}:${idFromColumn}`

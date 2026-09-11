@@ -1,0 +1,3486 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-11T19:32:46Z",
+  "dataset_id": "clinical_correlation_synonyms_v1",
+  "description": "Search synonyms, abbreviations, Latin variants, lay phrases and common misspellings for anatomy clinical correlations.",
+  "global_synonyms": {
+    "stomach": [
+      "gaster",
+      "ventriculus",
+      "gastric",
+      "žalúdok",
+      "magen"
+    ],
+    "greater curvature": [
+      "curvatura major",
+      "great curvature",
+      "inferior border of stomach",
+      "inferior side of stomach",
+      "big curvature",
+      "outer curvature",
+      "large curvature"
+    ],
+    "lesser curvature": [
+      "curvatura minor",
+      "small curvature",
+      "superior border of stomach",
+      "upper border of stomach",
+      "inner curvature"
+    ],
+    "gastro-omental artery": [
+      "gastroepiploic artery",
+      "gastro omental artery",
+      "gastroepiploic",
+      "gastro-epiploic",
+      "arteria gastroomentalis",
+      "arteria gastroepiploica"
+    ],
+    "right gastro-omental artery": [
+      "right gastroepiploic artery",
+      "right gastro omental artery",
+      "arteria gastroomentalis dextra",
+      "arteria gastroepiploica dextra"
+    ],
+    "left gastro-omental artery": [
+      "left gastroepiploic artery",
+      "left gastro omental artery",
+      "arteria gastroomentalis sinistra",
+      "arteria gastroepiploica sinistra"
+    ],
+    "right gastric artery": [
+      "arteria gastrica dextra"
+    ],
+    "left gastric artery": [
+      "arteria gastrica sinistra"
+    ],
+    "short gastric arteries": [
+      "arteriae gastricae breves",
+      "short gastrics"
+    ],
+    "duodenum": [
+      "duodenum",
+      "duodenal",
+      "dvanástnik",
+      "zwölffingerdarm"
+    ],
+    "first part of duodenum": [
+      "duodenal bulb",
+      "superior part of duodenum",
+      "pars superior duodeni",
+      "D1"
+    ],
+    "third part of duodenum": [
+      "horizontal part of duodenum",
+      "inferior part of duodenum",
+      "pars horizontalis duodeni",
+      "D3"
+    ],
+    "gastroduodenal artery": [
+      "arteria gastroduodenalis",
+      "GDA"
+    ],
+    "superior mesenteric artery": [
+      "arteria mesenterica superior",
+      "SMA",
+      "superior mesenteric a."
+    ],
+    "pancreas": [
+      "pancreas",
+      "pancreatic",
+      "pankreas",
+      "slinivka"
+    ],
+    "head of pancreas": [
+      "caput pancreatis",
+      "pancreatic head"
+    ],
+    "tail of pancreas": [
+      "cauda pancreatis",
+      "pancreatic tail"
+    ],
+    "common bile duct": [
+      "ductus choledochus",
+      "bile duct",
+      "CBD",
+      "choledochus"
+    ],
+    "splenic vessels": [
+      "splenic artery and vein",
+      "lienal vessels",
+      "arteria splenica",
+      "vena splenica"
+    ],
+    "appendix": [
+      "vermiform appendix",
+      "appendix vermiformis",
+      "slepé črevo appendix"
+    ],
+    "appendicular artery": [
+      "arteria appendicularis",
+      "appendix artery"
+    ],
+    "gallbladder": [
+      "vesica biliaris",
+      "vesica fellea",
+      "žlčník",
+      "gallenblase"
+    ],
+    "cystic artery": [
+      "arteria cystica"
+    ],
+    "porta hepatis": [
+      "hepatic hilum",
+      "liver hilum",
+      "porta hepatis"
+    ],
+    "hepatoduodenal ligament": [
+      "ligamentum hepatoduodenale",
+      "free edge of lesser omentum"
+    ],
+    "portal triad": [
+      "portal vein, hepatic artery, bile duct",
+      "triad",
+      "Glisson triad"
+    ],
+    "rib": [
+      "costa",
+      "rebro",
+      "rippe"
+    ],
+    "costal groove": [
+      "sulcus costae",
+      "inferior border of rib",
+      "under rib"
+    ],
+    "intercostal vein artery nerve": [
+      "VAN bundle",
+      "VAN",
+      "intercostal neurovascular bundle",
+      "vein artery nerve"
+    ],
+    "root of lung": [
+      "radix pulmonis",
+      "lung hilum",
+      "hilum of lung",
+      "pulmonary root"
+    ],
+    "phrenic nerve": [
+      "nervus phrenicus"
+    ],
+    "vagus nerve": [
+      "nervus vagus",
+      "CN X",
+      "cranial nerve X"
+    ],
+    "anterior interventricular artery": [
+      "left anterior descending artery",
+      "LAD",
+      "ramus interventricularis anterior",
+      "anterior descending artery"
+    ],
+    "anterior interventricular sulcus": [
+      "anterior interventricular groove",
+      "sulcus interventricularis anterior"
+    ],
+    "right coronary artery": [
+      "RCA",
+      "arteria coronaria dextra"
+    ],
+    "coronary sulcus": [
+      "atrioventricular groove",
+      "sulcus coronarius"
+    ],
+    "circumflex artery": [
+      "LCx",
+      "ramus circumflexus",
+      "left circumflex artery"
+    ],
+    "foramen spinosum": [
+      "spinosum",
+      "foramen spinosum"
+    ],
+    "middle meningeal artery": [
+      "arteria meningea media",
+      "MMA"
+    ],
+    "cavernous sinus": [
+      "sinus cavernosus",
+      "cavernous venous sinus"
+    ],
+    "internal carotid artery": [
+      "ICA",
+      "arteria carotis interna"
+    ],
+    "oculomotor nerve": [
+      "CN III",
+      "cranial nerve III",
+      "third cranial nerve",
+      "nervus oculomotorius"
+    ],
+    "trochlear nerve": [
+      "CN IV",
+      "cranial nerve IV",
+      "fourth cranial nerve",
+      "nervus trochlearis"
+    ],
+    "ophthalmic nerve": [
+      "V1",
+      "ophthalmic division",
+      "nervus ophthalmicus"
+    ],
+    "maxillary nerve": [
+      "V2",
+      "maxillary division",
+      "nervus maxillaris"
+    ],
+    "abducens nerve": [
+      "CN VI",
+      "cranial nerve VI",
+      "sixth cranial nerve",
+      "nervus abducens"
+    ],
+    "parotid gland": [
+      "glandula parotis",
+      "parotis"
+    ],
+    "facial nerve": [
+      "CN VII",
+      "cranial nerve VII",
+      "nervus facialis"
+    ],
+    "retromandibular vein": [
+      "vena retromandibularis"
+    ],
+    "external carotid artery": [
+      "ECA",
+      "arteria carotis externa"
+    ],
+    "submandibular duct": [
+      "Wharton duct",
+      "Wharton’s duct",
+      "ductus submandibularis"
+    ],
+    "lingual nerve": [
+      "nervus lingualis"
+    ],
+    "carotid sheath": [
+      "vagina carotica"
+    ],
+    "common carotid artery": [
+      "CCA",
+      "arteria carotis communis"
+    ],
+    "internal jugular vein": [
+      "IJV",
+      "vena jugularis interna"
+    ],
+    "optic canal": [
+      "canalis opticus"
+    ],
+    "optic nerve": [
+      "CN II",
+      "cranial nerve II",
+      "nervus opticus"
+    ],
+    "ophthalmic artery": [
+      "arteria ophthalmica"
+    ],
+    "superior orbital fissure": [
+      "SOF",
+      "fissura orbitalis superior"
+    ],
+    "superior ophthalmic vein": [
+      "vena ophthalmica superior"
+    ],
+    "hypoglossal nerve": [
+      "CN XII",
+      "cranial nerve XII",
+      "nervus hypoglossus"
+    ],
+    "optic chiasm": [
+      "chiasma opticum",
+      "optic chiasma"
+    ],
+    "visual pathway": [
+      "optic pathway",
+      "visus pathway"
+    ],
+    "surgical neck of humerus": [
+      "collum chirurgicum humeri",
+      "humeral surgical neck"
+    ],
+    "axillary nerve": [
+      "nervus axillaris"
+    ],
+    "posterior circumflex humeral artery": [
+      "PCHA",
+      "arteria circumflexa humeri posterior"
+    ],
+    "radial groove": [
+      "spiral groove",
+      "sulcus nervi radialis",
+      "radial nerve groove"
+    ],
+    "humeral shaft": [
+      "shaft of humerus",
+      "corpus humeri"
+    ],
+    "radial nerve": [
+      "nervus radialis"
+    ],
+    "profunda brachii artery": [
+      "deep brachial artery",
+      "arteria profunda brachii"
+    ],
+    "medial epicondyle": [
+      "medial epicondyle of humerus",
+      "epicondylus medialis humeri",
+      "funny bone region"
+    ],
+    "ulnar nerve": [
+      "nervus ulnaris"
+    ],
+    "carpal tunnel": [
+      "canalis carpi",
+      "carpal canal"
+    ],
+    "median nerve": [
+      "nervus medianus"
+    ],
+    "flexor tendons": [
+      "flexor muscle tendons",
+      "FDS FDP FPL tendons"
+    ],
+    "cubital fossa": [
+      "fossa cubitalis",
+      "elbow fossa"
+    ],
+    "biceps tendon": [
+      "tendon of biceps brachii"
+    ],
+    "brachial artery": [
+      "arteria brachialis"
+    ],
+    "femoral triangle": [
+      "trigonum femorale",
+      "Scarpa triangle",
+      "Scarpa’s triangle"
+    ],
+    "femoral nerve": [
+      "nervus femoralis"
+    ],
+    "femoral artery": [
+      "arteria femoralis"
+    ],
+    "femoral vein": [
+      "vena femoralis"
+    ],
+    "lymphatics": [
+      "lymph nodes",
+      "lymphatic vessels"
+    ],
+    "adductor canal": [
+      "Hunter canal",
+      "subsartorial canal",
+      "canalis adductorius"
+    ],
+    "saphenous nerve": [
+      "nervus saphenus"
+    ],
+    "nerve to vastus medialis": [
+      "nervus vasti medialis"
+    ],
+    "neck of fibula": [
+      "fibular neck",
+      "collum fibulae",
+      "neck of the fibula"
+    ],
+    "common fibular nerve": [
+      "common peroneal nerve",
+      "nervus fibularis communis",
+      "nervus peroneus communis"
+    ],
+    "popliteal fossa": [
+      "fossa poplitea"
+    ],
+    "tibial nerve": [
+      "nervus tibialis"
+    ],
+    "popliteal vein": [
+      "vena poplitea"
+    ],
+    "popliteal artery": [
+      "arteria poplitea"
+    ],
+    "tarsal tunnel": [
+      "canalis malleolaris",
+      "behind medial malleolus"
+    ],
+    "tibialis posterior": [
+      "tendon of tibialis posterior"
+    ],
+    "flexor digitorum longus": [
+      "FDL"
+    ],
+    "posterior tibial vessels": [
+      "posterior tibial artery and veins",
+      "arteria tibialis posterior"
+    ],
+    "flexor hallucis longus": [
+      "FHL"
+    ],
+    "femoral neck": [
+      "collum femoris",
+      "neck of femur"
+    ],
+    "medial circumflex femoral artery": [
+      "MCFA",
+      "arteria circumflexa femoris medialis"
+    ],
+    "retinacular arteries": [
+      "retinacular vessels",
+      "ascending cervical branches"
+    ],
+    "ureter": [
+      "močovod",
+      "ureter"
+    ],
+    "uterine artery": [
+      "arteria uterina"
+    ],
+    "obturator canal": [
+      "canalis obturatorius"
+    ],
+    "obturator nerve": [
+      "nervus obturatorius"
+    ],
+    "obturator artery": [
+      "arteria obturatoria"
+    ],
+    "obturator vein": [
+      "vena obturatoria"
+    ],
+    "lesser sciatic foramen": [
+      "foramen ischiadicum minus"
+    ],
+    "pudendal nerve": [
+      "nervus pudendus"
+    ],
+    "internal pudendal vessels": [
+      "internal pudendal artery and vein",
+      "arteria pudenda interna",
+      "vena pudenda interna"
+    ]
+  },
+  "common_misspellings": {
+    "gastro-omental": [
+      "gastromental",
+      "gastro omental",
+      "gastroomental",
+      "gastroepiploic",
+      "gastro epiploic",
+      "gastrepiploic",
+      "gastroepiploick"
+    ],
+    "gastroepiploic": [
+      "gastroepiploic",
+      "gastro-epiploic",
+      "gastro epiploic",
+      "gastro-omental"
+    ],
+    "gastroduodenal": [
+      "gastro duodenal",
+      "gastrodoudenal",
+      "gastroduodinal",
+      "gastrodeuodenal"
+    ],
+    "duodenum": [
+      "duodenum",
+      "duodenom",
+      "duodenumum",
+      "duodenal",
+      "duedenum"
+    ],
+    "pancreas": [
+      "pancreas",
+      "pankreas",
+      "pancreatis",
+      "pankreatic"
+    ],
+    "choledochus": [
+      "choledocus",
+      "coledochus",
+      "ductus choledocus",
+      "choledoch"
+    ],
+    "appendicular": [
+      "apendicular",
+      "appendical",
+      "appendiceal"
+    ],
+    "cystic": [
+      "cistic",
+      "cystic"
+    ],
+    "hepatoduodenal": [
+      "hepato duodenal",
+      "hepatodoudenal",
+      "hepatoduodinal"
+    ],
+    "intercostal": [
+      "intercostal",
+      "intercostalis",
+      "intercostel"
+    ],
+    "phrenic": [
+      "frenic",
+      "phrenicus",
+      "phrenick"
+    ],
+    "vagus": [
+      "vagus",
+      "vagal",
+      "vagus nerve",
+      "nervus vagus"
+    ],
+    "interventricular": [
+      "inter ventricular",
+      "interventrikular",
+      "interventricularis"
+    ],
+    "circumflex": [
+      "circumflex",
+      "circumfleks",
+      "cirumflex",
+      "circumflexus"
+    ],
+    "spinosum": [
+      "spinosum",
+      "spinosus",
+      "spinozum"
+    ],
+    "meningeal": [
+      "meningeal",
+      "meningealis",
+      "meningial",
+      "meningeus"
+    ],
+    "cavernous": [
+      "cavernosus",
+      "cavernous",
+      "cavernozus"
+    ],
+    "oculomotor": [
+      "oculomotorius",
+      "oculomotor",
+      "occulomotor",
+      "oculomotoric"
+    ],
+    "trochlear": [
+      "trochlearis",
+      "trochlear",
+      "troclear"
+    ],
+    "abducens": [
+      "abducens",
+      "abducent",
+      "abducence",
+      "abduciens"
+    ],
+    "ophthalmic": [
+      "ophthalmic",
+      "ophtalmic",
+      "opthalmic",
+      "ophthalmicus"
+    ],
+    "parotid": [
+      "parotis",
+      "parotid",
+      "parotidea"
+    ],
+    "retromandibular": [
+      "retro mandibular",
+      "retromandibularis",
+      "retromandibular"
+    ],
+    "submandibular": [
+      "sub mandibular",
+      "submandibularis",
+      "submandibular"
+    ],
+    "lingual": [
+      "lingualis",
+      "lingual",
+      "lingval"
+    ],
+    "carotid": [
+      "carotid",
+      "carotis",
+      "karotid"
+    ],
+    "jugular": [
+      "jugular",
+      "jugularis",
+      "juguler"
+    ],
+    "humerus": [
+      "humerus",
+      "humeri",
+      "humeral",
+      "humerous"
+    ],
+    "axillary": [
+      "axillary",
+      "axillaris",
+      "axilarry",
+      "axilary"
+    ],
+    "brachial": [
+      "brachial",
+      "brachialis",
+      "brachialis",
+      "bracial"
+    ],
+    "radial": [
+      "radial",
+      "radialis",
+      "radiallis"
+    ],
+    "ulnar": [
+      "ulnar",
+      "ulnaris",
+      "ulner"
+    ],
+    "carpal": [
+      "carpal",
+      "carpalis",
+      "karpal"
+    ],
+    "cubital": [
+      "cubital",
+      "cubitalis",
+      "kubital"
+    ],
+    "femoral": [
+      "femoral",
+      "femoralis",
+      "femur artery",
+      "femur nerve"
+    ],
+    "saphenous": [
+      "saphenous",
+      "saphenus",
+      "saphenus",
+      "safenous"
+    ],
+    "fibular": [
+      "fibular",
+      "fibularis",
+      "peroneal",
+      "fibuler"
+    ],
+    "popliteal": [
+      "popliteal",
+      "popliteus",
+      "poplitea",
+      "poplitealis"
+    ],
+    "tarsal": [
+      "tarsal",
+      "tarsalis",
+      "tarzal"
+    ],
+    "hallucis": [
+      "hallucis",
+      "halucis",
+      "hallicis"
+    ],
+    "ureter": [
+      "ureter",
+      "urether",
+      "močovod"
+    ],
+    "uterine": [
+      "uterine",
+      "uterina",
+      "uterinne"
+    ],
+    "obturator": [
+      "obturator",
+      "obturatorius",
+      "obturater"
+    ],
+    "pudendal": [
+      "pudendal",
+      "pudendus",
+      "pudenthal"
+    ],
+    "hemianopia": [
+      "hemianopia",
+      "hemianopsia",
+      "hemianopsy",
+      "hemianopsie"
+    ],
+    "bitemporal": [
+      "bitemporal",
+      "bi temporal",
+      "bitemporalis"
+    ]
+  },
+  "relation_synonyms": {
+    "artery_runs_along": [
+      "artery along",
+      "artery passes along",
+      "artery runs on",
+      "blood supply of border",
+      "vessel on curvature"
+    ],
+    "supplied_by": [
+      "supplied by",
+      "blood supply",
+      "artery of",
+      "vascular supply",
+      "which artery supplies"
+    ],
+    "posterior_relation_vulnerable": [
+      "posterior relation",
+      "behind it",
+      "bleeds from",
+      "ulcer bleeding",
+      "what artery is posterior"
+    ],
+    "crossed_anteriorly_by": [
+      "crossed by",
+      "passes in front of",
+      "anterior relation",
+      "compresses",
+      "overlies"
+    ],
+    "adjacent_to": [
+      "next to",
+      "relation of",
+      "nearby",
+      "lies adjacent to",
+      "close to"
+    ],
+    "related_to": [
+      "related to",
+      "near",
+      "runs with",
+      "associated with"
+    ],
+    "contains": [
+      "contains",
+      "what is inside",
+      "contents",
+      "what passes in"
+    ],
+    "contains_or_protects": [
+      "contains",
+      "protected by",
+      "runs in groove",
+      "under border"
+    ],
+    "contains_or_related_to": [
+      "contents",
+      "inside",
+      "lateral wall",
+      "passes through",
+      "relation"
+    ],
+    "traversed_by": [
+      "traversed by",
+      "passes through gland",
+      "inside gland",
+      "content of gland"
+    ],
+    "crossed_by": [
+      "crossed by",
+      "hooks around",
+      "which nerve crosses",
+      "passes under/over"
+    ],
+    "transmits": [
+      "transmits",
+      "passes through",
+      "contents of foramen",
+      "what goes through"
+    ],
+    "vulnerable_structure_nearby": [
+      "injured in fracture",
+      "vulnerable near",
+      "damage causes",
+      "what nerve is injured"
+    ],
+    "nerve_passes_behind": [
+      "passes behind",
+      "funny bone",
+      "behind epicondyle"
+    ],
+    "contains_ordered": [
+      "order",
+      "from lateral to medial",
+      "from superficial to deep",
+      "contents order",
+      "mnemonic"
+    ],
+    "blood_supply_vulnerable": [
+      "blood supply vulnerable",
+      "avascular necrosis",
+      "fracture endangers artery"
+    ],
+    "passes_under": [
+      "passes under",
+      "water under bridge",
+      "surgical danger",
+      "uterine artery relation"
+    ],
+    "lesion_causes": [
+      "lesion causes",
+      "damage causes",
+      "palsy sign",
+      "clinical sign"
+    ],
+    "innervates": [
+      "innervates",
+      "supplies muscle",
+      "motor supply"
+    ]
+  },
+  "stopwords": [
+    "a",
+    "along",
+    "an",
+    "anatomy",
+    "and",
+    "are",
+    "artery",
+    "at",
+    "border",
+    "by",
+    "canal",
+    "clinical",
+    "contain",
+    "contains",
+    "content",
+    "contents",
+    "did",
+    "do",
+    "does",
+    "exam",
+    "fissure",
+    "for",
+    "foramen",
+    "from",
+    "gland",
+    "how",
+    "in",
+    "into",
+    "is",
+    "ligament",
+    "muscle",
+    "near",
+    "nearby",
+    "nerve",
+    "of",
+    "on",
+    "or",
+    "organ",
+    "over",
+    "pass",
+    "passes",
+    "region",
+    "relation",
+    "relations",
+    "run",
+    "runs",
+    "side",
+    "structure",
+    "structures",
+    "supplied",
+    "supplies",
+    "supply",
+    "the",
+    "through",
+    "to",
+    "under",
+    "vein",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "why",
+    "with"
+  ],
+  "critical_term_rules": {
+    "left_right_sensitive": [
+      "left",
+      "right",
+      "anterior",
+      "posterior",
+      "superior",
+      "inferior",
+      "medial",
+      "lateral",
+      "greater",
+      "lesser"
+    ],
+    "do_not_fuzzy_cross": [
+      [
+        "artery",
+        "vein"
+      ],
+      [
+        "nerve",
+        "artery"
+      ],
+      [
+        "gastric",
+        "gastro-omental"
+      ],
+      [
+        "greater",
+        "lesser"
+      ],
+      [
+        "left",
+        "right"
+      ],
+      [
+        "v1",
+        "v2"
+      ],
+      [
+        "v2",
+        "v3"
+      ],
+      [
+        "iii",
+        "iv"
+      ],
+      [
+        "iv",
+        "vi"
+      ]
+    ],
+    "roman_numeral_rule": "Roman numerals and cranial nerve labels must match exactly after normalization; do not fuzzy-match CN III to CN IV or CN VI."
+  },
+  "correlation_query_support": [
+    {
+      "correlation_id": "cc_stomach_greater_curvature_gastro_omental",
+      "canonical_terms": [
+        "stomach: greater curvature",
+        "right and left gastro-omental arteries",
+        "artery runs along",
+        "stomach",
+        "greater curvature",
+        "gastro-omental",
+        "blood supply"
+      ],
+      "direct_synonyms": [
+        "stomach",
+        "gaster",
+        "ventriculus",
+        "gastric",
+        "žalúdok",
+        "magen",
+        "greater curvature",
+        "curvatura major",
+        "great curvature",
+        "inferior border of stomach",
+        "inferior side of stomach",
+        "big curvature",
+        "outer curvature",
+        "large curvature",
+        "gastromental",
+        "gastro omental",
+        "gastroomental",
+        "gastroepiploic",
+        "gastro epiploic",
+        "gastrepiploic",
+        "gastroepiploick",
+        "gastro-omental artery",
+        "gastroepiploic artery",
+        "gastro omental artery",
+        "gastro-epiploic",
+        "arteria gastroomentalis",
+        "arteria gastroepiploica",
+        "right gastro-omental artery",
+        "right gastroepiploic artery",
+        "right gastro omental artery",
+        "arteria gastroomentalis dextra",
+        "arteria gastroepiploica dextra",
+        "left gastro-omental artery",
+        "left gastroepiploic artery",
+        "left gastro omental artery",
+        "arteria gastroomentalis sinistra",
+        "arteria gastroepiploica sinistra",
+        "artery along",
+        "artery passes along",
+        "artery runs on",
+        "blood supply of border",
+        "vessel on curvature",
+        "inferior side of stomach artery",
+        "great curvature artery",
+        "greater omentum artery",
+        "which artery passes along stomach greater curvature",
+        "gastrocolic ligament vessels",
+        "right and left gastroepiploic"
+      ],
+      "common_misspellings": [
+        "gastromental",
+        "gastro omental",
+        "gastroomental",
+        "gastroepiploic",
+        "gastro epiploic",
+        "gastrepiploic",
+        "gastroepiploick"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "artery along",
+        "artery passes along",
+        "artery runs on",
+        "blood supply of border",
+        "vessel on curvature"
+      ],
+      "negative_traps": [
+        "Do not answer right gastric or left gastric artery; those follow the lesser curvature.",
+        "Short gastric arteries supply mainly the fundus near the superior part of the greater curvature, not the full inferior greater-curvature arcade."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_stomach_lesser_curvature_gastric",
+      "canonical_terms": [
+        "stomach: lesser curvature",
+        "right and left gastric arteries",
+        "artery runs along",
+        "stomach",
+        "lesser curvature",
+        "gastric arteries"
+      ],
+      "direct_synonyms": [
+        "stomach",
+        "gaster",
+        "ventriculus",
+        "gastric",
+        "žalúdok",
+        "magen",
+        "lesser curvature",
+        "curvatura minor",
+        "small curvature",
+        "superior border of stomach",
+        "upper border of stomach",
+        "inner curvature",
+        "short gastric arteries",
+        "arteriae gastricae breves",
+        "short gastrics",
+        "artery along",
+        "artery passes along",
+        "artery runs on",
+        "blood supply of border",
+        "vessel on curvature",
+        "lesser curvature artery",
+        "small curvature artery",
+        "hepatogastric ligament vessels",
+        "right and left gastric"
+      ],
+      "common_misspellings": [],
+      "abbreviations": [],
+      "relation_phrases": [
+        "artery along",
+        "artery passes along",
+        "artery runs on",
+        "blood supply of border",
+        "vessel on curvature"
+      ],
+      "negative_traps": [
+        "Do not confuse with gastro-omental arteries, which follow the greater curvature."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_stomach_fundus_short_gastric",
+      "canonical_terms": [
+        "fundus of stomach",
+        "short gastric arteries",
+        "supplied by",
+        "stomach",
+        "fundus"
+      ],
+      "direct_synonyms": [
+        "stomach",
+        "gaster",
+        "ventriculus",
+        "gastric",
+        "žalúdok",
+        "magen",
+        "short gastric arteries",
+        "arteriae gastricae breves",
+        "short gastrics",
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies",
+        "fundus blood supply",
+        "gastric fundus artery"
+      ],
+      "common_misspellings": [],
+      "abbreviations": [],
+      "relation_phrases": [
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies"
+      ],
+      "negative_traps": [
+        "Short gastric arteries are not the main answer for the entire greater curvature arcade."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_duodenal_ulcer_gastroduodenal",
+      "canonical_terms": [
+        "first part of duodenum",
+        "gastroduodenal artery",
+        "posterior relation vulnerable",
+        "duodenum",
+        "ulcer",
+        "bleeding"
+      ],
+      "direct_synonyms": [
+        "duodenum",
+        "duodenal",
+        "dvanástnik",
+        "zwölffingerdarm",
+        "first part of duodenum",
+        "duodenal bulb",
+        "superior part of duodenum",
+        "pars superior duodeni",
+        "D1",
+        "duodenom",
+        "duodenumum",
+        "duedenum",
+        "gastroduodenal artery",
+        "arteria gastroduodenalis",
+        "GDA",
+        "gastro duodenal",
+        "gastrodoudenal",
+        "gastroduodinal",
+        "gastrodeuodenal",
+        "third part of duodenum",
+        "horizontal part of duodenum",
+        "inferior part of duodenum",
+        "pars horizontalis duodeni",
+        "D3",
+        "posterior relation",
+        "behind it",
+        "bleeds from",
+        "ulcer bleeding",
+        "what artery is posterior",
+        "posterior duodenal ulcer bleeding",
+        "duodenal bulb ulcer artery",
+        "D1 posterior artery",
+        "ulcer bleeds gastroduodenal"
+      ],
+      "common_misspellings": [
+        "duodenum",
+        "duodenom",
+        "duodenumum",
+        "duodenal",
+        "duedenum",
+        "gastro duodenal",
+        "gastrodoudenal",
+        "gastroduodinal",
+        "gastrodeuodenal"
+      ],
+      "abbreviations": [
+        "D1",
+        "GDA",
+        "D3"
+      ],
+      "relation_phrases": [
+        "posterior relation",
+        "behind it",
+        "bleeds from",
+        "ulcer bleeding",
+        "what artery is posterior"
+      ],
+      "negative_traps": [
+        "Anterior duodenal ulcers are more likely to perforate; posterior ulcers are classically associated with gastroduodenal artery bleeding."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_duodenum_third_part_sma",
+      "canonical_terms": [
+        "third part of duodenum",
+        "superior mesenteric artery",
+        "crossed anteriorly by",
+        "duodenum",
+        "SMA",
+        "compression"
+      ],
+      "direct_synonyms": [
+        "duodenum",
+        "duodenal",
+        "dvanástnik",
+        "zwölffingerdarm",
+        "third part of duodenum",
+        "horizontal part of duodenum",
+        "inferior part of duodenum",
+        "pars horizontalis duodeni",
+        "D3",
+        "duodenom",
+        "duodenumum",
+        "duedenum",
+        "superior mesenteric artery",
+        "arteria mesenterica superior",
+        "SMA",
+        "superior mesenteric a.",
+        "first part of duodenum",
+        "duodenal bulb",
+        "superior part of duodenum",
+        "pars superior duodeni",
+        "D1",
+        "crossed by",
+        "passes in front of",
+        "anterior relation",
+        "compresses",
+        "overlies",
+        "SMA syndrome",
+        "third part duodenum compression",
+        "D3 anterior artery",
+        "aorta SMA duodenum"
+      ],
+      "common_misspellings": [
+        "duodenum",
+        "duodenom",
+        "duodenumum",
+        "duodenal",
+        "duedenum"
+      ],
+      "abbreviations": [
+        "D3",
+        "SMA",
+        "D1"
+      ],
+      "relation_phrases": [
+        "crossed by",
+        "passes in front of",
+        "anterior relation",
+        "compresses",
+        "overlies"
+      ],
+      "negative_traps": [
+        "This is the third part of the duodenum, not the first part."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_pancreatic_head_bile_duct",
+      "canonical_terms": [
+        "head of pancreas",
+        "common bile duct",
+        "adjacent to",
+        "pancreas",
+        "bile duct",
+        "jaundice"
+      ],
+      "direct_synonyms": [
+        "pancreas",
+        "pancreatic",
+        "pankreas",
+        "slinivka",
+        "head of pancreas",
+        "caput pancreatis",
+        "pancreatic head",
+        "pancreatis",
+        "pankreatic",
+        "common bile duct",
+        "ductus choledochus",
+        "bile duct",
+        "CBD",
+        "choledochus",
+        "tail of pancreas",
+        "cauda pancreatis",
+        "pancreatic tail",
+        "next to",
+        "relation of",
+        "nearby",
+        "lies adjacent to",
+        "close to",
+        "pancreatic head cancer jaundice",
+        "bile duct behind pancreas",
+        "choledochus pancreatic head"
+      ],
+      "common_misspellings": [
+        "pancreas",
+        "pankreas",
+        "pancreatis",
+        "pankreatic"
+      ],
+      "abbreviations": [
+        "CBD"
+      ],
+      "relation_phrases": [
+        "next to",
+        "relation of",
+        "nearby",
+        "lies adjacent to",
+        "close to"
+      ],
+      "negative_traps": [
+        "Pancreatic tail lesions are more related to the splenic hilum; pancreatic head lesions classically affect the bile duct."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_pancreatic_tail_splenic_vessels",
+      "canonical_terms": [
+        "tail of pancreas",
+        "splenic vessels",
+        "related to",
+        "pancreas",
+        "tail"
+      ],
+      "direct_synonyms": [
+        "pancreas",
+        "pancreatic",
+        "pankreas",
+        "slinivka",
+        "tail of pancreas",
+        "cauda pancreatis",
+        "pancreatic tail",
+        "pancreatis",
+        "pankreatic",
+        "splenic vessels",
+        "splenic artery and vein",
+        "lienal vessels",
+        "arteria splenica",
+        "vena splenica",
+        "head of pancreas",
+        "caput pancreatis",
+        "pancreatic head",
+        "related to",
+        "near",
+        "runs with",
+        "associated with",
+        "splenic artery along pancreas",
+        "pancreatic tail splenic hilum",
+        "splenic vessels pancreas relation"
+      ],
+      "common_misspellings": [
+        "pancreas",
+        "pankreas",
+        "pancreatis",
+        "pankreatic"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "related to",
+        "near",
+        "runs with",
+        "associated with"
+      ],
+      "negative_traps": [
+        "Tail is near spleen; head is embraced by duodenum."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_appendix_appendicular_artery",
+      "canonical_terms": [
+        "vermiform appendix",
+        "appendicular artery",
+        "supplied by",
+        "appendix",
+        "SMA"
+      ],
+      "direct_synonyms": [
+        "appendix",
+        "vermiform appendix",
+        "appendix vermiformis",
+        "slepé črevo appendix",
+        "appendicular artery",
+        "arteria appendicularis",
+        "appendix artery",
+        "apendicular",
+        "appendical",
+        "appendiceal",
+        "superior mesenteric artery",
+        "arteria mesenterica superior",
+        "SMA",
+        "superior mesenteric a.",
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies",
+        "blood supply appendix",
+        "mesoappendix artery"
+      ],
+      "common_misspellings": [
+        "apendicular",
+        "appendical",
+        "appendiceal"
+      ],
+      "abbreviations": [
+        "SMA"
+      ],
+      "relation_phrases": [
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies"
+      ],
+      "negative_traps": [
+        "The appendicular artery is from the SMA territory via ileocolic artery, not IMA."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_gallbladder_cystic_artery",
+      "canonical_terms": [
+        "gallbladder",
+        "cystic artery",
+        "supplied by",
+        "hepatocystic triangle"
+      ],
+      "direct_synonyms": [
+        "gallbladder",
+        "vesica biliaris",
+        "vesica fellea",
+        "žlčník",
+        "gallenblase",
+        "cystic artery",
+        "arteria cystica",
+        "cistic",
+        "cystic",
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies",
+        "artery gallbladder",
+        "Calot triangle artery",
+        "cholecystectomy cystic artery"
+      ],
+      "common_misspellings": [
+        "cistic",
+        "cystic"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "supplied by",
+        "blood supply",
+        "artery of",
+        "vascular supply",
+        "which artery supplies"
+      ],
+      "negative_traps": [
+        "Anatomical variations are common; do not assume the exact branching pattern without inspection in surgery."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_liver_portal_triad",
+      "canonical_terms": [
+        "porta hepatis / hepatoduodenal ligament",
+        "portal triad",
+        "contains",
+        "liver",
+        "hepatoduodenal ligament"
+      ],
+      "direct_synonyms": [
+        "porta hepatis",
+        "hepatic hilum",
+        "liver hilum",
+        "hepatoduodenal ligament",
+        "ligamentum hepatoduodenale",
+        "free edge of lesser omentum",
+        "hepato duodenal",
+        "hepatodoudenal",
+        "hepatoduodinal",
+        "portal triad",
+        "portal vein, hepatic artery, bile duct",
+        "triad",
+        "Glisson triad",
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in",
+        "portal triad contents",
+        "hepatoduodenal ligament contents",
+        "portal vein hepatic artery bile duct"
+      ],
+      "common_misspellings": [
+        "hepato duodenal",
+        "hepatodoudenal",
+        "hepatoduodinal"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in"
+      ],
+      "negative_traps": [
+        "Hepatic veins are not part of the portal triad; they drain directly into the IVC."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_intercostal_van_costal_groove",
+      "canonical_terms": [
+        "inferior border of rib / costal groove",
+        "intercostal vein, artery and nerve",
+        "contains or protects",
+        "rib",
+        "intercostal",
+        "VAN",
+        "chest tube"
+      ],
+      "direct_synonyms": [
+        "rib",
+        "costa",
+        "rebro",
+        "rippe",
+        "costal groove",
+        "sulcus costae",
+        "inferior border of rib",
+        "under rib",
+        "intercostal",
+        "intercostalis",
+        "intercostel",
+        "intercostal vein artery nerve",
+        "VAN bundle",
+        "VAN",
+        "intercostal neurovascular bundle",
+        "vein artery nerve",
+        "contains",
+        "protected by",
+        "runs in groove",
+        "under border",
+        "VAN order",
+        "costal groove contents",
+        "safe thoracentesis above rib",
+        "intercostal bundle"
+      ],
+      "common_misspellings": [
+        "intercostal",
+        "intercostalis",
+        "intercostel"
+      ],
+      "abbreviations": [
+        "VAN"
+      ],
+      "relation_phrases": [
+        "contains",
+        "protected by",
+        "runs in groove",
+        "under border"
+      ],
+      "negative_traps": [
+        "Do not place instruments just under a rib; that is where the main intercostal bundle runs."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_lung_root_phrenic_vagus",
+      "canonical_terms": [
+        "root of lung",
+        "phrenic nerve anterior, vagus nerve posterior",
+        "related to",
+        "lung root",
+        "phrenic nerve",
+        "vagus nerve"
+      ],
+      "direct_synonyms": [
+        "root of lung",
+        "radix pulmonis",
+        "lung hilum",
+        "hilum of lung",
+        "pulmonary root",
+        "phrenic nerve",
+        "nervus phrenicus",
+        "vagus nerve",
+        "nervus vagus",
+        "CN X",
+        "cranial nerve X",
+        "frenic",
+        "phrenicus",
+        "phrenick",
+        "vagus",
+        "vagal",
+        "related to",
+        "near",
+        "runs with",
+        "associated with",
+        "phrenic anterior vagus posterior",
+        "lung root nerves",
+        "hilum phrenic vagus"
+      ],
+      "common_misspellings": [
+        "frenic",
+        "phrenicus",
+        "phrenick",
+        "vagus",
+        "vagal",
+        "vagus nerve",
+        "nervus vagus"
+      ],
+      "abbreviations": [
+        "CN X"
+      ],
+      "relation_phrases": [
+        "related to",
+        "near",
+        "runs with",
+        "associated with"
+      ],
+      "negative_traps": [
+        "Phrenic nerve is anterior to the root; vagus nerve is posterior."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_lad_anterior_interventricular",
+      "canonical_terms": [
+        "anterior interventricular sulcus",
+        "anterior interventricular artery / LAD",
+        "artery runs in",
+        "heart",
+        "LAD",
+        "coronary arteries"
+      ],
+      "direct_synonyms": [
+        "anterior interventricular sulcus",
+        "anterior interventricular groove",
+        "sulcus interventricularis anterior",
+        "inter ventricular",
+        "interventrikular",
+        "interventricularis",
+        "anterior interventricular artery",
+        "left anterior descending artery",
+        "LAD",
+        "ramus interventricularis anterior",
+        "anterior descending artery",
+        "gallbladder",
+        "vesica biliaris",
+        "vesica fellea",
+        "žlčník",
+        "gallenblase",
+        "LAD groove",
+        "widow maker artery"
+      ],
+      "common_misspellings": [
+        "inter ventricular",
+        "interventrikular",
+        "interventricularis"
+      ],
+      "abbreviations": [
+        "LAD"
+      ],
+      "relation_phrases": [],
+      "negative_traps": [
+        "Do not confuse with posterior interventricular artery in the posterior interventricular sulcus."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_rca_coronary_sulcus",
+      "canonical_terms": [
+        "right coronary sulcus",
+        "right coronary artery",
+        "artery runs in",
+        "heart",
+        "RCA",
+        "coronary sulcus"
+      ],
+      "direct_synonyms": [
+        "coronary sulcus",
+        "atrioventricular groove",
+        "sulcus coronarius",
+        "right coronary artery",
+        "RCA",
+        "arteria coronaria dextra",
+        "RCA groove",
+        "right coronary sulcus artery",
+        "AV groove right"
+      ],
+      "common_misspellings": [],
+      "abbreviations": [
+        "RCA"
+      ],
+      "relation_phrases": [],
+      "negative_traps": [
+        "Coronary dominance depends on origin of posterior interventricular artery."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_circumflex_left_coronary_sulcus",
+      "canonical_terms": [
+        "left coronary sulcus",
+        "circumflex artery",
+        "artery runs in",
+        "heart",
+        "circumflex",
+        "coronary arteries"
+      ],
+      "direct_synonyms": [
+        "coronary sulcus",
+        "atrioventricular groove",
+        "sulcus coronarius",
+        "circumflex artery",
+        "LCx",
+        "ramus circumflexus",
+        "left circumflex artery",
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus",
+        "posterior circumflex humeral artery",
+        "PCHA",
+        "arteria circumflexa humeri posterior",
+        "medial circumflex femoral artery",
+        "MCFA",
+        "arteria circumflexa femoris medialis",
+        "LCx groove",
+        "left AV groove",
+        "circumflex coronary sulcus"
+      ],
+      "common_misspellings": [
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus"
+      ],
+      "abbreviations": [
+        "PCHA",
+        "MCFA"
+      ],
+      "relation_phrases": [],
+      "negative_traps": [
+        "The LAD runs anteriorly; the circumflex turns around the left AV groove."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_middle_meningeal_foramen_spinosum",
+      "canonical_terms": [
+        "foramen spinosum",
+        "middle meningeal artery",
+        "transmits",
+        "epidural hematoma"
+      ],
+      "direct_synonyms": [
+        "foramen spinosum",
+        "spinosum",
+        "spinosus",
+        "spinozum",
+        "middle meningeal artery",
+        "arteria meningea media",
+        "MMA",
+        "meningeal",
+        "meningealis",
+        "meningial",
+        "meningeus",
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through",
+        "foramen spinosum contents",
+        "middle meningeal through",
+        "epidural hematoma artery"
+      ],
+      "common_misspellings": [
+        "spinosum",
+        "spinosus",
+        "spinozum",
+        "meningeal",
+        "meningealis",
+        "meningial",
+        "meningeus"
+      ],
+      "abbreviations": [
+        "MMA"
+      ],
+      "relation_phrases": [
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through"
+      ],
+      "negative_traps": [
+        "Foramen ovale transmits V3; foramen rotundum transmits V2."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_cavernous_sinus_contents",
+      "canonical_terms": [
+        "cavernous sinus",
+        "ICA and cranial nerves III, IV, V1, V2, VI",
+        "contains or related to",
+        "cranial nerves",
+        "ICA"
+      ],
+      "direct_synonyms": [
+        "cavernous sinus",
+        "sinus cavernosus",
+        "cavernous venous sinus",
+        "cavernosus",
+        "cavernous",
+        "cavernozus",
+        "internal carotid artery",
+        "ICA",
+        "arteria carotis interna",
+        "maxillary nerve",
+        "V2",
+        "maxillary division",
+        "nervus maxillaris",
+        "abducens nerve",
+        "CN VI",
+        "cranial nerve VI",
+        "sixth cranial nerve",
+        "nervus abducens",
+        "axillary nerve",
+        "nervus axillaris",
+        "oculomotorius",
+        "oculomotor",
+        "occulomotor",
+        "oculomotoric",
+        "trochlearis",
+        "trochlear",
+        "troclear",
+        "abducens",
+        "abducent",
+        "abducence",
+        "abduciens",
+        "ophthalmic",
+        "ophtalmic",
+        "opthalmic",
+        "ophthalmicus",
+        "carotid",
+        "carotis",
+        "karotid",
+        "axillary",
+        "axillaris",
+        "axilarry",
+        "axilary",
+        "surgical neck of humerus",
+        "collum chirurgicum humeri",
+        "humeral surgical neck",
+        "contents",
+        "inside",
+        "lateral wall",
+        "passes through",
+        "relation",
+        "cavernous sinus nerves",
+        "ICA CN VI inside sinus",
+        "lateral wall cavernous sinus",
+        "SOF and cavernous sinus"
+      ],
+      "common_misspellings": [
+        "cavernosus",
+        "cavernous",
+        "cavernozus"
+      ],
+      "abbreviations": [
+        "ICA",
+        "V2",
+        "CN VI"
+      ],
+      "relation_phrases": [
+        "contents",
+        "inside",
+        "lateral wall",
+        "passes through",
+        "relation"
+      ],
+      "negative_traps": [
+        "Mandibular nerve V3 is not in the cavernous sinus lateral wall."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_parotid_contents",
+      "canonical_terms": [
+        "parotid gland",
+        "facial nerve, retromandibular vein and external carotid artery",
+        "traversed by",
+        "parotid",
+        "facial nerve",
+        "external carotid"
+      ],
+      "direct_synonyms": [
+        "parotid gland",
+        "glandula parotis",
+        "parotis",
+        "parotid",
+        "parotidea",
+        "facial nerve",
+        "CN VII",
+        "cranial nerve VII",
+        "nervus facialis",
+        "retromandibular vein",
+        "vena retromandibularis",
+        "external carotid artery",
+        "ECA",
+        "arteria carotis externa",
+        "retro mandibular",
+        "retromandibularis",
+        "retromandibular",
+        "carotid",
+        "carotis",
+        "karotid",
+        "traversed by",
+        "passes through gland",
+        "inside gland",
+        "content of gland",
+        "parotid gland contents",
+        "facial nerve in parotid",
+        "retromandibular vein parotid",
+        "external carotid parotid"
+      ],
+      "common_misspellings": [
+        "parotis",
+        "parotid",
+        "parotidea",
+        "retro mandibular",
+        "retromandibularis",
+        "retromandibular",
+        "carotid",
+        "carotis",
+        "karotid"
+      ],
+      "abbreviations": [
+        "CN VII",
+        "ECA"
+      ],
+      "relation_phrases": [
+        "traversed by",
+        "passes through gland",
+        "inside gland",
+        "content of gland"
+      ],
+      "negative_traps": [
+        "Facial nerve passes through the gland but does not innervate the gland secretomotorly."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_lingual_nerve_submandibular_duct",
+      "canonical_terms": [
+        "submandibular duct",
+        "lingual nerve",
+        "crossed by",
+        "floor of mouth"
+      ],
+      "direct_synonyms": [
+        "submandibular duct",
+        "Wharton duct",
+        "Wharton’s duct",
+        "ductus submandibularis",
+        "sub mandibular",
+        "submandibularis",
+        "submandibular",
+        "lingual nerve",
+        "nervus lingualis",
+        "lingualis",
+        "lingual",
+        "lingval",
+        "rib",
+        "costa",
+        "rebro",
+        "rippe",
+        "crossed by",
+        "hooks around",
+        "which nerve crosses",
+        "passes under/over",
+        "lingual nerve crosses Wharton duct",
+        "submandibular duct relation",
+        "nerve hooks under duct"
+      ],
+      "common_misspellings": [
+        "sub mandibular",
+        "submandibularis",
+        "submandibular",
+        "lingualis",
+        "lingual",
+        "lingval"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "crossed by",
+        "hooks around",
+        "which nerve crosses",
+        "passes under/over"
+      ],
+      "negative_traps": [
+        "The hypoglossal nerve is motor to tongue muscles; the lingual nerve provides general sensation to anterior tongue."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_carotid_sheath_contents",
+      "canonical_terms": [
+        "carotid sheath",
+        "common/internal carotid artery, internal jugular vein and vagus nerve",
+        "contains",
+        "vagus",
+        "IJV"
+      ],
+      "direct_synonyms": [
+        "carotid sheath",
+        "vagina carotica",
+        "carotid",
+        "carotis",
+        "karotid",
+        "vagus nerve",
+        "nervus vagus",
+        "CN X",
+        "cranial nerve X",
+        "internal carotid artery",
+        "ICA",
+        "arteria carotis interna",
+        "internal jugular vein",
+        "IJV",
+        "vena jugularis interna",
+        "vagus",
+        "vagal",
+        "jugular",
+        "jugularis",
+        "juguler",
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in",
+        "carotid sheath contents",
+        "CCA ICA IJV vagus",
+        "neck neurovascular sheath"
+      ],
+      "common_misspellings": [
+        "carotid",
+        "carotis",
+        "karotid",
+        "vagus",
+        "vagal",
+        "vagus nerve",
+        "nervus vagus",
+        "jugular",
+        "jugularis",
+        "juguler"
+      ],
+      "abbreviations": [
+        "CN X",
+        "ICA",
+        "IJV"
+      ],
+      "relation_phrases": [
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in"
+      ],
+      "negative_traps": [
+        "The sympathetic trunk is not inside the carotid sheath."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_optic_canal_contents",
+      "canonical_terms": [
+        "optic canal",
+        "optic nerve and ophthalmic artery",
+        "transmits",
+        "CN II",
+        "ophthalmic artery"
+      ],
+      "direct_synonyms": [
+        "optic canal",
+        "canalis opticus",
+        "optic nerve",
+        "CN II",
+        "cranial nerve II",
+        "nervus opticus",
+        "ophthalmic artery",
+        "arteria ophthalmica",
+        "ophthalmic",
+        "ophtalmic",
+        "opthalmic",
+        "ophthalmicus",
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through",
+        "optic canal contents",
+        "optic nerve ophthalmic artery"
+      ],
+      "common_misspellings": [
+        "ophthalmic",
+        "ophtalmic",
+        "opthalmic",
+        "ophthalmicus"
+      ],
+      "abbreviations": [
+        "CN II"
+      ],
+      "relation_phrases": [
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through"
+      ],
+      "negative_traps": [
+        "Superior orbital fissure transmits CN III, IV, V1 and VI; optic canal transmits CN II."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_superior_orbital_fissure_contents",
+      "canonical_terms": [
+        "superior orbital fissure",
+        "CN III, IV, V1, VI and superior ophthalmic vein",
+        "transmits",
+        "orbit",
+        "cranial nerves"
+      ],
+      "direct_synonyms": [
+        "superior orbital fissure",
+        "SOF",
+        "fissura orbitalis superior",
+        "superior ophthalmic vein",
+        "vena ophthalmica superior",
+        "ophthalmic",
+        "ophtalmic",
+        "opthalmic",
+        "ophthalmicus",
+        "oculomotor nerve",
+        "CN III",
+        "cranial nerve III",
+        "third cranial nerve",
+        "nervus oculomotorius",
+        "trochlear nerve",
+        "CN IV",
+        "cranial nerve IV",
+        "fourth cranial nerve",
+        "nervus trochlearis",
+        "abducens nerve",
+        "CN VI",
+        "cranial nerve VI",
+        "sixth cranial nerve",
+        "nervus abducens",
+        "oculomotorius",
+        "oculomotor",
+        "occulomotor",
+        "oculomotoric",
+        "trochlearis",
+        "trochlear",
+        "troclear",
+        "abducens",
+        "abducent",
+        "abducence",
+        "abduciens",
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through",
+        "SOF contents",
+        "superior orbital fissure nerves",
+        "3 4 V1 6"
+      ],
+      "common_misspellings": [
+        "ophthalmic",
+        "ophtalmic",
+        "opthalmic",
+        "ophthalmicus"
+      ],
+      "abbreviations": [
+        "SOF",
+        "CN III",
+        "CN IV",
+        "CN VI",
+        "3 4 V1 6"
+      ],
+      "relation_phrases": [
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through"
+      ],
+      "negative_traps": [
+        "Optic nerve passes through optic canal, not superior orbital fissure."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_surgical_neck_axillary_pcha",
+      "canonical_terms": [
+        "surgical neck of humerus",
+        "axillary nerve and posterior circumflex humeral artery",
+        "vulnerable structure nearby",
+        "humerus",
+        "axillary nerve",
+        "posterior circumflex humeral artery"
+      ],
+      "direct_synonyms": [
+        "surgical neck of humerus",
+        "collum chirurgicum humeri",
+        "humeral surgical neck",
+        "humerus",
+        "humeri",
+        "humeral",
+        "humerous",
+        "axillary nerve",
+        "nervus axillaris",
+        "posterior circumflex humeral artery",
+        "PCHA",
+        "arteria circumflexa humeri posterior",
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus",
+        "axillary",
+        "axillaris",
+        "axilarry",
+        "axilary",
+        "maxillary nerve",
+        "V2",
+        "maxillary division",
+        "nervus maxillaris",
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured",
+        "surgical neck fracture nerve",
+        "axillary nerve humerus",
+        "PCHA surgical neck"
+      ],
+      "common_misspellings": [
+        "humerus",
+        "humeri",
+        "humeral",
+        "humerous",
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus",
+        "axillary",
+        "axillaris",
+        "axilarry",
+        "axilary"
+      ],
+      "abbreviations": [
+        "PCHA",
+        "V2"
+      ],
+      "relation_phrases": [
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured"
+      ],
+      "negative_traps": [
+        "Radial nerve is classically related to the radial groove/shaft, not surgical neck."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_radial_groove_radial_profunda",
+      "canonical_terms": [
+        "radial groove / humeral shaft",
+        "radial nerve and profunda brachii artery",
+        "vulnerable structure nearby",
+        "humerus",
+        "radial nerve",
+        "profunda brachii",
+        "wrist drop"
+      ],
+      "direct_synonyms": [
+        "radial groove",
+        "spiral groove",
+        "sulcus nervi radialis",
+        "radial nerve groove",
+        "humeral shaft",
+        "shaft of humerus",
+        "corpus humeri",
+        "radial",
+        "radialis",
+        "radiallis",
+        "radial nerve",
+        "nervus radialis",
+        "profunda brachii artery",
+        "deep brachial artery",
+        "arteria profunda brachii",
+        "humerus",
+        "humeri",
+        "humeral",
+        "humerous",
+        "surgical neck of humerus",
+        "collum chirurgicum humeri",
+        "humeral surgical neck",
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured",
+        "humeral shaft fracture wrist drop",
+        "radial groove contents",
+        "radial nerve profunda brachii"
+      ],
+      "common_misspellings": [
+        "radial",
+        "radialis",
+        "radiallis",
+        "humerus",
+        "humeri",
+        "humeral",
+        "humerous"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured"
+      ],
+      "negative_traps": [
+        "Do not confuse with axillary nerve at surgical neck."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_medial_epicondyle_ulnar",
+      "canonical_terms": [
+        "medial epicondyle",
+        "ulnar nerve",
+        "nerve passes behind"
+      ],
+      "direct_synonyms": [
+        "medial epicondyle",
+        "medial epicondyle of humerus",
+        "epicondylus medialis humeri",
+        "funny bone region",
+        "ulnar nerve",
+        "nervus ulnaris",
+        "ulnar",
+        "ulnaris",
+        "ulner",
+        "humerus",
+        "humeri",
+        "humeral",
+        "humerous",
+        "passes behind",
+        "funny bone",
+        "behind epicondyle",
+        "funny bone nerve",
+        "ulnar nerve medial epicondyle",
+        "cubital tunnel nerve"
+      ],
+      "common_misspellings": [
+        "ulnar",
+        "ulnaris",
+        "ulner"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "passes behind",
+        "funny bone",
+        "behind epicondyle"
+      ],
+      "negative_traps": [
+        "Median nerve is in cubital fossa anteriorly; ulnar nerve passes behind medial epicondyle."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_carpal_tunnel_contents",
+      "canonical_terms": [
+        "carpal tunnel",
+        "median nerve and flexor tendons",
+        "contains",
+        "median nerve",
+        "flexor tendons"
+      ],
+      "direct_synonyms": [
+        "carpal tunnel",
+        "canalis carpi",
+        "carpal canal",
+        "carpal",
+        "carpalis",
+        "karpal",
+        "median nerve",
+        "nervus medianus",
+        "flexor tendons",
+        "flexor muscle tendons",
+        "FDS FDP FPL tendons",
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in",
+        "carpal tunnel contents",
+        "median nerve tunnel",
+        "flexor tendons median"
+      ],
+      "common_misspellings": [
+        "carpal",
+        "carpalis",
+        "karpal"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in"
+      ],
+      "negative_traps": [
+        "Ulnar nerve and artery pass superficial/medial through Guyon canal region, not inside the carpal tunnel."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_cubital_fossa_tan",
+      "canonical_terms": [
+        "cubital fossa",
+        "biceps tendon, brachial artery and median nerve",
+        "contains ordered",
+        "brachial artery",
+        "median nerve"
+      ],
+      "direct_synonyms": [
+        "cubital fossa",
+        "fossa cubitalis",
+        "elbow fossa",
+        "cubital",
+        "cubitalis",
+        "kubital",
+        "median nerve",
+        "nervus medianus",
+        "biceps tendon",
+        "tendon of biceps brachii",
+        "brachial artery",
+        "arteria brachialis",
+        "brachial",
+        "brachialis",
+        "bracial",
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic",
+        "TAN cubital fossa",
+        "cubital fossa order",
+        "tendon artery nerve"
+      ],
+      "common_misspellings": [
+        "cubital",
+        "cubitalis",
+        "kubital",
+        "brachial",
+        "brachialis",
+        "bracial"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic"
+      ],
+      "negative_traps": [
+        "Ulnar nerve is not a main anterior cubital fossa content; it passes posterior to medial epicondyle."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_femoral_triangle_navl",
+      "canonical_terms": [
+        "femoral triangle",
+        "femoral nerve, artery, vein and lymphatics",
+        "contains ordered",
+        "NAVL",
+        "femoral sheath"
+      ],
+      "direct_synonyms": [
+        "femoral triangle",
+        "trigonum femorale",
+        "Scarpa triangle",
+        "Scarpa’s triangle",
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve",
+        "femoral nerve",
+        "nervus femoralis",
+        "lymphatics",
+        "lymph nodes",
+        "lymphatic vessels",
+        "femoral artery",
+        "arteria femoralis",
+        "femoral vein",
+        "vena femoralis",
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic",
+        "NAVL femoral triangle",
+        "femoral triangle order",
+        "nerve artery vein lymph"
+      ],
+      "common_misspellings": [
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic"
+      ],
+      "negative_traps": [
+        "Femoral nerve is outside the femoral sheath; artery, vein and canal are within the sheath."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_adductor_canal_contents",
+      "canonical_terms": [
+        "adductor canal",
+        "femoral artery, femoral vein, saphenous nerve and nerve to vastus medialis",
+        "contains",
+        "saphenous nerve",
+        "femoral artery"
+      ],
+      "direct_synonyms": [
+        "adductor canal",
+        "Hunter canal",
+        "subsartorial canal",
+        "canalis adductorius",
+        "femoral artery",
+        "arteria femoralis",
+        "femoral vein",
+        "vena femoralis",
+        "saphenous nerve",
+        "nervus saphenus",
+        "nerve to vastus medialis",
+        "nervus vasti medialis",
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve",
+        "saphenous",
+        "saphenus",
+        "safenous",
+        "femoral nerve",
+        "nervus femoralis",
+        "medial circumflex femoral artery",
+        "MCFA",
+        "arteria circumflexa femoris medialis",
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in",
+        "Hunter canal contents",
+        "adductor canal contents",
+        "saphenous nerve canal"
+      ],
+      "common_misspellings": [
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve",
+        "saphenous",
+        "saphenus",
+        "safenous"
+      ],
+      "abbreviations": [
+        "MCFA"
+      ],
+      "relation_phrases": [
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in"
+      ],
+      "negative_traps": [
+        "Femoral nerve is not an adductor canal content."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_fibular_neck_common_fibular",
+      "canonical_terms": [
+        "neck of fibula",
+        "common fibular nerve",
+        "vulnerable structure nearby",
+        "fibular neck",
+        "foot drop"
+      ],
+      "direct_synonyms": [
+        "neck of fibula",
+        "fibular neck",
+        "collum fibulae",
+        "neck of the fibula",
+        "common fibular nerve",
+        "common peroneal nerve",
+        "nervus fibularis communis",
+        "nervus peroneus communis",
+        "fibular",
+        "fibularis",
+        "peroneal",
+        "fibuler",
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured",
+        "fibular neck nerve injury",
+        "common peroneal nerve foot drop",
+        "neck of fibula foot drop"
+      ],
+      "common_misspellings": [
+        "fibular",
+        "fibularis",
+        "peroneal",
+        "fibuler"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "injured in fracture",
+        "vulnerable near",
+        "damage causes",
+        "what nerve is injured"
+      ],
+      "negative_traps": [
+        "Tibial nerve runs in posterior compartment/popliteal fossa, not around fibular neck."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_popliteal_fossa_nva",
+      "canonical_terms": [
+        "popliteal fossa",
+        "tibial nerve, popliteal vein and popliteal artery",
+        "contains ordered",
+        "tibial nerve",
+        "popliteal artery"
+      ],
+      "direct_synonyms": [
+        "popliteal fossa",
+        "fossa poplitea",
+        "popliteal",
+        "popliteus",
+        "poplitea",
+        "poplitealis",
+        "tibial nerve",
+        "nervus tibialis",
+        "popliteal vein",
+        "vena poplitea",
+        "popliteal artery",
+        "arteria poplitea",
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic",
+        "popliteal fossa order",
+        "NVA popliteal",
+        "tibial nerve popliteal vein artery"
+      ],
+      "common_misspellings": [
+        "popliteal",
+        "popliteus",
+        "poplitea",
+        "poplitealis"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic"
+      ],
+      "negative_traps": [
+        "The artery is deepest, directly related to the femur/knee capsule."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_tarsal_tunnel_contents",
+      "canonical_terms": [
+        "tarsal tunnel",
+        "tibialis posterior, flexor digitorum longus, posterior tibial vessels, tibial nerve and flexor hallucis longus",
+        "contains ordered",
+        "tibial nerve",
+        "posterior tibial artery"
+      ],
+      "direct_synonyms": [
+        "tarsal tunnel",
+        "canalis malleolaris",
+        "behind medial malleolus",
+        "tarsal",
+        "tarsalis",
+        "tarzal",
+        "tibial nerve",
+        "nervus tibialis",
+        "tibialis posterior",
+        "tendon of tibialis posterior",
+        "flexor digitorum longus",
+        "FDL",
+        "posterior tibial vessels",
+        "posterior tibial artery and veins",
+        "arteria tibialis posterior",
+        "flexor hallucis longus",
+        "FHL",
+        "hallucis",
+        "halucis",
+        "hallicis",
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic",
+        "Tom Dick And Very Nervous Harry",
+        "tarsal tunnel order",
+        "posterior tibial nerve vessels tendons"
+      ],
+      "common_misspellings": [
+        "tarsal",
+        "tarsalis",
+        "tarzal",
+        "hallucis",
+        "halucis",
+        "hallicis"
+      ],
+      "abbreviations": [
+        "FDL",
+        "FHL"
+      ],
+      "relation_phrases": [
+        "order",
+        "from lateral to medial",
+        "from superficial to deep",
+        "contents order",
+        "mnemonic"
+      ],
+      "negative_traps": [
+        "Anterior tibial artery is on the anterior leg/dorsum as dorsalis pedis, not in tarsal tunnel."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_femoral_neck_medial_circumflex",
+      "canonical_terms": [
+        "femoral neck",
+        "medial circumflex femoral artery / retinacular arteries",
+        "blood supply vulnerable",
+        "medial circumflex femoral artery",
+        "AVN"
+      ],
+      "direct_synonyms": [
+        "femoral neck",
+        "collum femoris",
+        "neck of femur",
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve",
+        "femoral artery",
+        "arteria femoralis",
+        "medial circumflex femoral artery",
+        "MCFA",
+        "arteria circumflexa femoris medialis",
+        "retinacular arteries",
+        "retinacular vessels",
+        "ascending cervical branches",
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus",
+        "blood supply vulnerable",
+        "avascular necrosis",
+        "fracture endangers artery",
+        "femoral neck avascular necrosis",
+        "retinacular arteries femoral head",
+        "medial circumflex femoral fracture"
+      ],
+      "common_misspellings": [
+        "femoral",
+        "femoralis",
+        "femur artery",
+        "femur nerve",
+        "circumflex",
+        "circumfleks",
+        "cirumflex",
+        "circumflexus"
+      ],
+      "abbreviations": [
+        "MCFA"
+      ],
+      "relation_phrases": [
+        "blood supply vulnerable",
+        "avascular necrosis",
+        "fracture endangers artery"
+      ],
+      "negative_traps": [
+        "The artery to the head of femur is important in children but usually not the main adult supply."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_ureter_under_uterine_artery",
+      "canonical_terms": [
+        "ureter in female pelvis",
+        "uterine artery",
+        "passes under",
+        "ureter",
+        "pelvis",
+        "hysterectomy"
+      ],
+      "direct_synonyms": [
+        "ureter",
+        "močovod",
+        "urether",
+        "uterine artery",
+        "arteria uterina",
+        "uterine",
+        "uterina",
+        "uterinne",
+        "passes under",
+        "water under bridge",
+        "surgical danger",
+        "uterine artery relation",
+        "water under the bridge",
+        "ureter under uterine artery",
+        "hysterectomy ureter injury"
+      ],
+      "common_misspellings": [
+        "ureter",
+        "urether",
+        "močovod",
+        "uterine",
+        "uterina",
+        "uterinne"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "passes under",
+        "water under bridge",
+        "surgical danger",
+        "uterine artery relation"
+      ],
+      "negative_traps": [
+        "The uterine artery crosses over the ureter, not under it."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_obturator_canal_contents",
+      "canonical_terms": [
+        "obturator canal",
+        "obturator nerve, artery and vein",
+        "contains",
+        "obturator nerve",
+        "medial thigh"
+      ],
+      "direct_synonyms": [
+        "obturator canal",
+        "canalis obturatorius",
+        "obturator",
+        "obturatorius",
+        "obturater",
+        "obturator nerve",
+        "nervus obturatorius",
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in",
+        "obturator canal contents",
+        "obturator nerve artery vein"
+      ],
+      "common_misspellings": [
+        "obturator",
+        "obturatorius",
+        "obturater"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "contains",
+        "what is inside",
+        "contents",
+        "what passes in"
+      ],
+      "negative_traps": [
+        "Femoral nerve passes under the inguinal ligament, not through obturator canal."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_pudendal_lesser_sciatic",
+      "canonical_terms": [
+        "lesser sciatic foramen",
+        "pudendal nerve and internal pudendal vessels",
+        "transmits",
+        "pudendal nerve",
+        "perineum"
+      ],
+      "direct_synonyms": [
+        "lesser sciatic foramen",
+        "foramen ischiadicum minus",
+        "pudendal nerve",
+        "nervus pudendus",
+        "internal pudendal vessels",
+        "internal pudendal artery and vein",
+        "arteria pudenda interna",
+        "vena pudenda interna",
+        "pudendal",
+        "pudendus",
+        "pudenthal",
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through",
+        "pudendal nerve lesser sciatic foramen",
+        "internal pudendal vessels lesser sciatic"
+      ],
+      "common_misspellings": [
+        "pudendal",
+        "pudendus",
+        "pudenthal"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "transmits",
+        "passes through",
+        "contents of foramen",
+        "what goes through"
+      ],
+      "negative_traps": [
+        "They do not stay in the gluteal region; they re-enter through the lesser sciatic foramen to reach the perineum."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_cranial_nerve_iii_pupil_ptosis",
+      "canonical_terms": [
+        "oculomotor nerve",
+        "ptosis, diplopia and possible dilated pupil",
+        "lesion causes",
+        "CN III",
+        "oculomotor",
+        "pupil",
+        "ptosis"
+      ],
+      "direct_synonyms": [
+        "oculomotor nerve",
+        "CN III",
+        "cranial nerve III",
+        "third cranial nerve",
+        "nervus oculomotorius",
+        "oculomotorius",
+        "oculomotor",
+        "occulomotor",
+        "oculomotoric",
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign",
+        "CN III palsy",
+        "oculomotor palsy ptosis mydriasis",
+        "down and out eye"
+      ],
+      "common_misspellings": [
+        "oculomotorius",
+        "oculomotor",
+        "occulomotor",
+        "oculomotoric"
+      ],
+      "abbreviations": [
+        "CN III"
+      ],
+      "relation_phrases": [
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign"
+      ],
+      "negative_traps": [
+        "CN VI lesion mainly prevents abduction; CN III is broader and may involve pupil."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_cn_vi_lateral_rectus",
+      "canonical_terms": [
+        "abducens nerve",
+        "lateral rectus muscle",
+        "innervates",
+        "CN VI",
+        "lateral rectus",
+        "eye movement"
+      ],
+      "direct_synonyms": [
+        "abducens nerve",
+        "CN VI",
+        "cranial nerve VI",
+        "sixth cranial nerve",
+        "nervus abducens",
+        "abducens",
+        "abducent",
+        "abducence",
+        "abduciens",
+        "innervates",
+        "supplies muscle",
+        "motor supply",
+        "CN VI palsy",
+        "abducens lateral rectus",
+        "cannot abduct eye"
+      ],
+      "common_misspellings": [
+        "abducens",
+        "abducent",
+        "abducence",
+        "abduciens"
+      ],
+      "abbreviations": [
+        "CN VI"
+      ],
+      "relation_phrases": [
+        "innervates",
+        "supplies muscle",
+        "motor supply"
+      ],
+      "negative_traps": [
+        "Superior oblique is CN IV; lateral rectus is CN VI."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_hypoglossal_tongue_deviation",
+      "canonical_terms": [
+        "hypoglossal nerve",
+        "tongue deviation toward the side of a lower motor neuron lesion",
+        "lesion causes",
+        "CN XII",
+        "tongue",
+        "hypoglossal"
+      ],
+      "direct_synonyms": [
+        "hypoglossal nerve",
+        "CN XII",
+        "cranial nerve XII",
+        "nervus hypoglossus",
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign",
+        "CN XII lesion",
+        "tongue deviates side lesion",
+        "hypoglossal palsy"
+      ],
+      "common_misspellings": [],
+      "abbreviations": [
+        "CN XII"
+      ],
+      "relation_phrases": [
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign"
+      ],
+      "negative_traps": [
+        "Palatoglossus is supplied by vagus nerve via pharyngeal plexus."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    },
+    {
+      "correlation_id": "cc_visual_pathway_optic_chiasm",
+      "canonical_terms": [
+        "optic chiasm",
+        "bitemporal hemianopia",
+        "lesion causes",
+        "visual pathway",
+        "pituitary"
+      ],
+      "direct_synonyms": [
+        "optic chiasm",
+        "chiasma opticum",
+        "optic chiasma",
+        "hemianopia",
+        "hemianopsia",
+        "hemianopsy",
+        "hemianopsie",
+        "bitemporal",
+        "bi temporal",
+        "bitemporalis",
+        "visual pathway",
+        "optic pathway",
+        "visus pathway",
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign",
+        "optic chiasm lesion",
+        "bitemporal hemianopia",
+        "pituitary tumor visual field"
+      ],
+      "common_misspellings": [
+        "hemianopia",
+        "hemianopsia",
+        "hemianopsy",
+        "hemianopsie",
+        "bitemporal",
+        "bi temporal",
+        "bitemporalis"
+      ],
+      "abbreviations": [],
+      "relation_phrases": [
+        "lesion causes",
+        "damage causes",
+        "palsy sign",
+        "clinical sign"
+      ],
+      "negative_traps": [
+        "Optic tract lesions cause contralateral homonymous hemianopia, not bitemporal hemianopia."
+      ],
+      "search_boosts": {
+        "subject": 90,
+        "target": 85,
+        "direct_synonym": 75,
+        "relation_phrase": 65,
+        "clinical_relevance": 45,
+        "exam_trap": 35,
+        "fuzzy_term": 30
+      }
+    }
+  ]
+}
