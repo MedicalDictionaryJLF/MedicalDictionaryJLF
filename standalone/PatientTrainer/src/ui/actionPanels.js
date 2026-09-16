@@ -29,17 +29,17 @@ const LAB_GROUPS = [
 
 const MEDICATION_ACTIONS = {
   chest_pain_acs_risk: [
-    { label: 'Give an aspirin loading dose', category: 'Antiplatelet' },
-    { label: 'Place the patient on continuous cardiac monitoring and obtain IV access', category: 'Immediate care' },
+    { label: 'Administer an aspirin loading dose', category: 'Antiplatelet' },
+    { label: 'Connect continuous cardiac monitoring and establish IV access', category: 'Immediate care' },
     { label: 'Activate urgent cardiology / STEMI pathway for reperfusion assessment', category: 'Escalation' },
-    { label: 'Plan anticoagulation according to the local ACS / PCI pathway', category: 'Antithrombotic' },
-    { label: 'Consider sublingual nitrate only after checking blood pressure and contraindications', category: 'Symptom control' },
-    { label: 'Give supplemental oxygen only if hypoxaemia develops', category: 'Supportive care' }
+    { label: 'Administer anticoagulation according to the local ACS / PCI pathway', category: 'Antithrombotic' },
+    { label: 'Administer sublingual nitrate after checking blood pressure and contraindications', category: 'Symptom control' },
+    { label: 'Apply supplemental oxygen if hypoxaemia develops', category: 'Supportive care' }
   ],
   abdominal_pain_cholecystitis: [
-    { label: 'Provide appropriate analgesia', category: 'Symptom control' },
-    { label: 'Provide an antiemetic', category: 'Symptom control' },
-    { label: 'Establish IV access and give fluids if clinically indicated', category: 'Supportive care' },
+    { label: 'Administer appropriate analgesia', category: 'Symptom control' },
+    { label: 'Administer an antiemetic', category: 'Symptom control' },
+    { label: 'Establish IV access and start fluids if clinically indicated', category: 'Supportive care' },
     { label: 'Request senior / surgical review', category: 'Escalation' }
   ]
 };
@@ -74,7 +74,7 @@ export function renderMedicationPanel({ container, patientCase, administeredActi
   const actions = MEDICATION_ACTIONS[patientCase.id] ?? [{ label: 'Document proposed management action', category: 'Management' }];
   if (mode === 'exam') {
     container.innerHTML = `
-      <p class="subtle-note management-disclaimer">Exam mode does not reveal suggested actions. Record what you would actually do. Physiological effects are not simulated in Phase 1.</p>
+      <p class="subtle-note management-disclaimer">Exam mode does not reveal suggested actions. Record what you would actually do. Case-defined physiological and visual effects are simulated when an action has a response model.</p>
       <form id="examManagementForm" class="exam-management-form">
         <input id="examManagementInput" type="text" autocomplete="off" placeholder="e.g. monitoring, medication, escalation, procedure..." />
         <button type="submit">Record action</button>
@@ -91,7 +91,7 @@ export function renderMedicationPanel({ container, patientCase, administeredActi
     return;
   }
   container.innerHTML = `
-    <p class="subtle-note management-disclaimer">Practice/Teaching mode offers structured actions. Physiological treatment effects are intentionally not simulated yet.</p>
+    <p class="subtle-note management-disclaimer">Practice/Teaching mode offers structured actions. Case-defined physiological and visual effects are simulated when an action has a response model.</p>
     <div class="management-action-list">
       ${actions.map(({ label, category }) => {
         const recorded = administeredActions.includes(label);

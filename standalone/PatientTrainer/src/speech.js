@@ -18,8 +18,11 @@ export function chooseVoiceForPatient(sex = 'unknown', preferredLanguage = 'en')
   return byLanguage || voices[0];
 }
 
-export function speak(text, patientCase = null) {
-  if (!('speechSynthesis' in window)) return;
+export function speak(text, patientCase = null, hooks = {}) {
+  if (!('speechSynthesis' in window)) {
+    hooks?.onError?.(new Error('Speech synthesis unavailable'));
+    return null;
+  }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';
@@ -27,7 +30,16 @@ export function speak(text, patientCase = null) {
   utterance.pitch = 1;
   const voice = chooseVoiceForPatient(patientCase?.identity?.sex ?? 'unknown', 'en');
   if (voice) utterance.voice = voice;
+  utterance.onstart = () => hooks?.onStart?.(utterance);
+  utterance.onboundary = (event) => hooks?.onBoundary?.(event, utterance);
+  utterance.onend = () => hooks?.onEnd?.(utterance);
+  utterance.onerror = (event) => hooks?.onError?.(event, utterance);
   window.speechSynthesis.speak(utterance);
+  return utterance;
+}
+
+export function stopSpeaking() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 }
 
 export function initVoices(callback) {

@@ -178,6 +178,7 @@ export function renderEncounterReport({ container, report, onContribute }) {
         ${scoreTile('Clinical reasoning', report.clinicalReasoning.percent)}
         ${scoreTile('Closing / presentation', report.closing.percent)}
       </div>
+      ${renderInterviewDebrief(report.interviewDebrief, report.interviewBreakdown)}
       <section class="report-section">
         <h3>Physical examination</h3>
         <p>${report.examination.missed.length ? `<strong>Missed required actions:</strong> ${escapeHtml(report.examination.missed.join(', '))}` : 'All required examination actions were performed.'}</p>
@@ -202,6 +203,51 @@ export function renderEncounterReport({ container, report, onContribute }) {
     </section>
   `;
   container.querySelector('#contributeEncounterBtn')?.addEventListener('click', () => onContribute?.());
+}
+
+function renderInterviewDebrief(debrief, breakdown) {
+  if (!debrief && !breakdown) return '';
+  const score = breakdown || debrief?.scoreBreakdown || {};
+  const criticalMisses = debrief?.criticalSafetyMisses ?? [];
+  const caseCriticalMisses = debrief?.missedCaseCritical ?? [];
+  const resolutionIssues = (debrief?.resolutionIssues ?? []).filter((item) => !item.laterResolved || item.engineIntentIds?.length);
+  const communicationIssues = debrief?.communication?.issues ?? [];
+  return `
+    <section class="report-section interview-debrief-section">
+      <h3>Interview debrief</h3>
+      <p class="report-muted">The interview score is based on what you clinically attempted. Simulator recognition failures are listed separately and are not treated as missed questions.</p>
+      <div class="encounter-score-grid compact-score-grid">
+        ${scoreTile('Essential history', score.essential ?? 0)}
+        ${scoreTile('Case-critical', score.caseCritical ?? 0)}
+        ${scoreTile('Comprehensive breadth', score.comprehensive ?? 0)}
+        ${scoreTile('Communication', score.communication ?? 100)}
+      </div>
+      <div class="debrief-columns">
+        <div>
+          <h4>Important omissions</h4>
+          ${criticalMisses.length
+            ? `<ul>${criticalMisses.map((intent) => `<li>${escapeHtml(humanizeIntent(intent))}</li>`).join('')}</ul>`
+            : '<p>No critical safety-history omissions detected.</p>'}
+          ${caseCriticalMisses.length
+            ? `<p><strong>Case-critical areas still missing:</strong> ${escapeHtml(caseCriticalMisses.map(humanizeIntent).join(', '))}</p>`
+            : '<p>Case-critical interview areas were covered.</p>'}
+        </div>
+        <div>
+          <h4>Simulator recognition</h4>
+          ${resolutionIssues.length
+            ? `<ul>${resolutionIssues.slice(0, 8).map((issue) => `<li><strong>${escapeHtml(issue.label || humanizeIntent(issue.intentId))}:</strong> “${escapeHtml(issue.question)}”${issue.laterResolved ? ' <small>(later resolved)</small>' : ''}</li>`).join('')}</ul>`
+            : '<p>No unresolved student attempts were detected.</p>'}
+        </div>
+      </div>
+      ${communicationIssues.length
+        ? `<div class="communication-feedback"><h4>Communication</h4><ul>${communicationIssues.slice(0, 6).map((issue) => `<li>${escapeHtml(issue.message)} <small>Turn ${issue.turnNumber}</small></li>`).join('')}</ul></div>`
+        : '<p><strong>Communication:</strong> No major phrasing issues detected.</p>'}
+    </section>
+  `;
+}
+
+function humanizeIntent(value) {
+  return String(value ?? '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 function scoreTile(label, value) {

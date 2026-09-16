@@ -1,8 +1,24 @@
 let monitorAnimation = null;
 let monitorValueTimer = null;
 let currentRuntime = null;
+let patientStateSource = null;
+let unsubscribePatientState = null;
 
 const GENERIC_ECG_PATHS = [new URL('../ECGs/peter_novak_ecg.png', import.meta.url).href];
+
+
+export function setMonitorPatientStateSource(source) {
+  unsubscribePatientState?.();
+  unsubscribePatientState = null;
+  patientStateSource = source || null;
+  if (patientStateSource?.subscribe) {
+    unsubscribePatientState = patientStateSource.subscribe((snapshot) => {
+      if (!currentRuntime) return;
+      const next = vitalsFromSnapshot(snapshot, currentRuntime.baseline);
+      currentRuntime.baseline = next;
+    });
+  }
+}
 
 export function openVitalsMonitor(patientCase) {
   const modal = document.getElementById('vitalsMonitorModal');
@@ -11,7 +27,7 @@ export function openVitalsMonitor(patientCase) {
   if (!modal || !canvas) return;
 
   stopVitalsMonitor();
-  const baseline = extractVitals(patientCase);
+  const baseline = currentPatientVitals(patientCase);
   currentRuntime = makeRuntime(baseline, patientCase);
   if (title) title.textContent = `Live vitals monitor`;
   modal.classList.add('visible');
@@ -92,6 +108,30 @@ export function resizeVisibleMonitor() {
   const canvas = document.getElementById('vitalsMonitorCanvas');
   const modal = document.getElementById('vitalsMonitorModal');
   if (canvas && modal?.classList.contains('visible')) resizeCanvas(canvas);
+}
+
+
+function currentPatientVitals(patientCase) {
+  const fallback = extractVitals(patientCase);
+  const snapshot = patientStateSource?.getSnapshot?.();
+  return snapshot ? vitalsFromSnapshot(snapshot, fallback) : fallback;
+}
+
+function vitalsFromSnapshot(snapshot, fallback) {
+  const p = snapshot?.physiology || {};
+  return {
+    hr: finiteOr(p.hr, fallback.hr),
+    rr: finiteOr(p.rr, fallback.rr),
+    spo2: finiteOr(p.spo2, fallback.spo2),
+    temp: finiteOr(p.temp, fallback.temp),
+    sbp: finiteOr(p.sbp, fallback.sbp),
+    dbp: finiteOr(p.dbp, fallback.dbp)
+  };
+}
+
+function finiteOr(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
 }
 
 function extractVitals(patientCase) {

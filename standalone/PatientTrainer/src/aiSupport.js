@@ -1,5 +1,5 @@
 import { buildApiUrl, resolveContextWithAI, resolveIntentWithAI, rewritePatientAnswer } from './ai/client.js';
-import { INTENTS } from './patientCase.js';
+import { INTENTS } from './data/interviewSchema.js';
 
 const AI_CONFIDENCE_THRESHOLD = 0.45;
 const CONTEXTUAL_QUESTION = /\b(it|this|that|where exactly|when exactly|what type|what kind|what reaction)\b/i;
@@ -38,7 +38,8 @@ export async function prepareQuestionWithAI(engine, question) {
   }
 
   let workingDetection = deterministic;
-  if (CONTEXTUAL_QUESTION.test(question)) {
+  const needsDeterministicHelp = !deterministic?.primaryIntent || deterministic.confidence < AI_CONFIDENCE_THRESHOLD || deterministic.responseScope === 'clarification';
+  if (CONTEXTUAL_QUESTION.test(question) && needsDeterministicHelp) {
     event.aiAttempted = true;
     event.aiEndpoint = buildApiUrl('/api/context-resolve');
     try {
@@ -131,7 +132,10 @@ export function prepareAnonymousContribution(engine) {
   return {
     transcript: engine.transcript.map(({ role, text, intent }) => ({ role, text, intent })),
     score: engine.getScore(),
+    scoreBreakdown: engine.getScoreBreakdown?.() ?? null,
     missedItems: engine.getMissedFeedback(),
+    studentCoverage: engine.getStudentCoverage?.() ?? null,
+    simulatorResolutionIssues: engine.getResolutionIssues?.() ?? [],
     debugIntentEvents: engine.debugTurns
   };
 }

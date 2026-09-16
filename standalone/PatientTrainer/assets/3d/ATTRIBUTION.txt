@@ -1,0 +1,17 @@
+Patient Trainer 3D asset attribution
+
+Patient model
+"Rigged T-Pose Human Male w 50 Face Blendshapes"
+Author: Mike Alger
+Source: https://sketchfab.com/3d-models/rigged-t-pose-human-male-w-50-face-blendshapes-cc7e4596bcd145208a6992c757854c07
+License: CC BY 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+Hospital bed model
+"Simple Hospital Bed"
+Author: Yvo Pors
+Source: https://sketchfab.com/3d-models/simple-hospital-bed-60651eac7e96454c8cf5c43a91412336
+License: CC BY 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+The original license files are preserved alongside each asset.

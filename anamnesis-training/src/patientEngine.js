@@ -1,4 +1,5 @@
-import { INTENTS, QUESTION_AREAS } from './patientCase.js';
+import { INTENTS, QUESTION_AREAS } from './data/interviewSchema.js';
+import { renderIntentAnswer } from './dialogue/responseTemplates.js';
 
 const MATCH_THRESHOLD = 0.24;
 const WEAK_MATCH_THRESHOLD = 0.16;
@@ -7,8 +8,36 @@ const MIN_TOP_SCORE_FOR_WEAK_MATCH = 0.85;
 
 const POLITE_TERMS = ['please', 'thank you', 'thanks', 'could you', 'can you', 'may i', 'sorry', 'take your time'];
 const RUDE_TERMS = ['stupid', 'idiot', 'shut up', 'moron', 'fuck', 'bitch', 'irrelevant', 'hurry'];
+const EMPATHY_TERMS = ['i am sorry', 'im sorry', 'that sounds', 'must be difficult', 'must be scary', 'i understand', 'i can see', 'thank you for telling me', 'thanks for telling me'];
+const INTRO_TERMS = ['my name is', 'i am a medical student', 'im a medical student', 'i am a doctor', 'im a doctor', 'hello', 'good morning', 'good afternoon'];
+const PERMISSION_TERMS = ['may i', 'is it okay if', 'is it alright if', 'would it be okay', 'can i ask', 'do you mind if'];
+const PATIENT_CENTERED_TERMS = ['tell me more', 'what worries you most', 'how are you feeling', 'how does that make you feel', 'take your time'];
+const DISMISSIVE_TERMS = ['just answer', 'just tell me', 'get to the point', 'stop talking', 'doesnt matter', 'does not matter'];
 const YES_WORDS = ['yes', 'yeah', 'yep', 'correct', 'exactly', 'that', 'yes that'];
 const NO_WORDS = ['no', 'not that', 'no i mean'];
+
+const ATTEMPT_RULES = [
+  ['identity_dob', /\b(date of birth|birth date|when were you born|born exactly|exact date.*birth|birthday)\b/],
+  ['identity_age', /\b(how old|what is your age|your age)\b/],
+  ['hpi_relieving', /\b(help|helping|ease|eased|relieve|relieving|alleviat\w*|better|improv\w*|go away|rest)\b.*\b(pain|pressure|symptom|it)\b|\b(pain|pressure|symptom|it)\b.*\b(help|helping|ease|eased|relieve|relieving|alleviat\w*|better|improv\w*|go away|rest)\b/],
+  ['hpi_timing', /\b(for how long|how long (did|does|was|is|has|had)|duration|lasting|lasted|constant|continuous|intermittent|comes and goes|come and go|how often)\b/],
+  ['hpi_exacerbating', /\b(exacerbat\w*|aggravat\w*|makes? .* worse|worsens?|trigger\w*|bring\w* it on)\b/],
+  ['hpi_radiation', /\b(radiat\w*|spread\w*|travel\w*|go anywhere|move anywhere|left arm|jaw|shoulder|back)\b/],
+  ['hpi_character', /\b(character|describe .*pain|what .*pain .*like|feel like|pressure|tightness|stabbing|sharp|dull|burning|cramping|colicky)\b/],
+  ['hpi_site', /\b(where .*pain|site of .*pain|location of .*pain|where does it hurt|where exactly)\b/],
+  ['hpi_onset', /\b(when did .*start|when .*pain .*start|since when|how long ago|onset)\b/],
+  ['hpi_activity_at_onset', /\b(what were you doing|doing when .*start|activity at onset|circumstances at onset)\b/],
+  ['hpi_associated_symptoms', /\b(other symptoms|anything else with it|associated symptoms|symptoms accompanying|accompanying the pain|other symptoms except pain|symptoms except pain)\b/],
+  ['hpi_severity', /\b(scale .*one .*ten|scale .*1 .*10|out of ten|rate .*pain|how (bad|strong|severe|intense)|severity|vas)\b/],
+  ['hpi_course', /\b(course|getting better|getting worse|improving|worsening|changed over time|progress\w*)\b/],
+  ['chief_complaint', /\b(why did you come|why are you here|what brought you|main problem|what happened|what is wrong|how can i help)\b/],
+  ['allergies', /\b(allerg\w*|alerg\w*)\b/],
+  ['medication_regular', /\b(medication|medicine|meds|pills|tablets|what are you on)\b/],
+  ['pmh_chronic_diseases', /\b(chronic diseases?|medical problems?|previous diseases?|hypertension|high blood pressure|diabetes|cholesterol)\b/],
+  ['pmh_cardiovascular_disease', /\b(heart disease|cardiac disease|cardiovascular disease|heart attack|mi|stent|bypass|angina)\b/],
+  ['family_history', /\b(family history|mother|father|parents|siblings|relatives)\b/],
+  ['substance_smoking', /\b(smok\w*|cigarette\w*|tobacco)\b/]
+];
 
 export const MEDICAL_TERMINOLOGY = {
   dyspnea: { intent: 'ros_respiratory', patientFriendly: 'Do you feel short of breath?', difficulty: 'high' },
@@ -33,7 +62,8 @@ export const MEDICAL_TERMINOLOGY = {
 
 const DIRECT_RULES = [
   [/\b(what is your name|your name|who are you|full name)\b/, ['identity_name'], 'single_intent'],
-  [/\b(how old|what is your age|age\??|date of birth|when were you born|born)\b/, ['identity_age'], 'single_intent'],
+  [/\b(date of birth|birth date|when were you born|born exactly|exact date of birth|birthday)\b/, ['identity_dob'], 'single_intent'],
+  [/\b(how old|what is your age|age\??)\b/, ['identity_age'], 'single_intent'],
   [/\b(male or female|sex|gender)\b/, ['identity_sex'], 'single_intent'],
   [/\b(where are you from|where do you live|which town|what town|what city|address|residence)\b/, ['identity_residence'], 'single_intent'],
   [/\b(when did (they )?admit you|when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
@@ -42,13 +72,13 @@ const DIRECT_RULES = [
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],
   [/\b(what were you doing|doing when it started|activity at onset|circumstances at onset)\b/, ['hpi_activity_at_onset'], 'single_intent'],
-  [/\b(character of (the )?pain|what is the character|what is its character|what type of pain|what type is it|what kind of pain|what kind is it|what is the pain like|what does it feel like|how would you describe it|describe the pain)\b/, ['hpi_character'], 'single_intent'],
+  [/\b(character of (the )?pain|what is the character|what is its character|what character is (the )?pain|what type of pain|what type is it|what kind of pain|what kind is it|what is the pain like|what does it feel like|how would you describe (it|your pain|the pain)|describe (your|the) pain)\b/, ['hpi_character'], 'single_intent'],
   [/\b(radiation of (the )?pain|does it radiate|is it radiating|does the pain radiate|does it spread|does the pain spread|does it go anywhere|was the pain moving somewhere|does it move|does it travel|does it shoot|go to (your )?(arm|jaw|back))\b/, ['hpi_radiation'], 'single_intent'],
   [/\b(associated symptoms|any other symptoms|anything else with it|symptoms accompanying|accompanying the pain)\b/, ['hpi_associated_symptoms'], 'single_intent'],
   [/\b(shortness of breath|feel short of breath|breathless|trouble breathing|problem with breathing)\b/, ['ros_respiratory'], 'single_intent'],
-  [/\b(how long does it last|duration|timing|constant|comes and goes)\b/, ['hpi_timing'], 'single_intent'],
+  [/\b(for how long|how long (did|does|was|is|has|had) (the )?(pain|symptom|problem|it)?.*(last|lasting|continue)|how long was (the )?(pain|symptom|problem) lasting|duration|timing|lasting|lasted|constant|continuous|intermittent|comes and goes|come and go)\b/, ['hpi_timing'], 'single_intent'],
   [/\b(what makes it worse|makes the pain worse|does anything worsen it|is something worsening it|is something worsening the pain|what worsens the pain|aggravating factors|exacerbating factors|trigger)\b/, ['hpi_exacerbating'], 'single_intent'],
-  [/\b(what makes it better|makes the pain better|go away|relieving factors|alleviating|what relieves|helps the pain)\b/, ['hpi_relieving'], 'single_intent'],
+  [/\b(what makes it better|makes the pain better|go away|relieving factors|alleviating|what relieves|helps the pain|help ease the pain|helping with the pain|anything help.*pain|anything helping.*pain|ease the pain|eased the pain|improve the pain|improved the pain)\b/, ['hpi_relieving'], 'single_intent'],
   [/\b(how bad|how strong|severity|vas|scale from|scale 1|scale of 1|rate it)\b/, ['hpi_severity'], 'single_intent'],
   [/\b(getting worse over time|getting better over time|course since onset|has it changed|changed since it started|progressing|improving over time|worsening over time)\b/, ['hpi_course'], 'single_intent'],
   [/\b(heart condition|cvs condition|heart disease|cardiac condition|cardiovascular disease|coronary disease|angina|previous mi|heart attack|stent|bypass|arrhythmia|heart failure)\b/, ['pmh_cardiovascular_disease'], 'single_intent'],
@@ -100,6 +130,9 @@ export class PatientEngine {
   loadCase(patientCase) {
     this.case = patientCase;
     this.askedIntents = new Set();
+    this.attemptedIntents = new Set();
+    this.attemptEvents = [];
+    this.communicationEvents = [];
     this.transcript = [];
     this.debugTurns = [];
     this.terminologyEvents = [];
@@ -112,16 +145,23 @@ export class PatientEngine {
     this.lastDetection = null;
     this.pendingClarification = null;
     this.rapport = patientCase.personality?.baselineRapport ?? 70;
+    this.rapportEvents = [];
+    this.lastRapportEvent = null;
     this.turn = 0;
     return '';
   }
 
   ask(question, detectionOverride = null) {
     this.turn += 1;
-    this.updateRapport(question);
     const detection = detectionOverride || this.detect(question);
+    const rapportEvent = this.updateRapport(question, detection);
+    const attemptedIntentIds = this.inferAttemptedIntents(question, detection);
+    const previouslyAttempted = new Set(this.attemptedIntents);
+    const previouslyResolved = new Set(this.askedIntents);
+    attemptedIntentIds.forEach((intentId) => this.attemptedIntents.add(intentId));
     const reply = this.composeReply(question, detection);
-    const feedbackLabel = this.makeFeedbackLabel(detection);
+    const communicationAssessment = this.assessCommunication(question, detection, attemptedIntentIds, previouslyAttempted, previouslyResolved);
+    const feedbackLabel = this.makeFeedbackLabel(detection, communicationAssessment);
 
     this.pushStudent(question, detection.primaryIntent?.id ?? 'unknown', feedbackLabel);
     this.pushPatient(reply, detection.primaryIntent?.id ?? 'unknown');
@@ -133,10 +173,25 @@ export class PatientEngine {
       this.lastMeaningfulDomain = INTENTS[detection.primaryIntent.id]?.domain ?? null;
       this.updateCurrentSymptom(detection.primaryIntent.id);
     }
+    const resolvedIds = new Set((detection.answerIntents ?? []).map((intent) => intent.id));
+    attemptedIntentIds.forEach((intentId) => {
+      this.attemptEvents.push({
+        turnNumber: this.turn,
+        intentId,
+        question,
+        resolved: resolvedIds.has(intentId) && detection.responseScope !== 'clarification' && detection.responseScope !== 'terminology_not_understood',
+        engineIntentIds: [...resolvedIds],
+        responseScope: detection.responseScope,
+        matchKind: detection.kind,
+        previouslyAttempted: previouslyAttempted.has(intentId),
+        previouslyResolved: previouslyResolved.has(intentId)
+      });
+    });
+    this.communicationEvents.push({ turnNumber: this.turn, question, ...communicationAssessment });
     if (detection.terminologyEvent) this.terminologyEvents.push(detection.terminologyEvent);
-    this.debugTurns.push(this.makeDebugTurn(question, detection, reply, feedbackLabel));
+    this.debugTurns.push(this.makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds, communicationAssessment));
 
-    return { reply, detectedIntent: detection.primaryIntent?.id ?? 'unknown', confidence: detection.confidence, detection, coverage: this.getCoverage(), rapport: this.rapport, feedbackLabel, terminologySuggestion: detection.terminologyEvent?.suggestedPatientFriendlyQuestion ?? '' };
+    return { reply, detectedIntent: detection.primaryIntent?.id ?? 'unknown', confidence: detection.confidence, detection, coverage: this.getCoverage(), rapport: this.rapport, rapportEvent, feedbackLabel, terminologySuggestion: detection.terminologyEvent?.suggestedPatientFriendlyQuestion ?? '' };
   }
 
   detectionForResolvedIntent(question, intentId, reason = 'AI helper resolved an existing deterministic intent.') {
@@ -206,6 +261,26 @@ export class PatientEngine {
     return this.makeDetection({ kind: 'uncertain', responseScope: 'clarification', normalized, tokens, phrases, primaryIntent: null, answerIntents: [], candidates: candidates.slice(0, 5), suppressedCandidates: suppressed, confidence });
   }
 
+  inferAttemptedIntents(question, detection) {
+    const normalized = normalize(question);
+    const explicitAttempts = ATTEMPT_RULES
+      .filter(([, pattern]) => pattern.test(normalized))
+      .map(([intentId]) => intentId)
+      .filter((intentId, index, list) => INTENTS[intentId] && list.indexOf(intentId) === index);
+
+    if (explicitAttempts.length) {
+      const hpiAttempts = explicitAttempts.filter((intentId) => intentId.startsWith('hpi_'));
+      if (hpiAttempts.length) return hpiAttempts.slice(0, 2);
+      return explicitAttempts.slice(0, 3);
+    }
+
+    if (detection?.responseScope === 'terminology_not_understood' && detection.primaryIntent?.id) {
+      return [detection.primaryIntent.id];
+    }
+
+    return [...new Set((detection?.answerIntents ?? []).map((intent) => intent.id).filter((intentId) => INTENTS[intentId]))];
+  }
+
   makeDetection(data) {
     return { kind: data.kind ?? 'matched', responseScope: data.responseScope ?? 'single_intent', primaryIntent: data.primaryIntent ?? null, bestIntent: data.primaryIntent ?? null, answerIntents: data.answerIntents ?? [], confidence: data.confidence ?? (data.primaryIntent ? 1 : 0), candidates: data.candidates ?? (data.primaryIntent ? [data.primaryIntent] : []), suppressedCandidates: data.suppressedCandidates ?? [], normalized: data.normalized ?? '', tokens: data.tokens ?? [], phrases: data.phrases ?? [], directMappingUsed: data.kind === 'direct', contextUsed: Boolean(data.contextUsed), terminologyEvent: data.terminologyEvent ?? null, questionType: data.questionType ?? this.lastQuestionType ?? 'question', contextResolutionReason: data.contextResolutionReason ?? this.lastContextResolutionReason ?? '' };
   }
@@ -265,7 +340,7 @@ export class PatientEngine {
     const lastDomain = this.lastMeaningfulDomain;
 
     if (/^(when exactly|exact date|when was that exactly|when was that)$/.test(normalized)) {
-      if (last === 'identity_age' || last === 'identity_dob') return this.contextCandidate('identity_age', 'Exact date requested after age/date of birth.');
+      if (last === 'identity_age' || last === 'identity_dob') return this.contextCandidate('identity_dob', 'Exact date requested after age/date of birth.');
       if (last === 'pmh_operations' || last === 'operation_date' || last === 'operation_approach') return this.contextCandidate('operation_date', 'Date requested after operation history.');
       if (last === 'hpi_onset') return this.contextCandidate('hpi_onset', 'Exact time requested after symptom onset.');
       return null;
@@ -289,7 +364,8 @@ export class PatientEngine {
       if (/\b(does it radiate|is it radiating|does it move|does it go anywhere|does it spread|does it travel|does it shoot|go to arm|go to jaw|go to back)\b/.test(normalized)) return this.contextCandidate('hpi_radiation', 'Pronoun/radiation follow-up resolved to active pain symptom.');
       if (/\b(how strong is it|how bad is it|how severe is it|rate it|scale)\b/.test(normalized)) return this.contextCandidate('hpi_severity', 'Pronoun/severity follow-up resolved to active pain symptom.');
       if (/\b(what makes it worse|does anything worsen it|is something worsening it|is something worsening the pain|what worsens it|what worsens the pain)\b/.test(normalized)) return this.contextCandidate('hpi_exacerbating', 'Worsening trigger follow-up resolved to active pain symptom.');
-      if (/\b(what makes it better|does anything relieve it|what relieves it|does anything help|what helps it|does it go away)\b/.test(normalized)) return this.contextCandidate('hpi_relieving', 'Relieving factor follow-up resolved to active pain symptom.');
+      if (/\b(what makes it better|does anything relieve it|what relieves it|does anything help|what helps it|does it go away|did anything help|anything help|anything helping|help ease|ease the pain|eased the pain|improve the pain|make the pain better)\b/.test(normalized)) return this.contextCandidate('hpi_relieving', 'Relieving factor follow-up resolved to active pain symptom.');
+      if (/\b(for how long|how long (did|does|was|is|has|had)|duration|lasting|lasted|constant|continuous|intermittent|comes and goes|come and go|how often)\b/.test(normalized)) return this.contextCandidate('hpi_timing', 'Timing/duration follow-up resolved to active pain symptom.');
       if (/\b(anything else|other symptoms|with it)\b/.test(normalized)) return this.contextCandidate('hpi_associated_symptoms', 'Associated symptom follow-up resolved to active pain symptom.');
     }
     return null;
@@ -337,7 +413,7 @@ export class PatientEngine {
     if (INTENTS[id]?.domain === 'objective' && this.hasObjectiveTrigger(normalized)) score += 0.8;
     if (INTENTS[id]?.domain === 'objective' && !this.hasObjectiveTrigger(normalized)) score -= 0.75;
     if (this.askedIntents.has(id)) score -= 0.35;
-    if (this.case.identity.sex !== 'I am female.' && id === 'gyn_history') score -= 2.5;
+    if (!/female/i.test(String(this.case.identity?.sex || '')) && id === 'gyn_history') score -= 2.5;
     if (this.nextNeededIntents().includes(id)) score += 0.08;
 
     return this.toCandidate(id, Math.max(0, score * (1 + ((intent.priority ?? 4) / 100))), reasons);
@@ -351,7 +427,26 @@ export class PatientEngine {
     if (intentId === 'chief_complaint' || intentId.startsWith('hpi_')) {
       const complaint = [this.case.chiefComplaint, this.case.hpi?.site, this.case.patientCard].join(' ').toLowerCase();
       if (/pain|pressure|chest|abdomen|stomach/.test(complaint)) {
-        this.currentSymptom = { type: 'pain', bodyArea: /chest|pressure/.test(complaint) ? 'chest' : '', active: true, sourceIntent: intentId };
+        const bodyArea = /chest|pressure/.test(complaint) ? 'chest' : /abdomen|stomach/.test(complaint) ? 'abdomen' : '';
+        if (!this.currentSymptom || this.currentSymptom.type !== 'pain') {
+          this.currentSymptom = {
+            type: 'pain',
+            bodyArea,
+            active: true,
+            rootSourceIntent: 'chief_complaint',
+            sourceIntent: 'chief_complaint',
+            lastPropertyIntent: intentId
+          };
+        } else {
+          this.currentSymptom = {
+            ...this.currentSymptom,
+            bodyArea: this.currentSymptom.bodyArea || bodyArea,
+            active: true,
+            rootSourceIntent: this.currentSymptom.rootSourceIntent || 'chief_complaint',
+            sourceIntent: this.currentSymptom.rootSourceIntent || this.currentSymptom.sourceIntent || 'chief_complaint',
+            lastPropertyIntent: intentId
+          };
+        }
       }
     }
   }
@@ -420,7 +515,7 @@ export class PatientEngine {
   answerFor(intentId) {
     const intent = INTENTS[intentId];
     if (!intent) return '';
-    return (intent.answerKeys ?? []).map((path) => getByPath(this.case, path)).filter(Boolean).join(' ');
+    return renderIntentAnswer(intentId, this.case, intent.answerKeys ?? []);
   }
 
   mergeAnswers(parts, detection) {
@@ -447,9 +542,27 @@ export class PatientEngine {
     return styled;
   }
 
-  makeFeedbackLabel(detection) {
+  assessCommunication(question, detection, attemptedIntentIds = [], previouslyAttempted = new Set(), previouslyResolved = new Set()) {
+    const normalized = normalize(question);
+    const words = normalized.split(' ').filter(Boolean);
+    const issues = [];
+
+    const shorthand = detection.questionType === 'fragment_or_statement' && words.length <= 4 && /\b(factors?|history|timing|duration|severity|radiation|onset|character|allergies|medication)\b/.test(normalized);
+    if (shorthand) issues.push({ type: 'checklist_shorthand', message: 'Phrase this as a patient-facing question rather than a checklist heading.' });
+    if (detection.responseScope === 'terminology_not_understood') issues.push({ type: 'too_technical', message: 'Use patient-friendly wording instead of unexplained medical terminology.' });
+    if (normalized.length > 180) issues.push({ type: 'overlong', message: 'Ask one focused question at a time.' });
+
+    const unnecessaryRepeats = attemptedIntentIds.filter((intentId) => previouslyAttempted.has(intentId) && previouslyResolved.has(intentId));
+    if (unnecessaryRepeats.length) issues.push({ type: 'repeated_resolved_area', message: 'This area had already been successfully covered.' });
+
+    const penalty = issues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2 }[issue.type] ?? 0), 0);
+    return { score: Math.max(0, 100 - penalty), issues, shorthand, unnecessaryRepeats };
+  }
+
+  makeFeedbackLabel(detection, communicationAssessment = null) {
     if (detection.responseScope === 'terminology_not_understood') return 'Terminology unclear';
     if (detection.responseScope === 'clarification') return 'Needs clarification';
+    if (communicationAssessment?.shorthand) return 'Use patient-facing wording';
     if (detection.responseScope === 'contextual_followup') return 'Useful follow-up';
     if (detection.responseScope === 'objective_exam_request') return 'Objective finding';
     const domain = INTENTS[detection.primaryIntent?.id]?.domain;
@@ -462,18 +575,174 @@ export class PatientEngine {
     return 'Good question';
   }
 
-  updateRapport(question) {
+  updateRapport(question, detection = null) {
     const q = normalize(question);
-    if (POLITE_TERMS.some((term) => q.includes(term))) this.rapport = Math.min(100, this.rapport + 2);
-    if (RUDE_TERMS.some((term) => q.includes(term))) this.rapport = Math.max(0, this.rapport - 18);
-    if (q.length > 180) this.rapport = Math.max(0, this.rapport - 2);
+    const factors = [];
+    let delta = 0;
+    const add = (value, id, label) => { delta += value; factors.push({ id, value, label }); };
+
+    if (POLITE_TERMS.some((term) => q.includes(term))) add(1.5, 'polite', 'Polite wording');
+    if (this.turn <= 3 && INTRO_TERMS.some((term) => q.includes(term))) add(3.5, 'introduction', 'Introduced self / greeted patient');
+    if (EMPATHY_TERMS.some((term) => q.includes(term))) add(4, 'empathy', 'Acknowledged the patient experience');
+    if (PERMISSION_TERMS.some((term) => q.includes(term))) add(2.5, 'permission', 'Asked permission respectfully');
+    if (PATIENT_CENTERED_TERMS.some((term) => q.includes(term))) add(2.5, 'patient_centered', 'Patient-centred open wording');
+    if (RUDE_TERMS.some((term) => q.includes(term))) add(-20, 'rude', 'Rude or hostile wording');
+    if (DISMISSIVE_TERMS.some((term) => q.includes(term))) add(-8, 'dismissive', 'Dismissive wording');
+    if (q.length > 180) add(-2, 'overlong', 'Overlong multi-part question');
+    if (detection?.responseScope === 'terminology_not_understood') add(-3, 'jargon', 'Used unexplained technical terminology');
+    if (detection?.questionType === 'fragment_or_statement' && q.split(' ').length <= 4) add(-2, 'checklist', 'Checklist-style fragment');
+
+    delta = Math.max(-22, Math.min(6, delta));
+    const before = this.rapport;
+    this.rapport = Math.max(0, Math.min(100, this.rapport + delta));
+    const event = {
+      turnNumber: this.turn,
+      before,
+      after: this.rapport,
+      delta: this.rapport - before,
+      factors,
+      source: 'text',
+      state: this.rapport >= 82 ? 'strong' : this.rapport >= 62 ? 'comfortable' : this.rapport >= 42 ? 'guarded' : 'poor'
+    };
+    this.lastRapportEvent = event;
+    this.rapportEvents.push(event);
+    return event;
   }
 
-  nextNeededIntents() { return QUESTION_AREAS.filter((area) => area.required || (area.id === 'gynecological' && /female/i.test(this.case.identity.sex))).flatMap((area) => area.intents).filter((intent) => !this.askedIntents.has(intent)); }
-  getCoverage() { return QUESTION_AREAS.filter((area) => area.id !== 'gynecological' || /female/i.test(this.case.identity.sex)).map((area) => { const asked = area.intents.filter((intent) => this.askedIntents.has(intent)); return { id: area.id, title: area.title, required: area.required, modelQuestion: area.modelQuestion, total: area.intents.length, asked: asked.length, percent: Math.round((asked.length / area.intents.length) * 100), missing: area.intents.filter((intent) => !this.askedIntents.has(intent)) }; }); }
-  getScore() { const coverage = this.getCoverage().filter((area) => area.required); const totalAsked = coverage.reduce((sum, area) => sum + area.asked, 0); const total = coverage.reduce((sum, area) => sum + area.total, 0); const raw = total ? Math.round((totalAsked / total) * 100) : 0; const penalty = this.getCriticalMisses().length * 3; return Math.max(0, Math.min(100, raw - penalty)); }
-  getCriticalMisses() { return ['chief_complaint', 'hpi_site', 'hpi_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_severity', 'pmh_chronic_diseases', 'allergies', 'medication_regular'].filter((intent) => !this.askedIntents.has(intent)); }
-  getMissedFeedback() { return this.getCoverage().filter((area) => area.required && area.percent < 100).map((area) => ({ title: area.title, missing: area.missing, modelQuestion: area.modelQuestion })); }
+  applyRapportSignal({ delta = 0, source = 'external', label = 'External interaction signal', metadata = null } = {}) {
+    const before = this.rapport;
+    const bounded = Math.max(-12, Math.min(12, Number(delta) || 0));
+    this.rapport = Math.max(0, Math.min(100, this.rapport + bounded));
+    const event = {
+      turnNumber: this.turn,
+      before,
+      after: this.rapport,
+      delta: this.rapport - before,
+      source,
+      factors: [{ id: source, value: this.rapport - before, label }],
+      metadata,
+      state: this.rapport >= 82 ? 'strong' : this.rapport >= 62 ? 'comfortable' : this.rapport >= 42 ? 'guarded' : 'poor'
+    };
+    this.lastRapportEvent = event;
+    this.rapportEvents.push(event);
+    return event;
+  }
+
+  nextNeededIntents() {
+    return QUESTION_AREAS
+      .filter((area) => area.required || (area.id === 'gynecological' && /female/i.test(this.case.identity.sex)))
+      .flatMap((area) => area.intents)
+      .filter((intent) => !this.isIntentSatisfied(intent, this.askedIntents));
+  }
+
+  isIntentSatisfied(intentId, intentSet) {
+    if (intentId === 'identity_age') return intentSet.has('identity_age') || intentSet.has('identity_dob');
+    return intentSet.has(intentId);
+  }
+
+  getCoverageForSet(intentSet, basis = 'resolved') {
+    return QUESTION_AREAS
+      .filter((area) => area.id !== 'gynecological' || /female/i.test(this.case.identity.sex))
+      .map((area) => {
+        const asked = area.intents.filter((intent) => this.isIntentSatisfied(intent, intentSet));
+        return {
+          id: area.id,
+          title: area.title,
+          required: area.required,
+          modelQuestion: area.modelQuestion,
+          total: area.intents.length,
+          asked: asked.length,
+          percent: Math.round((asked.length / area.intents.length) * 100),
+          missing: area.intents.filter((intent) => !this.isIntentSatisfied(intent, intentSet)),
+          basis
+        };
+      });
+  }
+
+  getCoverage() { return this.getCoverageForSet(this.askedIntents, 'resolved'); }
+  getStudentCoverage() { return this.getCoverageForSet(this.attemptedIntents, 'student_attempt'); }
+
+  getDebriefPriorities() {
+    const configured = this.case.debriefPriorities ?? {};
+    const required = QUESTION_AREAS
+      .filter((area) => area.required && (area.id !== 'gynecological' || /female/i.test(this.case.identity.sex)))
+      .flatMap((area) => area.intents);
+    const essential = [...new Set(configured.essential ?? [
+      'chief_complaint', 'hpi_site', 'hpi_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_severity',
+      'pmh_chronic_diseases', 'allergies', 'medication_regular'
+    ])].filter((id) => INTENTS[id]);
+    const caseCritical = [...new Set(configured.caseCritical ?? [])].filter((id) => INTENTS[id] && !essential.includes(id));
+    const comprehensive = required.filter((id) => !essential.includes(id) && !caseCritical.includes(id));
+    const criticalSafety = [...new Set(configured.criticalSafety ?? [...essential, ...caseCritical])].filter((id) => INTENTS[id]);
+    return { essential, caseCritical, comprehensive, criticalSafety };
+  }
+
+  percentForIntents(intentIds, intentSet = this.attemptedIntents) {
+    if (!intentIds.length) return 100;
+    const complete = intentIds.filter((id) => this.isIntentSatisfied(id, intentSet)).length;
+    return Math.round((complete / intentIds.length) * 100);
+  }
+
+  getCommunicationAssessment() {
+    const allIssues = this.communicationEvents.flatMap((event) => (event.issues ?? []).map((issue) => ({ ...issue, turnNumber: event.turnNumber, question: event.question })));
+    const penalty = allIssues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2 }[issue.type] ?? 0), 0);
+    return {
+      score: Math.max(0, 100 - Math.min(35, penalty)),
+      issues: allIssues
+    };
+  }
+
+  getScoreBreakdown() {
+    const priorities = this.getDebriefPriorities();
+    const essential = this.percentForIntents(priorities.essential);
+    const caseCritical = this.percentForIntents(priorities.caseCritical);
+    const comprehensive = this.percentForIntents(priorities.comprehensive);
+    const communication = this.getCommunicationAssessment().score;
+    const overall = Math.round((essential * 0.50) + (caseCritical * 0.30) + (comprehensive * 0.15) + (communication * 0.05));
+    const requiredResolved = this.getCoverage().filter((area) => area.required);
+    const resolvedAsked = requiredResolved.reduce((sum, area) => sum + area.asked, 0);
+    const resolvedTotal = requiredResolved.reduce((sum, area) => sum + area.total, 0);
+    const engineResolvedCoverage = resolvedTotal ? Math.round((resolvedAsked / resolvedTotal) * 100) : 0;
+    return { overall, essential, caseCritical, comprehensive, communication, engineResolvedCoverage };
+  }
+
+  getScore() { return this.getScoreBreakdown().overall; }
+
+  getCriticalMisses() {
+    return this.getDebriefPriorities().criticalSafety.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
+  }
+
+  getMissedFeedback() {
+    return this.getStudentCoverage()
+      .filter((area) => area.required && area.percent < 100)
+      .map((area) => ({ title: area.title, missing: area.missing, modelQuestion: area.modelQuestion }));
+  }
+
+  getResolutionIssues() {
+    const eventuallyResolved = this.askedIntents;
+    return this.attemptEvents
+      .filter((event) => !event.resolved)
+      .map((event) => ({
+        ...event,
+        label: INTENTS[event.intentId]?.title ?? event.intentId,
+        laterResolved: this.isIntentSatisfied(event.intentId, eventuallyResolved)
+      }));
+  }
+
+  getDebrief() {
+    const priorities = this.getDebriefPriorities();
+    return {
+      score: this.getScore(),
+      scoreBreakdown: this.getScoreBreakdown(),
+      studentCoverage: this.getStudentCoverage(),
+      engineResolvedCoverage: this.getCoverage(),
+      missedRequired: this.getMissedFeedback(),
+      missedCaseCritical: priorities.caseCritical.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents)),
+      criticalSafetyMisses: this.getCriticalMisses(),
+      resolutionIssues: this.getResolutionIssues(),
+      communication: this.getCommunicationAssessment()
+    };
+  }
 
   legacyGenerateSummary() {
     const section = (title, intentIds) => [title, intentIds.filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Not asked / incomplete]'].join('\n');
@@ -483,14 +752,71 @@ export class PatientEngine {
 
   generateSummary() {
     const section = (title, intentIds) => [title, intentIds.filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Not asked / incomplete]'].join('\n');
-    const patient = ['identity_name', 'identity_age', 'identity_sex', 'identity_residence'].filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Identity not assessed]';
+    const patient = ['identity_name', 'identity_age', 'identity_dob', 'identity_sex', 'identity_residence'].filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Identity not assessed]';
     const gyn = /female/i.test(this.case.identity.sex) ? section('Gynecological History:', ['gyn_history']) : 'Gynecological History:\nNot applicable.';
     return ['Anamnesis Summary', '', `Patient: ${patient}`, '', section('Chief Complaint:', ['chief_complaint']), '', section('History Of Present Illness:', ['hpi_site', 'hpi_onset', 'hpi_activity_at_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_timing', 'hpi_exacerbating', 'hpi_relieving', 'hpi_severity', 'hpi_course']), '', section('Review Of Systems:', ['ros_general', 'ros_head_neck', 'ros_cardiovascular', 'ros_respiratory', 'ros_gastrointestinal', 'ros_genitourinary', 'ros_neurological', 'ros_musculoskeletal', 'ros_skin']), '', section('Past Medical History:', ['pmh_chronic_diseases', 'pmh_cardiovascular_disease', 'pmh_specialists', 'pmh_hospitalizations', 'pmh_operations', 'pmh_previous_exams']), '', section('Medication:', ['medication_regular', 'medication_nitroglycerin_previous', 'medication_otc_supplements', 'medication_adherence']), '', section('Allergies And Transfusions:', ['allergies', 'allergy_environment_food', 'allergy_pollen', 'allergy_reaction', 'transfusions']), '', gyn, '', section('Family History:', ['family_history']), '', section('Epidemiological History:', ['epidemiology']), '', section('Social And Functional History:', ['identity_occupation', 'social_living', 'daily_independence']), '', section('Substance Use:', ['substance_smoking', 'substance_alcohol', 'substance_caffeine', 'substance_drugs']), '', 'Terminology feedback:', ...(this.terminologyEvents.length ? this.terminologyEvents.map((event) => `- Used "${event.term}"; patient-friendly wording: ${event.suggestedPatientFriendlyQuestion}`) : ['None.'])].join('\n');
   }
 
-  getDebugExport() { return { appVersion: '2.2.0-context-animation', exportedAt: new Date().toISOString(), selectedCase: this.case.id, conversationHistory: this.debugTurns, finalCoverage: this.getCoverage(), scoreState: { score: this.getScore() }, discoveredFacts: [...this.askedIntents], missedRequiredFields: this.getMissedFeedback(), missedRedFlags: this.getCriticalMisses(), terminologyFeedback: this.terminologyEvents }; }
+  getDebugExport() {
+    const debrief = this.getDebrief();
+    return {
+      appVersion: '2.3.0-debrief-coverage',
+      exportedAt: new Date().toISOString(),
+      selectedCase: this.case.id,
+      conversationHistory: this.debugTurns,
+      finalCoverage: this.getCoverage(),
+      studentCoverage: this.getStudentCoverage(),
+      scoreState: { score: this.getScore(), breakdown: this.getScoreBreakdown() },
+      discoveredFacts: [...this.askedIntents],
+      studentAttemptedIntents: [...this.attemptedIntents],
+      missedRequiredFields: debrief.missedRequired,
+      missedCaseCritical: debrief.missedCaseCritical,
+      missedRedFlags: debrief.criticalSafetyMisses,
+      simulatorResolutionIssues: debrief.resolutionIssues,
+      communicationFeedback: debrief.communication,
+      rapport: this.rapport,
+      rapportEvents: this.rapportEvents,
+      terminologyFeedback: this.terminologyEvents
+    };
+  }
 
-  makeDebugTurn(question, detection, reply, feedbackLabel) { return { turnNumber: this.turn, studentInput: question, normalizedInput: detection.normalized, tokens: detection.tokens, selectedIntentIds: detection.answerIntents.map((i) => i.id), selectedIntentLabels: detection.answerIntents.map((i) => INTENTS[i.id]?.title || i.id), selectedDomains: detection.answerIntents.map((i) => INTENTS[i.id]?.domain || 'unknown'), responseScope: detection.responseScope, patientAnswer: reply, feedbackLabel, matchKind: detection.kind, directMappingUsed: detection.directMappingUsed, contextUsed: detection.contextUsed, topCandidates: detection.candidates.map((c) => ({ intentId: c.id, label: c.title, domain: INTENTS[c.id]?.domain || 'unknown', score: c.score })), suppressedCandidates: detection.suppressedCandidates, fallbackOccurred: detection.responseScope === 'clarification', fallbackReason: detection.responseScope === 'clarification' ? 'No clinically reasonable interpretation.' : '', terminologyEvents: detection.terminologyEvent ? [detection.terminologyEvent] : [], coverageSnapshot: this.getCoverage(), repeatedIntentState: Object.fromEntries([...this.askedIntents].map((id) => [id, true])), lastMeaningfulIntent: this.lastMeaningfulIntent, lastMeaningfulDomain: this.lastMeaningfulDomain, currentSymptom: this.currentSymptom, questionType: detection.questionType, contextResolutionReason: detection.contextResolutionReason }; }
+  makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds = [], communicationAssessment = null) {
+    const resolvedIds = detection.answerIntents.map((intent) => intent.id);
+    return {
+      turnNumber: this.turn,
+      studentInput: question,
+      normalizedInput: detection.normalized,
+      tokens: detection.tokens,
+      attemptedIntentIds,
+      attemptedIntentLabels: attemptedIntentIds.map((id) => INTENTS[id]?.title || id),
+      selectedIntentIds: resolvedIds,
+      selectedIntentLabels: detection.answerIntents.map((i) => INTENTS[i.id]?.title || i.id),
+      selectedDomains: detection.answerIntents.map((i) => INTENTS[i.id]?.domain || 'unknown'),
+      studentEngineMismatch: attemptedIntentIds.length > 0 && attemptedIntentIds.some((id) => !resolvedIds.includes(id)),
+      responseScope: detection.responseScope,
+      patientAnswer: reply,
+      feedbackLabel,
+      communicationAssessment,
+      matchKind: detection.kind,
+      directMappingUsed: detection.directMappingUsed,
+      contextUsed: detection.contextUsed,
+      topCandidates: detection.candidates.map((c) => ({ intentId: c.id, label: c.title, domain: INTENTS[c.id]?.domain || 'unknown', score: c.score })),
+      suppressedCandidates: detection.suppressedCandidates,
+      fallbackOccurred: detection.responseScope === 'clarification',
+      fallbackReason: detection.responseScope === 'clarification' ? 'No clinically reasonable interpretation.' : '',
+      terminologyEvents: detection.terminologyEvent ? [detection.terminologyEvent] : [],
+      coverageSnapshot: this.getCoverage(),
+      studentCoverageSnapshot: this.getStudentCoverage(),
+      repeatedIntentState: Object.fromEntries([...this.askedIntents].map((id) => [id, true])),
+      attemptedIntentState: Object.fromEntries([...this.attemptedIntents].map((id) => [id, true])),
+      lastMeaningfulIntent: this.lastMeaningfulIntent,
+      lastMeaningfulDomain: this.lastMeaningfulDomain,
+      currentSymptom: this.currentSymptom,
+      questionType: detection.questionType,
+      contextResolutionReason: detection.contextResolutionReason,
+      rapportEvent: this.lastRapportEvent
+    };
+  }
 
   pushStudent(text, intent, feedbackLabel = '') { this.transcript.push({ role: 'student', text, intent, feedbackLabel, at: Date.now() }); }
   pushPatient(text, intent) { this.transcript.push({ role: 'patient', text, intent, at: Date.now() }); }
@@ -502,7 +828,6 @@ function tokenize(text) { return normalize(text).split(' ').filter((token) => to
 function lightStem(token) { const keep = ['is','was','has','does','this','his','as','its','it','ct','mi','bp','hr','rr','tsh','crp','wbc','ntg','dyspnea','dysuria','hemoptysis','orthopnea','syncope','palpitations','edema','melena','hematemesis','nocturia','polyuria','polydipsia','dysphagia','paresthesia','vertigo','cephalgia','cyanosis','diaphoresis']; if (keep.includes(token)) return token; return token.replace(/ies$/, 'y').replace(/ing$/, '').replace(/ed$/, '').replace(/s$/, ''); }
 function makeNgrams(tokens, maxSize = 4) { const grams = []; for (let size = 2; size <= maxSize; size += 1) for (let i = 0; i <= tokens.length - size; i += 1) grams.push(tokens.slice(i, i + size).join(' ')); return grams; }
 function calculateConfidence(top, second, length) { if (top <= 0) return 0; const separation = Math.max(0, top - second) / Math.max(top, 1); const strength = Math.min(1, top / 5.5); const lengthFactor = length < 8 ? 0.88 : 1; return round2(((strength * 0.75) + (separation * 0.25)) * lengthFactor); }
-function getByPath(obj, path) { return path.split('.').reduce((current, key) => current?.[key], obj); }
 function round2(value) { return Math.round(value * 100) / 100; }
 function strip(value) { return String(value ?? '').replace(/^I am /i, '').replace(/^My name is /i, '').replace(/^I live in /i, 'from '); }
 function dice(a, b) { if (a === b) return 1; if (a.length < 2 || b.length < 2) return 0; const bigrams = (s) => Array.from({ length: s.length - 1 }, (_, i) => s.slice(i, i + 2)); const aGrams = bigrams(a); const bGrams = bigrams(b); let hits = 0; const used = new Set(); for (const g of aGrams) { const idx = bGrams.findIndex((x, i) => x === g && !used.has(i)); if (idx >= 0) { hits += 1; used.add(idx); } } return (2 * hits) / (aGrams.length + bGrams.length); }

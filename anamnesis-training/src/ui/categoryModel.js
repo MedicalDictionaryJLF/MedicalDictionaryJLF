@@ -1,4 +1,4 @@
-import { QUESTION_AREAS, INTENTS } from '../patientCase.js';
+import { QUESTION_AREAS, INTENTS } from '../data/interviewSchema.js';
 
 const LAB_LABELS = {
   wbc: 'White blood cell count',
@@ -25,11 +25,12 @@ export function getChecklistItemsByCategory(engine, patientCase) {
     const coverage = coverageById.get(category.id);
     const items = category.intents.map((intentId) => {
       const applicable = Boolean(INTENTS[intentId]);
-      const complete = engine.askedIntents.has(intentId);
+      const complete = engine.isIntentSatisfied?.(intentId, engine.askedIntents) ?? engine.askedIntents.has(intentId);
+      const attempted = engine.isIntentSatisfied?.(intentId, engine.attemptedIntents ?? new Set()) ?? engine.attemptedIntents?.has(intentId);
       return {
         id: intentId,
         label: labelForIntent(intentId),
-        status: applicable ? (complete ? 'complete' : 'notAsked') : 'notApplicable'
+        status: applicable ? (complete ? 'complete' : attempted ? 'attempted' : 'notAsked') : 'notApplicable'
       };
     });
     return {
@@ -48,7 +49,7 @@ export function getKnownFactsByCategory(engine, patientCase, orderedLabs = {}) {
   const orderedLabFacts = new Map(Object.entries(orderedLabs).map(([key, value]) => [`lab_${key}`, value]));
   return getVisibleCategories(patientCase)
     .map((category) => {
-      const facts = category.intents
+      const facts = [...category.intents, ...(category.optionalIntents ?? [])]
         .filter((intentId) => engine.askedIntents.has(intentId) || orderedLabFacts.has(intentId))
         .map((intentId) => ({
           id: intentId,
@@ -65,7 +66,7 @@ export function getQuestionVariantsByCategory(patientCase, engine) {
   return getVisibleCategories(patientCase).map((category) => ({
     id: category.id,
     title: category.title,
-    intents: category.intents
+    intents: [...category.intents, ...(category.optionalIntents ?? [])]
       .filter((intentId) => INTENTS[intentId])
       .map((intentId) => ({
         id: intentId,

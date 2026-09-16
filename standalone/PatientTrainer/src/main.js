@@ -1,9 +1,10 @@
-import { PATIENT_CASES, INTENTS } from './patientCase.js';
+import { PATIENT_CASES } from './cases/index.js';
+import { INTENTS } from './data/interviewSchema.js';
 import { PatientEngine } from './patientEngine.js';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js';
-import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, mountEmbeddedVitalsMonitor, stopEmbeddedVitalsMonitor } from './vitalsMonitor.v11.js';
-import { initAvatarAnimator, reactAvatarToPatientReply, setAvatarEmotion } from './avatarAnimator.js';
+import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, mountEmbeddedVitalsMonitor, stopEmbeddedVitalsMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from './ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
@@ -12,10 +13,12 @@ import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
 import { buildEncounterReport, countCompletedNoteSections, createEncounterState, getEncounterProfile } from './clinicalEncounter.js';
-import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.v6.js';
-import { createEcgLeadPlacementState, renderEcgLeadPlacement } from './ui/ecgLeadPlacement.v11.js';
+import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js';
+import { createEcgLeadPlacementState, renderEcgLeadPlacement } from './ui/ecgLeadPlacement.js';
+import { PatientStateEngine } from './patientState.js';
+import { renderPatientStatePanel } from './ui/patientStatePanel.js';
 
-const TRAINER_CASES = PATIENT_CASES.filter((item) => item.id === 'chest_pain_acs_risk');
+const TRAINER_CASES = PATIENT_CASES.filter((item) => item && item.id);
 
 const els = {
   caseSelect: document.getElementById('caseSelect'),
@@ -31,6 +34,8 @@ const els = {
   stationDifficultyBadge: document.getElementById('stationDifficultyBadge'),
   restartBtn: document.getElementById('restartBtn'),
   patientMeta: document.getElementById('patientMeta'),
+  patientSceneStatus: document.getElementById('patientSceneStatus'),
+  patientEquipmentStatus: document.getElementById('patientEquipmentStatus'),
   chatLog: document.getElementById('chatLog'),
   questionForm: document.getElementById('questionForm'),
   questionInput: document.getElementById('questionInput'),
@@ -77,6 +82,10 @@ const els = {
   testsNavCount: document.getElementById('testsNavCount'),
   reasoningNavCount: document.getElementById('reasoningNavCount'),
   coachWindowTitle: document.getElementById('coachWindowTitle'),
+  coachToggleBtn: document.getElementById('coachToggleBtn'),
+  coachCloseBtn: document.getElementById('coachCloseBtn'),
+  coachRail: document.getElementById('coachRail'),
+  coachBackdrop: document.getElementById('coachBackdrop'),
   ecgAvailabilityText: document.getElementById('ecgAvailabilityText'),
   ecgPlacementPanel: document.getElementById('ecgPlacementPanel'),
   ecgSetupStatus: document.getElementById('ecgSetupStatus'),
@@ -101,6 +110,7 @@ let orderedLabs = {};
 let administeredMedications = [];
 let actionHistory = [];
 let encounterState = createEncounterState();
+let patientStateEngine = null;
 let ecgPlacementState = createEcgLeadPlacementState();
 let currentInvestigationTool = null;
 const aiDiagnostics = {
@@ -126,16 +136,32 @@ function init() {
     els.caseSelect.appendChild(option);
   });
 
+  if (!TRAINER_CASES.length) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'No patient cases available';
+    els.caseSelect.appendChild(option);
+    els.caseSelect.disabled = true;
+    if (els.startTrainingBtn) els.startTrainingBtn.disabled = true;
+  } else {
+    els.caseSelect.disabled = false;
+    if (els.startTrainingBtn) els.startTrainingBtn.disabled = false;
+    els.caseSelect.value = activeCase?.id || TRAINER_CASES[0].id;
+  }
+
 
   els.caseSelect.addEventListener('change', () => {
     activeCase = TRAINER_CASES.find((item) => item.id === els.caseSelect.value) || TRAINER_CASES[0] || PATIENT_CASES[0];
     renderSetupPreview();
   });
   els.randomCaseBtn?.addEventListener('click', chooseRandomCase);
-  els.modeSelect?.addEventListener('change', () => { currentMode = els.modeSelect.value; renderSetupPreview(); if (stationStarted) { renderInterfacePanels(); renderTerminologyHint(''); renderStationHeader(); } });
+  els.modeSelect?.addEventListener('change', () => { currentMode = els.modeSelect.value; renderSetupPreview(); if (stationStarted) { renderInterfacePanels(); renderTerminologyHint(''); renderStationHeader(); renderPatientVisualState(); } });
   els.difficultySelect?.addEventListener('change', () => { currentDifficulty = els.difficultySelect.value; renderSetupPreview(); if (stationStarted) renderStationHeader(); });
   els.startTrainingBtn?.addEventListener('click', startCase);
   els.restartBtn.addEventListener('click', showSetupScreen);
+  els.coachToggleBtn?.addEventListener('click', () => setCoachDrawerOpen(!els.coachRail?.classList.contains('open')));
+  els.coachCloseBtn?.addEventListener('click', () => setCoachDrawerOpen(false));
+  els.coachBackdrop?.addEventListener('click', () => setCoachDrawerOpen(false));
   els.questionForm.addEventListener('submit', handleQuestion);
   els.finishBtn.addEventListener('click', finishCase);
   els.openVitalsBtn?.addEventListener('click', () => openInvestigationTool('monitor'));
@@ -168,7 +194,7 @@ function init() {
   document.querySelector('[data-close="differential"]')?.addEventListener('click', () => closeModal(els.differentialModal));
   document.querySelector('[data-close="closing"]')?.addEventListener('click', () => closeModal(els.closingModal));
   window.addEventListener('resize', resizeVisibleMonitor);
-  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeVitalsMonitor(); closeEcgViewer(); closeModal(els.labsModal); closeModal(els.medicationModal); closeModal(els.examinationModal); closeModal(els.clinicalNotesModal); closeModal(els.differentialModal); closeModal(els.closingModal); } });
+  window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setCoachDrawerOpen(false); closeVitalsMonitor(); closeEcgViewer(); closeModal(els.labsModal); closeModal(els.medicationModal); closeModal(els.examinationModal); closeModal(els.clinicalNotesModal); closeModal(els.differentialModal); closeModal(els.closingModal); } });
 
   voiceInputController = initVoiceInput({ button: els.voiceInputBtn, input: els.questionInput, status: els.voiceInputStatus });
   initVoices(() => { if (stationStarted) renderPatientMeta(); });
@@ -189,6 +215,8 @@ async function startCase() {
   administeredMedications = [];
   actionHistory = [];
   encounterState = createEncounterState();
+  patientStateEngine = new PatientStateEngine(activeCase);
+  setMonitorPatientStateSource(patientStateEngine);
   ecgPlacementState = createEcgLeadPlacementState();
   currentInvestigationTool = null;
   voiceInputController?.stop?.();
@@ -207,13 +235,19 @@ async function startCase() {
   await refreshAiHealthDiagnostics();
   renderInterfacePanels();
   await initAvatarAnimator(activeCase);
+  bindAvatarToPatientState(patientStateEngine);
   setAvatarEmotion('neutral');
+  setAvatarViewMode('encounter');
+  renderPatientVisualState();
   els.questionInput.focus();
 }
 
 function showSetupScreen() {
+  setCoachDrawerOpen(false);
   stopEmbeddedVitalsMonitor();
   stationStarted = false;
+  setMonitorPatientStateSource(null);
+  patientStateEngine = null;
   closeVitalsMonitor();
   closeEcgViewer();
   closeModal(els.labsModal);
@@ -278,6 +312,20 @@ function renderPatientMeta() {
     <div class="patient-meta-footer"><span>${escapeHtml(currentMode)} mode</span><span>${voice ? 'Voice ready' : 'Browser voice'}</span></div>
   `;
 }
+function renderPatientVisualState() {
+  if (!patientStateEngine) {
+    if (els.patientSceneStatus) els.patientSceneStatus.innerHTML = '';
+    if (els.patientEquipmentStatus) els.patientEquipmentStatus.innerHTML = '';
+    return;
+  }
+  renderPatientStatePanel({
+    statusContainer: els.patientSceneStatus,
+    equipmentContainer: els.patientEquipmentStatus,
+    snapshot: patientStateEngine.getSnapshot(),
+    mode: currentMode
+  });
+}
+
 function addMessage(role, text, intent = '', feedbackLabel = '') {
   const bubble = document.createElement('article');
   bubble.className = `message ${role}`;
@@ -309,8 +357,17 @@ async function handleQuestion(event) {
     lastDetection = result.detection;
     removeResponseLoading(els.chatLog);
     addMessage('patient', reply, result.detectedIntent, result.feedbackLabel);
-    reactAvatarToPatientReply(reply, result);
-    if (els.voiceToggle.checked) speak(reply, activeCase);
+    reactAvatarToPatientReply(reply, { ...result, studentInput: question });
+    if (els.voiceToggle.checked) {
+      speak(reply, activeCase, {
+        onStart: () => setAvatarSpeaking(true, reply),
+        onBoundary: () => pulseAvatarSpeechBoundary(),
+        onEnd: () => setAvatarSpeaking(false),
+        onError: () => setAvatarSpeaking(false)
+      });
+    } else {
+      setAvatarSpeaking(false);
+    }
     recordLearningEvent(prepared.event);
     els.questionInput.value = '';
     renderTerminologyHint(result.terminologySuggestion, result.detection?.terminologyEvent?.term);
@@ -486,6 +543,8 @@ function submitEncounter(closingInput) {
     patientCase: activeCase,
     encounterState,
     interviewScore: engine.getScore(),
+    interviewBreakdown: engine.getScoreBreakdown(),
+    interviewDebrief: engine.getDebrief(),
     closingInput
   });
   actionHistory.push({ type: 'encounter-submitted', at: new Date().toISOString(), score: report.encounterScore });
@@ -533,6 +592,9 @@ function renderPhysicalExamPanel() {
         at: new Date().toISOString()
       });
       encounterState.notes.examination = mergeNote(encounterState.notes.examination, `${label}: ${result.finding}`);
+      patientStateEngine?.recordExamination(result.action?.id || result.hotspot?.id || '', result.finding);
+      reactAvatarToExamination(result.action?.id || result.hotspot?.id || '', result.finding);
+      renderPatientVisualState();
       renderActionHistoryPanel();
       updateEncounterToolLabels();
     }
@@ -570,11 +632,21 @@ function recordObjectiveAction(kind, label) {
   updateEncounterToolLabels();
 }
 
+function setCoachDrawerOpen(open) {
+  const shouldOpen = Boolean(open && stationStarted);
+  els.coachRail?.classList.toggle('open', shouldOpen);
+  els.coachRail?.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+  els.coachToggleBtn?.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+  document.body.classList.toggle('coach-drawer-open', shouldOpen);
+}
+
 function activateWorkspace(name) {
   const target = String(name || 'interview');
+  if (target === 'examination' || target === 'investigations') setCoachDrawerOpen(false);
   document.querySelectorAll('[data-workspace-panel]').forEach((panel) => panel.classList.toggle('active', panel.dataset.workspacePanel === target));
   document.querySelectorAll('[data-workspace-target]').forEach((button) => button.classList.toggle('active', button.dataset.workspaceTarget === target));
   document.body.dataset.patientWorkspace = target;
+  setAvatarViewMode(target === 'examination' ? 'examination' : 'encounter');
 }
 
 function focusWorkspaceSubwindow(selector) {
@@ -628,7 +700,7 @@ function renderActionHistoryPanel() {
       : item.type?.startsWith('objective-') ? `Objective data · ${item.label || item.type}`
       : item.type === 'encounter-submitted' ? 'Station submitted'
       : String(item.type || 'Clinical action').replaceAll('-', ' ');
-    return `<div class="history-row"><span>${escapeHtml(label)}</span><small>${escapeHtml(new Date(item.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</small></div>`;
+    return `<div class="history-row"><span>${escapeHtml(label)}${item.effectModelled ? '<em class="effect-modelled"> · state updated</em>' : ''}</span><small>${escapeHtml(new Date(item.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</small>${item.effectMessage ? `<div class="management-effect-note">${escapeHtml(item.effectMessage)}</div>` : ''}</div>`;
   }).join('');
 }
 
@@ -647,6 +719,7 @@ function getDebugExport() {
     administeredMedications,
     actionHistory,
     encounterState,
+    patientState: patientStateEngine?.getSnapshot?.() || null,
     aiDiagnostics: { ...aiDiagnostics, apiBaseUrl: aiDiagnostics.apiBaseUrl ? '[configured]' : '' }
   };
 }
@@ -663,6 +736,10 @@ function requestEcgAcquisition() {
 
 function openInvestigationTool(tool) {
   if (!stationStarted) return;
+  if (tool === 'monitor') {
+    patientStateEngine?.connectEquipment('monitor', true, 'Bedside monitor selected');
+    renderPatientVisualState();
+  }
   currentInvestigationTool = tool || null;
   activateWorkspace('investigations');
   renderInvestigationWorkspace();
@@ -729,6 +806,8 @@ function renderEcgPlacementPanel() {
         actionHistory.push({ type: 'objective-ecg-acquired', label: '12-lead ECG acquired after correct electrode placement', at: new Date().toISOString() });
         encounterState.notes.investigations = mergeNote(encounterState.notes.investigations, '12-lead ECG acquired after correct placement of all 10 electrodes.');
       }
+      patientStateEngine?.recordEcgAcquired();
+      renderPatientVisualState();
       if (els.ecgSetupStatus) els.ecgSetupStatus.textContent = 'ECG acquired';
       renderStationHeader();
       renderActionHistoryPanel();
@@ -766,7 +845,10 @@ function renderMedicationActionPanel() {
     mode: currentMode,
     onAdminister: (action) => {
       administeredMedications = [...new Set([...administeredMedications, action])];
-      actionHistory.push({ type: 'medication-action', action, effectModelled: false, at: new Date().toISOString() });
+      const effect = patientStateEngine?.applyClinicalAction(action) || { matched: false, message: '' };
+      actionHistory.push({ type: 'medication-action', action, effectModelled: Boolean(effect.matched), effectMessage: effect.message || '', at: new Date().toISOString() });
+      if (effect.message) encounterState.notes.investigations = mergeNote(encounterState.notes.investigations, `Management response: ${effect.message}`);
+      renderPatientVisualState();
       renderMedicationActionPanel();
       renderActionHistoryPanel();
       renderInterfacePanels();

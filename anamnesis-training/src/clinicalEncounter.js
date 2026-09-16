@@ -162,7 +162,7 @@ export function evaluateClosing(patientCase, encounterState, closingInput = {}) 
   return { percent, summaryPercent, investigationPercent, managementPercent, diagnosis };
 }
 
-export function buildEncounterReport({ patientCase, encounterState, interviewScore, closingInput }) {
+export function buildEncounterReport({ patientCase, encounterState, interviewScore, interviewBreakdown = null, interviewDebrief = null, closingInput }) {
   encounterState.closing = { ...encounterState.closing, ...closingInput };
   const examination = evaluateExamination(patientCase, encounterState);
   const closing = evaluateClosing(patientCase, encounterState, encounterState.closing);
@@ -171,6 +171,8 @@ export function buildEncounterReport({ patientCase, encounterState, interviewSco
   const report = {
     encounterScore,
     interviewScore: Number(interviewScore || 0),
+    interviewBreakdown,
+    interviewDebrief,
     examination,
     clinicalReasoning: reasoning,
     closing,

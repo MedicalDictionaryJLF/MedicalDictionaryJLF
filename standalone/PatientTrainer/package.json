@@ -1,8 +1,8 @@
 {
-  "name": "patient-trainer-interactive-exam-prototype",
+  "name": "medical-dictionary-patient-trainer",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/pt_v6_features.test.mjs && node tests/interactive_exam.test.mjs && node tests/posterior_view_v6.test.mjs && node tests/pt_v9_ecg_monitor.test.mjs && node tests/pt_v12_waveforms.test.mjs"
+    "test": "node tests/three_scene.test.mjs && node tests/patient_affect_rapport.test.mjs && node tests/case_selection.test.mjs && node tests/patient_state.test.mjs && node tests/case_templates.test.mjs && node tests/debrief_regression.test.mjs && node tests/physical_exam.test.mjs && node tests/ecg_leads.test.mjs && node tests/monitor_waveforms.test.mjs"
   }
 }

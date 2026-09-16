@@ -1,41 +1,65 @@
-# Patient Trainer Lab — standalone interactive physical examination prototype
+# Patient Trainer
 
-This directory is intentionally **separate from Medical Dictionary**. Do not merge it back into the main application until the physical-examination interaction model is approved.
+Standalone development build for the Medical Dictionary Patient Trainer.
 
-## Current development case
+## Current source layout
 
-Only **Peter Novak**, a 58-year-old man with an acute chest-pain / inferior STEMI station, is exposed in the standalone UI.
+```text
+src/
+├── cases/                  Patient-specific facts and case configuration
+│   ├── peterNovak.js
+│   ├── janaKovacova.js
+│   └── index.js
+├── data/
+│   ├── interviewSchema.js  Shared intents/question areas
+│   ├── physicalExamMap.js
+│   └── examSoundLibrary.js
+├── dialogue/
+│   └── responseTemplates.js  Reusable patient wording with placeholders
+├── ui/
+│   ├── clinicalEncounterPanels.js
+│   ├── ecgLeadPlacement.js
+│   └── interactivePhysicalExam.js
+├── main.js
+├── patientEngine.js
+├── monitorWaveforms.js
+└── vitalsMonitor.js
+```
 
-## What changed
+Patient-specific values belong in `src/cases/`. Reusable English phrasing does not.
 
-The physical examination no longer uses a checklist of reveal buttons. The student:
+Example:
 
-1. chooses a technique — **Inspect, Auscultate, Palpate, Percuss**;
-2. chooses **Anterior / Posterior** view;
-3. places the selected instrument/action directly on one of the anatomical hotspots on the full-body avatar;
-4. receives only the finding for that technique at that point;
-5. hears point-specific sound when that finding has audio;
-6. builds a chronological physical-examination log that remains compatible with the existing scoring layer.
+```js
+identity: {
+  name: 'Peter Novak',
+  age: 58,
+  dob: '14 March 1968',
+  sex: 'male',
+  residence: 'Martin',
+  occupation: 'a bus driver'
+}
+```
 
-The current body map contains 38 targeted sites after adding the tracheal/upper-airway point, including the five standard cardiac auscultation areas, bilateral lung comparison fields, carotids, pulses, chest wall, abdomen and peripheral examination sites.
+The shared dialogue layer renders those values using templates such as:
 
-## Avatar
+```js
+identity_dob: 'I was born on {identity.dob}.'
+```
 
-The examination avatar is a new inline SVG rather than the old decorative interview avatar. It supports:
+Clinical narrative that genuinely belongs to a particular case can stay as patient-ready text
+inside that case file.
 
-- anterior and posterior views
-- breathing motion and blinking
-- pointer-following examination instrument
-- persistent placed-instrument marker
-- hover/focus anatomical labels
-- case-defined visual overlays
-- current Peter overlays for subtle pallor and diaphoresis
+## Adding a case
 
-The overlay model is deliberately extensible for later cyanosis, jaundice, rash, bruising, scars, local swelling, edema and other visible signs.
+1. Copy an existing file in `src/cases/`.
+2. Change the case `id` and patient-specific data.
+3. Add the new export to `src/cases/index.js`.
+4. Do not add patient-specific facts to `interviewSchema.js`, `patientEngine.js`, or the shared
+   response template file.
 
-## Audio
-
-See [`docs/SOUND_SOURCES.md`](docs/SOUND_SOURCES.md). The registry distinguishes real clinical recordings, published reference simulations and locally synthesized educational audio. Sound provenance/license is shown in the UI whenever applicable.
+The integrated Medical Dictionary build follows the same case/template layout under
+`anamnesis-training/src/`.
 
 ## Validation
 
@@ -45,4 +69,5 @@ Run:
 npm test
 ```
 
-The standalone test validates hotspot uniqueness, standard cardiac/lung coverage, sound references, licensing metadata and removal of the legacy click-to-reveal examination panel.
+The current test suite covers case/template rendering, debrief regression, the interactive
+physical examination, ECG lead placement, and monitor waveforms.
