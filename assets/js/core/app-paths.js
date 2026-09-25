@@ -144,5 +144,5 @@ export function resolveAppShellUrl() {
 }
 
 export function resolveAppModuleUrl() {
-  return new URL("../app.js?v=61", import.meta.url).href;
+  return new URL("../app.js?v=62", import.meta.url).href;
 }

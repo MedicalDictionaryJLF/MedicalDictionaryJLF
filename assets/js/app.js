@@ -2603,6 +2603,7 @@ function applyAnamnesisTranslationsToDom(){
       item.node.nodeValue = item.template.replace(item.base, translated);
     }
   });
+  renumberInternalAnamnesisSections(document.getElementById("anamnesis-form"));
 }
 
 const TRANSLATION_LANG_CANON = {
@@ -8052,11 +8053,55 @@ function updateBloodTransfusionVisibility(){
   }
 }
 
+function renumberInternalAnamnesisSections(form = null){
+  const targetForm = form && typeof form.querySelector === "function"
+    ? form
+    : document.getElementById("anamnesis-form");
+  if(!targetForm) return;
+
+  let visibleOrdinal = 0;
+  const sections = [...targetForm.children].filter(el => el && el.classList && el.classList.contains("anam-section"));
+  sections.forEach(section => {
+    if(section.classList.contains("hidden") || section.hidden) return;
+    const heading = section.querySelector(":scope > h3, :scope > summary > strong, :scope > summary");
+    if(!heading) return;
+    visibleOrdinal += 1;
+
+    // Keep the existing text node alive so the translation cache remains valid.
+    // Translation may restore the original hard-coded ordinal; this function is
+    // called again after translation and whenever sex changes.
+    const textNode = [...heading.childNodes].find(node => node.nodeType === Node.TEXT_NODE && String(node.nodeValue || "").trim());
+    if(!textNode) return;
+    const raw = String(textNode.nodeValue || "");
+    const match = raw.match(/^(\s*)(?:\d+\s*[.)-]?\s*)?(.*)$/s);
+    if(!match) return;
+    textNode.nodeValue = `${match[1]}${visibleOrdinal}. ${String(match[2] || "").trimStart()}`;
+  });
+}
+
+function updateGynecologicalDetailVisibility(form = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document;
+  const female = scope.querySelector('input[name="ident_sex"][value="female"]');
+  const isFemale = !!(female && female.checked);
+  const toggle = (name, wrapId) => {
+    const yes = scope.querySelector(`input[name="${name}"][value="yes"]`);
+    const wrap = document.getElementById(wrapId);
+    if(wrap) wrap.classList.toggle("hidden", !(isFemale && yes && yes.checked));
+  };
+  toggle("gyn_children", "gyn-children-details-wrap");
+  toggle("gyn_deliveries", "gyn-deliveries-details-wrap");
+  toggle("gyn_miscarriage", "gyn-miscarriage-details-wrap");
+}
+
 function updateGynecologicalVisibility(form = null){
   const scope = form && typeof form.querySelector === "function" ? form : document;
+  const targetForm = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
   const wrap = document.getElementById("anam-gyn-section");
   const female = scope.querySelector('input[name="ident_sex"][value="female"]');
-  if(wrap) wrap.classList.toggle("hidden", !(female && female.checked));
+  const isFemale = !!(female && female.checked);
+  if(wrap) wrap.classList.toggle("hidden", !isFemale);
+  updateGynecologicalDetailVisibility(targetForm || scope);
+  renumberInternalAnamnesisSections(targetForm);
 }
 
 function updatePediatricsBloodTransfusionVisibility(){
@@ -13243,6 +13288,8 @@ async function init(){
       }
       if(targetName === "ident_sex"){
         updateGynecologicalVisibility(anamForm);
+      } else if(targetName.startsWith("gyn_")){
+        updateGynecologicalDetailVisibility(anamForm);
       }
       if(targetName === "ident_full_name" || targetName === "chief_complaint" || targetName === "ident_age"){
         syncInternalFormToMeta(targetName);
@@ -13259,6 +13306,10 @@ async function init(){
       if(targetName === "ident_sex"){
         updateGynecologicalVisibility(anamForm);
         rebuildAnamnesisSectionNavigator();
+        updateAnamnesisDocumentationProgress();
+      } else if(targetName.startsWith("gyn_")){
+        updateGynecologicalDetailVisibility(anamForm);
+        updateAnamnesisDocumentationProgress();
       }
       scheduleAnamnesisSave();
     });

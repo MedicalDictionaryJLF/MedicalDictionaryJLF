@@ -11385,3 +11385,64 @@ body[data-theme="dark"] #screen-anamnesis .anam-psych-prompt-line{
     grid-column:1 / -1;
   }
 }
+
+/* Internal/Surgery anamnesis · female-only gynecological history */
+.anam-gyn-table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.anam-gyn-table{
+  min-width:720px;
+}
+.anam-gyn-table th{
+  background:var(--surface-soft, rgba(0,0,0,.025));
+  font-weight:750;
+  text-align:left;
+}
+.anam-gyn-table .anam-gyn-choice-head,
+.anam-gyn-table .anam-gyn-choice{
+  width:64px;
+  text-align:center;
+  vertical-align:middle;
+}
+.anam-gyn-table .anam-gyn-choice label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  min-height:34px;
+  margin:0;
+}
+.anam-gyn-table input[type="text"],
+.anam-gyn-table input[type="number"],
+.anam-gyn-table input:not([type]){
+  width:100%;
+}
+.anam-gyn-followup{
+  display:grid;
+  gap:7px;
+}
+.anam-gyn-delivery-types{
+  margin:0 0 2px;
+}
+.anam-gyn-delivery-types > span:first-child,
+.anam-gyn-delivery-types > strong:first-child{
+  display:none;
+}
+.sr-only{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+@media (max-width: 720px){
+  .anam-gyn-table{
+    min-width:650px;
+  }
+}

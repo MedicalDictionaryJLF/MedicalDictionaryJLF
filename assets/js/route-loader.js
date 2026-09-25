@@ -3,7 +3,7 @@ import {
   getScreenForRoute,
   resolveAppModuleUrl,
   resolveAppShellUrl
-} from "./core/app-paths.js?v=61";
+} from "./core/app-paths.js?v=62";
 
 async function bootstrapRoutedPage(){
   const indexUrl = resolveAppShellUrl();

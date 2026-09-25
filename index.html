@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Medical Dictionary </title>
-  <link rel="stylesheet" href="assets/css/app.css?v=61">
+  <link rel="stylesheet" href="assets/css/app.css?v=62">
 </head>
 <body>
   <div id="app">    <header>
@@ -1527,66 +1527,80 @@
             </div>
 
             <div id="anam-gyn-section" class="anam-section hidden">
-              <h3>8. Gynecological History (Females)</h3>
-              <div class="anam-grid">
-                <div>
-                  <strong>Regular menstruation</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_regular_menses" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_regular_menses" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_regular_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Menopause</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_menopause" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_menopause" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_menopause_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Contraception</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_contraception" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_contraception" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_contraception_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Children</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_children" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_children" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_children_number" placeholder="If yes, number" />
-                </div>
-                <div>
-                  <strong>Deliveries</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_deliveries" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_deliveries" value="no" /> No</label>
-                    <label><input type="checkbox" name="gyn_deliveries_vaginal" /> Vaginal</label>
-                    <label><input type="checkbox" name="gyn_deliveries_csection" /> C-section</label>
-                  </div>
-                  <input name="gyn_deliveries_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Miscarriage / abortion</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_miscarriage" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_miscarriage" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_miscarriage_number" placeholder="If yes, number" />
-                </div>
-                <div>
-                  <strong>Pelvic pain</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="gyn_pelvic_pain" value="yes" /> Yes</label>
-                    <label><input type="radio" name="gyn_pelvic_pain" value="no" /> No</label>
-                  </div>
-                  <input name="gyn_pelvic_pain_notes" placeholder="Notes" />
-                </div>
+              <h3 data-anam-key="anam_n_8_gynecological_history_females">8. Gynecological History (Females)</h3>
+              <div class="anam-gyn-table-wrap">
+                <table class="anam-table anam-gyn-table">
+                  <thead>
+                    <tr>
+                      <th data-anam-key="anam_question">Question</th>
+                      <th class="anam-gyn-choice-head" data-anam-key="anam_yes">Yes</th>
+                      <th class="anam-gyn-choice-head" data-anam-key="anam_no">No</th>
+                      <th data-anam-key="anam_notes">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-anam-key="anam_regular_menstruation">Regular menstruation</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_regular_menses" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_regular_menses" value="no" /><span class="sr-only">No</span></label></td>
+                      <td><input name="gyn_regular_notes" data-anam-key="anam_notes" placeholder="Notes" /></td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_menopause">Menopause</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_menopause" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_menopause" value="no" /><span class="sr-only">No</span></label></td>
+                      <td><input name="gyn_menopause_notes" data-anam-key="anam_notes" placeholder="Notes" /></td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_contraception">Contraception</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_contraception" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_contraception" value="no" /><span class="sr-only">No</span></label></td>
+                      <td><input name="gyn_contraception_notes" data-anam-key="anam_notes" placeholder="Notes" /></td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_children">Children</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_children" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_children" value="no" /><span class="sr-only">No</span></label></td>
+                      <td>
+                        <div id="gyn-children-details-wrap" class="anam-gyn-followup hidden">
+                          <input name="gyn_children_number" type="number" min="0" step="1" data-anam-key="anam_if_yes_number" placeholder="If yes, number" />
+                          <input name="gyn_children_notes" data-anam-key="anam_notes" placeholder="Notes" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_deliveries">Deliveries</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_deliveries" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_deliveries" value="no" /><span class="sr-only">No</span></label></td>
+                      <td>
+                        <div id="gyn-deliveries-details-wrap" class="anam-gyn-followup hidden">
+                          <div class="anam-row anam-gyn-delivery-types">
+                            <label data-anam-key="anam_vaginal"><input type="checkbox" name="gyn_deliveries_vaginal" /> Vaginal</label>
+                            <label data-anam-key="anam_c_section"><input type="checkbox" name="gyn_deliveries_csection" /> C-section</label>
+                          </div>
+                          <input name="gyn_deliveries_notes" data-anam-key="anam_notes" placeholder="Notes" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_miscarriage_abortion">Miscarriage / abortion</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_miscarriage" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_miscarriage" value="no" /><span class="sr-only">No</span></label></td>
+                      <td>
+                        <div id="gyn-miscarriage-details-wrap" class="anam-gyn-followup hidden">
+                          <input name="gyn_miscarriage_number" type="number" min="0" step="1" data-anam-key="anam_if_yes_number" placeholder="If yes, number" />
+                          <input name="gyn_miscarriage_notes" data-anam-key="anam_notes" placeholder="Notes" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td data-anam-key="anam_pelvic_pain">Pelvic pain</td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_pelvic_pain" value="yes" /><span class="sr-only">Yes</span></label></td>
+                      <td class="anam-gyn-choice"><label><input type="radio" name="gyn_pelvic_pain" value="no" /><span class="sr-only">No</span></label></td>
+                      <td><input name="gyn_pelvic_pain_notes" data-anam-key="anam_notes" placeholder="Notes" /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -2062,7 +2076,7 @@
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="assets/js/app-shell.js?v=51" defer></script>
-<script type="module" src="assets/js/app.js?v=61"></script>
+<script type="module" src="assets/js/app.js?v=62"></script>
 </body>
 </html>
 
