@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { PATIENT_CASES } from '../anamnesis-training/src/patientCase.js';
+import { PATIENT_CASES } from '../anamnesis-training/src/cases/index.js';
 import {
   addDifferential,
   buildEncounterReport,

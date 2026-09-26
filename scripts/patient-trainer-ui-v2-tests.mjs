@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PATIENT_CASES } from '../anamnesis-training/src/patientCase.js';
+import { PATIENT_CASES } from '../anamnesis-training/src/cases/index.js';
 import { getExaminationActions, createEncounterState } from '../anamnesis-training/src/clinicalEncounter.js';
 import { labsForGroup } from '../anamnesis-training/src/ui/actionPanels.js';
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PATIENT_CASES } from '../anamnesis-training/src/patientCase.js';
+import { PATIENT_CASES } from '../anamnesis-training/src/cases/index.js';
 import { PatientEngine } from '../anamnesis-training/src/patientEngine.js';
 import { getChecklistItemsByCategory, getKnownFactsByCategory, getQuestionVariantsByCategory } from '../anamnesis-training/src/ui/categoryModel.js';
 import { showResponseLoading, removeResponseLoading } from '../anamnesis-training/src/ui/loadingIndicator.js';

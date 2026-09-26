@@ -11446,3 +11446,10 @@ body[data-theme="dark"] #screen-anamnesis .anam-psych-prompt-line{
     min-width:650px;
   }
 }
+
+/* Mobile navigation stacking hotfix · 2026-09-26
+   Keep the interactive sidebar above its dimming scrim. */
+@media(max-width:899px){
+  .app-sidebar{z-index:74!important;}
+  .sidebar-scrim{z-index:73!important;}
+}

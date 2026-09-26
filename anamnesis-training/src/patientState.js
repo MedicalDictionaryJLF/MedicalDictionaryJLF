@@ -34,6 +34,25 @@ export class PatientStateEngine {
     return cloneState(this.state);
   }
 
+  restoreSnapshot(snapshot) {
+    if (!snapshot || typeof snapshot !== 'object') return this.getSnapshot();
+    const base = buildInitialState(this.patientCase);
+    this.state = {
+      ...base,
+      ...snapshot,
+      caseId: this.patientCase?.id || String(snapshot.caseId || ''),
+      physiology: { ...base.physiology, ...(snapshot.physiology || {}) },
+      symptoms: { ...base.symptoms, ...(snapshot.symptoms || {}) },
+      visual: { ...base.visual, ...(snapshot.visual || {}) },
+      equipment: { ...base.equipment, ...(snapshot.equipment || {}) },
+      interventions: Array.isArray(snapshot.interventions) ? snapshot.interventions.map((item) => ({ ...item })) : [],
+      revision: Math.max(0, Number(snapshot.revision || 0)),
+      lastEvent: snapshot.lastEvent ? { ...snapshot.lastEvent } : null
+    };
+    this.emit({ type: 'restore' });
+    return this.getSnapshot();
+  }
+
   subscribe(listener) {
     if (typeof listener !== 'function') return () => {};
     this.listeners.add(listener);

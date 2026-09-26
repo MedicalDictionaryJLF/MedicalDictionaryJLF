@@ -31,6 +31,13 @@ import {
 } from "./services/data-repository.js";
 import { createSearchService } from "./services/search-service.js";
 import { createQuizEngine } from "./services/quiz-service.js";
+import {
+  PATIENT_TRAINER_SESSIONS_STORAGE_KEY,
+  clearActivePatientTrainerAccountId,
+  ensurePatientTrainerProfileShape,
+  mergePatientTrainerProfiles,
+  syncPatientTrainerHistoryWithProfile
+} from "./services/patient-trainer-session-store.js";
 import { createPharmacologyService } from "./pharmacology/pharmacology-service.js?v=2";
 import { createPharmacologyUi } from "./pharmacology/pharmacology-ui.js?v=4";
 import {
@@ -98,6 +105,15 @@ let driveManualSyncInFlight = false;
 let storageSyncCooldownTimer = null;
 let settingsDialogController = null;
 let appReadyPromise = null;
+
+window.addEventListener("storage", (event)=>{
+  if(event.key !== PATIENT_TRAINER_SESSIONS_STORAGE_KEY || !isProfileSessionActive()) return;
+  const result = syncPatientTrainerHistoryWithProfile(userProfile, { claimGuestSessions: false });
+  if(result.changed){
+    markProfileDirty();
+    scheduleAnamnesisProfileSave(1200);
+  }
+});
 
 // ===== Offline cache via IndexedDB (stores downloaded CSVs) =====
 const IDB_NAME = "mdict_cache";
@@ -1308,6 +1324,10 @@ function defaultProfile(){
       records: [],
       active_patient_id: ""
     },
+    patient_trainer: {
+      anonymous_user_id: "",
+      sessions: []
+    },
     settings: {}
   };
 }
@@ -1357,6 +1377,7 @@ function ensureProfileShape(rawProfile){
     merged.anamnesis.activePatientId ||
     ""
   ).trim();
+  ensurePatientTrainerProfileShape(merged);
   merged.settings = merged.settings && typeof merged.settings === "object" ? merged.settings : {};
   return merged;
 }
@@ -1799,6 +1820,8 @@ function mergeProfiles(localProfileDoc, remoteProfileDoc){
   merged.anamnesis.active_patient_id = String(merged.anamnesis.activePatientId || "").trim();
   delete merged.anamnesis.activePatientId;
 
+  mergePatientTrainerProfiles(merged, local);
+
   merged.settings = {
     ...(remote.settings || {}),
     ...(local.settings || {})
@@ -2021,6 +2044,7 @@ async function saveUserProfileNow(reason = "manual"){
   profileSaveInFlight = true;
   try{
     userProfile = ensureProfileShape(userProfile);
+    syncPatientTrainerHistoryWithProfile(userProfile, { claimGuestSessions: false });
     userProfile.meta.updated_at = nowIso();
     let saveRes = await driveUpdateProfileFile(profileFileId, userProfile, profileFileEtag);
     if(saveRes.conflict){
@@ -2097,6 +2121,8 @@ async function handleGoogleTokenResponse(resp){
     setSyncLoadingScreen(true, tOr("sync_progress_drive", "Synchronizing study progress with Google Drive..."));
     console.log("[AUTH] got access token, loading Drive profile...");
     await loadOrCreateDriveProfile();
+    syncPatientTrainerHistoryWithProfile(userProfile);
+    markProfileDirty();
     syncLatinCourseProgressWithProfile();
     loadAnamnesisRegistryFromStorage();
     if(getAttachmentSyncMode() !== STORAGE_MODE_DRIVE){
@@ -2226,6 +2252,7 @@ async function signOutGoogleDrive(){
   stopProfileAutosave();
   state.currentUser = null;
   state.currentUserEmail = null;
+  clearActivePatientTrainerAccountId();
   clearAiSessionToken();
   if(typeof quizLastFinishedState !== "undefined") quizLastFinishedState = null;
   if(typeof flashcardsV2State !== "undefined" && flashcardsV2State && flashcardsV2State.session){

@@ -5,58 +5,94 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Patient Trainer · Medical Dictionary</title>
-<link href="./styles.css?v=116" rel="stylesheet"/>
+<link href="./styles.css?v=131" rel="stylesheet"/>
 </head>
-<body>
+<body class="patient-trainer-page app-workspace-active">
+<header class="pt-shell-header">
+  <div class="pt-shell-header-left">
+    <button id="ptNavToggle" class="pt-shell-icon-button" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <a class="pt-shell-icon-button pt-shell-back" href="../main/" aria-label="Back to Medical Dictionary">←</a>
+    <div class="pt-shell-brand-lockup"><span data-pt-i18n="clinical_workspace">Clinical Study Workspace</span><strong data-pt-i18n="patient_trainer">Patient Trainer</strong></div>
+  </div>
+  <div class="pt-shell-header-actions">
+    <a class="pt-shell-search" href="../search/"><span aria-hidden="true">⌕</span><span data-pt-i18n="search_anything">Search anything</span><kbd>Ctrl K</kbd></a>
+    <button id="ptSettingsToggle" class="pt-shell-icon-button" type="button" aria-label="Settings">⚙</button>
+  </div>
+</header>
+<aside id="ptShellSidebar" class="pt-shell-sidebar" aria-label="Primary navigation">
+  <a class="pt-shell-sidebar-brand" href="../main/"><img src="../assets/logo-menu.png" alt=""><span><strong>Medical Dictionary</strong><small data-pt-i18n="study_workspace">Study workspace</small></span></a>
+  <nav class="pt-shell-nav">
+    <a href="../main/" class="pt-shell-nav-item"><span>⌂</span><b data-pt-i18n="home">Home</b></a>
+    <a href="../search/" class="pt-shell-nav-item"><span>⌕</span><b data-pt-i18n="search">Search</b></a>
+    <div class="pt-shell-nav-group"><em data-pt-i18n="reference">Reference</em>
+      <a href="../pharmacology/" class="pt-shell-nav-item"><span>Rx</span><b data-pt-i18n="pharmacology">Pharmacology</b></a>
+      <a href="../muscles/" class="pt-shell-nav-item"><span>A</span><b data-pt-i18n="anatomy">Anatomy</b></a>
+      <a href="../lab-parameters/" class="pt-shell-nav-item"><span>Lab</span><b data-pt-i18n="laboratory">Laboratory</b></a>
+      <a href="../latin-terminology/" class="pt-shell-nav-item"><span>L</span><b data-pt-i18n="latin">Latin</b></a>
+    </div>
+    <div class="pt-shell-nav-group"><em data-pt-i18n="study">Study</em>
+      <a href="../quiz/" class="pt-shell-nav-item"><span>?</span><b data-pt-i18n="quiz">Quiz</b></a>
+      <a href="../flashcards/" class="pt-shell-nav-item"><span>▱</span><b data-pt-i18n="flashcards">Flashcards</b></a>
+      <a href="../courses/" class="pt-shell-nav-item"><span>C</span><b data-pt-i18n="courses">Courses</b></a>
+      <a href="../biophysics/" class="pt-shell-nav-item"><span>T/F</span><b data-pt-i18n="biophysics">Biophysics True/False</b></a>
+    </div>
+    <div class="pt-shell-nav-group"><em data-pt-i18n="clinical">Clinical</em>
+      <a href="../anamnesis/" class="pt-shell-nav-item"><span>+</span><b data-pt-i18n="anamnesis">Anamnesis</b></a>
+      <a href="./" class="pt-shell-nav-item is-active" aria-current="page"><span>Pt</span><b data-pt-i18n="patient_trainer">Patient Trainer</b></a>
+    </div>
+  </nav>
+  <div class="pt-shell-sidebar-footer">
+    <a href="../entry/" class="pt-shell-nav-item"><span>+</span><b data-pt-i18n="add_term">Add term</b></a>
+    <button id="ptSidebarSettings" class="pt-shell-nav-item" type="button"><span>⚙</span><b data-pt-i18n="settings">Settings</b></button>
+  </div>
+</aside>
+<button id="ptShellScrim" class="pt-shell-scrim" type="button" aria-label="Close navigation"></button>
+<aside id="ptSettingsDrawer" class="pt-settings-drawer" aria-hidden="true" aria-label="Settings">
+  <div class="pt-settings-head"><h2 data-pt-i18n="settings">Settings</h2><button id="ptSettingsClose" type="button" aria-label="Close">×</button></div>
+  <section><h3 data-pt-i18n="language">Language</h3><div class="pt-language-row"><button data-pt-language="Slovensky" type="button">🇸🇰</button><button data-pt-language="Deutsch" type="button">🇩🇪</button><button data-pt-language="English" type="button">🇬🇧</button></div></section>
+  <section><h3 data-pt-i18n="text_size">Text size</h3><input id="ptTextSize" type="range" min="1" max="7" step="1" value="4"></section>
+  <section><h3 data-pt-i18n="theme">Theme</h3><div class="pt-theme-row"><button id="ptThemeLight" type="button" data-pt-i18n="light">Light</button><button id="ptThemeDark" type="button" data-pt-i18n="dark">Dark</button></div></section>
+</aside>
+<button id="ptSettingsScrim" class="pt-settings-scrim" type="button" aria-label="Close settings"></button>
+<main class="pt-shell-main">
 <div class="app-shell" id="app">
 <section class="setup-screen" id="setupScreen">
-<div class="setup-shell">
-<header class="setup-brandbar">
-<a aria-label="Back to Medical Dictionary" class="back-to-app" href="../main/">← Medical Dictionary</a>
-<span class="setup-version">Patient Trainer · Clinical Encounter</span>
-</header>
-<div class="setup-hero-grid">
-<section class="setup-intro-card">
-<p class="eyebrow">Medical Education Simulator</p>
-<h1>Enter a clinical station</h1>
-<p class="hero-text">
-                Interview the patient, examine selectively, request investigations, keep a working differential, and hand the case over when you are ready.
-              </p>
-<div aria-label="Station workflow" class="setup-feature-row">
-<span>01 Interview</span><span>02 Examine</span><span>03 Investigate</span><span>04 Reason</span><span>05 Handover</span>
+<div class="setup-shell pt-setup-shell">
+<div class="pt-setup-heading">
+  <p class="eyebrow" data-pt-i18n="medical_education_simulator">Medical Education Simulator</p>
+  <h1 data-pt-i18n="choose_training">Choose how you want to train</h1>
+  <p data-pt-i18n="choose_training_desc">Keep the current anamnesis trainer focused, or preview the larger clinical encounter that is still being built.</p>
 </div>
+<section class="pt-experience-picker" id="experiencePicker" aria-label="Patient Trainer mode">
+  <button class="pt-experience-card is-selected" data-trainer-experience="anamnesis" type="button">
+    <span class="pt-experience-icon">A</span><span><strong data-pt-i18n="anamnesis_only">Anamnesis only</strong><small data-pt-i18n="anamnesis_only_desc">Take a complete history from the patient. Interview, track covered topics, and keep a structured worksheet.</small></span><em data-pt-i18n="available">Available</em>
+  </button>
+  <button class="pt-experience-card is-development" data-trainer-experience="full" type="button" aria-disabled="true">
+    <span class="pt-experience-icon">+</span><span><strong data-pt-i18n="anamnesis_exam">Anamnesis + examination</strong><small data-pt-i18n="anamnesis_exam_desc">Full encounter with examination, investigations, reasoning and handover.</small></span><em data-pt-i18n="under_development">Under development</em>
+  </button>
 </section>
-<section class="setup-card setup-config-card">
+<div class="pt-dev-access-note" id="developerAccessNote" hidden></div>
+<section class="setup-card setup-config-card pt-setup-config">
 <div class="setup-card-heading">
-<div><p class="eyebrow">Station setup</p><h2>Configure your attempt</h2></div>
-<button class="secondary compact-setup-action" id="randomCaseBtn" type="button">Random case</button>
+<div><p class="eyebrow" data-pt-i18n="station_setup">Station setup</p><h2 data-pt-i18n="configure_attempt">Configure your attempt</h2></div>
+<button class="secondary compact-setup-action" id="randomCaseBtn" type="button" data-pt-i18n="random_case">Random case</button>
 </div>
 <div class="setup-grid">
-<label class="setup-field setup-field-wide">
-<span>Case</span>
-<select id="caseSelect"></select>
-</label>
-<label class="setup-field">
-<span>Difficulty</span>
-<select id="difficultySelect">
-<option value="beginner">Beginner</option>
-<option selected="" value="intermediate">Intermediate</option>
-<option value="advanced">Advanced</option>
-</select>
-</label>
-<label class="setup-field">
-<span>Regime</span>
-<select id="modeSelect">
-<option selected="" value="practice">Practice</option>
-<option value="teaching">Teaching</option>
-<option value="exam">Exam</option>
-</select>
-</label>
+<label class="setup-field setup-field-wide"><span data-pt-i18n="case">Case</span><select id="caseSelect"></select></label>
+<label class="setup-field"><span data-pt-i18n="difficulty">Difficulty</span><select id="difficultySelect"><option value="beginner">Beginner</option><option selected="" value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
+<label class="setup-field"><span data-pt-i18n="regime">Regime</span><select id="modeSelect"><option selected="" value="practice">Practice</option><option value="teaching">Teaching</option><option value="exam">Exam</option></select></label>
 </div>
 <div class="setup-preview" id="setupPreview"></div>
-<button class="start-training-btn" id="startTrainingBtn" type="button">Enter station</button>
+<button class="start-training-btn" id="startTrainingBtn" type="button" data-pt-i18n="start_anamnesis">Start anamnesis</button>
 </section>
-</div>
+<section class="setup-card pt-session-history-card" aria-labelledby="patientTrainerHistoryTitle">
+  <div class="setup-card-heading">
+    <div><p class="eyebrow">Patient Trainer</p><h2 id="patientTrainerHistoryTitle">Session history</h2></div>
+    <span class="badge subtle" id="patientTrainerHistoryCount">0 sessions</span>
+  </div>
+  <p class="pt-history-intro">Continue unfinished sessions or review completed records. Developer upload locations are never shown here.</p>
+  <div class="pt-session-history-list" id="patientTrainerHistoryList"></div>
+</section>
 </div>
 </section>
 <section class="training-screen" hidden="" id="trainingScreen">
@@ -72,7 +108,7 @@
 <div class="station-actions">
 <span class="badge" id="stationModeBadge"></span>
 <span class="badge subtle" id="stationDifficultyBadge"></span>
-<button class="secondary" id="restartBtn" type="button">New scenario</button><button aria-controls="coachRail" aria-expanded="false" class="secondary coach-toggle-button" id="coachToggleBtn" type="button">Coach</button>
+<button class="secondary" id="restartBtn" type="button" data-pt-i18n="new_scenario">New scenario</button><button class="secondary anamnesis-finish-button" id="finishAnamnesisBtn" type="button" data-pt-i18n="finish_anamnesis">Finish anamnesis</button><button aria-controls="coachRail" aria-expanded="false" class="secondary coach-toggle-button" id="coachToggleBtn" type="button">Coach</button>
 </div>
 </header>
 <nav aria-label="Clinical encounter workspace" class="encounter-stepbar">
@@ -189,6 +225,12 @@
 <div class="handover-panel" id="closingPanel"></div>
 </section>
 </section>
+<aside class="anamnesis-companion" id="anamnesisCompanion" aria-label="Anamnesis companion">
+  <header class="anamnesis-companion-head"><div><p class="eyebrow" data-pt-i18n="anamnesis_companion">Anamnesis companion</p><h2>Coverage overview</h2></div><button id="anamnesisCompanionClose" class="anamnesis-companion-close" type="button" aria-label="Close">×</button></header>
+  <div class="anamnesis-companion-content" id="anamnesisCompanionContent"></div>
+</aside>
+<button class="anamnesis-companion-mobile-toggle" id="anamnesisCompanionToggle" type="button"><span>☷</span><span data-pt-i18n="overview">Overview</span></button>
+<button class="anamnesis-companion-backdrop" id="anamnesisCompanionBackdrop" type="button" aria-label="Close anamnesis overview"></button>
 <aside aria-hidden="true" aria-label="Mode-specific training panel" class="coach-rail" id="coachRail">
 <section class="coach-window">
 <header class="coach-window-header"><div><p class="eyebrow">Learning support</p><h2 id="coachWindowTitle">Practice coach</h2></div><span class="coach-mode-dot"></span><button aria-label="Close learning support" class="secondary coach-close-button" id="coachCloseBtn" type="button">×</button></header>
@@ -199,6 +241,7 @@
 <button aria-label="Close learning support" class="coach-drawer-backdrop" id="coachBackdrop" type="button"></button></main>
 </section>
 </div>
+</main>
 <div aria-hidden="true" class="clinical-modal" id="vitalsMonitorModal">
 <div class="clinical-modal-backdrop" data-close="vitals"></div>
 <section aria-labelledby="vitalsMonitorTitle" aria-modal="true" class="clinical-modal-card vitals-monitor-card" role="dialog">
@@ -225,6 +268,20 @@
 </div>
 </section>
 </div>
+<div aria-hidden="true" class="clinical-modal" id="anamnesisDebriefModal">
+  <div class="clinical-modal-backdrop" data-close="anamnesis-debrief"></div>
+  <section class="clinical-modal-card anamnesis-debrief-card" role="dialog" aria-modal="true" aria-labelledby="anamnesisDebriefTitle">
+    <header class="clinical-modal-header"><div><p class="eyebrow" data-pt-i18n="anamnesis_debrief">Anamnesis debrief</p><h2 id="anamnesisDebriefTitle" data-pt-i18n="history_review">History review</h2></div><button class="secondary" id="closeAnamnesisDebriefBtn" type="button" data-pt-i18n="close">Close</button></header>
+    <div class="anamnesis-debrief-content" id="anamnesisDebriefContent"></div>
+  </section>
+</div>
+<div aria-hidden="true" class="clinical-modal" id="patientTrainerRecordModal">
+  <div class="clinical-modal-backdrop" data-close="patient-trainer-record"></div>
+  <section class="clinical-modal-card pt-record-card" role="dialog" aria-modal="true" aria-labelledby="patientTrainerRecordTitle">
+    <header class="clinical-modal-header"><div><p class="eyebrow">Patient Trainer</p><h2 id="patientTrainerRecordTitle">Session record</h2></div><button class="secondary" id="closePatientTrainerRecordBtn" type="button">Close</button></header>
+    <div class="pt-record-content" id="patientTrainerRecordContent"></div>
+  </section>
+</div>
 <script>
       window.ANAMNESIS_AI_ENABLED = true;
       window.ANAMNESIS_API_BASE_URL = "https://medical-dictionary-jlf.vercel.app";
@@ -237,6 +294,7 @@
   }
 }
 </script>
-<script src="./src/main.js?v=117" type="module"></script>
+<script src="./src/ui/trainerShell.js?v=131" type="module"></script>
+<script src="./src/main.js?v=131" type="module"></script>
 </body>
 </html>

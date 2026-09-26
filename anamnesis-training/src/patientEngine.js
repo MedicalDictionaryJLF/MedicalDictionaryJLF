@@ -127,6 +127,54 @@ const DIRECT_RULES = [
 export class PatientEngine {
   constructor(patientCase, options = {}) { this.options = options; this.loadCase(patientCase); }
 
+  exportState() {
+    return {
+      askedIntents: [...this.askedIntents],
+      attemptedIntents: [...this.attemptedIntents],
+      attemptEvents: structuredCopy(this.attemptEvents),
+      communicationEvents: structuredCopy(this.communicationEvents),
+      transcript: structuredCopy(this.transcript),
+      debugTurns: structuredCopy(this.debugTurns),
+      terminologyEvents: structuredCopy(this.terminologyEvents),
+      lastIntent: this.lastIntent,
+      lastMeaningfulIntent: this.lastMeaningfulIntent,
+      lastMeaningfulDomain: this.lastMeaningfulDomain,
+      currentSymptom: this.currentSymptom,
+      lastQuestionType: this.lastQuestionType,
+      lastContextResolutionReason: this.lastContextResolutionReason,
+      lastDetection: structuredCopy(this.lastDetection),
+      pendingClarification: structuredCopy(this.pendingClarification),
+      rapport: this.rapport,
+      rapportEvents: structuredCopy(this.rapportEvents),
+      lastRapportEvent: structuredCopy(this.lastRapportEvent),
+      turn: this.turn
+    };
+  }
+
+  restoreState(state = {}) {
+    if (!state || typeof state !== 'object') return this;
+    this.askedIntents = new Set(Array.isArray(state.askedIntents) ? state.askedIntents : []);
+    this.attemptedIntents = new Set(Array.isArray(state.attemptedIntents) ? state.attemptedIntents : []);
+    this.attemptEvents = structuredCopy(Array.isArray(state.attemptEvents) ? state.attemptEvents : []);
+    this.communicationEvents = structuredCopy(Array.isArray(state.communicationEvents) ? state.communicationEvents : []);
+    this.transcript = structuredCopy(Array.isArray(state.transcript) ? state.transcript : []);
+    this.debugTurns = structuredCopy(Array.isArray(state.debugTurns) ? state.debugTurns : []);
+    this.terminologyEvents = structuredCopy(Array.isArray(state.terminologyEvents) ? state.terminologyEvents : []);
+    this.lastIntent = state.lastIntent || null;
+    this.lastMeaningfulIntent = state.lastMeaningfulIntent || null;
+    this.lastMeaningfulDomain = state.lastMeaningfulDomain || null;
+    this.currentSymptom = state.currentSymptom || null;
+    this.lastQuestionType = state.lastQuestionType || null;
+    this.lastContextResolutionReason = String(state.lastContextResolutionReason || '');
+    this.lastDetection = structuredCopy(state.lastDetection || null);
+    this.pendingClarification = structuredCopy(state.pendingClarification || null);
+    this.rapport = Number.isFinite(Number(state.rapport)) ? Number(state.rapport) : (this.case.personality?.baselineRapport ?? 70);
+    this.rapportEvents = structuredCopy(Array.isArray(state.rapportEvents) ? state.rapportEvents : []);
+    this.lastRapportEvent = structuredCopy(state.lastRapportEvent || null);
+    this.turn = Math.max(0, Number(state.turn || 0));
+    return this;
+  }
+
   loadCase(patientCase) {
     this.case = patientCase;
     this.askedIntents = new Set();
@@ -821,6 +869,14 @@ export class PatientEngine {
   pushStudent(text, intent, feedbackLabel = '') { this.transcript.push({ role: 'student', text, intent, feedbackLabel, at: Date.now() }); }
   pushPatient(text, intent) { this.transcript.push({ role: 'patient', text, intent, at: Date.now() }); }
   toCandidate(id, score = 0, reasons = []) { if (!INTENTS[id]) return null; return { id, title: INTENTS[id].title, score, reasons, answerKeys: INTENTS[id].answerKeys, alreadyAsked: this.askedIntents.has(id) }; }
+}
+
+function structuredCopy(value) {
+  if (value === undefined) return undefined;
+  if (typeof structuredClone === 'function') {
+    try { return structuredClone(value); } catch {}
+  }
+  return JSON.parse(JSON.stringify(value));
 }
 
 export function normalize(text) { return String(text ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim(); }
