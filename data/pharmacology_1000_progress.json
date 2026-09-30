@@ -1,0 +1,26 @@
+{
+  "project": "Medical Dictionary pharmacology 1000-drug completion",
+  "source_blob_sha": "ac6c997504f5bd21dd2cd8abf3d1fef68af34320",
+  "total_records": 1000,
+  "unique_ids": 1000,
+  "duplicate_ids": 0,
+  "duplicate_normalized_names": [],
+  "inventory_audit": {
+    "missing_category_counts": {
+      "atc": 0,
+      "mech": 0,
+      "uses": 0,
+      "admin": 0,
+      "safety": 0,
+      "interactions": 0,
+      "pk": 0
+    },
+    "first_incomplete_records": []
+  },
+  "content_review": {
+    "completed_records": 0,
+    "next_index": 0
+  },
+  "cleanup_pending": true,
+  "note": "Initial canonical-dataset audit completed. No drug is marked clinically reviewed yet."
+}
