@@ -223,8 +223,21 @@ module.exports = async function handler(req, res) {
       signal: AbortSignal.timeout(12000)
     });
     const raw = await upstream.text();
+    const upstreamContentType = String(upstream.headers.get("content-type") || "unknown").slice(0, 120);
+    let upstreamHost = "unknown";
+    try { upstreamHost = new URL(upstream.url).hostname || "unknown"; } catch {}
+
     let answer;
-    try { answer = JSON.parse(raw); } catch { return sendJson(res, 502, { ok: false, error: "Upload service returned an invalid response." }); }
+    try {
+      answer = JSON.parse(raw);
+    } catch {
+      const diagnostic = `HTTP ${upstream.status}; ${upstreamContentType}; final host ${upstreamHost}`;
+      console.error("patient-trainer-log invalid upstream response", diagnostic);
+      return sendJson(res, 502, {
+        ok: false,
+        error: `Upload service returned an invalid response (${diagnostic}).`
+      });
+    }
     if (!upstream.ok || !answer || answer.ok !== true) {
       return sendJson(res, 502, { ok: false, error: text(answer?.error, 300) || "Upload service rejected the session." });
     }
