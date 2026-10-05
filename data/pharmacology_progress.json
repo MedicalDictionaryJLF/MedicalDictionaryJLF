@@ -1,13 +1,14 @@
 {
   "project": "Medical Dictionary pharmacology 1000-drug completion",
   "canonical_file": "data/pharmacology_database_test.json",
+  "target_branch": "pharmacology-1000-enrichment",
   "record_count": 1000,
-  "batch_status": "canonical_dataset_recovered",
-  "completed_actions": [
-    "Confirmed canonical repository and database blob",
-    "Confirmed 1000 structured drug records are present",
-    "Audited student-facing metadata targeted for removal"
-  ],
-  "next_action": "Continue substance-specific enrichment and apply metadata cleanup when raw-file write access is available.",
-  "reviewed_through_index": 0
+  "completed_count": 0,
+  "completed_ids": [],
+  "next_index": 0,
+  "failed_ids": [],
+  "status": "blocked",
+  "validation_status": "not_started",
+  "blocker": "The approved first-20 preview exists as a ChatGPT conversation attachment, but the current GitHub connector only accepts UTF-8 content strings and cannot upload/materialize that local attachment directly into the repository. The preview therefore could not be persisted as the required first working chunk without unsafe manual reconstruction.",
+  "last_successful_commit": null
 }
