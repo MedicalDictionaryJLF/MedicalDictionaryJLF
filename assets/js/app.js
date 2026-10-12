@@ -2460,6 +2460,430 @@ const ANAMNESIS_DICTIONARY_CANDIDATE_GROUPS = [
   ]
 ];
 
+
+const ANAMNESIS_QUESTION_PROMPT_CANDIDATES = [
+  resolveBundledDataUrl("app_language/anamnesis_question_prompts.csv"),
+  "data/app_language/anamnesis_question_prompts.csv"
+];
+const anamnesisQuestionPromptMap = new Map();
+const anamnesisQuestionPromptState = { loaded: false, loadPromise: null };
+const anamnesisQuestionObservers = new WeakMap();
+let anamnesisQuestionPopoverEl = null;
+let anamnesisQuestionActiveButton = null;
+let anamnesisQuestionActiveAnchor = null;
+let anamnesisQuestionHoverTimer = null;
+const ANAMNESIS_QUESTION_POPOVER_ID = "anamnesis-question-popover";
+
+function normalizeAnamnesisQuestionKey(value){
+  return String(value || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+async function loadAnamnesisQuestionPrompts(){
+  anamnesisQuestionPromptMap.clear();
+  let parsed = null;
+  let lastErr = null;
+  for(const path of ANAMNESIS_QUESTION_PROMPT_CANDIDATES){
+    try{
+      const txt = await loadFile(path);
+      if(!String(txt || "").trim()) continue;
+      const rows = parseCSVLines(txt);
+      if(rows.length < 2) continue;
+      parsed = rows;
+      break;
+    }catch(e){
+      lastErr = e;
+    }
+  }
+  if(!parsed){
+    if(lastErr) console.warn("Anamnesis question prompts load failed:", lastErr.message || lastErr);
+    return false;
+  }
+  for(const row of rowsToObjects(parsed)){
+    const key = normalizeAnamnesisQuestionKey(row.key);
+    if(!key) continue;
+    anamnesisQuestionPromptMap.set(key, {
+      key,
+      en: normalizeAnamnesisText(row.english_question),
+      sk: normalizeAnamnesisText(row.slovak_question),
+      kind: String(row.kind || "patient").trim().toLowerCase() === "clinical" ? "clinical" : "patient"
+    });
+  }
+  return anamnesisQuestionPromptMap.size > 0;
+}
+
+async function ensureAnamnesisQuestionPromptsLoaded(){
+  if(anamnesisQuestionPromptState.loaded) return true;
+  if(anamnesisQuestionPromptState.loadPromise) return anamnesisQuestionPromptState.loadPromise;
+  anamnesisQuestionPromptState.loadPromise = (async ()=>{
+    try{
+      anamnesisQuestionPromptState.loaded = await loadAnamnesisQuestionPrompts();
+      return anamnesisQuestionPromptState.loaded;
+    }catch(e){
+      console.warn("Anamnesis question prompt initialization failed:", e.message || e);
+      return false;
+    }finally{
+      anamnesisQuestionPromptState.loadPromise = null;
+    }
+  })();
+  return anamnesisQuestionPromptState.loadPromise;
+}
+
+function getAnamnesisDictionaryRowByAnyText(value){
+  const normalized = normalizeAnamnesisText(value);
+  if(!normalized) return null;
+  const direct = anamnesisDictionary.get(normalized);
+  if(direct) return direct;
+  const lower = normalized.toLowerCase();
+  for(const row of anamnesisDictionaryById.values()){
+    if([row.english, row.slovak, row.german].some(item => normalizeAnamnesisText(item).toLowerCase() === lower)){
+      return row;
+    }
+  }
+  return null;
+}
+
+function humanizeAnamnesisFieldName(value){
+  return String(value || "")
+    .replace(/^(ped_|psych_|anam_)/i, "")
+    .replace(/^(spg_|spl_|vital_|ref_|hpi_|ros_|pmh_)/i, "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase())
+    .trim();
+}
+
+function cleanAnamnesisQuestionLabelText(value){
+  return normalizeAnamnesisText(String(value || "")
+    .replace(/[?]\s*$/g, "")
+    .replace(/\s+[+−-]\s*$/g, ""));
+}
+
+function getAnamnesisQuestionLabelPair(target, explicitLabel = ""){
+  const keyed = target && target.closest ? target.closest("[data-anam-key]") : null;
+  const dataKey = String((target && target.dataset && target.dataset.anamKey) || (keyed && keyed.dataset && keyed.dataset.anamKey) || "").trim();
+  if(dataKey){
+    const row = anamnesisDictionaryById.get(dataKey);
+    if(row && (row.english || row.slovak)){
+      return {
+        en: cleanAnamnesisQuestionLabelText(row.english || row.slovak),
+        sk: cleanAnamnesisQuestionLabelText(row.slovak || row.english)
+      };
+    }
+  }
+  let raw = explicitLabel;
+  if(!raw && target){
+    if(target.classList && target.classList.contains("anam-psych-field-label")) raw = target.textContent;
+    if(!raw && target.closest){
+      const psychLabel = target.closest(".anam-psych-field")?.querySelector(".anam-psych-field-label .anam-help-term-text");
+      if(psychLabel) raw = psychLabel.textContent;
+    }
+    if(!raw && target.matches && target.matches("input,textarea,select")) raw = target.getAttribute("placeholder") || "";
+    if(!raw && target.tagName === "TD") raw = target.textContent;
+    if(!raw && target.matches && target.matches("span,strong,label")) raw = target.textContent;
+  }
+  raw = cleanAnamnesisQuestionLabelText(raw);
+  const dictionaryRow = getAnamnesisDictionaryRowByAnyText(raw);
+  if(dictionaryRow){
+    return {
+      en: cleanAnamnesisQuestionLabelText(dictionaryRow.english || raw),
+      sk: cleanAnamnesisQuestionLabelText(dictionaryRow.slovak || dictionaryRow.english || raw)
+    };
+  }
+  const fallback = raw || humanizeAnamnesisFieldName(target && target.name);
+  return { en: fallback, sk: fallback };
+}
+
+function isGenericAnamnesisOptionLabel(text){
+  return /^(yes|no|male|female|áno|nie|muž|žena)$/i.test(cleanAnamnesisQuestionLabelText(text));
+}
+
+function isClinicalAnamnesisQuestionTarget(target){
+  if(!target) return false;
+  const name = String(target.name || "").toLowerCase();
+  if(/^(spg_|spl_|vital_|ref_|ped_spg_|ped_spl_|ped_vital_|ped_spine_)/.test(name)) return true;
+  if(target.classList && target.classList.contains("anam-psych-clinician")) return true;
+  if(target.closest && target.closest(".anam-psych-clinician")) return true;
+  const section = target.closest ? target.closest(".anam-section") : null;
+  const heading = section ? cleanAnamnesisQuestionLabelText(section.querySelector("summary strong, h3")?.textContent || "").toLowerCase() : "";
+  return /status praesens|vital signs|physical|neurological|mental state examination|reference values|clinical formulation/.test(heading);
+}
+
+function getExplicitAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  const keys = [];
+  if(target && target.name) keys.push(normalizeAnamnesisQuestionKey(target.name));
+  if(target && target.dataset && target.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(target.dataset.anamKey));
+  const keyed = target && target.closest ? target.closest("[data-anam-key]") : null;
+  if(keyed && keyed.dataset && keyed.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(keyed.dataset.anamKey));
+  const pair = getAnamnesisQuestionLabelPair(target, explicitLabel);
+  if(pair.en) keys.push("label:" + normalizeAnamnesisQuestionKey(pair.en));
+  if(pair.sk) keys.push("label:" + normalizeAnamnesisQuestionKey(pair.sk));
+  for(const key of keys){
+    const prompt = anamnesisQuestionPromptMap.get(key);
+    if(prompt) return prompt;
+  }
+  return null;
+}
+
+function buildFallbackAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  const pair = getAnamnesisQuestionLabelPair(target, explicitLabel);
+  if(!pair.en && !pair.sk) return null;
+  const clinical = isClinicalAnamnesisQuestionTarget(target);
+  const enLabel = pair.en || pair.sk;
+  const skLabel = pair.sk || pair.en;
+  if(clinical){
+    return { en: "Assess: " + enLabel + ".", sk: "Zhodnoťte: " + skLabel + ".", kind: "clinical" };
+  }
+  if(/[?]$/.test(String(explicitLabel || "").trim())){
+    return { en: String(explicitLabel || "").trim(), sk: "Spýtajte sa na: " + skLabel + ".", kind: "patient" };
+  }
+  return { en: "Ask about: " + enLabel + ".", sk: "Spýtajte sa na: " + skLabel + ".", kind: "patient" };
+}
+
+function resolveAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  return getExplicitAnamnesisQuestionPrompt(target, explicitLabel) || buildFallbackAnamnesisQuestionPrompt(target, explicitLabel);
+}
+
+function ensureAnamnesisQuestionPopover(){
+  if(anamnesisQuestionPopoverEl && document.body.contains(anamnesisQuestionPopoverEl)) return anamnesisQuestionPopoverEl;
+  const pop = document.createElement("div");
+  pop.id = ANAMNESIS_QUESTION_POPOVER_ID;
+  pop.className = "anam-question-popover hidden";
+  pop.setAttribute("role", "dialog");
+  pop.setAttribute("aria-hidden", "true");
+  pop.setAttribute("aria-label", "Suggested anamnesis question");
+  pop.addEventListener("mouseenter", ()=>{
+    if(anamnesisQuestionHoverTimer){
+      clearTimeout(anamnesisQuestionHoverTimer);
+      anamnesisQuestionHoverTimer = null;
+    }
+  });
+  pop.addEventListener("mouseleave", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches) scheduleAnamnesisQuestionPopoverClose();
+  });
+  document.body.appendChild(pop);
+  anamnesisQuestionPopoverEl = pop;
+  return pop;
+}
+
+function closeAnamnesisQuestionPopover(){
+  if(anamnesisQuestionHoverTimer){
+    clearTimeout(anamnesisQuestionHoverTimer);
+    anamnesisQuestionHoverTimer = null;
+  }
+  if(anamnesisQuestionActiveButton) anamnesisQuestionActiveButton.setAttribute("aria-expanded", "false");
+  if(anamnesisQuestionPopoverEl){
+    anamnesisQuestionPopoverEl.classList.add("hidden");
+    anamnesisQuestionPopoverEl.setAttribute("aria-hidden", "true");
+  }
+  anamnesisQuestionActiveButton = null;
+  anamnesisQuestionActiveAnchor = null;
+}
+
+function scheduleAnamnesisQuestionPopoverClose(){
+  if(anamnesisQuestionHoverTimer) clearTimeout(anamnesisQuestionHoverTimer);
+  anamnesisQuestionHoverTimer = setTimeout(()=> closeAnamnesisQuestionPopover(), 180);
+}
+
+function positionAnamnesisQuestionPopover(anchor){
+  if(!anamnesisQuestionPopoverEl || !anchor) return;
+  const margin = 10;
+  const gap = 8;
+  anamnesisQuestionPopoverEl.style.visibility = "hidden";
+  anamnesisQuestionPopoverEl.classList.remove("hidden");
+  anamnesisQuestionPopoverEl.setAttribute("aria-hidden", "false");
+  const anchorRect = anchor.getBoundingClientRect();
+  const popRect = anamnesisQuestionPopoverEl.getBoundingClientRect();
+  let left = anchorRect.left + anchorRect.width / 2 - popRect.width / 2;
+  left = Math.max(margin, Math.min(left, Math.max(margin, window.innerWidth - popRect.width - margin)));
+  let top = anchorRect.bottom + gap;
+  let placement = "bottom";
+  if(top + popRect.height > window.innerHeight - margin && anchorRect.top - popRect.height - gap >= margin){
+    top = anchorRect.top - popRect.height - gap;
+    placement = "top";
+  }
+  anamnesisQuestionPopoverEl.style.left = Math.round(left) + "px";
+  anamnesisQuestionPopoverEl.style.top = Math.round(Math.max(margin, top)) + "px";
+  anamnesisQuestionPopoverEl.dataset.placement = placement;
+  anamnesisQuestionPopoverEl.style.visibility = "visible";
+}
+
+function openAnamnesisQuestionPopover(button, anchor, prompt){
+  if(!prompt || (!prompt.en && !prompt.sk)) return;
+  const pop = ensureAnamnesisQuestionPopover();
+  pop.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "anam-question-popover-head";
+  const title = document.createElement("strong");
+  title.textContent = prompt.kind === "clinical" ? "Assessment prompt" : "Suggested question";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "anam-question-popover-close";
+  close.setAttribute("aria-label", "Close question help");
+  close.textContent = "×";
+  close.addEventListener("click", (event)=>{
+    event.preventDefault();
+    closeAnamnesisQuestionPopover();
+    button.focus();
+  });
+  head.append(title, close);
+  pop.appendChild(head);
+
+  const makeLine = (code, language, value)=>{
+    const row = document.createElement("div");
+    row.className = "anam-question-language-row";
+    const badge = document.createElement("span");
+    badge.className = "anam-question-language-badge";
+    badge.textContent = code;
+    const body = document.createElement("div");
+    const label = document.createElement("small");
+    label.textContent = language;
+    const question = document.createElement("p");
+    question.textContent = value || "—";
+    body.append(label, question);
+    row.append(badge, body);
+    return row;
+  };
+  pop.appendChild(makeLine("EN", "English", prompt.en || prompt.sk));
+  pop.appendChild(makeLine("SK", "Slovenčina", prompt.sk || prompt.en));
+
+  if(anamnesisQuestionActiveButton && anamnesisQuestionActiveButton !== button){
+    anamnesisQuestionActiveButton.setAttribute("aria-expanded", "false");
+  }
+  anamnesisQuestionActiveButton = button;
+  anamnesisQuestionActiveAnchor = anchor;
+  button.setAttribute("aria-expanded", "true");
+  button.setAttribute("aria-controls", ANAMNESIS_QUESTION_POPOVER_ID);
+  positionAnamnesisQuestionPopover(anchor);
+}
+
+function toggleAnamnesisQuestionPopover(button, anchor, prompt){
+  const isOpen = anamnesisQuestionActiveButton === button && anamnesisQuestionPopoverEl && !anamnesisQuestionPopoverEl.classList.contains("hidden");
+  if(isOpen) closeAnamnesisQuestionPopover();
+  else openAnamnesisQuestionPopover(button, anchor, prompt);
+}
+
+function createAnamnesisQuestionHelpButton(target, explicitLabel = ""){
+  const prompt = resolveAnamnesisQuestionPrompt(target, explicitLabel);
+  if(!prompt) return null;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "anam-question-help-button";
+  button.textContent = "?";
+  button.setAttribute("aria-label", prompt.kind === "clinical"
+    ? "Show assessment prompt in English and Slovak"
+    : "Show suggested question in English and Slovak");
+  button.setAttribute("aria-haspopup", "dialog");
+  button.setAttribute("aria-controls", ANAMNESIS_QUESTION_POPOVER_ID);
+  button.setAttribute("aria-expanded", "false");
+  button.addEventListener("click", (event)=>{
+    event.preventDefault();
+    event.stopPropagation();
+    toggleAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+  });
+  button.addEventListener("mouseenter", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches){
+      if(anamnesisQuestionHoverTimer) clearTimeout(anamnesisQuestionHoverTimer);
+      openAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+    }
+  });
+  button.addEventListener("mouseleave", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches) scheduleAnamnesisQuestionPopoverClose();
+  });
+  button.addEventListener("focus", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches){
+      openAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+    }
+  });
+  return button;
+}
+
+function decorateAnamnesisQuestionControl(control){
+  if(!control || control.dataset.anamQuestionReady === "1") return;
+  if(control.type === "hidden" || control.closest(".anam-question-popover")) return;
+  if(control.closest(".anam-repeater-head")) return;
+  if(control.type === "checkbox" || control.type === "radio"){
+    const label = control.closest("label");
+    if(!label || label.dataset.anamQuestionReady === "1") return;
+    const labelText = cleanAnamnesisQuestionLabelText(label.textContent);
+    if(!labelText || isGenericAnamnesisOptionLabel(labelText)) return;
+    const button = createAnamnesisQuestionHelpButton(control, labelText);
+    if(!button) return;
+    label.classList.add("anam-question-anchor", "anam-question-inline-label");
+    label.appendChild(button);
+    label.dataset.anamQuestionReady = "1";
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  if(control.closest(".anam-question-control-wrap")){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  const button = createAnamnesisQuestionHelpButton(control);
+  if(!button) return;
+  const parent = control.parentNode;
+  if(!parent) return;
+  const wrap = document.createElement("div");
+  wrap.className = "anam-question-control-wrap anam-question-anchor";
+  parent.insertBefore(wrap, control);
+  wrap.appendChild(control);
+  wrap.appendChild(button);
+  control.dataset.anamQuestionReady = "1";
+}
+
+function decorateAnamnesisQuestionLabel(label){
+  if(!label || label.dataset.anamQuestionReady === "1") return;
+  const labelText = cleanAnamnesisQuestionLabelText(label.textContent);
+  if(!labelText || isGenericAnamnesisOptionLabel(labelText)) return;
+  const button = createAnamnesisQuestionHelpButton(label, labelText);
+  if(!button) return;
+  label.classList.add("anam-question-anchor", "anam-question-labelled-point");
+  label.appendChild(button);
+  label.dataset.anamQuestionReady = "1";
+}
+
+function decorateAnamnesisTableRows(root){
+  root.querySelectorAll("tbody tr").forEach(row=>{
+    const first = row.querySelector(":scope > td:first-child");
+    if(!first || first.dataset.anamQuestionReady === "1" || first.querySelector("input,textarea,select")) return;
+    decorateAnamnesisQuestionLabel(first);
+  });
+}
+
+function decorateAnamnesisGroupLabels(root){
+  root.querySelectorAll(".anam-row > span:first-child, .anam-row > strong:first-child, .anam-psych-field-label, .anam-group-title").forEach(label=>{
+    decorateAnamnesisQuestionLabel(label);
+  });
+}
+
+function decorateAnamnesisQuestionHelp(root){
+  if(!root) return;
+  decorateAnamnesisGroupLabels(root);
+  decorateAnamnesisTableRows(root);
+  root.querySelectorAll("input, textarea, select").forEach(control=> decorateAnamnesisQuestionControl(control));
+}
+
+async function enhanceAnamnesisQuestionHelp(form){
+  if(!form) return;
+  if(anamnesisDictionaryById.size === 0){
+    try{ await loadAnamnesisDictionary(); }catch(e){}
+  }
+  await ensureAnamnesisQuestionPromptsLoaded();
+  decorateAnamnesisQuestionHelp(form);
+  if(!anamnesisQuestionObservers.has(form) && typeof MutationObserver !== "undefined"){
+    let queued = false;
+    const observer = new MutationObserver(()=>{
+      if(queued) return;
+      queued = true;
+      requestAnimationFrame(()=>{
+        queued = false;
+        decorateAnamnesisQuestionHelp(form);
+      });
+    });
+    observer.observe(form, { childList: true, subtree: true });
+    anamnesisQuestionObservers.set(form, observer);
+  }
+}
+
+
 function normalizeAnamnesisText(text){
   return String(text || '').replace(/\s+/g, ' ').trim();
 }
@@ -11282,6 +11706,7 @@ async function loadInternalAnamnesisForm(data = null){
     updateHpiRadiationVisibility();
     applyAnamnesisTranslationsToDom();
     enhanceAnamnesisSections(form);
+    await enhanceAnamnesisQuestionHelp(form);
     refreshAnamnesisInputMode();
     return;
   }
@@ -11302,6 +11727,7 @@ async function loadInternalAnamnesisForm(data = null){
   syncAgeFromDob(form);
   applyAnamnesisTranslationsToDom();
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
 
@@ -11316,6 +11742,7 @@ async function loadPsychiatryAnamnesisForm(data = null){
   }
   syncAgeFromDob(form);
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
 
@@ -11336,8 +11763,26 @@ async function loadPediatricsAnamnesisForm(data = null){
   updatePediatricsBloodTransfusionVisibility();
   syncAgeFromDob(form);
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
+
+
+document.addEventListener("click", (event)=>{
+  if(!anamnesisQuestionPopoverEl || anamnesisQuestionPopoverEl.classList.contains("hidden")) return;
+  const target = event.target instanceof Element ? event.target : null;
+  if(target && (target.closest(".anam-question-popover") || target.closest(".anam-question-help-button"))) return;
+  closeAnamnesisQuestionPopover();
+});
+document.addEventListener("keydown", (event)=>{
+  if(event.key === "Escape") closeAnamnesisQuestionPopover();
+});
+window.addEventListener("resize", ()=>{
+  if(anamnesisQuestionActiveAnchor) positionAnamnesisQuestionPopover(anamnesisQuestionActiveAnchor);
+});
+document.addEventListener("scroll", ()=>{
+  if(anamnesisQuestionActiveAnchor) positionAnamnesisQuestionPopover(anamnesisQuestionActiveAnchor);
+}, true);
 
 async function loadAnamnesisForm(){
   const record = getActiveAnamnesisPatientRecord();
