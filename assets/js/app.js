@@ -2800,6 +2800,33 @@ function decorateAnamnesisQuestionControl(control){
   if(!control || control.dataset.anamQuestionReady === "1") return;
   if(control.type === "hidden" || control.closest(".anam-question-popover")) return;
   if(control.closest(".anam-repeater-head")) return;
+
+  const psychField = control.closest(".anam-psych-field");
+  if(psychField && psychField.querySelector(".anam-psych-field-label[data-anam-question-ready=\"1\"]")){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  const row = control.closest(".anam-row");
+  if(row && row.querySelector(":scope > span:first-child[data-anam-question-ready=\"1\"], :scope > strong:first-child[data-anam-question-ready=\"1\"]")){
+    if(control.type !== "checkbox" && control.type !== "radio"){
+      control.dataset.anamQuestionReady = "1";
+      return;
+    }
+  }
+  const tableRow = control.closest("tbody tr");
+  if(tableRow){
+    const rowLabel = tableRow.querySelector(":scope > td:first-child[data-anam-question-ready=\"1\"]");
+    if(rowLabel){
+      control.dataset.anamQuestionReady = "1";
+      return;
+    }
+  }
+  const placeholder = cleanAnamnesisQuestionLabelText(control.getAttribute("placeholder") || "");
+  if(/^(notes?|other|details|reason|if yes details|add notes|enter value|optional response notes)$/i.test(placeholder)){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+
   if(control.type === "checkbox" || control.type === "radio"){
     const label = control.closest("label");
     if(!label || label.dataset.anamQuestionReady === "1") return;
