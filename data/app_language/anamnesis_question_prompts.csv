@@ -1,0 +1,124 @@
+key,english_question,slovak_question,kind
+ident_full_name,"What is your full name?","Ako sa voláte celým menom?",patient
+ident_dob,"What is your date of birth?","Aký je váš dátum narodenia?",patient
+ident_age,"How old are you?","Koľko máte rokov?",patient
+ident_sex,"How do you describe your sex?","Aké je vaše pohlavie?",patient
+ident_city,"Where do you live?","Kde bývate?",patient
+ident_admitted,"When were you admitted to the hospital?","Kedy vás prijali do nemocnice?",patient
+chief_complaint,"What brought you to the hospital today?","Čo vás dnes priviedlo do nemocnice?",patient
+hpi_site,"Where exactly is the problem or symptom located?","Kde presne sa problém alebo príznak nachádza?",patient
+hpi_onset,"When did the problem start?","Kedy sa problém začal?",patient
+hpi_onset_activity,"What were you doing when it started?","Čo ste robili, keď sa to začalo?",patient
+hpi_timing,"How long does it last and how often does it occur?","Ako dlho to trvá a ako často sa to objavuje?",patient
+hpi_exacerbating,"What makes it worse?","Čo to zhoršuje?",patient
+hpi_relieving,"What makes it better?","Čo to zmierňuje alebo zlepšuje?",patient
+hpi_radiation_where,"Does it spread anywhere else? If so, where?","Vyžaruje alebo sa šíri problém niekam ďalej? Ak áno, kam?",patient
+label:character / type of symptoms,"How would you describe the character of the symptoms?","Ako by ste opísali charakter príznakov?",patient
+label:character of pain,"How would you describe the pain?","Ako by ste opísali bolesť?",patient
+label:radiation,"Does the pain or symptom spread anywhere else?","Vyžaruje bolesť alebo príznak niekam ďalej?",patient
+label:associated symptoms,"Have you noticed any other symptoms with it?","Všimli ste si aj nejaké ďalšie pridružené príznaky?",patient
+label:severity (vas),"On a scale from 0 to 10, how severe is it?","Na škále od 0 do 10, aká silná je ťažkosť?",patient
+label:course since onset,"How has the problem changed since it started?","Ako sa problém zmenil od jeho začiatku?",patient
+label:specialist care,"Are you followed by any specialist doctors?","Ste sledovaný u nejakých odborných lekárov?",patient
+label:operations & hospitalizations,"Have you ever had an operation or been hospitalized?","Boli ste niekedy operovaný alebo hospitalizovaný?",patient
+label:planned operation now,"Do you currently have an operation planned?","Máte teraz naplánovanú operáciu?",patient
+label:previous examinations,"Have you had any relevant examinations or tests before?","Absolvovali ste už v súvislosti s týmto problémom nejaké vyšetrenia alebo testy?",patient
+allergies,"Do you have any allergies? What reaction do you get?","Máte nejaké alergie? Akú reakciu mávate?",patient
+label:blood transfusion in past,"Have you ever received a blood transfusion?","Dostali ste niekedy transfúziu krvi?",patient
+label:reaction,"Did you have any reaction to the transfusion?","Mali ste po transfúzii nejakú reakciu?",patient
+label:regular use of over the counter medicine,"Do you regularly take any over-the-counter medicines?","Užívate pravidelne nejaké voľnopredajné lieky?",patient
+label:regular use of supplements / vitamins / herbal products,"Do you use any supplements, vitamins, or herbal products?","Užívate nejaké výživové doplnky, vitamíny alebo bylinné prípravky?",patient
+label:history of misuse of prescribed drugs,"Have you ever taken prescribed medicines differently from how they were prescribed?","Užívali ste niekedy predpísané lieky inak, než vám boli predpísané?",patient
+label:regular menstruation,"Is your menstrual cycle regular?","Máte pravidelný menštruačný cyklus?",patient
+label:menopause,"Have you reached menopause?","Ste už v menopauze?",patient
+label:contraception,"Do you use any contraception?","Používate antikoncepciu?",patient
+label:children,"Do you have children? If yes, how many?","Máte deti? Ak áno, koľko?",patient
+label:deliveries,"Have you given birth? How were the deliveries?","Rodili ste? Akým spôsobom prebehli pôrody?",patient
+label:miscarriage / abortion,"Have you ever had a miscarriage or an abortion?","Mali ste niekedy spontánny potrat alebo umelé prerušenie tehotenstva?",patient
+label:pelvic pain,"Do you have or have you had pelvic pain?","Máte alebo ste mali bolesti v panve?",patient
+label:parents alive,"Are your parents alive?","Žijú vaši rodičia?",patient
+label:recent travel abroad (12 months),"Have you travelled abroad during the last 12 months?","Cestovali ste počas posledných 12 mesiacov do zahraničia?",patient
+label:pets / farm animals,"Do you have contact with pets or farm animals?","Ste v kontakte s domácimi alebo hospodárskymi zvieratami?",patient
+label:employment,"Are you currently working, retired, or unemployed?","Pracujete, ste na dôchodku alebo ste nezamestnaný?",patient
+label:occupation / previous jobs,"What is your occupation and what jobs have you done previously?","Aké je vaše povolanie a aké zamestnania ste vykonávali v minulosti?",patient
+label:marital status,"What is your marital status?","Aký je váš rodinný stav?",patient
+label:living situation,"Who do you live with?","S kým bývate?",patient
+label:housing,"What is your housing situation?","Aké sú vaše podmienky bývania?",patient
+label:smoking,"Do you smoke or use nicotine products?","Fajčíte alebo užívate nikotínové výrobky?",patient
+label:alcohol,"Do you drink alcohol? If yes, how much and how often?","Pijete alkohol? Ak áno, koľko a ako často?",patient
+label:coffee,"How much coffee do you drink?","Koľko kávy pijete?",patient
+label:black tea,"How much black tea do you drink?","Koľko čierneho čaju pijete?",patient
+label:drugs,"Do you use any recreational drugs or other substances?","Užívate rekreačné drogy alebo iné návykové látky?",patient
+label:orientation,"Can you tell me where you are and what day or date it is?","Môžete mi povedať, kde sa nachádzate a aký je dnes deň alebo dátum?",patient
+label:consciousness,"Assess the patient's level of consciousness and responsiveness.","Zhodnoťte úroveň vedomia a reakcie pacienta.",clinical
+label:general appearance,"Assess the patient's general appearance and level of distress.","Zhodnoťte celkový vzhľad pacienta a známky ťažkostí.",clinical
+label:hydration,"Assess hydration using mucous membranes and skin turgor.","Zhodnoťte hydratáciu podľa slizníc a kožného turgoru.",clinical
+label:nutrition status,"Assess the patient's nutritional status.","Zhodnoťte stav výživy pacienta.",clinical
+label:gait / mobility,"Please walk a few steps if you can so I can assess your gait and mobility.","Ak môžete, prejdite sa niekoľko krokov, aby som mohol zhodnotiť vašu chôdzu a pohyblivosť.",clinical
+label:speech,"Assess the patient's speech during the conversation.","Zhodnoťte reč pacienta počas rozhovoru.",clinical
+label:skin,"May I examine your skin?","Môžem vám prezrieť kožu?",clinical
+label:peripheral edema,"May I check your legs and dependent areas for swelling?","Môžem skontrolovať vaše dolné končatiny a závislé oblasti na prítomnosť opuchov?",clinical
+label:vital signs,"May I measure your vital signs?","Môžem vám zmerať vitálne funkcie?",clinical
+label:medical devices / lines / catheters,"Check which medical devices, lines, or catheters are currently present.","Skontrolujte, aké zdravotnícke pomôcky, vstupy alebo katétre má pacient zavedené.",clinical
+ped_hpi_site,"Where is your child's problem or symptom located?","Kde sa problém alebo príznak dieťaťa nachádza?",patient
+ped_hpi_onset,"When did it start and what was the child doing at the time?","Kedy sa to začalo a čo dieťa vtedy robilo?",patient
+ped_hpi_timing,"How often does it happen and how long does it last?","Ako často sa to objavuje a ako dlho to trvá?",patient
+ped_hpi_exacerbating,"What makes the child's symptoms worse?","Čo zhoršuje príznaky dieťaťa?",patient
+ped_hpi_relieving,"What makes the child's symptoms better?","Čo zmierňuje príznaky dieťaťa?",patient
+ped_hpi_radiation,"Does the symptom spread anywhere else?","Šíri sa príznak niekam ďalej?",patient
+label:planned pregnancy,"Was the pregnancy planned?","Bolo tehotenstvo plánované?",patient
+label:regular prenatal care,"Did the mother receive regular prenatal care?","Absolvovala matka pravidelnú prenatálnu starostlivosť?",patient
+label:gestational age,"Was the child born preterm, at term, or post-term?","Narodilo sa dieťa predčasne, v termíne alebo po termíne?",patient
+label:resuscitation,"Did the baby need resuscitation after birth?","Potrebovalo dieťa po pôrode resuscitáciu?",patient
+label:nicu admission,"Was the baby admitted to a neonatal intensive care unit?","Bolo dieťa prijaté na novorodeneckú jednotku intenzívnej starostlivosti?",patient
+label:feeding,"How was the child fed during infancy?","Ako bolo dieťa kŕmené počas dojčenského obdobia?",patient
+label:learning difficulties,"Has the child had any learning difficulties?","Malo dieťa nejaké problémy s učením?",patient
+label:attention problems,"Has the child had problems with attention?","Malo dieťa problémy s pozornosťou?",patient
+label:hyperactivity,"Have you noticed significant hyperactivity?","Všimli ste si výraznú hyperaktivitu?",patient
+label:behavioral problems,"Have you noticed any behavioural problems?","Všimli ste si nejaké problémy v správaní?",patient
+label:vaccination status,"Are the child's vaccinations up to date?","Má dieťa očkovanie podľa aktuálneho očkovacieho kalendára?",patient
+label:history of adverse vaccine reactions,"Has the child ever had an adverse reaction after vaccination?","Malo dieťa niekedy nežiaducu reakciu po očkovaní?",patient
+psych_name,"What is your name?","Ako sa voláte?",patient
+psych_age,"How old are you?","Koľko máte rokov?",patient
+psych_dob,"When were you born?","Kedy ste sa narodili?",patient
+psych_address,"Where do you live?","Kde bývate?",patient
+psych_living_with,"Who do you live with?","S kým bývate?",patient
+psych_occupation,"What is your occupation? Are you currently working?","Aké je vaše povolanie? Pracujete v súčasnosti?",patient
+psych_admitted_when,"When were you admitted?","Kedy vás prijali?",patient
+psych_admission_reason,"Why did you come to the hospital?","Prečo ste prišli do nemocnice?",patient
+psych_symptoms_most_bothersome,"What symptoms are bothering you the most now?","Ktoré príznaky vás teraz najviac trápia?",patient
+psych_onset_when,"When did the problem start?","Kedy sa problém začal?",patient
+psych_onset_type,"Did it start suddenly or gradually?","Začalo sa to náhle alebo postupne?",patient
+psych_context_at_onset,"What was happening in your life at that time?","Čo sa v tom čase dialo vo vašom živote?",patient
+psych_development,"How has the problem developed since then?","Ako sa problém odvtedy vyvíjal?",patient
+psych_course,"Are the symptoms continuous or do they come in episodes?","Sú príznaky nepretržité alebo sa objavujú v epizódach?",patient
+psych_modifiers,"What makes your symptoms better or worse?","Čo vaše príznaky zlepšuje alebo zhoršuje?",patient
+psych_function_impact,"How do these symptoms affect your everyday functioning?","Ako tieto príznaky ovplyvňujú vaše každodenné fungovanie?",patient
+psych_past_similar,"Has anything similar happened to you before?","Stalo sa vám niečo podobné už v minulosti?",patient
+psych_q_sad_low,"Do you feel sad, empty, or low in mood?","Cítite sa smutný, prázdny alebo máte zníženú náladu?",patient
+psych_q_anhedonia,"Have you lost interest or pleasure in things you usually enjoy?","Stratili ste záujem alebo potešenie z vecí, ktoré vás zvyčajne tešia?",patient
+psych_q_sleep,"How is your sleep?","Ako spíte?",patient
+psych_q_guilt_hopeless,"Do you feel guilty, worthless, or hopeless?","Máte pocity viny, bezcennosti alebo beznádeje?",patient
+psych_q_suicide,"Have you had thoughts of death or suicide?","Mali ste myšlienky na smrť alebo samovraždu?",patient
+psych_q_elevated_irritable,"Have you had periods of unusually elevated or irritable mood?","Mali ste obdobia nezvyčajne povznesenej alebo podráždenej nálady?",patient
+psych_q_increased_energy,"Have you had periods of unusually increased energy or activity?","Mali ste obdobia nezvyčajne zvýšenej energie alebo aktivity?",patient
+psych_q_decreased_sleep,"Have you needed much less sleep without feeling tired?","Potrebovali ste výrazne menej spánku bez pocitu únavy?",patient
+psych_q_tachypsychism_logorrhea,"Have your thoughts or speech felt unusually fast or difficult to slow down?","Mali ste pocit, že vaše myšlienky alebo reč sú nezvyčajne rýchle a ťažko sa spomaľujú?",patient
+psych_q_risky_behaviour,"Have you done unusually risky or impulsive things?","Robili ste nezvyčajne riskantné alebo impulzívne veci?",patient
+psych_q_worried_on_edge,"Do you often feel worried, tense, or on edge?","Cítite sa často ustarostený, napätý alebo v strehu?",patient
+psych_q_panic,"Have you had panic attacks or sudden episodes of intense fear?","Mali ste panické záchvaty alebo náhle epizódy intenzívneho strachu?",patient
+psych_q_phobias,"Do you have specific fears that make you avoid certain situations?","Máte konkrétne obavy, pre ktoré sa vyhýbate určitým situáciám?",patient
+psych_q_persecutory,"Do you feel that someone is trying to harm, watch, or control you?","Máte pocit, že sa vám niekto snaží ublížiť, sleduje vás alebo vás ovláda?",patient
+psych_q_schneider,"Have you felt that thoughts were inserted, removed, broadcast, or read by others?","Mali ste pocit, že vám niekto vkladá alebo odoberá myšlienky, že sa vaše myšlienky vysielajú alebo ich iní čítajú?",patient
+psych_q_intrusive,"Do you have intrusive thoughts that keep repeating?","Máte vtieravé myšlienky, ktoré sa opakovane vracajú?",patient
+psych_q_rituals,"Do you perform rituals or repeated actions to reduce anxiety?","Vykonávate rituály alebo opakované činnosti, aby ste zmiernili úzkosť?",patient
+psych_q_voices,"Do you hear voices when nobody is around?","Počujete hlasy, keď nikto nie je nablízku?",patient
+psych_q_visual,"Do you see things that other people cannot see?","Vidíte veci, ktoré iní ľudia nevidia?",patient
+psych_q_forget,"Have you had problems remembering recent or past events?","Máte problémy zapamätať si nedávne alebo minulé udalosti?",patient
+psych_q_focus,"Do you have difficulty concentrating or maintaining attention?","Máte ťažkosti so sústredením alebo udržaním pozornosti?",patient
+psych_q_day,"Can you tell me what day it is today?","Môžete mi povedať, aký je dnes deň?",patient
+psych_q_where,"Can you tell me where you are now?","Môžete mi povedať, kde sa teraz nachádzate?",patient
+psych_risk_suicidal_thoughts,"Have you had thoughts of harming or killing yourself?","Mali ste myšlienky na sebapoškodenie alebo na to, že by ste si vzali život?",patient
+psych_risk_suicidal_plan,"Have you made a specific plan to harm or kill yourself?","Máte konkrétny plán, ako by ste si ublížili alebo vzali život?",patient
+psych_risk_suicidal_means,"Do you have access to the means you would use?","Máte prístup k prostriedkom, ktoré by ste na to použili?",patient
+psych_risk_suicidal_intent,"Do you intend to act on those thoughts or plans?","Máte v úmysle podľa týchto myšlienok alebo plánov konať?",patient

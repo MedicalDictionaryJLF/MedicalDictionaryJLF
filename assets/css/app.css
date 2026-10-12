@@ -644,6 +644,184 @@ details.is-collapsing{
 .anam-row > span.anam-med-question{
   margin-top:2px;
 }
+
+.anam-question-anchor{
+  position:relative;
+}
+.anam-question-control-wrap{
+  position:relative;
+  display:block;
+  width:100%;
+  min-width:0;
+}
+.anam-question-control-wrap > input:not([type="checkbox"]):not([type="radio"]),
+.anam-question-control-wrap > textarea,
+.anam-question-control-wrap > select{
+  width:100%;
+  padding-right:38px;
+}
+.anam-question-help-button{
+  appearance:none;
+  -webkit-appearance:none;
+  width:24px;
+  height:24px;
+  min-width:24px;
+  min-height:24px;
+  padding:0;
+  border:1px solid color-mix(in srgb, var(--brand) 42%, var(--border));
+  border-radius:999px;
+  background:color-mix(in srgb, var(--brand) 7%, #fff);
+  color:var(--brand);
+  font-size:13px;
+  font-weight:800;
+  line-height:1;
+  display:inline-grid;
+  place-items:center;
+  cursor:help;
+  vertical-align:middle;
+  box-shadow:none;
+}
+.anam-question-help-button:hover,
+.anam-question-help-button:focus-visible,
+.anam-question-help-button[aria-expanded="true"]{
+  background:color-mix(in srgb, var(--brand) 14%, #fff);
+  border-color:var(--brand);
+  outline:none;
+}
+.anam-question-help-button:focus-visible{
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.anam-question-control-wrap > .anam-question-help-button{
+  position:absolute;
+  top:50%;
+  right:7px;
+  transform:translateY(-50%);
+  z-index:2;
+}
+.anam-question-control-wrap:has(> textarea) > .anam-question-help-button{
+  top:8px;
+  transform:none;
+}
+.anam-question-inline-label,
+.anam-question-labelled-point{
+  display:inline-flex !important;
+  align-items:center;
+  gap:6px;
+}
+.anam-row > .anam-question-labelled-point:first-child{
+  flex-wrap:wrap;
+}
+.anam-table td.anam-question-labelled-point{
+  display:table-cell !important;
+}
+.anam-table td.anam-question-labelled-point > .anam-question-help-button{
+  margin-left:6px;
+}
+.anam-psych-field-label.anam-question-labelled-point,
+.anam-group-title.anam-question-labelled-point{
+  display:flex !important;
+  justify-content:flex-start;
+  width:100%;
+}
+.anam-question-popover{
+  position:fixed;
+  z-index:12000;
+  width:min(380px, calc(100vw - 24px));
+  max-height:min(420px, calc(100vh - 24px));
+  overflow:auto;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--surface, #fff);
+  color:var(--text, #1d2733);
+  box-shadow:0 14px 40px rgba(20, 33, 50, .20);
+}
+.anam-question-popover.hidden{
+  display:none !important;
+}
+.anam-question-popover-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:9px;
+}
+.anam-question-popover-head strong{
+  font-size:14px;
+}
+.anam-question-popover-close{
+  appearance:none;
+  -webkit-appearance:none;
+  width:30px;
+  height:30px;
+  min-width:30px;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:inherit;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+}
+.anam-question-popover-close:hover,
+.anam-question-popover-close:focus-visible{
+  background:color-mix(in srgb, var(--text, #1d2733) 7%, transparent);
+  outline:none;
+}
+.anam-question-language-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:9px;
+  align-items:start;
+  padding:9px 0;
+  border-top:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+.anam-question-language-row:first-of-type{
+  border-top:0;
+}
+.anam-question-language-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:24px;
+  border-radius:7px;
+  background:color-mix(in srgb, var(--brand) 10%, #fff);
+  color:var(--brand);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.anam-question-language-row small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:2px;
+}
+.anam-question-language-row p{
+  margin:0;
+  font-size:14px;
+  line-height:1.4;
+}
+@media (max-width: 700px){
+  .anam-question-help-button{
+    width:28px;
+    height:28px;
+    min-width:28px;
+    min-height:28px;
+  }
+  .anam-question-control-wrap > input:not([type="checkbox"]):not([type="radio"]),
+  .anam-question-control-wrap > textarea,
+  .anam-question-control-wrap > select{
+    padding-right:42px;
+  }
+  .anam-question-popover{
+    width:calc(100vw - 20px);
+    max-height:min(55vh, 440px);
+  }
+}
+
 .anam-table{
   width:100%;
   border-collapse:collapse;

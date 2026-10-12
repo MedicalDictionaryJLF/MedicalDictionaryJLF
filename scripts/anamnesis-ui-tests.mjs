@@ -94,4 +94,23 @@ for (const id of ['openVitalsBtn', 'openEcgBtn', 'orderLabsBtn', 'administerMedi
 assert.ok(!html.includes('id="suggestions"'));
 assert.ok(!html.includes('id="engineDebug"'));
 
+const mainAppJs = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
+const mainAppCss = readFileSync(new URL('../assets/css/app.css', import.meta.url), 'utf8');
+const questionPromptsCsv = readFileSync(new URL('../data/app_language/anamnesis_question_prompts.csv', import.meta.url), 'utf8');
+
+assert.match(questionPromptsCsv, /^key,english_question,slovak_question,kind/m);
+for (const requiredKey of ['ident_full_name', 'chief_complaint', 'ped_hpi_onset', 'psych_q_suicide', 'psych_risk_suicidal_thoughts']) {
+  assert.ok(questionPromptsCsv.includes(requiredKey + ','), `Missing bilingual anamnesis prompt: ${requiredKey}`);
+}
+assert.match(questionPromptsCsv, /Ako sa voláte/);
+assert.match(questionPromptsCsv, /Mali ste myšlienky na smrť alebo samovraždu/);
+
+assert.ok(mainAppJs.includes('anamnesis_question_prompts.csv'));
+assert.ok(mainAppJs.includes('enhanceAnamnesisQuestionHelp'));
+assert.ok(mainAppJs.includes('anam-question-help-button'));
+assert.ok(mainAppJs.includes('Slovenčina'));
+assert.ok(mainAppCss.includes('.anam-question-help-button'));
+assert.ok(mainAppCss.includes('.anam-question-popover'));
+assert.ok(mainAppCss.includes('.anam-question-language-row'));
+
 console.log('Anamnesis UI regression tests passed.');
