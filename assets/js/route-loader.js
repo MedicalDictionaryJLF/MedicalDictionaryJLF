@@ -3,10 +3,11 @@ import {
   getScreenForRoute,
   resolveAppModuleUrl,
   resolveAppShellUrl
-} from "./core/app-paths.js?v=62";
+} from "./core/app-paths.js?v=71";
 
 async function bootstrapRoutedPage(){
-  const indexUrl = resolveAppShellUrl();
+  const indexUrl = new URL(resolveAppShellUrl());
+  indexUrl.searchParams.set("v", "71");
   const res = await fetch(indexUrl);
   if(!res.ok){
     throw new Error(`Failed to load app shell: ${res.status}`);

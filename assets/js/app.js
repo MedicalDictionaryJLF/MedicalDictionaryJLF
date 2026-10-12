@@ -32,12 +32,21 @@ import {
 import { createSearchService } from "./services/search-service.js";
 import { createQuizEngine } from "./services/quiz-service.js";
 import {
+  getMasteryState,
+  isDifficultStudyRecord,
+  isStudyDue,
+  normalizeAnswer,
+  recordStudyEvent,
+  setManualDifficult
+} from "./services/study-progress.js?v=75";
+import { createStudyDeck } from "./services/study-deck.js?v=75";
+import {
   PATIENT_TRAINER_SESSIONS_STORAGE_KEY,
   clearActivePatientTrainerAccountId,
   ensurePatientTrainerProfileShape,
   mergePatientTrainerProfiles,
   syncPatientTrainerHistoryWithProfile
-} from "./services/patient-trainer-session-store.js";
+} from "./services/patient-trainer-session-store.js?v=75";
 import { createPharmacologyService } from "./pharmacology/pharmacology-service.js?v=2";
 import { createPharmacologyUi } from "./pharmacology/pharmacology-ui.js?v=4";
 import {
@@ -119,7 +128,7 @@ window.addEventListener("storage", (event)=>{
 const IDB_NAME = "mdict_cache";
 const IDB_STORE = "files";
 const IDB_VERSION = 1;
-const BUNDLED_DATA_CACHE_VERSION = "2026-08-24-anatomy-v2.3-deep-graph-questions-v1";
+const BUNDLED_DATA_CACHE_VERSION = "2026-10-06-anatomy-taxonomy-v1";
 const ATTACHMENTS_DB_NAME = "medical_dictionary_db";
 const ATTACHMENTS_DB_VERSION = 1;
 const ATTACHMENTS_STORE = "attachments";
@@ -2259,6 +2268,9 @@ async function signOutGoogleDrive(){
     flashcardsV2State.session.deck = [];
     flashcardsV2State.session.index = 0;
     flashcardsV2State.session.revealed = false;
+    flashcardsV2State.session.completed = false;
+    flashcardsV2State.session.completedCount = 0;
+    flashcardsV2State.session.initialCount = 0;
     flashcardsV2State.session.querySnapshot = null;
   }
   if(token && window.google && google.accounts && google.accounts.oauth2 && typeof google.accounts.oauth2.revoke === "function"){
@@ -2282,6 +2294,7 @@ const anamnesisTextNodes = new WeakMap();
 const BUILTIN_TRANSLATION_FALLBACKS = {
   English: {
     dataset_anatomy: "Anatomy",
+    study_anatomy_questions: "Anatomy questions",
     dataset_physiology: "Physiology",
     dataset_latin_abbreviations: "Latin abbreviations",
     dataset_latin_greek: "Latin-Greek synonyms",
@@ -2338,6 +2351,7 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
   },
   Deutsch: {
     dataset_anatomy: "Anatomie",
+    study_anatomy_questions: "Anatomie-Fragen",
     dataset_physiology: "Physiologie",
     dataset_latin_abbreviations: "Lateinische Abkuerzungen",
     dataset_latin_greek: "Lateinisch-griechische Synonyme",
@@ -2394,6 +2408,7 @@ const BUILTIN_TRANSLATION_FALLBACKS = {
   },
   Slovensky: {
     dataset_anatomy: "Anatomia",
+    study_anatomy_questions: "Otázky z anatómie",
     dataset_physiology: "Fyziologia",
     dataset_latin_abbreviations: "Latinske skratky",
     dataset_latin_greek: "Latinsko-grecke synonyma",
@@ -2459,6 +2474,817 @@ const ANAMNESIS_DICTIONARY_CANDIDATE_GROUPS = [
     "data/app_language/anamnesis_pediatrics.csv"
   ]
 ];
+
+
+const ANAMNESIS_QUESTION_PROMPT_CANDIDATES = [
+  resolveBundledDataUrl("app_language/anamnesis_question_prompts.csv"),
+  "data/app_language/anamnesis_question_prompts.csv"
+];
+const anamnesisQuestionPromptMap = new Map();
+const anamnesisQuestionPromptState = { loaded: false, loadPromise: null };
+const anamnesisQuestionObservers = new WeakMap();
+let anamnesisQuestionPopoverEl = null;
+let anamnesisQuestionActiveButton = null;
+let anamnesisQuestionActiveAnchor = null;
+let anamnesisQuestionHoverTimer = null;
+const ANAMNESIS_QUESTION_POPOVER_ID = "anamnesis-question-popover";
+
+function normalizeAnamnesisQuestionKey(value){
+  return String(value || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function parseAnamnesisPromptList(value){
+  return String(value || "")
+    .split("||")
+    .map(item => normalizeAnamnesisText(item))
+    .filter(Boolean);
+}
+
+function pairAnamnesisPromptLists(enItems = [], skItems = []){
+  const length = Math.max(enItems.length, skItems.length);
+  const pairs = [];
+  for(let i = 0; i < length; i++){
+    const en = String(enItems[i] || "").trim();
+    const sk = String(skItems[i] || "").trim();
+    if(!en && !sk) continue;
+    pairs.push({ en: en || sk, sk: sk || en });
+  }
+  return pairs;
+}
+
+async function loadAnamnesisQuestionPrompts(){
+  anamnesisQuestionPromptMap.clear();
+  let parsed = null;
+  let lastErr = null;
+  for(const path of ANAMNESIS_QUESTION_PROMPT_CANDIDATES){
+    try{
+      const txt = await loadFile(path);
+      if(!String(txt || "").trim()) continue;
+      const rows = parseCSVLines(txt);
+      if(rows.length < 2) continue;
+      parsed = rows;
+      break;
+    }catch(e){
+      lastErr = e;
+    }
+  }
+  if(!parsed){
+    if(lastErr) console.warn("Anamnesis question prompts load failed:", lastErr.message || lastErr);
+    return false;
+  }
+  for(const row of rowsToObjects(parsed)){
+    const key = normalizeAnamnesisQuestionKey(row.key);
+    if(!key) continue;
+    anamnesisQuestionPromptMap.set(key, {
+      key,
+      en: normalizeAnamnesisText(row.english_question),
+      sk: normalizeAnamnesisText(row.slovak_question),
+      kind: String(row.kind || "patient").trim().toLowerCase() === "clinical" ? "clinical" : "patient",
+      followupsEn: parseAnamnesisPromptList(row.english_followups),
+      followupsSk: parseAnamnesisPromptList(row.slovak_followups),
+      positiveEn: parseAnamnesisPromptList(row.english_if_positive),
+      positiveSk: parseAnamnesisPromptList(row.slovak_if_positive)
+    });
+  }
+  return anamnesisQuestionPromptMap.size > 0;
+}
+
+async function ensureAnamnesisQuestionPromptsLoaded(){
+  if(anamnesisQuestionPromptState.loaded) return true;
+  if(anamnesisQuestionPromptState.loadPromise) return anamnesisQuestionPromptState.loadPromise;
+  anamnesisQuestionPromptState.loadPromise = (async ()=>{
+    try{
+      anamnesisQuestionPromptState.loaded = await loadAnamnesisQuestionPrompts();
+      return anamnesisQuestionPromptState.loaded;
+    }catch(e){
+      console.warn("Anamnesis question prompt initialization failed:", e.message || e);
+      return false;
+    }finally{
+      anamnesisQuestionPromptState.loadPromise = null;
+    }
+  })();
+  return anamnesisQuestionPromptState.loadPromise;
+}
+
+function getAnamnesisDictionaryRowByAnyText(value){
+  const normalized = normalizeAnamnesisText(value);
+  if(!normalized) return null;
+  const direct = anamnesisDictionary.get(normalized);
+  if(direct) return direct;
+  const lower = normalized.toLowerCase();
+  for(const row of anamnesisDictionaryById.values()){
+    if([row.english, row.slovak, row.german].some(item => normalizeAnamnesisText(item).toLowerCase() === lower)){
+      return row;
+    }
+  }
+  return null;
+}
+
+function humanizeAnamnesisQuestionFieldName(value){
+  return String(value || "")
+    .replace(/^(ped_|psych_|anam_)/i, "")
+    .replace(/^(spg_|spl_|vital_|ref_|hpi_|ros_|pmh_)/i, "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase())
+    .trim();
+}
+
+function cleanAnamnesisQuestionLabelText(value){
+  return normalizeAnamnesisText(String(value || "")
+    .replace(/[?]\s*$/g, "")
+    .replace(/\s+[+−-]\s*$/g, ""));
+}
+
+function getAnamnesisQuestionLabelPair(target, explicitLabel = ""){
+  const keyed = target && target.closest ? target.closest("[data-anam-key]") : null;
+  const dataKey = String((target && target.dataset && target.dataset.anamKey) || (keyed && keyed.dataset && keyed.dataset.anamKey) || "").trim();
+  if(dataKey){
+    const row = anamnesisDictionaryById.get(dataKey);
+    if(row && (row.english || row.slovak)){
+      return {
+        en: cleanAnamnesisQuestionLabelText(row.english || row.slovak),
+        sk: cleanAnamnesisQuestionLabelText(row.slovak || row.english)
+      };
+    }
+  }
+  let raw = explicitLabel;
+  if(!raw && target){
+    if(target.classList && target.classList.contains("anam-psych-field-label")) raw = target.textContent;
+    if(!raw && target.closest){
+      const psychLabel = target.closest(".anam-psych-field")?.querySelector(".anam-psych-field-label .anam-help-term-text");
+      if(psychLabel) raw = psychLabel.textContent;
+    }
+    if(!raw && target.matches && target.matches("input,textarea,select")) raw = target.getAttribute("placeholder") || "";
+    if(!raw && target.tagName === "TD") raw = target.textContent;
+    if(!raw && target.matches && target.matches("span,strong,label")) raw = target.textContent;
+  }
+  raw = cleanAnamnesisQuestionLabelText(raw);
+  const dictionaryRow = getAnamnesisDictionaryRowByAnyText(raw);
+  if(dictionaryRow){
+    return {
+      en: cleanAnamnesisQuestionLabelText(dictionaryRow.english || raw),
+      sk: cleanAnamnesisQuestionLabelText(dictionaryRow.slovak || dictionaryRow.english || raw)
+    };
+  }
+  const fallback = raw || humanizeAnamnesisQuestionFieldName(target && target.name);
+  return { en: fallback, sk: fallback };
+}
+
+function isGenericAnamnesisOptionLabel(text){
+  return /^(yes|no|male|female|áno|nie|muž|žena)$/i.test(cleanAnamnesisQuestionLabelText(text));
+}
+
+function isClinicalAnamnesisQuestionTarget(target){
+  if(!target) return false;
+  const name = String(target.name || "").toLowerCase();
+  if(/^(spg_|spl_|vital_|ref_|ped_spg_|ped_spl_|ped_vital_|ped_spine_)/.test(name)) return true;
+  if(target.classList && target.classList.contains("anam-psych-clinician")) return true;
+  if(target.closest && target.closest(".anam-psych-clinician")) return true;
+  const section = target.closest ? target.closest(".anam-section") : null;
+  const heading = section ? cleanAnamnesisQuestionLabelText(section.querySelector("summary strong, h3")?.textContent || "").toLowerCase() : "";
+  return /status praesens|vital signs|physical|neurological|mental state examination|reference values|clinical formulation/.test(heading);
+}
+
+function getExplicitAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  const keys = [];
+  if(target && target.name) keys.push(normalizeAnamnesisQuestionKey(target.name));
+  if(target && target.dataset && target.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(target.dataset.anamKey));
+  const keyed = target && target.closest ? target.closest("[data-anam-key]") : null;
+  if(keyed && keyed.dataset && keyed.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(keyed.dataset.anamKey));
+  const pair = getAnamnesisQuestionLabelPair(target, explicitLabel);
+  if(pair.en) keys.push("label:" + normalizeAnamnesisQuestionKey(pair.en));
+  if(pair.sk) keys.push("label:" + normalizeAnamnesisQuestionKey(pair.sk));
+  for(const key of keys){
+    const prompt = anamnesisQuestionPromptMap.get(key);
+    if(prompt){
+      const generic = getGenericAnamnesisFollowups(target, prompt.kind === "clinical");
+      return {
+        ...prompt,
+        followupsEn: prompt.followupsEn.length ? prompt.followupsEn : generic.en,
+        followupsSk: prompt.followupsSk.length ? prompt.followupsSk : generic.sk
+      };
+    }
+  }
+  return null;
+}
+
+function getGenericAnamnesisFollowups(target, clinical = false){
+  if(clinical){
+    return {
+      en: ["Document the relevant positive and negative findings.", "Compare with the expected normal finding and note severity or asymmetry where relevant."],
+      sk: ["Zaznamenajte relevantné pozitívne aj negatívne nálezy.", "Porovnajte s očakávaným normálnym nálezom a podľa potreby uveďte závažnosť alebo asymetriu."]
+    };
+  }
+  const name = String(target && target.name || "").toLowerCase();
+  if(!name) return { en: [], sk: [] };
+  if(/^(ros_|ped_ros_|hpi_|ped_hpi_)/.test(name)){
+    return {
+      en: ["When did it start?", "How often does it happen and how long does it last?", "How severe is it?", "What makes it better or worse?", "Has it changed over time?"],
+      sk: ["Kedy sa to začalo?", "Ako často sa to objavuje a ako dlho to trvá?", "Aká je závažnosť?", "Čo to zlepšuje alebo zhoršuje?", "Zmenilo sa to v priebehu času?"]
+    };
+  }
+  if(/^(pmh_|ped_pmh_|ped_family_|family_)/.test(name)){
+    return {
+      en: ["When was it diagnosed or first noticed?", "How is it currently treated or followed?", "Is it well controlled?", "Has it caused complications or hospital admissions?"],
+      sk: ["Kedy bolo ochorenie diagnostikované alebo prvýkrát zistené?", "Ako sa v súčasnosti lieči alebo sleduje?", "Je dobre kontrolované?", "Spôsobilo komplikácie alebo hospitalizácie?"]
+    };
+  }
+  if(/^(med_|ped_med_|allerg|blood_transfusion)/.test(name)){
+    return {
+      en: ["What exactly was taken or given?", "What dose or amount and how often?", "When was the last dose or exposure?", "Were there any adverse effects or reactions?"],
+      sk: ["Čo presne pacient užil alebo dostal?", "V akej dávke alebo množstve a ako často?", "Kedy bola posledná dávka alebo expozícia?", "Vyskytli sa nežiaduce účinky alebo reakcie?"]
+    };
+  }
+  if(/^(social_|epi_|abuse_|ped_social_|ped_substance_|ped_headsss_)/.test(name)){
+    return {
+      en: ["Can you tell me more about that?", "How often or to what extent?", "Has it affected health, daily functioning, school, work or relationships?"],
+      sk: ["Môžete mi o tom povedať viac?", "Ako často alebo v akej miere?", "Ovplyvnilo to zdravie, každodenné fungovanie, školu, prácu alebo vzťahy?"]
+    };
+  }
+  if(/^(gyn_|sexual_)/.test(name)){
+    return {
+      en: ["When did this last occur or change?", "Is there pain, bleeding or another associated symptom?", "Is pregnancy possible or relevant to the current problem?"],
+      sk: ["Kedy sa to naposledy vyskytlo alebo zmenilo?", "Je prítomná bolesť, krvácanie alebo iný pridružený príznak?", "Je možné tehotenstvo alebo je relevantné k aktuálnemu problému?"]
+    };
+  }
+  if(/^ped_/.test(name)){
+    return {
+      en: ["When was this first noticed?", "Is it different from the child's usual baseline?", "How does it affect feeding, sleep, play, school or development?"],
+      sk: ["Kedy ste si to prvýkrát všimli?", "Je to odlišné od bežného stavu dieťaťa?", "Ako to ovplyvňuje kŕmenie, spánok, hru, školu alebo vývin?"]
+    };
+  }
+  return { en: [], sk: [] };
+}
+
+function buildFallbackAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  const pair = getAnamnesisQuestionLabelPair(target, explicitLabel);
+  if(!pair.en && !pair.sk) return null;
+  const clinical = isClinicalAnamnesisQuestionTarget(target);
+  const enLabel = pair.en || pair.sk;
+  const skLabel = pair.sk || pair.en;
+  const generic = getGenericAnamnesisFollowups(target, clinical);
+  if(clinical){
+    return {
+      en: "Assess: " + enLabel + ".",
+      sk: "Zhodnoťte: " + skLabel + ".",
+      kind: "clinical",
+      followupsEn: generic.en,
+      followupsSk: generic.sk,
+      positiveEn: [],
+      positiveSk: []
+    };
+  }
+  const prompt = /[?]$/.test(String(explicitLabel || "").trim())
+    ? String(explicitLabel || "").trim()
+    : "Ask about: " + enLabel + ".";
+  return {
+    en: prompt,
+    sk: "Spýtajte sa na: " + skLabel + ".",
+    kind: "patient",
+    followupsEn: generic.en,
+    followupsSk: generic.sk,
+    positiveEn: [],
+    positiveSk: []
+  };
+}
+
+function resolveAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  return getExplicitAnamnesisQuestionPrompt(target, explicitLabel) || buildFallbackAnamnesisQuestionPrompt(target, explicitLabel);
+}
+
+function ensureAnamnesisQuestionPopover(){
+  if(anamnesisQuestionPopoverEl && document.body.contains(anamnesisQuestionPopoverEl)) return anamnesisQuestionPopoverEl;
+  const pop = document.createElement("div");
+  pop.id = ANAMNESIS_QUESTION_POPOVER_ID;
+  pop.className = "anam-question-popover hidden";
+  pop.setAttribute("role", "dialog");
+  pop.setAttribute("aria-hidden", "true");
+  pop.setAttribute("aria-label", "Suggested anamnesis question");
+  pop.addEventListener("mouseenter", ()=>{
+    if(anamnesisQuestionHoverTimer){
+      clearTimeout(anamnesisQuestionHoverTimer);
+      anamnesisQuestionHoverTimer = null;
+    }
+  });
+  pop.addEventListener("mouseleave", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches) scheduleAnamnesisQuestionPopoverClose();
+  });
+  document.body.appendChild(pop);
+  anamnesisQuestionPopoverEl = pop;
+  return pop;
+}
+
+function closeAnamnesisQuestionPopover(){
+  if(anamnesisQuestionHoverTimer){
+    clearTimeout(anamnesisQuestionHoverTimer);
+    anamnesisQuestionHoverTimer = null;
+  }
+  if(anamnesisQuestionActiveButton) anamnesisQuestionActiveButton.setAttribute("aria-expanded", "false");
+  if(anamnesisQuestionPopoverEl){
+    anamnesisQuestionPopoverEl.classList.add("hidden");
+    anamnesisQuestionPopoverEl.setAttribute("aria-hidden", "true");
+  }
+  anamnesisQuestionActiveButton = null;
+  anamnesisQuestionActiveAnchor = null;
+}
+
+function scheduleAnamnesisQuestionPopoverClose(){
+  if(anamnesisQuestionHoverTimer) clearTimeout(anamnesisQuestionHoverTimer);
+  anamnesisQuestionHoverTimer = setTimeout(()=> closeAnamnesisQuestionPopover(), 180);
+}
+
+function positionAnamnesisQuestionPopover(anchor){
+  if(!anamnesisQuestionPopoverEl || !anchor) return;
+  const margin = 10;
+  const gap = 8;
+  anamnesisQuestionPopoverEl.style.visibility = "hidden";
+  anamnesisQuestionPopoverEl.classList.remove("hidden");
+  anamnesisQuestionPopoverEl.setAttribute("aria-hidden", "false");
+  const anchorRect = anchor.getBoundingClientRect();
+  const popRect = anamnesisQuestionPopoverEl.getBoundingClientRect();
+  let left = anchorRect.left + anchorRect.width / 2 - popRect.width / 2;
+  left = Math.max(margin, Math.min(left, Math.max(margin, window.innerWidth - popRect.width - margin)));
+  let top = anchorRect.bottom + gap;
+  let placement = "bottom";
+  if(top + popRect.height > window.innerHeight - margin && anchorRect.top - popRect.height - gap >= margin){
+    top = anchorRect.top - popRect.height - gap;
+    placement = "top";
+  }
+  anamnesisQuestionPopoverEl.style.left = Math.round(left) + "px";
+  anamnesisQuestionPopoverEl.style.top = Math.round(Math.max(margin, top)) + "px";
+  anamnesisQuestionPopoverEl.dataset.placement = placement;
+  anamnesisQuestionPopoverEl.style.visibility = "visible";
+}
+
+function openAnamnesisQuestionPopover(button, anchor, prompt){
+  if(!prompt || (!prompt.en && !prompt.sk)) return;
+  const pop = ensureAnamnesisQuestionPopover();
+  pop.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "anam-question-popover-head";
+  const title = document.createElement("strong");
+  title.textContent = prompt.kind === "clinical" ? "Assessment prompt" : "Suggested question";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "anam-question-popover-close";
+  close.setAttribute("aria-label", "Close question help");
+  close.textContent = "×";
+  close.addEventListener("click", (event)=>{
+    event.preventDefault();
+    closeAnamnesisQuestionPopover();
+    button.focus();
+  });
+  head.append(title, close);
+  pop.appendChild(head);
+
+  const makeLine = (code, language, value)=>{
+    const row = document.createElement("div");
+    row.className = "anam-question-language-row";
+    const badge = document.createElement("span");
+    badge.className = "anam-question-language-badge";
+    badge.textContent = code;
+    const body = document.createElement("div");
+    const label = document.createElement("small");
+    label.textContent = language;
+    const question = document.createElement("p");
+    question.textContent = value || "—";
+    body.append(label, question);
+    row.append(badge, body);
+    return row;
+  };
+  pop.appendChild(makeLine("EN", "English", prompt.en || prompt.sk));
+  pop.appendChild(makeLine("SK", "Slovenčina", prompt.sk || prompt.en));
+
+  const appendQuestionBranch = (titleText, enItems, skItems, tone = "followup")=>{
+    const pairs = pairAnamnesisPromptLists(enItems, skItems);
+    if(pairs.length === 0) return;
+    const details = document.createElement("details");
+    details.className = `anam-question-branch anam-question-branch-${tone}`;
+    const summary = document.createElement("summary");
+    const title = document.createElement("span");
+    title.textContent = titleText;
+    const count = document.createElement("span");
+    count.className = "anam-question-branch-count";
+    count.textContent = String(pairs.length);
+    summary.append(title, count);
+    details.appendChild(summary);
+    const list = document.createElement("ol");
+    list.className = "anam-question-followup-list";
+    for(const pair of pairs){
+      const item = document.createElement("li");
+      const en = document.createElement("div");
+      en.className = "anam-question-followup-line";
+      const enBadge = document.createElement("span");
+      enBadge.className = "anam-question-mini-badge";
+      enBadge.textContent = "EN";
+      const enText = document.createElement("span");
+      enText.textContent = pair.en;
+      en.append(enBadge, enText);
+      const sk = document.createElement("div");
+      sk.className = "anam-question-followup-line";
+      const skBadge = document.createElement("span");
+      skBadge.className = "anam-question-mini-badge";
+      skBadge.textContent = "SK";
+      const skText = document.createElement("span");
+      skText.textContent = pair.sk;
+      sk.append(skBadge, skText);
+      item.append(en, sk);
+      list.appendChild(item);
+    }
+    details.appendChild(list);
+    pop.appendChild(details);
+  };
+
+  appendQuestionBranch("Follow-up questions", prompt.followupsEn || [], prompt.followupsSk || [], "followup");
+  appendQuestionBranch(prompt.kind === "clinical" ? "If abnormal" : "If positive / relevant", prompt.positiveEn || [], prompt.positiveSk || [], "positive");
+
+  if(anamnesisQuestionActiveButton && anamnesisQuestionActiveButton !== button){
+    anamnesisQuestionActiveButton.setAttribute("aria-expanded", "false");
+  }
+  anamnesisQuestionActiveButton = button;
+  anamnesisQuestionActiveAnchor = anchor;
+  button.setAttribute("aria-expanded", "true");
+  button.setAttribute("aria-controls", ANAMNESIS_QUESTION_POPOVER_ID);
+  positionAnamnesisQuestionPopover(anchor);
+}
+
+function toggleAnamnesisQuestionPopover(button, anchor, prompt){
+  const isOpen = anamnesisQuestionActiveButton === button && anamnesisQuestionPopoverEl && !anamnesisQuestionPopoverEl.classList.contains("hidden");
+  if(isOpen) closeAnamnesisQuestionPopover();
+  else openAnamnesisQuestionPopover(button, anchor, prompt);
+}
+
+function isAnamnesisQuestionHelpRelevant(target, explicitLabel = ""){
+  if(!target) return false;
+  const name = String(target.name || "").trim().toLowerCase();
+  const placeholder = cleanAnamnesisQuestionLabelText(target.getAttribute && target.getAttribute("placeholder") || "").toLowerCase();
+  const labelText = cleanAnamnesisQuestionLabelText(explicitLabel || target.textContent || "").toLowerCase();
+
+  if(target.classList && target.classList.contains("anam-group-title")) return false;
+  if(name === "anamnesis_global_notes" || /(?:^|_)(?:notes?|comments?|summary|other_notes?)$/.test(name)) return false;
+  if(/(?:other\s*\/\s*notes|general notes|write your .*notes|optional response notes|additional notes|free notes)/i.test(placeholder)) return false;
+  if(/^(?:general|head & neck|cardiovascular|respiratory|gastrointestinal|genitourinary|neurological|musculoskeletal|endocrine|skin|haematological|hematological)$/i.test(labelText)) return false;
+
+  if(target.matches && target.matches("strong") && target.closest){
+    const row = target.closest(".anam-row");
+    if(row && row.querySelectorAll('label input[type="checkbox"], label input[type="radio"]').length >= 2) return false;
+  }
+  return true;
+}
+
+function createAnamnesisQuestionHelpButton(target, explicitLabel = ""){
+  if(!isAnamnesisQuestionHelpRelevant(target, explicitLabel)) return null;
+  const prompt = getExplicitAnamnesisQuestionPrompt(target, explicitLabel);
+  if(!prompt) return null;
+  const labelPair = getAnamnesisQuestionLabelPair(target, explicitLabel);
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "anam-question-help-button";
+  button.textContent = "?";
+  button.__anamQuestionPrompt = prompt;
+  button.__anamQuestionLabel = labelPair;
+  button.dataset.anamQuestionKey = String(target && target.name || target && target.dataset && target.dataset.anamKey || labelPair.en || labelPair.sk || "");
+  button.setAttribute("aria-label", prompt.kind === "clinical"
+    ? "Show assessment prompt in English and Slovak"
+    : "Show suggested question in English and Slovak");
+  button.setAttribute("aria-haspopup", "dialog");
+  button.setAttribute("aria-controls", ANAMNESIS_QUESTION_POPOVER_ID);
+  button.setAttribute("aria-expanded", "false");
+  button.addEventListener("click", (event)=>{
+    event.preventDefault();
+    event.stopPropagation();
+    toggleAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+  });
+  button.addEventListener("mouseenter", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches){
+      if(anamnesisQuestionHoverTimer) clearTimeout(anamnesisQuestionHoverTimer);
+      openAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+    }
+  });
+  button.addEventListener("mouseleave", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches) scheduleAnamnesisQuestionPopoverClose();
+  });
+  button.addEventListener("focus", ()=>{
+    if(window.matchMedia && window.matchMedia("(hover: hover)").matches){
+      openAnamnesisQuestionPopover(button, button.closest(".anam-question-anchor") || button, prompt);
+    }
+  });
+  return button;
+}
+
+function decorateAnamnesisQuestionControl(control){
+  if(!control) return;
+  if(control.dataset.anamQuestionReady === "1"){
+    const wrapper = control.closest(".anam-question-control-wrap");
+    const label = (control.type === "checkbox" || control.type === "radio") ? control.closest("label") : null;
+    const liveButton = (wrapper && wrapper.querySelector(":scope > .anam-question-help-button")) || (label && label.querySelector(":scope > .anam-question-help-button"));
+    if(liveButton) return;
+    delete control.dataset.anamQuestionReady;
+    if(label) delete label.dataset.anamQuestionReady;
+  }
+  if(control.type === "hidden" || control.closest(".anam-question-popover")) return;
+  if(control.closest(".anam-repeater-head")) return;
+
+  const psychField = control.closest(".anam-psych-field");
+  if(psychField && psychField.querySelector(".anam-psych-field-label[data-anam-question-ready=\"1\"]")){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  const row = control.closest(".anam-row");
+  if(row && row.querySelector(":scope > span:first-child[data-anam-question-ready=\"1\"], :scope > strong:first-child[data-anam-question-ready=\"1\"]")){
+    if(control.type !== "checkbox" && control.type !== "radio"){
+      control.dataset.anamQuestionReady = "1";
+      return;
+    }
+  }
+  const tableRow = control.closest("tbody tr");
+  if(tableRow){
+    const rowLabel = tableRow.querySelector(":scope > td:first-child[data-anam-question-ready=\"1\"]");
+    if(rowLabel){
+      control.dataset.anamQuestionReady = "1";
+      return;
+    }
+  }
+  const placeholder = cleanAnamnesisQuestionLabelText(control.getAttribute("placeholder") || "");
+  const controlName = String(control.name || "").trim().toLowerCase();
+  if(/^(notes?|other|details|reason|if yes details|add notes|enter value|optional response notes)$/i.test(placeholder)
+      || /(?:other\s*\/\s*notes|general notes|write your .*notes|additional notes|free notes)/i.test(placeholder)
+      || controlName === "anamnesis_global_notes"
+      || /(?:^|_)(?:notes?|comments?|summary|other_notes?)$/.test(controlName)){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+
+  if(control.type === "checkbox" || control.type === "radio"){
+    const label = control.closest("label");
+    if(!label || label.dataset.anamQuestionReady === "1") return;
+    const labelText = cleanAnamnesisQuestionLabelText(label.textContent);
+    if(!labelText || isGenericAnamnesisOptionLabel(labelText)) return;
+    const button = createAnamnesisQuestionHelpButton(control, labelText);
+    if(!button) return;
+    label.classList.add("anam-question-anchor", "anam-question-inline-label");
+    label.appendChild(button);
+    label.dataset.anamQuestionReady = "1";
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  if(control.closest(".anam-question-control-wrap")){
+    control.dataset.anamQuestionReady = "1";
+    return;
+  }
+  const button = createAnamnesisQuestionHelpButton(control);
+  if(!button) return;
+  const parent = control.parentNode;
+  if(!parent) return;
+  const wrap = document.createElement("div");
+  wrap.className = "anam-question-control-wrap anam-question-anchor";
+  parent.insertBefore(wrap, control);
+  wrap.appendChild(control);
+  wrap.appendChild(button);
+  control.dataset.anamQuestionReady = "1";
+}
+
+function decorateAnamnesisQuestionLabel(label){
+  if(!label) return;
+  if(label.dataset.anamQuestionReady === "1"){
+    if(label.querySelector(":scope > .anam-question-help-button")) return;
+    delete label.dataset.anamQuestionReady;
+  }
+  const labelText = cleanAnamnesisQuestionLabelText(label.textContent);
+  if(!labelText || isGenericAnamnesisOptionLabel(labelText)) return;
+  const button = createAnamnesisQuestionHelpButton(label, labelText);
+  if(!button) return;
+  label.classList.add("anam-question-anchor", "anam-question-labelled-point");
+  label.appendChild(button);
+  label.dataset.anamQuestionReady = "1";
+}
+
+function decorateAnamnesisTableRows(root){
+  root.querySelectorAll("tbody tr").forEach(row=>{
+    const first = row.querySelector(":scope > td:first-child");
+    if(!first || first.dataset.anamQuestionReady === "1" || first.querySelector("input,textarea,select")) return;
+    decorateAnamnesisQuestionLabel(first);
+  });
+}
+
+function decorateAnamnesisGroupLabels(root){
+  root.querySelectorAll(".anam-row > span:first-child, .anam-row > strong:first-child, .anam-psych-field-label").forEach(label=>{
+    decorateAnamnesisQuestionLabel(label);
+  });
+}
+
+function decorateAnamnesisQuestionHelp(root){
+  if(!root) return;
+  root.querySelectorAll(".anam-question-help-button").forEach(button=>{
+    const anchor = button.closest(".anam-question-anchor");
+    const control = anchor && anchor.querySelector ? anchor.querySelector("input,textarea,select") : null;
+    const labelTarget = !control && anchor ? anchor : null;
+    const explicitLabel = button.__anamQuestionLabel && (button.__anamQuestionLabel.en || button.__anamQuestionLabel.sk) || "";
+    const prompt = control ? getExplicitAnamnesisQuestionPrompt(control, explicitLabel) : (labelTarget ? getExplicitAnamnesisQuestionPrompt(labelTarget, explicitLabel) : null);
+    const relevant = control ? isAnamnesisQuestionHelpRelevant(control, explicitLabel) : (labelTarget ? isAnamnesisQuestionHelpRelevant(labelTarget, explicitLabel) : false);
+    if(!prompt || !relevant){
+      if(anamnesisQuestionActiveButton === button) closeAnamnesisQuestionPopover();
+      button.remove();
+      if(control) delete control.dataset.anamQuestionReady;
+      if(labelTarget) delete labelTarget.dataset.anamQuestionReady;
+    }
+  });
+  root.querySelectorAll('[data-anam-question-ready="1"]').forEach(el=>{
+    const isControl = el.matches && el.matches("input,textarea,select");
+    const wrapper = isControl ? el.closest(".anam-question-control-wrap") : null;
+    const label = isControl && (el.type === "checkbox" || el.type === "radio") ? el.closest("label") : null;
+    const hasButton = isControl
+      ? !!((wrapper && wrapper.querySelector(":scope > .anam-question-help-button")) || (label && label.querySelector(":scope > .anam-question-help-button")))
+      : !!el.querySelector(":scope > .anam-question-help-button");
+    if(!hasButton) delete el.dataset.anamQuestionReady;
+  });
+  decorateAnamnesisGroupLabels(root);
+  decorateAnamnesisTableRows(root);
+  root.querySelectorAll("input, textarea, select").forEach(control=> decorateAnamnesisQuestionControl(control));
+}
+
+function getAnamnesisQuestionGuideSectionLabel(button){
+  const section = button && button.closest ? button.closest(".anam-section") : null;
+  if(!section) return "Other";
+  const heading = section.querySelector(":scope > summary strong, :scope > summary, :scope > h3");
+  return cleanAnamnesisQuestionLabelText(heading ? heading.textContent : "") || "Other";
+}
+
+function ensureAnamnesisQuestionGuideModal(){
+  let overlay = document.getElementById("anamnesis-question-guide-overlay");
+  if(overlay) return overlay;
+  overlay = document.createElement("div");
+  overlay.id = "anamnesis-question-guide-overlay";
+  overlay.className = "modal-overlay anam-question-guide-overlay hidden";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.innerHTML = `
+    <div class="modal anam-question-guide-modal" role="dialog" aria-modal="true" aria-labelledby="anamnesis-question-guide-title">
+      <div class="anam-question-guide-head">
+        <div>
+          <h3 id="anamnesis-question-guide-title">Questions EN/SK</h3>
+          <p class="muted small">Complete question guide for the currently selected anamnesis workflow.</p>
+        </div>
+        <button type="button" class="anam-question-guide-close" aria-label="Close question guide">×</button>
+      </div>
+      <input type="search" class="anam-question-guide-search" placeholder="Search questions / Hľadať otázky" aria-label="Search anamnesis questions">
+      <div class="anam-question-guide-status small"></div>
+      <div class="anam-question-guide-list"></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = ()=>{
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+  };
+  overlay.querySelector(".anam-question-guide-close")?.addEventListener("click", close);
+  overlay.addEventListener("click", event=>{ if(event.target === overlay) close(); });
+  overlay.querySelector(".anam-question-guide-search")?.addEventListener("input", ()=> renderAnamnesisQuestionGuide());
+  return overlay;
+}
+
+function buildAnamnesisGuidePromptRows(form){
+  const seen = new Set();
+  const rows = [];
+  form.querySelectorAll(".anam-question-help-button").forEach(button=>{
+    const prompt = button.__anamQuestionPrompt;
+    if(!prompt) return;
+    const label = button.__anamQuestionLabel || { en: "", sk: "" };
+    const key = normalizeAnamnesisQuestionKey(button.dataset.anamQuestionKey || label.en || label.sk || prompt.en || prompt.sk);
+    if(!key || seen.has(key)) return;
+    seen.add(key);
+    rows.push({ key, label, prompt, section: getAnamnesisQuestionGuideSectionLabel(button) });
+  });
+  return rows;
+}
+
+function renderAnamnesisQuestionGuide(){
+  const overlay = ensureAnamnesisQuestionGuideModal();
+  const form = getActiveAnamnesisForm();
+  const list = overlay.querySelector(".anam-question-guide-list");
+  const status = overlay.querySelector(".anam-question-guide-status");
+  const search = normalizeAnamnesisQuestionKey(overlay.querySelector(".anam-question-guide-search")?.value || "");
+  if(!form || !list) return;
+  decorateAnamnesisQuestionHelp(form);
+  let rows = buildAnamnesisGuidePromptRows(form);
+  if(search){
+    rows = rows.filter(row=>{
+      const prompt = row.prompt;
+      return normalizeAnamnesisQuestionKey([
+        row.section, row.label.en, row.label.sk, prompt.en, prompt.sk,
+        ...(prompt.followupsEn || []), ...(prompt.followupsSk || []),
+        ...(prompt.positiveEn || []), ...(prompt.positiveSk || [])
+      ].join(" ")).includes(search);
+    });
+  }
+  list.innerHTML = "";
+  if(status) status.textContent = `${rows.length} question${rows.length === 1 ? "" : "s"}`;
+  if(rows.length === 0){
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "No matching questions found.";
+    list.appendChild(empty);
+    return;
+  }
+  let lastSection = "";
+  for(const row of rows){
+    if(row.section !== lastSection){
+      lastSection = row.section;
+      const section = document.createElement("h4");
+      section.className = "anam-question-guide-section";
+      section.textContent = row.section;
+      list.appendChild(section);
+    }
+    const details = document.createElement("details");
+    details.className = "anam-question-guide-item";
+    const summary = document.createElement("summary");
+    summary.textContent = row.label.en || row.label.sk || row.prompt.en || row.prompt.sk || "Question";
+    details.appendChild(summary);
+    const body = document.createElement("div");
+    body.className = "anam-question-guide-item-body";
+    const addLang = (code, text)=>{
+      const line = document.createElement("div");
+      line.className = "anam-question-guide-primary";
+      const badge = document.createElement("span"); badge.className = "anam-question-mini-badge"; badge.textContent = code;
+      const value = document.createElement("span"); value.textContent = text || "—";
+      line.append(badge, value); body.appendChild(line);
+    };
+    addLang("EN", row.prompt.en || row.prompt.sk);
+    addLang("SK", row.prompt.sk || row.prompt.en);
+    const addBranch = (title, enItems, skItems)=>{
+      const pairs = pairAnamnesisPromptLists(enItems, skItems);
+      if(!pairs.length) return;
+      const titleEl = document.createElement("strong");
+      titleEl.className = "anam-question-guide-branch-title";
+      titleEl.textContent = title;
+      body.appendChild(titleEl);
+      const ol = document.createElement("ol");
+      ol.className = "anam-question-guide-subquestions";
+      pairs.forEach(pair=>{
+        const li = document.createElement("li");
+        const en = document.createElement("div"); en.textContent = `EN: ${pair.en}`;
+        const sk = document.createElement("div"); sk.textContent = `SK: ${pair.sk}`;
+        li.append(en, sk); ol.appendChild(li);
+      });
+      body.appendChild(ol);
+    };
+    addBranch("Follow-up questions", row.prompt.followupsEn || [], row.prompt.followupsSk || []);
+    addBranch(row.prompt.kind === "clinical" ? "If abnormal" : "If positive / relevant", row.prompt.positiveEn || [], row.prompt.positiveSk || []);
+    details.appendChild(body);
+    list.appendChild(details);
+  }
+}
+
+async function openAnamnesisQuestionGuide(){
+  const form = getActiveAnamnesisForm();
+  if(!form) return;
+  await enhanceAnamnesisQuestionHelp(form);
+  const overlay = ensureAnamnesisQuestionGuideModal();
+  const search = overlay.querySelector(".anam-question-guide-search");
+  if(search) search.value = "";
+  renderAnamnesisQuestionGuide();
+  overlay.classList.remove("hidden");
+  overlay.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(()=> search && search.focus());
+}
+
+function ensureAnamnesisQuestionGuideButton(){
+  let button = document.getElementById("anamnesis-question-guide-open");
+  if(button) return button;
+  const actions = document.querySelector("#screen-anamnesis .anam-actions");
+  if(!actions) return null;
+  button = document.createElement("button");
+  button.type = "button";
+  button.id = "anamnesis-question-guide-open";
+  button.className = "secondary anam-question-guide-open";
+  button.textContent = "Questions EN/SK";
+  button.title = "Open the complete bilingual question and follow-up guide";
+  button.addEventListener("click", openAnamnesisQuestionGuide);
+  actions.appendChild(button);
+  return button;
+}
+
+async function enhanceAnamnesisQuestionHelp(form){
+  if(!form) return;
+  if(anamnesisDictionaryById.size === 0){
+    try{ await loadAnamnesisDictionary(); }catch(e){}
+  }
+  await ensureAnamnesisQuestionPromptsLoaded();
+  decorateAnamnesisQuestionHelp(form);
+  ensureAnamnesisQuestionGuideButton();
+  if(!anamnesisQuestionObservers.has(form) && typeof MutationObserver !== "undefined"){
+    let queued = false;
+    const observer = new MutationObserver(()=>{
+      if(queued) return;
+      queued = true;
+      requestAnimationFrame(()=>{
+        queued = false;
+        decorateAnamnesisQuestionHelp(form);
+      });
+    });
+    observer.observe(form, { childList: true, subtree: true });
+    anamnesisQuestionObservers.set(form, observer);
+  }
+}
+
 
 function normalizeAnamnesisText(text){
   return String(text || '').replace(/\s+/g, ' ').trim();
@@ -2652,7 +3478,7 @@ function normalizeTranslationHeader(header){
 
 async function loadTranslations(){
   try{
-    const txt = await loadFile(resolveBundledDataUrl('app_language/app_translations.csv'));
+    const txt = await loadFile(withBundledDataCacheVersion(resolveBundledDataUrl('app_language/app_translations.csv')));
     const rows = parseCSVLines(txt);
     if(rows.length < 1) throw new Error('No data in translations file');
 
@@ -2786,6 +3612,7 @@ async function openPharmacologyScreen(){
 let muscleTerms = [];
 let anatomyTerms = [];
 let anatomyStructureDataset = null;
+let anatomyStudyTaxonomyConfig = null;
 let anatomyStructureIndex = null;
 let anatomyStructureQuestionBank = [];
 let anatomyStructureGeneratedQuestionBank = [];
@@ -2830,6 +3657,7 @@ function flattenAnatomyStructure(record){
     english_term: getStructureTerm(record, 'en'),
     latin_term: getStructureTerm(record, 'la'),
     german_term: getStructureTerm(record, 'de'),
+    slovak_term: getStructureTerm(record, 'sk'),
     synonyms: getStructureAliases(record).join('; '),
     related_structures: [...new Set(relationNames)].join('; '),
     key_features: arrayValue(record?.key_features).join('; '),
@@ -2871,19 +3699,46 @@ async function ensureMusclesLoaded(){
 
 async function loadAnatomyTerms() {
   try {
-    const [coreText, questionText, generatedQuestionText, rubricText, bridgeText] = await Promise.all([
-      loadBaseFile('anatomy/anatomy_structures_core_elaborated.json'),
+    // The structured v2.3 core is the authoritative Anatomy terminology source.
+    // Question banks and teaching extras are optional so a missing auxiliary file
+    // can never make the terminology library itself disappear.
+    const coreText = await loadBaseFile('anatomy/anatomy_structures_core_elaborated.json');
+    anatomyStructureDataset = JSON.parse(coreText);
+    anatomyStructureIndex = buildAnatomyStructureIndex(anatomyStructureDataset);
+
+    const optionalSources = await Promise.allSettled([
       loadBaseFile('anatomy/anatomy_structures_question_bank_seed.json'),
       loadBaseFile('anatomy/anatomy_structures_question_bank_generated.json'),
       loadBaseFile('anatomy/anatomy_structures_oral_rubrics_seed.json'),
-      loadBaseFile('anatomy/anatomy_structures_clinical_bridges_seed.json')
+      loadBaseFile('anatomy/anatomy_structures_clinical_bridges_seed.json'),
+      loadBaseFile('anatomy/anatomy_study_taxonomy.json')
     ]);
-    anatomyStructureDataset = JSON.parse(coreText);
-    anatomyStructureIndex = buildAnatomyStructureIndex(anatomyStructureDataset);
-    anatomyStructureQuestionBank = JSON.parse(questionText)?.questions || [];
-    anatomyStructureGeneratedQuestionBank = JSON.parse(generatedQuestionText)?.questions || [];
-    anatomyStructureOralRubrics = JSON.parse(rubricText)?.rubrics || [];
-    anatomyStructureClinicalBridges = JSON.parse(bridgeText)?.cases || [];
+    const parseOptionalArray = (result, key)=>{
+      if(!result || result.status !== 'fulfilled') return [];
+      try{
+        const parsed = JSON.parse(result.value || '{}');
+        return Array.isArray(parsed?.[key]) ? parsed[key] : [];
+      }catch(error){
+        console.warn(`[anatomy] Optional ${key} source could not be parsed:`, error?.message || error);
+        return [];
+      }
+    };
+    anatomyStructureQuestionBank = parseOptionalArray(optionalSources[0], 'questions');
+    anatomyStructureGeneratedQuestionBank = parseOptionalArray(optionalSources[1], 'questions');
+    anatomyStructureOralRubrics = parseOptionalArray(optionalSources[2], 'rubrics');
+    anatomyStructureClinicalBridges = parseOptionalArray(optionalSources[3], 'cases');
+    anatomyStudyTaxonomyConfig = null;
+    if(optionalSources[4]?.status === 'fulfilled'){
+      try{
+        const parsedTaxonomy = JSON.parse(optionalSources[4].value || '{}');
+        if(Array.isArray(parsedTaxonomy?.regions) && Array.isArray(parsedTaxonomy?.structure_types)){
+          anatomyStudyTaxonomyConfig = parsedTaxonomy;
+        }
+      }catch(error){
+        console.warn('[anatomy] Study taxonomy could not be parsed:', error?.message || error);
+      }
+    }
+
     const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
     const expectedCount = Number(anatomyStructureDataset?.dataset?.record_count || 0);
     if(expectedCount && structures.length !== expectedCount) throw new Error(`Expected ${expectedCount} anatomy structures, received ${structures.length}`);
@@ -2898,6 +3753,7 @@ async function loadAnatomyTerms() {
     anatomyStructureGeneratedQuestionBank = [];
     anatomyStructureOralRubrics = [];
     anatomyStructureClinicalBridges = [];
+    anatomyStudyTaxonomyConfig = null;
     anatomyTerms = [];
     anatomyLoadState.loaded = false;
     anatomyLoadState.failed = true;
@@ -2912,6 +3768,318 @@ async function ensureAnatomyTermsLoaded(){
   });
   await anatomyLoadState.loadPromise;
   return anatomyTerms;
+}
+
+
+function normalizeStudyTaxonomyText(value){
+  return String(value || '').trim().toLowerCase().replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
+}
+
+const DEFAULT_ANATOMY_STUDY_TAXONOMY = {
+  regions: [
+    { id:'head_neck', label:'Head and neck', aliases:['head and neck'], parts:[
+      { label:'Skull and cranial cavity', aliases:['skull','cranial cavity','cranium'] },
+      { label:'Scalp and face', aliases:['scalp','face','facial region'] },
+      { label:'Orbit', aliases:['orbit','orbital region','eye'] },
+      { label:'Ear', aliases:['ear','external ear','middle ear','inner ear'] },
+      { label:'Nose and paranasal sinuses', aliases:['nose','nasal cavity','paranasal sinus*'] },
+      { label:'Oral cavity', aliases:['oral cavity','mouth'] },
+      { label:'Palate', aliases:['palate','hard palate','soft palate'] },
+      { label:'Tongue and floor of mouth', aliases:['tongue','floor of mouth'] },
+      { label:'Pharynx', aliases:['pharynx','nasopharynx','oropharynx','laryngopharynx'] },
+      { label:'Larynx', aliases:['larynx'] },
+      { label:'Neck', aliases:['neck','cervical region'] },
+      { label:'General head and neck', aliases:['head and neck','head'] }
+    ]},
+    { id:'back', label:'Back and vertebral column', aliases:['back and vertebral column','back'], parts:[
+      { label:'Vertebral column', aliases:['vertebral column','spine','vertebr*'] },
+      { label:'Back muscles and fasciae', aliases:['back','deep back','superficial back'] },
+      { label:'General back', aliases:['back and vertebral column'] }
+    ]},
+    { id:'thorax', label:'Thorax', aliases:['thorax','thoracic region'], parts:[
+      { label:'Thoracic wall', aliases:['thoracic wall','chest wall','intercostal region'] },
+      { label:'Pleura and lungs', aliases:['pleura','lung*','pulmonary region'] },
+      { label:'Mediastinum', aliases:['mediastinum','mediastinal region'] },
+      { label:'Heart and pericardium', aliases:['heart','cardiac region','pericardium'] },
+      { label:'Diaphragm', aliases:['diaphragm'] },
+      { label:'General thorax', aliases:['thorax','thoracic region','chest'] }
+    ]},
+    { id:'abdomen', label:'Abdomen', aliases:['abdomen','abdominal region'], parts:[
+      { label:'Anterior abdominal wall', aliases:['anterior abdominal wall','abdominal wall'] },
+      { label:'Posterior abdominal wall', aliases:['posterior abdominal wall'] },
+      { label:'Peritoneum', aliases:['peritoneum','peritoneal cavity'] },
+      { label:'Upper abdominal viscera', aliases:['upper abdomen','foregut','liver','stomach','spleen','pancreas','gallbladder'] },
+      { label:'Intestines', aliases:['intestine*','small intestine','large intestine','colon','cecum','appendix'] },
+      { label:'Retroperitoneum', aliases:['retroperitoneum','kidney*','adrenal region'] },
+      { label:'General abdomen', aliases:['abdomen','abdominal region'] }
+    ]},
+    { id:'pelvis_perineum', label:'Pelvis and perineum', aliases:['pelvis and perineum','pelvis','pelvic region','perineum'], parts:[
+      { label:'Pelvic walls and floor', aliases:['pelvic wall*','pelvic floor'] },
+      { label:'Pelvic viscera', aliases:['pelvic viscera','pelvic cavity'] },
+      { label:'Perineum', aliases:['perineum','perineal region'] },
+      { label:'External genitalia', aliases:['external genitalia','scrotum','penis','vulva'] },
+      { label:'Rectum and anal canal', aliases:['rectum','anal canal'] },
+      { label:'General pelvis and perineum', aliases:['pelvis and perineum','pelvis','pelvic region'] }
+    ]},
+    { id:'upper_limb', label:'Upper limb', aliases:['upper limb'], parts:[
+      { label:'Pectoral girdle and shoulder', aliases:['pectoral girdle','pectoral region','shoulder','scapular region','clavicular region'] },
+      { label:'Axilla', aliases:['axilla','axillary region'] },
+      { label:'Arm', aliases:['arm','brachial region'] },
+      { label:'Elbow', aliases:['elbow','cubital region','cubital fossa'] },
+      { label:'Forearm', aliases:['forearm','antebrachial region'] },
+      { label:'Wrist', aliases:['wrist','carpal region'] },
+      { label:'Hand', aliases:['hand','palmar region','dorsum of hand','finger*','digit*'] },
+      { label:'General upper limb', aliases:['upper limb'] }
+    ]},
+    { id:'lower_limb', label:'Lower limb', aliases:['lower limb'], parts:[
+      { label:'Gluteal region and hip', aliases:['gluteal region','gluteal','buttock','hip'] },
+      { label:'Groin and femoral triangle', aliases:['groin','inguinal region','femoral triangle'] },
+      { label:'Thigh', aliases:['thigh','femoral region'] },
+      { label:'Knee and popliteal fossa', aliases:['knee','popliteal fossa','popliteal region'] },
+      { label:'Leg', aliases:['leg','crural region'] },
+      { label:'Ankle', aliases:['ankle','talocrural region'] },
+      { label:'Foot', aliases:['foot','plantar region','dorsum of foot','toe*'] },
+      { label:'General lower limb', aliases:['lower limb'] }
+    ]},
+    { id:'cns', label:'Central nervous system', aliases:['central nervous system','cns'], parts:[
+      { label:'Cerebrum', aliases:['cerebrum','cerebral hemisphere*','cerebral cortex'] },
+      { label:'Diencephalon', aliases:['diencephalon','thalamus','hypothalamus'] },
+      { label:'Brainstem', aliases:['brainstem','midbrain','pons','medulla oblongata'] },
+      { label:'Cerebellum', aliases:['cerebellum'] },
+      { label:'Ventricular system and meninges', aliases:['ventricular system','ventricle*','meninges','meningeal space*'] },
+      { label:'Spinal cord', aliases:['spinal cord'] },
+      { label:'General central nervous system', aliases:['central nervous system','cns','brain'] }
+    ]},
+    { id:'general', label:'General anatomy', aliases:['general anatomy'], parts:[
+      { label:'General / uncategorized', aliases:['general anatomy'] }
+    ]}
+  ],
+  structure_types: [
+    { label:'Bones', aliases:['bone','osseous structure'] },
+    { label:'Joints', aliases:['joint','articulation'] },
+    { label:'Cartilage', aliases:['cartilage'] },
+    { label:'Ligaments', aliases:['ligament'] },
+    { label:'Muscles', aliases:['muscle','skeletal muscle','smooth muscle'] },
+    { label:'Tendons and aponeuroses', aliases:['tendon','aponeurosis'] },
+    { label:'Fasciae', aliases:['fascia','fascial structure'] },
+    { label:'Arteries', aliases:['artery','arterial branch','arterial structure'] },
+    { label:'Veins', aliases:['vein','venous structure'] },
+    { label:'Blood vessels (unspecified)', aliases:['blood vessel','vessel'] },
+    { label:'Lymphatics', aliases:['lymphatic vessel','lymph node','lymphatic structure'] },
+    { label:'Nerves and ganglia', aliases:['nerve','ganglion','nerve plexus','plexus'] },
+    { label:'Organs and viscera', aliases:['organ','viscus','visceral structure'] },
+    { label:'Glands', aliases:['gland'] },
+    { label:'Ducts and passages', aliases:['duct','canal','meatus','foramen','passage'] },
+    { label:'Bursae and spaces', aliases:['bursa','space','cavity','compartment'] },
+    { label:'Membranes and meninges', aliases:['membrane','meninx','meninges'] },
+    { label:'Other structures', aliases:['structure','other'] }
+  ]
+};
+
+function getAnatomyStudyTaxonomy(){
+  return anatomyStudyTaxonomyConfig && Array.isArray(anatomyStudyTaxonomyConfig.regions)
+    ? anatomyStudyTaxonomyConfig
+    : DEFAULT_ANATOMY_STUDY_TAXONOMY;
+}
+
+function studyTaxonomyPatternMatches(rawText, rawPattern){
+  const text = normalizeStudyTaxonomyText(rawText);
+  let pattern = normalizeStudyTaxonomyText(rawPattern);
+  if(!text || !pattern) return false;
+  const wildcard = pattern.endsWith('*');
+  if(wildcard) pattern = pattern.slice(0, -1).trim();
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+  const suffix = wildcard ? '[a-z0-9]*' : '';
+  return new RegExp(`(?:^|\\b)${escaped}${suffix}(?=\\b|$)`, 'i').test(text);
+}
+
+function matchAnatomyStudyRegionLabel(rawRegion){
+  const taxonomy = getAnatomyStudyTaxonomy();
+  const raw = normalizeStudyTaxonomyText(rawRegion);
+  if(!raw) return null;
+  const specificMatches = [];
+  const majorMatches = [];
+  for(const region of (taxonomy.regions || [])){
+    if(region.id === 'general') continue;
+    for(const part of (region.parts || [])){
+      const specificAliases = (part.aliases || []).filter(alias => !((region.aliases || []).includes(alias)));
+      for(const alias of specificAliases){
+        if(studyTaxonomyPatternMatches(raw, alias)){
+          const normalizedAlias = normalizeStudyTaxonomyText(alias).replace(/\*$/, '');
+          specificMatches.push({ major:region.label, part:part.label, specificity:200 + normalizedAlias.length });
+        }
+      }
+    }
+    for(const alias of (region.aliases || [])){
+      if(studyTaxonomyPatternMatches(raw, alias)){
+        const fallback = (region.parts || []).find(part => /^General/.test(part.label)) || (region.parts || []).slice(-1)[0];
+        const normalizedAlias = normalizeStudyTaxonomyText(alias).replace(/\*$/, '');
+        majorMatches.push({ major:region.label, part:fallback?.label || region.label, specificity:100 + normalizedAlias.length });
+      }
+    }
+  }
+  const matches = specificMatches.length ? specificMatches : majorMatches;
+  if(!matches.length) return null;
+  matches.sort((a,b)=>b.specificity-a.specificity);
+  return matches[0];
+}
+
+function getExplicitAnatomyStudyTaxonomy(record){
+  const raw = record?.study_taxonomy || record?.studyTaxonomy || record?.learning?.study_taxonomy || null;
+  if(!raw || typeof raw !== 'object') return null;
+  const major = String(raw.region || raw.major_region || raw.majorRegion || '').trim();
+  const part = String(raw.part || raw.subregion || raw.part_of_region || raw.partOfRegion || '').trim();
+  const structure = String(raw.structure_type || raw.structureType || '').trim();
+  return major || part || structure ? { major, part, structure } : null;
+}
+
+function classifyAnatomyStudyLocation(record){
+  const explicit = getExplicitAnatomyStudyTaxonomy(record);
+  if(explicit?.major){
+    return { major:explicit.major, part:explicit.part || `General ${explicit.major.toLowerCase()}` };
+  }
+  const regionValues = arrayValue(record?.region).map(value => String(value || '').trim()).filter(Boolean);
+  const matches = [];
+  regionValues.forEach((value, index)=>{
+    const hit = matchAnatomyStudyRegionLabel(value);
+    if(hit) matches.push({ ...hit, index });
+  });
+  if(matches.length){
+    matches.sort((a,b)=>b.specificity-a.specificity || a.index-b.index);
+    return { major:matches[0].major, part:matches[0].part };
+  }
+  // System is only a fallback when the dataset has no usable topographic region.
+  const systems = arrayValue(record?.system).map(value => String(value || '').trim()).filter(Boolean);
+  for(const value of systems){
+    const hit = matchAnatomyStudyRegionLabel(value);
+    if(hit) return { major:hit.major, part:hit.part };
+  }
+  return { major:'General anatomy', part:'General / uncategorized' };
+}
+
+function getAnatomyStudyMajorRegion(record){
+  return classifyAnatomyStudyLocation(record).major;
+}
+
+function getAnatomyStudySubregion(record){
+  return classifyAnatomyStudyLocation(record).part;
+}
+
+function getAnatomyStudyStructureGroup(record){
+  const explicit = getExplicitAnatomyStudyTaxonomy(record);
+  if(explicit?.structure) return explicit.structure;
+  const type = String(record?.type || '').trim();
+  const taxonomy = getAnatomyStudyTaxonomy();
+  const matches = [];
+  for(const group of (taxonomy.structure_types || [])){
+    if(group.label === 'Other structures') continue;
+    for(const alias of (group.aliases || [])){
+      if(studyTaxonomyPatternMatches(type, alias)){
+        matches.push({ label:group.label, specificity:normalizeStudyTaxonomyText(alias).replace(/\*$/, '').length });
+      }
+    }
+  }
+  matches.sort((a,b)=>b.specificity-a.specificity);
+  return matches[0]?.label || 'Other structures';
+}
+
+function getAnatomyStudyTaxonomyOrder(key){
+  const taxonomy = getAnatomyStudyTaxonomy();
+  if(key === '__study_region_major') return (taxonomy.regions || []).map(item => item.label);
+  if(key === '__study_region_part') return (taxonomy.regions || []).flatMap(item => (item.parts || []).map(part => part.label));
+  if(key === '__study_structure_group') return (taxonomy.structure_types || []).map(item => item.label);
+  return [];
+}
+
+function sortStudyTaxonomyOptions(key, values){
+  const order = getAnatomyStudyTaxonomyOrder(key);
+  const index = new Map(order.map((value, idx)=>[value, idx]));
+  return [...new Set((values || []).map(v=>String(v || '').trim()).filter(Boolean))].sort((a,b)=>{
+    const ai = index.has(a) ? index.get(a) : Number.MAX_SAFE_INTEGER;
+    const bi = index.has(b) ? index.get(b) : Number.MAX_SAFE_INTEGER;
+    return ai-bi || a.localeCompare(b);
+  });
+}
+
+function getStudyHierarchyValue(row, key){
+  if(key === '__study_region_major') return String(row?._studyRegionMajor || '').trim();
+  if(key === '__study_region_part') return String(row?._studyRegionPart || '').trim();
+  if(key === '__study_structure_group') return String(row?._studyStructureGroup || '').trim();
+  return '';
+}
+
+function buildAuthoritativeAnatomyStudyRows(){
+  const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
+  return structures.map(record=>{
+    const flat = flattenAnatomyStructure(record);
+    const studyRegionMajor = getAnatomyStudyMajorRegion(record);
+    const studyRegionPart = getAnatomyStudySubregion(record);
+    const studyStructureGroup = getAnatomyStudyStructureGroup(record);
+    const muscleRow = String(record?.type || '') === 'muscle'
+      ? (anatomyMuscleToLegacyRows(record)?.[0] || {})
+      : {};
+    const learning = record?.learning || {};
+    return {
+      id: flat.id,
+      english_term: flat.english_term || String(muscleRow.english_muscle_name || '').trim(),
+      german_term: flat.german_term || String(muscleRow.german_muscle_name || '').trim(),
+      slovak_term: flat.slovak_term || '',
+      latin_term: flat.latin_term || String(muscleRow.latin_muscle_name || '').trim(),
+      region: flat.region || String(muscleRow.region || '').trim(),
+      type: flat.type || String(muscleRow.category || '').trim(),
+      system: flat.system,
+      key_features: flat.key_features,
+      clinical_notes: flat.clinical_notes,
+      study_definition: [flat.key_features, flat.clinical_notes].filter(Boolean).join(' | '),
+      common_confusions: arrayValue(learning.common_confusions).join('; '),
+      course_tags: flat.course_tags,
+      review_status: flat.exam_importance,
+      muscle_origin: String(muscleRow.origo || '').trim(),
+      muscle_insertion: String(muscleRow.insercio || '').trim(),
+      muscle_innervation: String(muscleRow.innervation || '').trim(),
+      muscle_blood_supply: String(muscleRow.blood_supply || '').trim(),
+      muscle_actions: String(muscleRow.movement_function || muscleRow.type_of_movement || '').trim(),
+      muscle_categories: String(muscleRow.category || '').trim(),
+      _studyCategory: flat.type || String(muscleRow.category || '').trim(),
+      _studyRegionMajor: studyRegionMajor,
+      _studyRegionPart: studyRegionPart,
+      _studyStructureGroup: studyStructureGroup,
+      _anatomySource: 'anatomy_structures_core_elaborated.json'
+    };
+  }).filter(row=>row.id && (row.english_term || row.latin_term || row.german_term || row.slovak_term));
+}
+
+function buildAuthoritativeAnatomyQuestionRows(){
+  const rows = [];
+  const addQuestion = (question, origin, fallbackIndex)=>{
+    const prompt = String(question?.prompt || '').trim();
+    const answer = String(question?.correct_answer || '').trim();
+    if(!prompt || !answer) return;
+    const sourceId = String(question?.question_id || question?.id || `${origin}-${fallbackIndex}`).trim();
+    rows.push({
+      question_id: sourceId,
+      prompt,
+      correct_answer: answer,
+      correct_answer_latin: String(question?.correct_answer_latin || '').trim(),
+      correct_answer_german: String(question?.correct_answer_german || '').trim(),
+      correct_answer_slovak: String(question?.correct_answer_slovak || '').trim(),
+      explanation: String(question?.explanation || '').trim(),
+      type: String(question?.type || question?.relation_type || origin).trim(),
+      relation_type: String(question?.relation_type || '').trim(),
+      generation_rule: String(question?.generation_rule || '').trim(),
+      concept_ids: arrayValue(question?.concept_ids).join('; '),
+      origin,
+      _studyCategory: String(question?.type || question?.relation_type || origin).trim(),
+      _anatomySource: origin === 'seed'
+        ? 'anatomy_structures_question_bank_seed.json'
+        : 'anatomy_structures_question_bank_generated.json'
+    });
+  };
+  anatomyStructureQuestionBank.forEach((question, index)=>addQuestion(question, 'seed', index));
+  anatomyStructureGeneratedQuestionBank
+    .filter(question=>question?.quiz_eligible === true)
+    .forEach((question, index)=>addQuestion(question, 'graph', index));
+  return rows;
 }
 
 async function loadClinicalCorrelations(){
@@ -3644,6 +4812,7 @@ function formatHeaderLabel(header){
 
 const DATASET_LABEL_TRANSLATION_KEYS = {
   anatomy: "dataset_anatomy",
+  anatomy_questions: "study_anatomy_questions",
   diagnostic_methods: "dataset_diagnostic_methods",
   disease_and_symptoms: "disease_and_symptoms",
   lab_parameters: "laboratory_parameters",
@@ -3654,6 +4823,8 @@ const DATASET_LABEL_TRANSLATION_KEYS = {
   microorganisms: "microorganisms",
   muscles: "dataset_muscles",
   pharmacology: "pharmacology",
+  manual_entry: "study_saved_terms",
+  custom_cards: "study_custom_cards",
   physiology: "dataset_physiology",
   procedures: "dataset_procedures"
 };
@@ -4377,9 +5548,9 @@ let muscleQuizCurrent = null;
 let muscleQuizRevealed = false;
 let muscleQuizSelectedRegions = new Set();
 let muscleQuizSelectedCategories = new Set();
-let anatomySelectedSystems = new Set();
-let anatomySelectedRegions = new Set();
-let anatomySelectedTypes = new Set();
+let anatomySelectedMajorRegions = new Set();
+let anatomySelectedSubregions = new Set();
+let anatomySelectedStructureGroups = new Set();
 let muscleQuizPersistentFields = new Set();
 let muscleQuizTempFields = new Set();
 let latinQuizPool = [];
@@ -4615,8 +5786,8 @@ function syncAnatomyDatasetCopy(){
   const selectionCopy = document.getElementById('anatomy-selection-copy');
   const filterTitle = document.getElementById('anatomy-filter-title');
   const searchCopy = document.getElementById('anatomy-search-copy');
-  if(selectionCopy) selectionCopy.textContent = tOr('anatomy_unified_selection_copy', 'Filter the complete anatomy library by structure type, system or region.');
-  if(filterTitle) filterTitle.textContent = tOr('anatomy_structure_filters', 'Structure filters');
+  if(selectionCopy) selectionCopy.textContent = tOr('anatomy_unified_selection_copy', 'Choose a region, then a part of the region, then a structure type. Only relevant options are shown.');
+  if(filterTitle) filterTitle.textContent = tOr('anatomy_structure_filters', 'Anatomy classification');
   if(searchCopy) searchCopy.textContent = tOr('anatomy_unified_search_copy', 'Search names, regions, systems, OINA fields, relationships and structured notes.');
 }
 
@@ -4908,18 +6079,63 @@ function getUnifiedMuscleCategory(row){
 }
 
 function muscleMatchesUnifiedFilters(row){
-  if(anatomySelectedTypes.size && !anatomySelectedTypes.has('muscle')) return false;
-  if(anatomySelectedSystems.size && !anatomySelectedSystems.has('muscular_system')) return false;
-  if(anatomySelectedRegions.size && !anatomySelectedRegions.has(getUnifiedMuscleRegion(row))) return false;
-  return true;
+  const source = String(row?.__structure?.id || row?.structure_id || '').trim();
+  const record = source && anatomyStructureIndex?.byId?.get ? anatomyStructureIndex.byId.get(source) : null;
+  return record ? anatomyRecordMatchesUnifiedFilters(record) : true;
 }
 
 function anatomyRecordMatchesUnifiedFilters(record){
   if(!record) return false;
-  if(anatomySelectedTypes.size && !anatomySelectedTypes.has(String(record.type || ''))) return false;
-  if(anatomySelectedSystems.size && !arrayValue(record.system).some(value=>anatomySelectedSystems.has(String(value)))) return false;
-  if(anatomySelectedRegions.size && !arrayValue(record.region).some(value=>anatomySelectedRegions.has(String(value)))) return false;
+  const major = getAnatomyStudyMajorRegion(record);
+  const part = getAnatomyStudySubregion(record);
+  const structureGroup = getAnatomyStudyStructureGroup(record);
+  if(anatomySelectedMajorRegions.size && !anatomySelectedMajorRegions.has(major)) return false;
+  if(anatomySelectedSubregions.size && !anatomySelectedSubregions.has(part)) return false;
+  if(anatomySelectedStructureGroups.size && !anatomySelectedStructureGroups.has(structureGroup)) return false;
   return true;
+}
+
+function getAnatomyModuleFilterCounts(structures, valueGetter, predicate = null){
+  const counts = new Map();
+  for(const record of (structures || [])){
+    if(predicate && !predicate(record)) continue;
+    const value = String(valueGetter(record) || '').trim();
+    if(value) counts.set(value, (counts.get(value) || 0) + 1);
+  }
+  return counts;
+}
+
+function anatomyRecordMatchesMajorSelection(record){
+  return !anatomySelectedMajorRegions.size || anatomySelectedMajorRegions.has(getAnatomyStudyMajorRegion(record));
+}
+
+function anatomyRecordMatchesMajorAndPartSelection(record){
+  if(!anatomyRecordMatchesMajorSelection(record)) return false;
+  return !anatomySelectedSubregions.size || anatomySelectedSubregions.has(getAnatomyStudySubregion(record));
+}
+
+function pruneAnatomyModuleSelections(structures = null){
+  const rows = Array.isArray(structures) ? structures : (Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : []);
+  const availableMajors = new Set(rows.map(getAnatomyStudyMajorRegion).filter(Boolean));
+  for(const value of [...anatomySelectedMajorRegions]) if(!availableMajors.has(value)) anatomySelectedMajorRegions.delete(value);
+
+  // The hierarchy is intentionally progressive. A child selection never survives
+  // after its parent level is cleared, otherwise hidden filters would still affect results.
+  if(!anatomySelectedMajorRegions.size){
+    anatomySelectedSubregions.clear();
+    anatomySelectedStructureGroups.clear();
+    return;
+  }
+
+  const availableParts = new Set(rows.filter(anatomyRecordMatchesMajorSelection).map(getAnatomyStudySubregion).filter(Boolean));
+  for(const value of [...anatomySelectedSubregions]) if(!availableParts.has(value)) anatomySelectedSubregions.delete(value);
+  if(!anatomySelectedSubregions.size){
+    anatomySelectedStructureGroups.clear();
+    return;
+  }
+
+  const availableStructures = new Set(rows.filter(anatomyRecordMatchesMajorAndPartSelection).map(getAnatomyStudyStructureGroup).filter(Boolean));
+  for(const value of [...anatomySelectedStructureGroups]) if(!availableStructures.has(value)) anatomySelectedStructureGroups.delete(value);
 }
 
 function scoreUnifiedMuscle(row, rawQuery, mode = 'any'){
@@ -4993,7 +6209,7 @@ function renderMuscleSearchResults(){
   if(!input || !results) return;
   const rawQuery = input.value.trim();
   const mode = fieldSel?.value || 'any';
-  const hasFilters = anatomySelectedSystems.size || anatomySelectedRegions.size || anatomySelectedTypes.size;
+  const hasFilters = anatomySelectedMajorRegions.size || anatomySelectedSubregions.size || anatomySelectedStructureGroups.size;
   results.innerHTML = '';
 
   if(rawQuery.length < 2 && !hasFilters){
@@ -5002,7 +6218,7 @@ function renderMuscleSearchResults(){
     const title = document.createElement('strong');
     title.textContent = tOr('anatomy_unified_empty_title', 'Browse the anatomy library');
     const copy = document.createElement('span');
-    copy.textContent = tOr('anatomy_unified_empty_copy', 'Choose a structure type, system or region, or search muscles, bones, nerves, vessels and other structures.');
+    copy.textContent = tOr('anatomy_unified_empty_copy', 'Choose a region to begin, then narrow by part of region and structure type, or search directly.');
     empty.append(title, copy);
     results.appendChild(empty);
     return;
@@ -5011,13 +6227,8 @@ function renderMuscleSearchResults(){
   let structureHits = [];
   if(rawQuery.length >= 2){
     structureHits = searchAnatomyStructures(rawQuery, anatomyStructureIndex, {
-      maxResults: 220,
-      filters: {
-        types: anatomySelectedTypes,
-        systems: anatomySelectedSystems,
-        regions: anatomySelectedRegions
-      }
-    });
+      maxResults: 220
+    }).filter(hit=>anatomyRecordMatchesUnifiedFilters(hit.record));
     if(mode !== 'any'){
       structureHits = structureHits.filter(hit=>{
         const flat = anatomyTerms.find(row=>row.id === hit.id) || {};
@@ -5063,10 +6274,58 @@ function addAnatomyActiveFilterChip(container, label, value, targetSet){
   chip.innerHTML = `<span>${escapeHTML(label)}</span><b aria-hidden="true">×</b>`;
   chip.addEventListener('click', ()=>{
     targetSet.delete(value);
+    pruneAnatomyModuleSelections();
     renderMuscleRegionList();
     renderMuscleSearchResults();
   });
   container.appendChild(chip);
+}
+
+function renderAnatomyTaxonomyStep({ number, title, helper = '', disabled = false }){
+  const section = document.createElement('section');
+  section.className = `anatomy-taxonomy-step${disabled ? ' is-disabled' : ''}`;
+  const head = document.createElement('div');
+  head.className = 'anatomy-taxonomy-step-head';
+  const badge = document.createElement('span');
+  badge.className = 'anatomy-taxonomy-step-number';
+  badge.textContent = String(number);
+  const copy = document.createElement('div');
+  const heading = document.createElement('strong');
+  heading.textContent = title;
+  copy.appendChild(heading);
+  if(helper){
+    const note = document.createElement('small');
+    note.textContent = helper;
+    copy.appendChild(note);
+  }
+  head.append(badge, copy);
+  section.appendChild(head);
+  return section;
+}
+
+function appendAnatomyTaxonomyChoices(container, values, selectedSet, onToggle){
+  const grid = document.createElement('div');
+  grid.className = 'anatomy-filter-chip-grid anatomy-taxonomy-choice-grid';
+  for(const item of (values || [])){
+    const value = typeof item === 'string' ? item : item.value;
+    const count = typeof item === 'string' ? null : item.count;
+    const button = document.createElement('button');
+    button.type = 'button';
+    const active = selectedSet.has(value);
+    button.className = `anatomy-filter-option anatomy-taxonomy-choice${active ? ' is-active' : ''}`;
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    const label = document.createElement('span');
+    label.textContent = value;
+    button.appendChild(label);
+    if(count !== null && count !== undefined){
+      const number = document.createElement('small');
+      number.textContent = String(count);
+      button.appendChild(number);
+    }
+    button.addEventListener('click', ()=>onToggle(value));
+    grid.appendChild(button);
+  }
+  container.appendChild(grid);
 }
 
 function renderMuscleRegionList(){
@@ -5074,26 +6333,14 @@ function renderMuscleRegionList(){
   if(!list) return;
   list.innerHTML = '';
   const structures = Array.isArray(anatomyStructureDataset?.structures) ? anatomyStructureDataset.structures : [];
+  pruneAnatomyModuleSelections(structures);
 
-  const counts = (values)=>{
-    const map = new Map();
-    values.forEach(raw=>{
-      const value = String(raw || '').trim();
-      if(value) map.set(value, (map.get(value) || 0) + 1);
-    });
-    return [...map.entries()].sort((a,b)=>humanizeClinicalCategory(a[0]).localeCompare(humanizeClinicalCategory(b[0]), undefined, { sensitivity:'base' }));
-  };
-
-  const typeValues = structures.map(record=>record.type);
-  const systemValues = structures.flatMap(record=>arrayValue(record.system));
-  const regionValues = structures.flatMap(record=>arrayValue(record.region));
-
+  const selectedCount = anatomySelectedMajorRegions.size + anatomySelectedSubregions.size + anatomySelectedStructureGroups.size;
   const toolbar = document.createElement('div');
   toolbar.className = 'anatomy-filter-toolbar';
   const toolbarTop = document.createElement('div');
   toolbarTop.className = 'anatomy-filter-toolbar-top';
   const status = document.createElement('strong');
-  const selectedCount = anatomySelectedTypes.size + anatomySelectedSystems.size + anatomySelectedRegions.size;
   status.textContent = selectedCount
     ? `${tOr('active_filters','Active filters')}: ${selectedCount}`
     : tOr('anatomy_no_active_filters','No filters selected');
@@ -5103,9 +6350,9 @@ function renderMuscleRegionList(){
   clear.textContent = tOr('clear_filters','Clear filters');
   clear.disabled = selectedCount === 0;
   clear.addEventListener('click', ()=>{
-    anatomySelectedTypes.clear();
-    anatomySelectedSystems.clear();
-    anatomySelectedRegions.clear();
+    anatomySelectedMajorRegions.clear();
+    anatomySelectedSubregions.clear();
+    anatomySelectedStructureGroups.clear();
     renderMuscleRegionList();
     renderMuscleSearchResults();
   });
@@ -5114,53 +6361,84 @@ function renderMuscleRegionList(){
   if(selectedCount){
     const active = document.createElement('div');
     active.className = 'anatomy-active-filters';
-    anatomySelectedTypes.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedTypes));
-    anatomySelectedSystems.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedSystems));
-    anatomySelectedRegions.forEach(value=>addAnatomyActiveFilterChip(active, humanizeClinicalCategory(value), value, anatomySelectedRegions));
+    anatomySelectedMajorRegions.forEach(value=>addAnatomyActiveFilterChip(active, value, value, anatomySelectedMajorRegions));
+    anatomySelectedSubregions.forEach(value=>addAnatomyActiveFilterChip(active, value, value, anatomySelectedSubregions));
+    anatomySelectedStructureGroups.forEach(value=>addAnatomyActiveFilterChip(active, value, value, anatomySelectedStructureGroups));
     toolbar.appendChild(active);
   }
   list.appendChild(toolbar);
 
-  const specs = [
-    { title:tOr('anatomy_type','Structure type'), values:counts(typeValues), selected:anatomySelectedTypes, open:true },
-    { title:tOr('field_system','System'), values:counts(systemValues), selected:anatomySelectedSystems, open:anatomySelectedSystems.size>0 },
-    { title:tOr('muscle_search_region','Region'), values:counts(regionValues), selected:anatomySelectedRegions, open:anatomySelectedRegions.size>0 }
-  ];
+  const majorCounts = getAnatomyModuleFilterCounts(structures, getAnatomyStudyMajorRegion);
+  const majorOptions = sortStudyTaxonomyOptions('__study_region_major', [...majorCounts.keys()])
+    .map(value=>({ value, count:majorCounts.get(value) || 0 }));
+  const regionStep = renderAnatomyTaxonomyStep({
+    number:1,
+    title:tOr('study_anatomy_region','Region'),
+    helper:tOr('anatomy_taxonomy_region_help','Choose one or more anatomical regions.')
+  });
+  appendAnatomyTaxonomyChoices(regionStep, majorOptions, anatomySelectedMajorRegions, value=>{
+    if(anatomySelectedMajorRegions.has(value)) anatomySelectedMajorRegions.delete(value); else anatomySelectedMajorRegions.add(value);
+    pruneAnatomyModuleSelections(structures);
+    renderMuscleRegionList();
+    renderMuscleSearchResults();
+  });
+  list.appendChild(regionStep);
 
-  specs.forEach(spec=>{
-    const group = document.createElement('details');
-    group.className = 'anatomy-filter-group anatomy-filter-group-clean';
-    group.open = spec.open || spec.selected.size > 0;
-    const summary = document.createElement('summary');
-    const summaryLabel = document.createElement('span');
-    summaryLabel.textContent = spec.title;
-    const summaryCount = document.createElement('small');
-    summaryCount.textContent = spec.selected.size ? `${spec.selected.size} ${tOr('selected','selected')}` : `${spec.values.length}`;
-    summary.append(summaryLabel, summaryCount);
-    group.appendChild(summary);
-    const options = document.createElement('div');
-    options.className = 'anatomy-filter-chip-grid';
-    spec.values.forEach(([value,count])=>{
-      const button = document.createElement('button');
-      button.type = 'button';
-      const active = spec.selected.has(value);
-      button.className = `anatomy-filter-option${active ? ' is-active' : ''}`;
-      button.setAttribute('aria-pressed', active ? 'true' : 'false');
-      const label = document.createElement('span');
-      label.textContent = humanizeClinicalCategory(value);
-      const number = document.createElement('small');
-      number.textContent = String(count);
-      button.append(label, number);
-      button.addEventListener('click', ()=>{
-        if(spec.selected.has(value)) spec.selected.delete(value); else spec.selected.add(value);
+  if(anatomySelectedMajorRegions.size){
+    const partStep = renderAnatomyTaxonomyStep({
+      number:2,
+      title:tOr('study_anatomy_subregion','Part of region'),
+      helper:tOr('anatomy_taxonomy_subregion_help','Only parts belonging to the selected region are shown.')
+    });
+    const groups = [];
+    for(const major of sortStudyTaxonomyOptions('__study_region_major', [...anatomySelectedMajorRegions])){
+      const partCounts = getAnatomyModuleFilterCounts(
+        structures,
+        getAnatomyStudySubregion,
+        record=>getAnatomyStudyMajorRegion(record) === major
+      );
+      const values = sortStudyTaxonomyOptions('__study_region_part', [...partCounts.keys()])
+        .map(value=>({ value, count:partCounts.get(value) || 0 }));
+      if(values.length) groups.push({ major, values });
+    }
+    groups.forEach(group=>{
+      const parent = document.createElement('div');
+      parent.className = 'anatomy-taxonomy-parent-group';
+      const parentTitle = document.createElement('div');
+      parentTitle.className = 'anatomy-taxonomy-parent-title';
+      parentTitle.textContent = group.major;
+      parent.appendChild(parentTitle);
+      appendAnatomyTaxonomyChoices(parent, group.values, anatomySelectedSubregions, value=>{
+        if(anatomySelectedSubregions.has(value)) anatomySelectedSubregions.delete(value); else anatomySelectedSubregions.add(value);
+        pruneAnatomyModuleSelections(structures);
         renderMuscleRegionList();
         renderMuscleSearchResults();
       });
-      options.appendChild(button);
+      partStep.appendChild(parent);
     });
-    group.appendChild(options);
-    list.appendChild(group);
-  });
+    list.appendChild(partStep);
+  }
+
+  if(anatomySelectedSubregions.size){
+    const typeCounts = getAnatomyModuleFilterCounts(
+      structures,
+      getAnatomyStudyStructureGroup,
+      anatomyRecordMatchesMajorAndPartSelection
+    );
+    const typeOptions = sortStudyTaxonomyOptions('__study_structure_group', [...typeCounts.keys()])
+      .map(value=>({ value, count:typeCounts.get(value) || 0 }));
+    const typeStep = renderAnatomyTaxonomyStep({
+      number:3,
+      title:tOr('study_anatomy_structure_type','Structure type'),
+      helper:tOr('anatomy_taxonomy_structure_help','Choose one or more structure types available in the selected parts.')
+    });
+    appendAnatomyTaxonomyChoices(typeStep, typeOptions, anatomySelectedStructureGroups, value=>{
+      if(anatomySelectedStructureGroups.has(value)) anatomySelectedStructureGroups.delete(value); else anatomySelectedStructureGroups.add(value);
+      renderMuscleRegionList();
+      renderMuscleSearchResults();
+    });
+    list.appendChild(typeStep);
+  }
 }
 
 function buildMuscleQuizPool(){
@@ -8747,13 +10025,18 @@ const PEDIATRICS_PRENATAL_ROWS = [
   { label: "Regular prenatal care", key: "ped_regular_prenatal_care" },
   { label: "Bleeding / spotting", key: "ped_bleeding_spotting" },
   { label: "Rubella during pregnancy", key: "ped_rubella_during_pregnancy" },
+  { label: "Other maternal infection / fever", key: "ped_maternal_infection_fever" },
   { label: "Gestational diabetes", key: "ped_gestational_diabetes" },
   { label: "Hypertension / preeclampsia", key: "ped_hypertension_preeclampsia" },
   { label: "Kidney disease", key: "ped_kidney_disease" },
+  { label: "Other maternal chronic disease", key: "ped_maternal_chronic_disease" },
+  { label: "Abnormal prenatal screening / ultrasound", key: "ped_prenatal_screen_abnormal" },
+  { label: "Fetal growth concern", key: "ped_fetal_growth_concern" },
   { label: "Premature contractions", key: "ped_premature_contractions" },
   { label: "Threatened miscarriage", key: "ped_threatened_miscarriage" },
   { label: "Drugs / alcohol / smoking", key: "ped_drugs_alcohol_smoking" },
   { label: "Medications / herbs used", key: "ped_medications_herbs_used" },
+  { label: "Folate / prenatal vitamins", key: "ped_folate_vitamins" },
   { label: "Fertility treatment", key: "ped_fertility_treatment" }
 ];
 const PEDIATRICS_IMMUNIZATION_ROWS = [
@@ -8772,19 +10055,26 @@ const PEDIATRICS_PMH_ROWS = [
   { label: "Varicella", key: "ped_varicella" }, { label: "Measles", key: "ped_measles" }, { label: "Mumps", key: "ped_mumps" }, { label: "Rubella", key: "ped_rubella" },
   { label: "Bronchitis / pneumonia", key: "ped_bronchitis_pneumonia" }, { label: "Otitis media (recurrent)", key: "ped_otitis_media_recurrent" },
   { label: "Asthma / wheezing", key: "ped_asthma_wheezing" }, { label: "Seizures", key: "ped_seizures" }, { label: "Anemia", key: "ped_anemia" }, { label: "UTI", key: "ped_uti" },
-  { label: "Abdominal pain", key: "ped_abdominal_pain" }, { label: "Skin problems", key: "ped_skin_problems" }
+  { label: "Abdominal pain", key: "ped_abdominal_pain" }, { label: "Skin problems", key: "ped_skin_problems" },
+  { label: "Other chronic disease", key: "ped_other_chronic_disease" }, { label: "Recurrent / unusual infections", key: "ped_recurrent_infections" },
+  { label: "Neurodevelopmental diagnosis", key: "ped_neurodevelopmental_diagnosis" }, { label: "Serious injury / trauma", key: "ped_serious_injury" }
 ];
 const PEDIATRICS_FAMILY_ROWS = [
   { label: "Allergies", key: "ped_allergies" }, { label: "Asthma", key: "ped_asthma_wheezing" }, { label: "Diabetes", key: "ped_diabetes" },
   { label: "Hypertension", key: "ped_hypertension" }, { label: "Heart disease", key: "ped_heart_disease" }, { label: "Thyroid disease", key: "ped_thyroid_disease" },
-  { label: "Epilepsy", key: "ped_epilepsy" }, { label: "Cancer", key: "ped_cancer" }, { label: "Genetic disorders", key: "ped_genetic_disorders" }
+  { label: "Epilepsy", key: "ped_epilepsy" }, { label: "Cancer", key: "ped_cancer" }, { label: "Genetic disorders", key: "ped_genetic_disorders" },
+  { label: "Congenital anomalies", key: "ped_family_congenital" }, { label: "Neurodevelopmental conditions", key: "ped_family_neurodevelopmental" },
+  { label: "Sudden / unexplained young death", key: "ped_family_sudden_death" }, { label: "Consanguinity", key: "ped_family_consanguinity" },
+  { label: "Recurrent miscarriage / stillbirth", key: "ped_family_pregnancy_loss" }
 ];
 const PEDIATRICS_SOCIAL_ROWS = [
   { label: "Smoking in home", key: "ped_smoking_in_home" }, { label: "Pets or farm animals", key: "ped_pets_or_farm_animals" },
   { label: "School/daycare attendance", key: "ped_school_daycare_attendance" }, { label: "Behavioural issues at school", key: "ped_behavioural_issues_at_school" },
+  { label: "Bullying / peer difficulties", key: "ped_bullying" }, { label: "Frequent school absence", key: "ped_school_absence" },
+  { label: "Sleep concern", key: "ped_sleep_concern" }, { label: "Snoring / witnessed apnoea", key: "ped_snoring_apnoea" },
   { label: "Abroad recently (approx. last 1 year)", key: "ped_abroad_recently" }, { label: "Screen time >2 hours/day", key: "ped_screen_time_2h" },
   { label: "Physical activity <1 hour/day", key: "ped_physical_activity_1h" }, { label: "Sick contacts (family/school outbreaks)", key: "ped_sick_contacts" },
-  { label: "Problems at home (e.g. domestic abuse)", key: "ped_problems_at_home" }
+  { label: "Problems at home (e.g. domestic abuse)", key: "ped_problems_at_home" }, { label: "Other safety / safeguarding concern", key: "ped_safety_concern" }
 ];
 const PEDIATRICS_SUBSTANCE_ROWS = [
   { label: "Coffee / dark tea", key: "ped_coffee_dark_tea" }, { label: "Smoking (vaping, cigarettes, etc.)", key: "ped_smoking_vaping" },
@@ -9763,6 +11053,17 @@ function renderPediatricsAnamnesisForm(){
       <textarea name="ped_ros_neuro_notes" placeholder="Neuro notes"></textarea>
     </div>`);
   form.appendChild(buildYesNoNotesTable("5. Prenatal History", PEDIATRICS_PRENATAL_ROWS, "ped_prenatal", { headingKey: "ped_n_5_prenatal" }));
+  if(form.lastElementChild){
+    form.lastElementChild.insertAdjacentHTML("beforeend", `
+      <div class="anam-capture-subsection">
+        <h4>Pregnancy details</h4>
+        <div class="anam-grid">
+          <input name="ped_prenatal_maternal_age" placeholder="Maternal age during pregnancy" />
+          <textarea name="ped_prenatal_screening_notes" placeholder="Antenatal screening / scans / fetal growth details"></textarea>
+          <textarea name="ped_prenatal_exposure_notes" placeholder="Medication, alcohol, nicotine, drugs, occupational or toxic exposures"></textarea>
+        </div>
+      </div>`);
+  }
   form.insertAdjacentHTML("beforeend", `
     <div class="anam-section">
       <h3 data-anam-key="ped_n_6_birth_neonatal">6. Birth & Neonatal History</h3>
@@ -9785,6 +11086,35 @@ function renderPediatricsAnamnesisForm(){
     </div>
     <div class="anam-section">
       <h3 data-anam-key="ped_n_7_developmental">7. Developmental History</h3>
+      <div class="anam-capture-subsection">
+        <h4>Feeding, nutrition, growth & elimination</h4>
+        <div class="anam-grid">
+          <textarea name="ped_feed_current_pattern" placeholder="Current feeding pattern / breast / formula / solids / meals"></textarea>
+          <textarea name="ped_feed_difficulties" placeholder="Feeding difficulties: latch, sucking, fatigue, choking, coughing or cyanosis"></textarea>
+          <textarea name="ped_feed_reflux_vomiting" placeholder="Reflux / vomiting / relationship to feeds"></textarea>
+          <textarea name="ped_diet_appetite" placeholder="Appetite, dietary variety, restrictions and fluid intake"></textarea>
+          <textarea name="ped_growth_concern" placeholder="Growth concern / weight or height trend / centile crossing"></textarea>
+          <textarea name="ped_elimination_urine" placeholder="Urine / wet nappies / frequency / enuresis"></textarea>
+          <textarea name="ped_elimination_stool" placeholder="Stool frequency, consistency, blood / mucus, constipation"></textarea>
+          <textarea name="ped_toileting" placeholder="Toileting / continence / stool withholding concerns"></textarea>
+        </div>
+      </div>
+      <div class="anam-capture-subsection">
+        <h4>Developmental surveillance</h4>
+        <textarea name="ped_dev_caregiver_concern" placeholder="Caregiver concerns about development, behaviour or learning"></textarea>
+        <div class="anam-row">
+          <span>Loss of previously acquired skills</span>
+          <label><input type="radio" name="ped_dev_regression" value="yes" /> Yes</label>
+          <label><input type="radio" name="ped_dev_regression" value="no" /> No</label>
+        </div>
+        <textarea name="ped_dev_regression_notes" placeholder="If yes: which skills, age at loss and progression"></textarea>
+        <div class="anam-grid">
+          <textarea name="ped_dev_gross_motor" placeholder="Gross motor development"></textarea>
+          <textarea name="ped_dev_fine_motor" placeholder="Fine motor development"></textarea>
+          <textarea name="ped_dev_language" placeholder="Language / communication development"></textarea>
+          <textarea name="ped_dev_social_adaptive" placeholder="Social / adaptive / self-care development"></textarea>
+        </div>
+      </div>
       <div class="anam-grid">
         <input name="ped_dev_head_control" data-anam-key="ped_head_control_age" placeholder="Head control age achieved" />
         <input name="ped_dev_first_words" data-anam-key="ped_first_words_age" placeholder="First words age achieved" />
@@ -9882,8 +11212,35 @@ function renderPediatricsAnamnesisForm(){
       </div>
     </div>`);
   form.appendChild(buildYesNoNotesTable("10. Family History", PEDIATRICS_FAMILY_ROWS, "ped_family", { headingKey: "ped_n_10_family" }));
-  form.appendChild(buildYesNoNotesTable("11. Social & Environmental History", PEDIATRICS_SOCIAL_ROWS, "ped_social", { headingKey: "ped_n_11_social" }));
-  form.appendChild(buildYesNoNotesTable("12. Abuses / Substance Use", PEDIATRICS_SUBSTANCE_ROWS, "ped_substance", { headingKey: "ped_n_12_substance", caption: "Relevant especially in older children / adolescents.", captionKey: "ped_relevant_older_children" }));
+  const pediatricSocialSection = buildYesNoNotesTable("11. Social & Environmental History", PEDIATRICS_SOCIAL_ROWS, "ped_social", { headingKey: "ped_n_11_social" });
+  pediatricSocialSection.insertAdjacentHTML("beforeend", `
+    <div class="anam-capture-subsection">
+      <h4>Home, school, sleep & support</h4>
+      <div class="anam-grid">
+        <textarea name="ped_social_household" placeholder="Who lives with the child / custody / siblings / main caregivers"></textarea>
+        <textarea name="ped_social_support" placeholder="Family support / caregiver strain / community or professional support"></textarea>
+        <textarea name="ped_social_school" placeholder="School year, attendance, performance, learning support, friends and bullying"></textarea>
+        <textarea name="ped_social_sleep" placeholder="Bedtime, sleep duration, waking, snoring / apnoea, daytime sleepiness"></textarea>
+        <textarea name="ped_social_safety" placeholder="Home and transport safety / safeguarding concerns"></textarea>
+      </div>
+    </div>`);
+  form.appendChild(pediatricSocialSection);
+  const pediatricSubstanceSection = buildYesNoNotesTable("12. Abuses / Substance Use", PEDIATRICS_SUBSTANCE_ROWS, "ped_substance", { headingKey: "ped_n_12_substance", caption: "Relevant especially in older children / adolescents.", captionKey: "ped_relevant_older_children" });
+  pediatricSubstanceSection.insertAdjacentHTML("beforeend", `
+    <details class="anam-capture-subsection">
+      <summary>Adolescent psychosocial history (HEADSSS, when age-appropriate)</summary>
+      <p class="anam-capture-subsection-note">For sensitive topics, offer private time with the adolescent where appropriate and follow local safeguarding rules.</p>
+      <div class="anam-grid">
+        <textarea name="ped_headsss_home" placeholder="Home: relationships, living arrangements, safety"></textarea>
+        <textarea name="ped_headsss_education" placeholder="Education: school, performance, attendance, bullying, future plans"></textarea>
+        <textarea name="ped_headsss_activities" placeholder="Activities: friends, hobbies, exercise, online / social media"></textarea>
+        <textarea name="ped_headsss_drugs" placeholder="Drugs: nicotine / vaping, alcohol, recreational substances"></textarea>
+        <textarea name="ped_headsss_relationships" placeholder="Relationships / sexuality / contraception / STI concerns when relevant"></textarea>
+        <textarea name="ped_headsss_mood" placeholder="Mood, anxiety, self-harm, suicidal thoughts"></textarea>
+        <textarea name="ped_headsss_safety" placeholder="Safety: violence, abuse, exploitation, risky behaviour"></textarea>
+      </div>
+    </details>`);
+  form.appendChild(pediatricSubstanceSection);
   form.insertAdjacentHTML("beforeend", `
     <div class="anam-section">
       <h3>13. Status Praesens Generalis (SPG)</h3>
@@ -10255,6 +11612,22 @@ function renderPsychiatryAnamnesisForm(fields){
   });
 
   appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_trauma_dissociation",
+    label: "Trauma-related & dissociative symptoms",
+    placeholder: "Trauma exposure, intrusive memories, nightmares, flashbacks, avoidance, hyperarousal, detachment or dissociation...",
+    promptTitle: "Trauma / PTSD interview prompts",
+    prompts: getPsychiatryFields(fields, "psych_21", ["open_trauma"])
+  });
+
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
+    name: "psych_symptoms_eating",
+    label: "Eating, weight & body-image symptoms",
+    placeholder: "Restriction, binge eating, compensatory behaviour, weight change, body image and physical consequences...",
+    promptTitle: "Eating-disorder interview prompts",
+    prompts: getPsychiatryFields(fields, "psych_21", ["open_eating"])
+  });
+
+  appendPsychiatryStudentSummaryBlock(symptomScreen, {
     name: "psych_symptoms_activation",
     label: "Elevated / irritable mood & activation",
     placeholder: "Periods of elevated or irritable mood, reduced need for sleep, increased activity, confidence or risky behaviour...",
@@ -10355,7 +11728,7 @@ function renderPsychiatryAnamnesisForm(fields){
   appendPsychiatryFlatFields(personal, basicPersonal, { compact: true });
   appendPsychiatryFieldGroups(personal, getPsychiatryFields(fields, "psych_09", ["premorbid"]));
   appendPsychiatryFlatFields(personal, getPsychiatryFields(fields, "psych_15"), { compact: true });
-  appendPsychiatryPromptGuide(personal, getPsychiatryFields(fields, "psych_21", ["open_social"]));
+  appendPsychiatryPromptGuide(personal, getPsychiatryFields(fields, "psych_21", ["open_social", "open_developmental"]));
   form.appendChild(personal);
 
   // 10. Risk assessment
@@ -11257,6 +12630,10 @@ async function setAnamnesisFormTab(tab){
   if(pediatricsWrap) pediatricsWrap.classList.toggle("hidden", nextTab !== "pediatrics");
   if(nextTab === "psychiatry") await ensurePsychiatryAnamnesisFormBuilt();
   if(nextTab === "pediatrics") ensurePediatricsAnamnesisFormBuilt();
+  const activeForm = nextTab === "psychiatry"
+    ? document.getElementById("anamnesis-psychiatry-form")
+    : (nextTab === "pediatrics" ? document.getElementById("anamnesis-pediatrics-form") : document.getElementById("anamnesis-form"));
+  if(activeForm) await enhanceAnamnesisQuestionHelp(activeForm);
 }
 
 async function loadInternalAnamnesisForm(data = null){
@@ -11282,6 +12659,7 @@ async function loadInternalAnamnesisForm(data = null){
     updateHpiRadiationVisibility();
     applyAnamnesisTranslationsToDom();
     enhanceAnamnesisSections(form);
+    await enhanceAnamnesisQuestionHelp(form);
     refreshAnamnesisInputMode();
     return;
   }
@@ -11302,6 +12680,7 @@ async function loadInternalAnamnesisForm(data = null){
   syncAgeFromDob(form);
   applyAnamnesisTranslationsToDom();
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
 
@@ -11316,6 +12695,7 @@ async function loadPsychiatryAnamnesisForm(data = null){
   }
   syncAgeFromDob(form);
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
 
@@ -11336,8 +12716,26 @@ async function loadPediatricsAnamnesisForm(data = null){
   updatePediatricsBloodTransfusionVisibility();
   syncAgeFromDob(form);
   enhanceAnamnesisSections(form);
+  await enhanceAnamnesisQuestionHelp(form);
   refreshAnamnesisInputMode();
 }
+
+
+document.addEventListener("click", (event)=>{
+  if(!anamnesisQuestionPopoverEl || anamnesisQuestionPopoverEl.classList.contains("hidden")) return;
+  const target = event.target instanceof Element ? event.target : null;
+  if(target && (target.closest(".anam-question-popover") || target.closest(".anam-question-help-button"))) return;
+  closeAnamnesisQuestionPopover();
+});
+document.addEventListener("keydown", (event)=>{
+  if(event.key === "Escape") closeAnamnesisQuestionPopover();
+});
+window.addEventListener("resize", ()=>{
+  if(anamnesisQuestionActiveAnchor) positionAnamnesisQuestionPopover(anamnesisQuestionActiveAnchor);
+});
+document.addEventListener("scroll", ()=>{
+  if(anamnesisQuestionActiveAnchor) positionAnamnesisQuestionPopover(anamnesisQuestionActiveAnchor);
+}, true);
 
 async function loadAnamnesisForm(){
   const record = getActiveAnamnesisPatientRecord();
@@ -12835,6 +14233,7 @@ async function prepareScreenAfterNavigation(screenId){
     await ensureFlashcardsV2DataLoaded();
     renderQuizGeneratorUi();
     renderQuizStudioInsights();
+    renderStudyOverview();
     return;
   }
   if(id === "screen-biophysics-tf"){
@@ -12851,6 +14250,7 @@ async function prepareScreenAfterNavigation(screenId){
     await ensureFlashcardsV2DataLoaded();
     refreshFlashcardsBuilderUI();
     renderFlashcardsPlayer();
+    renderStudyOverview();
   }
 }
 
@@ -13643,26 +15043,36 @@ async function init(){
   });
 
   on('start-quiz','click', ()=> startQuiz());
-  on('end-quiz','click', ()=> {
+  on('quiz-end-session','click', ()=> {
     quizEngine.finishQuiz();
-    setQuizSetupCollapsed(false);
     renderQuizUI();
-    saveUserProfileNow("quiz_end");
+  });
+  on('quiz-skip','click', ()=> {
+    quizEngine.skipQuestion();
+    renderQuizUI();
   });
   on('quiz-preset-balanced','click', ()=> applyQuizStudioPreset('balanced'));
   on('quiz-preset-exam','click', ()=> applyQuizStudioPreset('exam'));
   on('quiz-preset-speed','click', ()=> applyQuizStudioPreset('speed'));
   on('quiz-preset-recovery','click', ()=> applyQuizStudioPreset('recovery'));
-  on('quiz-studio-retry-last-wrong','click', ()=> retryLastWrongTermsFromStudio());
-  on('quiz-studio-review-last-wrong','click', ()=> addWrongTermsToReviewList());
+  document.querySelectorAll('[data-quiz-session-mode]').forEach(button => button.addEventListener('click', ()=> setQuizSessionMode(button.getAttribute('data-quiz-session-mode'))));
+  on('quiz-swap-direction','click', ()=> {
+    const front = document.getElementById('quiz-front-field');
+    const back = document.getElementById('quiz-back-field');
+    if(!front || !back) return;
+    const previous = front.value;
+    front.value = back.value;
+    back.value = previous;
+    quizGeneratorFrontFieldKey = front.value;
+    quizGeneratorBackFieldKey = back.value;
+    renderQuizGeneratorUi();
+    renderQuizStudioInsights();
+  });
   on('quiz-settings-toggle','click', ()=> setQuizSetupCollapsed(false));
   on('quiz-builder-toggle','click', ()=> setQuizSetupCollapsed(false));
-  on('quiz-preview-stage','click', ()=>{
-    setQuizSetupCollapsed(true);
-    renderQuizUI();
-  });
+  on('quiz-resume','click', ()=> setQuizSetupCollapsed(true));
   on('flashcards-builder-toggle','click', ()=> setFlashcardsBuilderCollapsed(false));
-  on('flashcards-preview-player','click', ()=> setFlashcardsBuilderCollapsed(true));
+  on('flashcards-resume','click', ()=> setFlashcardsBuilderCollapsed(true));
   onOptional('muscle-quiz-settings-toggle','click', ()=> setMuscleQuizSetupCollapsed(false));
   on('biophysics-answer-true','click', ()=> answerBiophysicsTf(true));
   on('biophysics-answer-false','click', ()=> answerBiophysicsTf(false));
@@ -13696,6 +15106,7 @@ async function init(){
     on('flashcard-back','click', ()=> showScreen('screen-submenu'));
   }
   document.addEventListener('keydown', handleQuizKeyboardShortcuts);
+  document.addEventListener('keydown', handleFlashcardsKeyboardShortcuts);
   document.addEventListener('keydown', handleBiophysicsTfKeyboard);
 
   updateAuthUI();
@@ -13722,6 +15133,7 @@ const QUIZ_PROGRESS_KEY = "quiz/progress_v1";
 const QUIZ_SESSIONS_KEY = "quiz/sessions_v1";
 const QUIZ_CUSTOM_KEY = "quiz/custom_quizzes_v1";
 const QUIZ_SCREEN_MODE_KEY = "quiz/screen_mode_v1";
+const QUIZ_SESSION_MODE_KEY = "quiz/session_mode_v1";
 const QUIZ_MAX_SESSIONS = 100;
 let quizLastFinishedState = null;
 let quizBuilderEditingId = null;
@@ -13734,8 +15146,10 @@ let quizBuilderBackFieldKey = "";
 let quizGeneratorDomainKey = "";
 let quizGeneratorSubdivision1 = [];
 let quizGeneratorSubdivision2 = [];
+let quizGeneratorSubdivision3 = [];
 let quizGeneratorFrontFieldKey = "";
 let quizGeneratorBackFieldKey = "";
+let quizSessionMode = String(localStorage.getItem(QUIZ_SESSION_MODE_KEY) || "study") === "exam" ? "exam" : "study";
 
 function getQuizScreenMode(){
   return "studio";
@@ -13745,6 +15159,23 @@ function setQuizScreenMode(mode){
   const studioSection = document.getElementById("quiz-studio-section");
   localStorage.setItem(QUIZ_SCREEN_MODE_KEY, "studio");
   if(studioSection) studioSection.classList.remove("hidden");
+}
+
+function renderQuizSessionModeUi(){
+  document.querySelectorAll('[data-quiz-session-mode]').forEach(button => {
+    const active = String(button.getAttribute('data-quiz-session-mode') || '') === quizSessionMode;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  const screen = document.getElementById('screen-quiz');
+  if(screen) screen.dataset.sessionMode = quizSessionMode;
+}
+
+function setQuizSessionMode(mode){
+  quizSessionMode = String(mode || '') === 'exam' ? 'exam' : 'study';
+  localStorage.setItem(QUIZ_SESSION_MODE_KEY, quizSessionMode);
+  renderQuizSessionModeUi();
+  renderQuizStudioInsights();
 }
 
 function genId(prefix){
@@ -13810,8 +15241,15 @@ function getQuizBuilderPairKeysFromForm(){
   return getQuizBuilderPairKeysFromQuery(getQuizBuilderFieldQueryFromForm());
 }
 
+function canonicalStudyDomainKey(domainKey){
+  const key = String(domainKey || "").trim();
+  if(key === "anatomy_structures" || key === "anatomy") return "anatomy";
+  if(key === "anatomy_question_seed" || key === "anatomy_question_graph" || key === "anatomy_questions") return "anatomy_questions";
+  return key;
+}
+
 function makeDomainFieldPairKey(domainKey, fieldKey){
-  return `field:${String(domainKey || "").trim()}:${String(fieldKey || "").trim()}`;
+  return `field:${canonicalStudyDomainKey(domainKey)}:${String(fieldKey || "").trim()}`;
 }
 
 function parseDomainFieldPairKey(value){
@@ -13820,7 +15258,7 @@ function parseDomainFieldPairKey(value){
   const parts = raw.split(":");
   if(parts.length < 3) return null;
   return {
-    domainKey: String(parts[1] || "").trim(),
+    domainKey: canonicalStudyDomainKey(parts[1]),
     fieldKey: String(parts.slice(2).join(":") || "").trim()
   };
 }
@@ -13828,7 +15266,7 @@ function parseDomainFieldPairKey(value){
 function buildQuizCandidatesFromFieldQuery(fieldQuery){
   const q = fieldQuery || {};
   if(!flashcardsV2State.loaded) return [];
-  const domainKey = String(q.domainKey || "").trim();
+  const domainKey = canonicalStudyDomainKey(q.domainKey);
   if(!domainKey) return [];
   const adapter = flashcardsV2State.adapterByKey.get(domainKey);
   if(!adapter) return [];
@@ -13855,7 +15293,8 @@ function buildQuizCandidatesFromFieldQuery(fieldQuery){
       category: adapter.label || domainKey,
       hasDefinition: hasAnyDefinition(row),
       baseTermKey: String(row._id || ""),
-      userTermId: null
+      userTermId: null,
+      explanation: getStudyExplanation(row, adapter, [q.frontFieldKey, q.backFieldKey])
     });
   }
   return out;
@@ -13878,7 +15317,7 @@ function renderQuizBuilderDomainUi(){
     quizBuilderDomainKey = flashcardsV2State.adapters[0].key;
   }
 
-  domainsEl.innerHTML = flashcardsV2State.adapters.map(adapter => {
+  domainsEl.innerHTML = visibleAdapters.map(adapter => {
     const checked = adapter.key === quizBuilderDomainKey ? " checked" : "";
     return `<label class="checkbox-item"><input type="radio" name="qb-domain" data-qb-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
@@ -13986,7 +15425,7 @@ function applyQuizBuilderConfigToForm(cfg){
       };
     }
   }
-  quizBuilderDomainKey = String(fq.domainKey || quizBuilderDomainKey || "");
+  quizBuilderDomainKey = canonicalStudyDomainKey(fq.domainKey || quizBuilderDomainKey || "");
   quizBuilderSubdivision1 = String(fq.subdivision1 || "");
   quizBuilderSubdivision2 = String(fq.subdivision2 || "");
   quizBuilderFrontFieldKey = String(fq.frontFieldKey || "");
@@ -14450,6 +15889,8 @@ const progressStore = {
     return `${termId}::${fromField}->${toField}`;
   },
   getTermStats(termId, fromField, toField){
+    const shared = loadProgress(getUserStorageKey())[termId];
+    if(shared) return shared;
     const data = this._readProgress();
     return data.terms[this._pairKey(termId, fromField, toField)] || { correct: 0, wrong: 0, attempts: 0, starred: false };
   },
@@ -14457,7 +15898,29 @@ const progressStore = {
     const data = this._readProgress();
     return Object.entries(data.terms || {}).some(([key, val]) => key.startsWith(`${termId}::`) && !!val.starred);
   },
+  getSharedRecord(termId){
+    return (loadProgress(getUserStorageKey()) || {})[termId] || {};
+  },
+  getMastery(termId){
+    return getMasteryState(this.getSharedRecord(termId));
+  },
+  isDifficult(termId){
+    return isDifficultStudyRecord(this.getSharedRecord(termId));
+  },
+  toggleDifficult(termId){
+    const userKey = getUserStorageKey();
+    const shared = loadProgress(userKey) || {};
+    const current = shared[termId] || {};
+    shared[termId] = setManualDifficult(current, !current.manualDifficult);
+    saveProgress(userKey, shared);
+    renderStudyOverview();
+    return !!shared[termId].manualDifficult;
+  },
   recordAttempt(termId, fromField, toField, isCorrect){
+    const userKey = getUserStorageKey();
+    const shared = loadProgress(userKey); // migrate old attempts before recording a new one
+    shared[termId] = recordStudyEvent(shared[termId], isCorrect ? "quiz-correct" : "quiz-wrong");
+    saveProgress(userKey, shared);
     const data = this._readProgress();
     const key = this._pairKey(termId, fromField, toField);
     const row = data.terms[key] || { correct: 0, wrong: 0, attempts: 0, starred: false, termId, fromField, toField, updatedAt: null };
@@ -14551,6 +16014,25 @@ function hasAnyDefinition(row){
   return fields.some(f => String(row[f] || "").trim().length > 0);
 }
 
+function getStudyExplanation(row, adapter = null, excludedFieldKeys = []){
+  if(!row) return "";
+  const excluded = new Set((excludedFieldKeys || []).map(String));
+  const preferred = ["notes", "definition", "mechanism", "clinical_use", "oina_summary"];
+  if(adapter && adapter.fieldByKey){
+    for(const key of preferred){
+      if(excluded.has(key)) continue;
+      const field = adapter.fieldByKey.get(key);
+      const value = field ? String(field.getValue(row) || "").trim() : "";
+      if(value) return value;
+    }
+  }
+  for(const key of ["english_definition", "slovak_definition", "german_definition", "english_description", "notes", "summary", "mechanism"]){
+    const value = String(row[key] || "").trim();
+    if(value) return value;
+  }
+  return "";
+}
+
 function buildQuizCandidates(fromField, toField){
   const fromPair = parseDomainFieldPairKey(fromField);
   const toPair = parseDomainFieldPairKey(toField);
@@ -14562,7 +16044,8 @@ function buildQuizCandidates(fromField, toField){
     if(!frontField || !backField) return [];
     const subQuery = {
       subdivision1: normalizeSubdivisionSelection(quizGeneratorSubdivision1),
-      subdivision2: normalizeSubdivisionSelection(quizGeneratorSubdivision2)
+      subdivision2: normalizeSubdivisionSelection(quizGeneratorSubdivision2),
+      subdivision3: normalizeSubdivisionSelection(quizGeneratorSubdivision3)
     };
     const candidates = [];
     for(const row of flashcardsV2State.allTerms){
@@ -14578,7 +16061,7 @@ function buildQuizCandidates(fromField, toField){
         toTerm,
         sourceType: "base",
         sourceDataset: fromPair.domainKey,
-        category: adapter.label || fromPair.domainKey,
+        category: row._studyCategory || adapter.label || fromPair.domainKey,
         hasDefinition: hasAnyDefinition(row),
         baseTermKey: termId,
         userTermId: null
@@ -14605,7 +16088,8 @@ function buildQuizCandidates(fromField, toField){
       category: buildCategoryText(row, row.__dataset || ""),
       hasDefinition: hasAnyDefinition(row),
       baseTermKey: termId,
-      userTermId: null
+      userTermId: null,
+      explanation: getStudyExplanation(row)
     });
   }
 
@@ -14624,7 +16108,8 @@ function buildQuizCandidates(fromField, toField){
       category: "manual_entry",
       hasDefinition: String((row && row.notes) || "").trim().length > 0,
       baseTermKey: null,
-      userTermId: row && row.id ? row.id : null
+      userTermId: row && row.id ? row.id : null,
+      explanation: String((row && row.notes) || "").trim()
     });
   }
   return candidates;
@@ -14640,13 +16125,16 @@ function resolveQuizCandidatesForSession({
 } = {}){
   const savedSub1 = normalizeSubdivisionSelection(quizGeneratorSubdivision1);
   const savedSub2 = normalizeSubdivisionSelection(quizGeneratorSubdivision2);
+  const savedSub3 = normalizeSubdivisionSelection(quizGeneratorSubdivision3);
   if(filters && typeof filters === "object"){
     if(Object.prototype.hasOwnProperty.call(filters, "subdivision1")) quizGeneratorSubdivision1 = normalizeSubdivisionSelection(filters.subdivision1);
     if(Object.prototype.hasOwnProperty.call(filters, "subdivision2")) quizGeneratorSubdivision2 = normalizeSubdivisionSelection(filters.subdivision2);
+    if(Object.prototype.hasOwnProperty.call(filters, "subdivision3")) quizGeneratorSubdivision3 = normalizeSubdivisionSelection(filters.subdivision3);
   }
-  let candidates = retryItems && retryItems.length ? retryItems.slice() : buildQuizCandidates(fromField, toField);
+  let candidates = Array.isArray(retryItems) ? retryItems.slice() : buildQuizCandidates(fromField, toField);
   quizGeneratorSubdivision1 = savedSub1;
   quizGeneratorSubdivision2 = savedSub2;
+  quizGeneratorSubdivision3 = savedSub3;
 
   if(Array.isArray(termIds) && termIds.length > 0){
     const wanted = new Set(termIds.map(v => String(v || "").trim()).filter(Boolean));
@@ -14667,12 +16155,70 @@ function resolveQuizCandidatesForSession({
   if(filters.onlyStarred){
     candidates = candidates.filter(candidate => progressStore.isStarred(candidate.termId));
   }
+  const source = String(filters.source || "all");
+  if(source === "saved"){
+    const ids = getSavedStudyIds();
+    candidates = candidates.filter(candidate => ids.has(candidate.termId));
+  } else if(source === "wrong" || source === "difficult"){
+    const progress = loadProgress(getUserStorageKey());
+    candidates = candidates.filter(candidate => {
+      const row = progress[candidate.termId];
+      return row && (source === "wrong" ? Number(row.wrong || 0) > 0 : isDifficultStudyRecord(row));
+    });
+  }
   return candidates.filter(candidate => candidate.fromTerm && candidate.toTerm);
 }
 
+function getSavedStudyIds(){
+  const ids = new Set(getLocalReview().flatMap(row => [row.base_term_key, row.user_term_id && `user:${row.user_term_id}`]).filter(Boolean).map(String));
+  getLocalTerms().forEach(row => { if(row.id) ids.add(`user:${row.id}`); });
+  getFlashcardCustomCards().forEach(card => { if(card.id) ids.add(`customcard:${card.id}`); });
+  return ids;
+}
+
+function renderStudyOverview(){
+  const progress = loadProgress(getUserStorageKey());
+  const rows = Object.entries(progress).filter(([key, value]) => key !== "__quizV1Imported" && value && typeof value === "object").map(([, value]) => value);
+  const due = rows.filter(row => isStudyDue(row)).length;
+  const difficult = rows.filter(row => isDifficultStudyRecord(row)).length;
+  const recent = rows.filter(row => row.wrong && row.lastSeen && Date.now() - Date.parse(row.lastSeen) < 7 * 86400000).length;
+  const sessions = progressStore._readSessions();
+  const total = sessions.reduce((sum, session) => sum + Number(session.total || 0), 0);
+  const correct = sessions.reduce((sum, session) => sum + Number(session.score || 0), 0);
+  const entries = [[tOr('study_due', 'Due'), due], [tOr('study_difficult_terms', 'Difficult terms'), difficult], [tOr('study_recent_mistakes', 'Recent mistakes'), recent], [tOr('study_saved', 'Saved'), getSavedStudyIds().size], [tOr('study_quiz_accuracy', 'Quiz accuracy'), total ? `${Math.round(100 * correct / total)}%` : "—"]];
+  for(const id of ["quiz-study-overview", "flashcards-study-overview"]){
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = entries.map(([label, value]) => `<span><strong>${escapeHTML(value)}</strong> ${escapeHTML(label)}</span>`).join("");
+  }
+}
+
+function renderQuizHistory(){
+  const root = document.getElementById('quiz-history-list');
+  if(!root) return;
+  const sessions = progressStore._readSessions().slice(0, 5);
+  if(!sessions.length){
+    root.innerHTML = `<div class="study-history-empty">${escapeHTML(tOr('study_no_quiz_history', 'No quiz sessions yet. Your recent results will appear here.'))}</div>`;
+    return;
+  }
+  root.innerHTML = sessions.map(session => {
+    const total = Math.max(1, Number(session.total || 0));
+    const score = Number(session.score || 0);
+    const pct = Math.round(100 * score / total);
+    const date = session.finishedAt ? new Date(session.finishedAt) : null;
+    const dateText = date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString() : '';
+    const mode = session.settings?.filters?.sessionMode === 'exam' ? tOr('exam_mode', 'Exam mode') : tOr('study_mode', 'Study mode');
+    return `<div class="study-history-item"><div><strong>${score}/${total}</strong><span>${escapeHTML(mode)}${dateText ? ` · ${escapeHTML(dateText)}` : ''}</span></div><b>${pct}%</b></div>`;
+  }).join('');
+}
+
+let quizStudySnapshot = null;
+let quizLastFocusKey = '';
 const quizEngine = createQuizEngine({
-  onTick: ()=>renderQuizUI(),
-  getTermStats: (termId, fromField, toField)=>progressStore.getTermStats(termId, fromField, toField),
+  onTick: (quizState)=>{
+    if(quizState.finished) renderQuizUI();
+    else renderQuizStats(quizState);
+  },
+  getTermStats: (termId, fromField, toField)=>quizStudySnapshot?.[termId] || progressStore.getTermStats(termId, fromField, toField),
   recordAttempt: (termId, fromField, toField, isCorrect)=>progressStore.recordAttempt(termId, fromField, toField, isCorrect),
   recordSession: (summary)=>progressStore.recordSession(summary),
   appendWrongTermsLog,
@@ -14687,17 +16233,24 @@ function quizAccuracyPct(quizState){
 function renderQuizStats(quizState){
   const scoreEl = document.getElementById('quiz-score');
   const statsEl = document.getElementById('quiz-stats');
+  const examMode = !!(quizState?.active && quizState?.settings?.filters?.sessionMode === 'exam');
   if(scoreEl){
     const total = quizState && quizState.settings ? quizState.settings.questionCount : 0;
-    scoreEl.textContent = `${t('score') || 'Score'}: ${(quizState && quizState.score) || 0} / ${total}`;
+    scoreEl.textContent = examMode
+      ? `${tOr('exam_mode', 'Exam mode')} · ${quizState.answered || 0}/${total}`
+      : `${t('score') || 'Score'}: ${(quizState && quizState.score) || 0} / ${total}`;
   }
   if(statsEl){
-    const streak = (quizState && quizState.streak) || 0;
-    const acc = quizAccuracyPct(quizState);
-    const timer = (quizState && quizState.timeLeftSeconds != null)
-      ? ` | ${tOr('quiz_time', 'Time')}: ${quizState.timeLeftSeconds}s`
+    const timerText = (quizState && quizState.timeLeftSeconds != null)
+      ? `${tOr('quiz_time', 'Time')}: ${quizState.timeLeftSeconds}s`
       : '';
-    statsEl.textContent = `${tOr('quiz_streak', 'Streak')}: ${streak} | ${tOr('quiz_accuracy', 'Accuracy')}: ${acc}%${timer}`;
+    if(examMode){
+      statsEl.textContent = timerText || tOr('exam_mode_hidden_results', 'Results stay hidden until the end.');
+    } else {
+      const streak = (quizState && quizState.streak) || 0;
+      const acc = quizAccuracyPct(quizState);
+      statsEl.textContent = `${tOr('quiz_streak', 'Streak')}: ${streak} | ${tOr('quiz_accuracy', 'Accuracy')}: ${acc}%${timerText ? ` | ${timerText}` : ''}`;
+    }
   }
 }
 
@@ -14706,49 +16259,103 @@ function renderQuizSummary(quizState){
   if(!area) return;
   const wrong = (quizState && quizState.wrongAnswers) || [];
   const wrongHtml = wrong.length === 0
-    ? `<div class="muted">${escapeHTML(tOr('quiz_no_wrong_terms', 'No wrong terms. Great run.'))}</div>`
-    : wrong.map(item => `
+    ? `<div class="muted">${escapeHTML(tOr('study_no_incorrect', 'No incorrect answers in this session.'))}</div>`
+    : wrong.map(item => {
+      const isTrueFalse = item.questionType === 'true_false';
+      const prompt = isTrueFalse && item.proposedToTerm
+        ? `${item.fromTerm || ''} → ${item.proposedToTerm}`
+        : item.fromTerm || '';
+      const correctValue = isTrueFalse
+        ? (item.correctBoolean ? tOr('true', 'True') : tOr('false', 'False'))
+        : item.correctToTerm || '';
+      return `
       <div class="quiz-wrong-item">
-        <div><strong>${escapeHTML(item.fromTerm || '')}</strong></div>
-        <div class="small">${escapeHTML(tOr('correct', 'Correct'))}: ${escapeHTML(item.correctToTerm || '')}</div>
+        <div><strong>${escapeHTML(prompt)}</strong></div>
+        <div class="small">${escapeHTML(tOr('correct', 'Correct'))}: ${escapeHTML(correctValue)}</div>
+        ${isTrueFalse ? `<div class="small">${escapeHTML(tOr('study_answer', 'Answer'))}: ${escapeHTML(item.correctToTerm || '')}</div>` : ''}
         <div class="small">${escapeHTML(tOr('quiz_chosen_label', 'Chosen'))}: ${escapeHTML(item.userChosen || '')}</div>
-        <div class="small">${escapeHTML(item.timestamp || '')}</div>
-      </div>
-    `).join('');
+        ${item.explanation ? `<div class="study-answer-explanation">${escapeHTML(item.explanation)}</div>` : ''}
+      </div>`;
+    }).join('');
+  const skippedHtml = (quizState.skippedAnswers || []).map(item => `
+    <div class="quiz-wrong-item"><strong>${escapeHTML(item.fromTerm || '')}</strong><div class="small">${escapeHTML(tOr('study_answer', 'Answer'))}: ${escapeHTML(item.correctToTerm || '')}</div></div>
+  `).join('');
 
   area.innerHTML = `
     <div class="quiz-summary">
-      <div><strong>${escapeHTML(tOr('quiz_summary_title', 'Quiz summary'))}</strong></div>
-      <div class="muted">${escapeHTML(tOr('quiz_total_correct', 'Total correct'))}: ${quizState.score} / ${(quizState.settings && quizState.settings.questionCount) || quizState.questions.length}</div>
+      <div class="study-result-mode">${escapeHTML(quizState.settings?.filters?.sessionMode === 'exam' ? tOr('exam_mode', 'Exam mode') : tOr('study_mode', 'Study mode'))}</div>
+      <h3>${escapeHTML(tOr('quiz_summary_title', 'Quiz summary'))}</h3>
+      <div class="study-result-score">${quizState.score} / ${(quizState.settings && quizState.settings.questionCount) || quizState.questions.length} <span>${Math.round(100 * quizState.score / Math.max(1, quizState.settings?.questionCount || quizState.questions.length))}%</span></div>
+      <div class="study-result-stats"><span>${escapeHTML(tOr('correct', 'Correct'))} <strong>${quizState.score}</strong></span><span>${escapeHTML(tOr('study_incorrect', 'Incorrect'))} <strong>${wrong.length}</strong></span><span>${escapeHTML(tOr('study_skipped', 'Skipped'))} <strong>${quizState.skipped || 0}</strong></span><span>${escapeHTML(tOr('study_unanswered', 'Unanswered'))} <strong>${Math.max(0, (quizState.settings?.questionCount || quizState.questions.length) - quizState.answered - (quizState.skipped || 0))}</strong></span></div>
+      <h4>${escapeHTML(tOr('study_revisit', 'Questions to revisit'))}</h4>
       <div class="quiz-wrong-list">${wrongHtml}</div>
+      ${skippedHtml ? `<h4>${escapeHTML(tOr('study_skipped_questions', 'Skipped questions'))}</h4><div class="quiz-wrong-list">${skippedHtml}</div>` : ''}
       <div class="row">
         <button type="button" id="quiz-retry-wrong"${wrong.length ? '' : ' disabled'}>${escapeHTML(tOr('quiz_retry_wrong_terms', 'Retry wrong terms'))}</button>
         <button type="button" id="quiz-add-wrong-review"${wrong.length ? '' : ' disabled'}>${escapeHTML(tOr('quiz_add_wrong_review', 'Add wrong terms to review list'))}</button>
+        <button type="button" id="quiz-review-flashcards"${wrong.length ? '' : ' disabled'}>${escapeHTML(tOr('study_review_as_flashcards', 'Review as flashcards'))}</button>
+        <button type="button" id="quiz-new-session" class="secondary">${escapeHTML(tOr('study_start_another', 'Start another quiz'))}</button>
       </div>
     </div>
   `;
 
   const retryBtn = document.getElementById('quiz-retry-wrong');
   if(retryBtn){
-    retryBtn.addEventListener('click', ()=>{
-      if(!quizLastFinishedState || !quizLastFinishedState.wrongAnswers || quizLastFinishedState.wrongAnswers.length === 0) return;
-      const fromField = quizLastFinishedState.fromField;
-      const toField = quizLastFinishedState.toField;
-      const fromSel = document.getElementById('quiz-from');
-      const toSel = document.getElementById('quiz-to');
-      if(fromSel) fromSel.value = fromField;
-      if(toSel) toSel.value = toField;
-      const all = buildQuizCandidates(fromField, toField);
-      const wanted = new Set(quizLastFinishedState.wrongAnswers.map(w => `${w.termId}::${w.fromTerm}::${w.correctToTerm}`));
-      const retryItems = all.filter(c => wanted.has(`${c.termId}::${c.fromTerm}::${c.toTerm}`));
-      startQuiz({ retryItems });
-    });
+    retryBtn.addEventListener('click', retryFinishedMistakes);
   }
 
   const reviewBtn = document.getElementById('quiz-add-wrong-review');
   if(reviewBtn){
     reviewBtn.addEventListener('click', addWrongTermsToReviewList);
   }
+  document.getElementById('quiz-new-session')?.addEventListener('click', ()=> setQuizSetupCollapsed(false));
+  document.getElementById('quiz-review-flashcards')?.addEventListener('click', reviewFinishedMistakesAsFlashcards);
+}
+
+function retryFinishedMistakes(){
+  const previous = quizLastFinishedState;
+  if(!previous?.wrongAnswers?.length) return;
+  const seen = new Set();
+  const retryItems = previous.wrongAnswers.filter(item => {
+    const key = `${item.termId}::${item.fromTerm}`;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(item => ({ ...item, toTerm: item.correctToTerm }));
+  const uniqueAnswers = new Set(retryItems.map(item => item.toTerm.toLocaleLowerCase())).size;
+  startQuiz({ retryItems, configOverrides: {
+    fromField: previous.fromField, toField: previous.toField,
+    questionCount: retryItems.length,
+    quizType: uniqueAnswers < 2 ? 'typing' : previous.quizType === 'matching' ? 'typing' : previous.quizType,
+    filters: { source: 'all', onlyStarred: false, useTimer: false, timerSeconds: 0 }
+  }});
+}
+
+async function reviewFinishedMistakesAsFlashcards(){
+  const previous = quizLastFinishedState;
+  if(!previous?.wrongAnswers?.length) return;
+  await ensureFlashcardsV2DataLoaded();
+  const seen = new Set();
+  const deck = previous.wrongAnswers.filter(item => {
+    const key = `${item.termId}::${item.fromTerm}`;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(item => ({
+    termId: item.termId, domain: item.sourceDataset || '',
+    front: item.fromTerm, back: item.correctToTerm,
+    frontSecondary: '', backSecondary: '', meta: {}
+  }));
+  const from = parseDomainFieldPairKey(previous.fromField);
+  const to = parseDomainFieldPairKey(previous.toField);
+  if(from && to && from.domainKey === to.domainKey){
+    flashcardsV2State.query.domains = [from.domainKey];
+    flashcardsV2State.query.frontFieldKey = from.fieldKey;
+    flashcardsV2State.query.backFieldKey = to.fieldKey;
+  }
+  showScreen('screen-flashcards');
+  startFlashcardsSession(deck);
+  setFlashcardsBuilderCollapsed(true);
 }
 
 function quizRequiresDoubleConfirm(quizState){
@@ -14782,6 +16389,7 @@ function renderQuizQuestion(quizState){
     area.textContent = tOr('quiz_complete', 'Quiz complete.');
     return;
   }
+  const examMode = quizState.settings?.filters?.sessionMode === 'exam';
   if(q.type === "matching"){
     const letterForIndex = (index)=>{
       const code = 65 + index;
@@ -14792,14 +16400,14 @@ function renderQuizQuestion(quizState){
     const promptListHtml = q.pairs.map((pair, idx)=>{
       const selectedLetter = pair.selectedToTerm ? (choiceLetterMap.get(pair.selectedToTerm) || "") : "";
       const wrongWithCorrect = `${tOr('wrong', 'Wrong')} (${tOr('correct', 'Correct')}: ${choiceLetterMap.get(pair.correctToTerm) || "?"})`;
-      const status = !q.answered ? "" : (pair.isCorrect
+      const status = !q.answered || examMode ? "" : (pair.isCorrect
         ? `<span class="quiz-feedback ok">${escapeHTML(tOr('correct', 'Correct'))}</span>`
         : `<span class="quiz-feedback bad">${escapeHTML(wrongWithCorrect)}</span>`);
       const classes = [
         "quiz-matching-reference-button",
         activePairId === String(pair.pairId) && !q.answered ? "is-active" : "",
-        q.answered && pair.isCorrect ? "quiz-correct" : "",
-        q.answered && !pair.isCorrect ? "quiz-wrong" : ""
+        q.answered && !examMode && pair.isCorrect ? "quiz-correct" : "",
+        q.answered && !examMode && !pair.isCorrect ? "quiz-wrong" : ""
       ].filter(Boolean).join(" ");
       return `
         <button type="button" class="${classes}" data-match-pair-select="${escapeHTML(pair.pairId)}" ${q.answered ? 'disabled' : ''}>
@@ -14824,9 +16432,9 @@ function renderQuizQuestion(quizState){
       const classes = [
         "quiz-matching-reference-button",
         assignedPair && !q.answered ? "quiz-pending" : "",
-        q.answered && assignedPair && assignedPair.correctToTerm === choice ? "quiz-correct" : "",
-        q.answered && assignedPair && assignedPair.correctToTerm !== choice ? "quiz-wrong" : "",
-        q.answered && !assignedPair && isCorrectTarget ? "quiz-neutral" : ""
+        q.answered && !examMode && assignedPair && assignedPair.correctToTerm === choice ? "quiz-correct" : "",
+        q.answered && !examMode && assignedPair && assignedPair.correctToTerm !== choice ? "quiz-wrong" : "",
+        q.answered && !examMode && !assignedPair && isCorrectTarget ? "quiz-neutral" : ""
       ].filter(Boolean).join(" ");
       return `
         <button type="button" class="${classes}" data-match-choice-pick="${escapeHTML(choice)}" ${q.answered ? 'disabled' : ''}>
@@ -14904,18 +16512,27 @@ function renderQuizQuestion(quizState){
   }
 
   const isStarred = progressStore.isStarred(q.termId);
-  const feedback = !q.answered ? '' : (q.isCorrect
+  const difficultRecord = progressStore.getSharedRecord(q.termId);
+  const manuallyDifficult = !!difficultRecord.manualDifficult;
+  const feedback = !q.answered || examMode ? '' : (q.skipped
+    ? `<div class="quiz-feedback">${escapeHTML(tOr('study_skipped', 'Skipped'))}. ${escapeHTML(tOr('quiz_correct_answer', 'Correct answer'))}: ${escapeHTML(q.correctToTerm)}</div>`
+    : q.isCorrect
     ? `<div class="quiz-feedback ok">${escapeHTML(tOr('correct', 'Correct'))}</div>`
     : `<div class="quiz-feedback bad">${escapeHTML(tOr('wrong', 'Wrong'))}. ${escapeHTML(tOr('quiz_correct_answer', 'Correct answer'))}: ${escapeHTML(q.correctToTerm)}</div>`);
+  const explanationHtml = q.answered && !examMode && q.explanation
+    ? `<div class="study-answer-explanation"><strong>${escapeHTML(tOr('study_explanation', 'Explanation'))}</strong>${escapeHTML(q.explanation)}</div>`
+    : '';
+  const questionActions = `<div class="study-question-actions"><button type="button" id="quiz-toggle-star" class="secondary">${isStarred ? escapeHTML(tOr('quiz_unstar', 'Unstar')) : escapeHTML(tOr('quiz_star', 'Star'))}</button><button type="button" id="quiz-toggle-difficult" class="secondary ${manuallyDifficult ? 'is-active' : ''}">${manuallyDifficult ? escapeHTML(tOr('study_unmark_difficult', 'Unmark difficult')) : escapeHTML(tOr('study_mark_difficult', 'Mark difficult'))}</button></div>`;
 
   if(q.type === "typing"){
     area.innerHTML = `
       <div class="quiz-question ${q.answered ? 'quiz-answered' : ''}" data-question-id="${escapeHTML(q.id)}">
         <div class="quiz-question-head">
-          <div class="quiz-question-title">Q${q.number}/${quizState.questions.length}: ${escapeHTML(q.fromTerm)}</div>
-          <button type="button" id="quiz-toggle-star">${isStarred ? escapeHTML(tOr('quiz_unstar', 'Unstar')) : escapeHTML(tOr('quiz_star', 'Star'))}</button>
+          <div><div class="study-question-context">${escapeHTML(q.category || q.sourceDataset || '')}</div><div class="quiz-question-title">${escapeHTML(q.fromTerm)}</div></div>
+          ${questionActions}
         </div>
         ${feedback}
+        ${explanationHtml}
         <div class="row">
           <input id="quiz-typing-answer" placeholder="${escapeHTML(tOr('quiz_type_answer_placeholder', 'Type answer'))}" value="${escapeHTML(q.typedAnswer || '')}" ${q.answered ? 'disabled' : ''} />
           ${q.answered ? '' : `<button type="button" id="quiz-submit-typing" class="primary">${escapeHTML(tOr('quiz_submit', 'Submit'))}</button>`}
@@ -14944,33 +16561,46 @@ function renderQuizQuestion(quizState){
       });
     }
   } else {
-    const requireDoubleConfirm = quizRequiresDoubleConfirm(quizState);
+    const requireDoubleConfirm = q.type === 'true_false' ? false : quizRequiresDoubleConfirm(quizState);
     const pendingOptionId = String(q.pendingOptionId || "");
     const optionsHtml = q.options.map((option, index)=>{
       let cls = "";
-      if(q.answered){
-        if(option.text === q.correctToTerm) cls = "quiz-correct";
+      const correctOptionId = q.type === 'true_false' ? (q.correctBoolean ? 'true' : 'false') : null;
+      if(q.answered && !examMode){
+        if(q.type === 'true_false'){
+          if(option.id === correctOptionId) cls = "quiz-correct";
+          else if(option.id === q.selectedOptionId) cls = "quiz-wrong";
+          else cls = "quiz-neutral";
+        } else if(option.text === q.correctToTerm) cls = "quiz-correct";
         else if(option.id === q.selectedOptionId) cls = "quiz-wrong";
         else cls = "quiz-neutral";
-      } else if(requireDoubleConfirm && option.id === pendingOptionId){
+      } else if(!q.answered && requireDoubleConfirm && option.id === pendingOptionId){
         cls = "quiz-pending";
       }
-      return `<button type="button" data-option-id="${escapeHTML(option.id)}" class="${cls}" ${q.answered ? 'disabled' : ''}>${index + 1}. ${escapeHTML(option.text)}</button>`;
+      const label = q.type === 'true_false'
+        ? (option.id === 'true' ? tOr('true', 'True') : tOr('false', 'False'))
+        : option.text;
+      return `<button type="button" data-option-id="${escapeHTML(option.id)}" class="${cls}" ${q.answered ? 'disabled' : ''}>${index + 1}. ${escapeHTML(label)}</button>`;
     }).join("");
     const pendingHint = (!q.answered && requireDoubleConfirm && pendingOptionId)
       ? `<div class="quiz-feedback">${escapeHTML(tOr('quiz_double_confirm_pending', 'Answer selected. Tap the same option again to confirm.'))}</div>`
       : '';
-    const shortcuts = requireDoubleConfirm
-      ? tOr('quiz_shortcuts_double_confirm', 'Keys 1-6 select options (press the same key again to confirm). Press Enter for next question.')
-      : tOr('quiz_shortcuts_standard', 'Keys 1-6 select an option. Press Enter for next question.');
+    const shortcuts = q.type === 'true_false'
+      ? tOr('study_true_false_shortcuts', 'Keys 1–2 answer True or False. Press Enter for next question.')
+      : requireDoubleConfirm
+        ? tOr('quiz_shortcuts_double_confirm', 'Keys 1-6 select options (press the same key again to confirm). Press Enter for next question.')
+        : tOr('quiz_shortcuts_standard', 'Keys 1-6 select an option. Press Enter for next question.');
 
     area.innerHTML = `
       <div class="quiz-question ${q.answered ? 'quiz-answered' : ''}" data-question-id="${escapeHTML(q.id)}">
         <div class="quiz-question-head">
-          <div class="quiz-question-title">Q${q.number}/${quizState.questions.length}: ${escapeHTML(q.fromTerm)}</div>
-          <button type="button" id="quiz-toggle-star">${isStarred ? escapeHTML(tOr('quiz_unstar', 'Unstar')) : escapeHTML(tOr('quiz_star', 'Star'))}</button>
+          <div><div class="study-question-context">${escapeHTML(q.category || q.sourceDataset || '')}</div>${q.type === 'true_false'
+            ? `<div class="quiz-question-title">${escapeHTML(tOr('study_true_false_prompt', 'Is this pairing correct?'))}</div><div class="quiz-tf-statement"><strong>${escapeHTML(q.fromTerm)}</strong><span aria-hidden="true">→</span><strong>${escapeHTML(q.proposedToTerm || '')}</strong></div>`
+            : `<div class="quiz-question-title">${escapeHTML(q.fromTerm)}</div>`}</div>
+          ${questionActions}
         </div>
         ${feedback}
+        ${explanationHtml}
         ${pendingHint}
         <div class="choices">${optionsHtml}</div>
         <div class="quiz-shortcuts">${escapeHTML(shortcuts)}</div>
@@ -14994,6 +16624,13 @@ function renderQuizQuestion(quizState){
       renderQuizUI();
     });
   }
+  const difficultBtn = document.getElementById('quiz-toggle-difficult');
+  if(difficultBtn){
+    difficultBtn.addEventListener('click', ()=>{
+      progressStore.toggleDifficult(q.termId);
+      renderQuizUI();
+    });
+  }
 
   const nextBtn = document.getElementById('quiz-next-question');
   if(nextBtn){
@@ -15006,13 +16643,33 @@ function renderQuizQuestion(quizState){
 
 function renderQuizUI(){
   const quizState = quizEngine.getQuizState();
+  document.getElementById('screen-quiz')?.classList.toggle('quiz-results', !!quizState.finished);
+  const position = document.getElementById('quiz-position');
+  const fill = document.getElementById('quiz-progress-fill');
+  const skip = document.getElementById('quiz-skip');
+  const total = quizState.questions.length;
+  if(position) position.textContent = quizState.finished ? tOr('study_results', 'Results') : `${tOr('study_question', 'Question')} ${quizState.active ? quizState.currentIndex + 1 : 0} / ${total}`;
+  if(fill) fill.style.width = `${total ? 100 * (quizState.currentIndex + (quizState.currentQuestion?.answered ? 1 : 0)) / total : 0}%`;
+  if(skip) skip.disabled = !quizState.active || !!quizState.currentQuestion?.answered || quizState.currentQuestion?.type === 'matching';
   renderQuizStats(quizState);
   renderQuizStudioInsights();
+  renderStudyOverview();
+  renderQuizHistory();
+  renderQuizSessionModeUi();
   if(quizState.active){
     renderQuizQuestion(quizState);
+    const focusKey = `${quizState.startedAt}:${quizState.currentIndex}:${!!quizState.currentQuestion?.answered}:${quizState.currentQuestion?.pendingOptionId || ''}`;
+    if(focusKey !== quizLastFocusKey){
+      quizLastFocusKey = focusKey;
+      requestAnimationFrame(()=>{
+        const target = document.querySelector('#quiz-area #quiz-next-question, #quiz-area #quiz-typing-answer, #quiz-area [data-option-id].quiz-pending, #quiz-area [data-option-id], #quiz-area [data-match-pair-select]');
+        target?.focus({ preventScroll: true });
+      });
+    }
     return;
   }
   if(quizState.finished){
+    quizLastFocusKey = '';
     quizLastFinishedState = quizState;
     renderQuizSummary(quizState);
     return;
@@ -15070,12 +16727,17 @@ function readQuizSettings(){
     questionCount: rawQuestionCount,
     optionsCount: rawOptionsCount,
     filters: {
+      source: document.getElementById('quiz-source')?.value || 'all',
+      useTimer: !!document.getElementById('quiz-use-timer')?.checked,
       onlyStarred: !!document.getElementById('quiz-only-starred')?.checked,
       preferWrong: !!document.getElementById('quiz-prefer-wrong')?.checked,
       doubleConfirm: !!document.getElementById('quiz-double-confirm')?.checked,
+      selectionMode: document.getElementById('quiz-selection-mode')?.value || 'smart',
+      sessionMode: quizSessionMode,
       domainKey: quizGeneratorDomainKey,
       subdivision1: normalizeSubdivisionSelection(quizGeneratorSubdivision1),
-      subdivision2: normalizeSubdivisionSelection(quizGeneratorSubdivision2)
+      subdivision2: normalizeSubdivisionSelection(quizGeneratorSubdivision2),
+      subdivision3: normalizeSubdivisionSelection(quizGeneratorSubdivision3)
     }
   };
 }
@@ -15083,7 +16745,48 @@ function readQuizSettings(){
 function getQuizStudioFilteredCandidates(settings = readQuizSettings()){
   let rows = buildQuizCandidates(settings.fromField, settings.toField).filter(c => c.fromTerm && c.toTerm);
   if(settings.filters.onlyStarred) rows = rows.filter(c => progressStore.isStarred(c.termId));
+  const source = settings.filters.source;
+  if(source === 'saved'){
+    const savedIds = getSavedStudyIds();
+    rows = rows.filter(c => savedIds.has(c.termId));
+  }
+  if(source === 'wrong' || source === 'difficult'){
+    const progress = loadProgress(getUserStorageKey());
+    rows = rows.filter(c => progress[c.termId] && (source === 'wrong' ? progress[c.termId].wrong > 0 : isDifficultStudyRecord(progress[c.termId])));
+  }
   return rows;
+}
+
+function getQuizSessionCapacity(rows, type){
+  const byPrompt = new Map();
+  for(const row of rows){
+    const prompt = normalizeAnswer(row.fromTerm);
+    if(!byPrompt.has(prompt)) byPrompt.set(prompt, new Set());
+    byPrompt.get(prompt).add(normalizeAnswer(row.toTerm));
+  }
+  if(type !== 'matching') return byPrompt.size;
+  const answers = new Set();
+  let count = 0;
+  for(const row of rows){
+    const prompt = normalizeAnswer(row.fromTerm);
+    const answer = normalizeAnswer(row.toTerm);
+    if(byPrompt.get(prompt)?.size !== 1 || answers.has(answer)) continue;
+    answers.add(answer);
+    count += 1;
+  }
+  return count;
+}
+
+function getQuizDistinctAnswerCount(rows){
+  const seen = new Set();
+  const answers = new Set();
+  for(const row of rows){
+    const prompt = normalizeAnswer(row.fromTerm);
+    if(seen.has(prompt)) continue;
+    seen.add(prompt);
+    answers.add(normalizeAnswer(row.toTerm));
+  }
+  return answers.size;
 }
 
 function syncQuizSessionStageVisibility(forceVisible = null){
@@ -15108,8 +16811,10 @@ function renderQuizStudioInsights(){
   const timerHintEl = document.getElementById("quiz-timer-hint");
   const settings = readQuizSettings();
   const filtered = getQuizStudioFilteredCandidates(settings);
-  const maxQuestions = Math.max(1, filtered.length || 1);
-  const normalizedQuestionCount = clampQuizQuestionCount(settings.questionCount, maxQuestions);
+  const capacity = getQuizSessionCapacity(filtered, settings.quizType);
+  const answerCount = getQuizDistinctAnswerCount(filtered);
+  const maxQuestions = Math.max(1, capacity);
+  const normalizedQuestionCount = Math.max(settings.quizType === 'matching' && capacity >= 2 ? 2 : 1, clampQuizQuestionCount(settings.questionCount, maxQuestions));
   const normalizedOptionsCount = clampQuizOptionsCount(settings.optionsCount);
   const timerSeconds = filtered.length ? calculateQuizTimerSeconds({
     quizType: settings.quizType,
@@ -15118,30 +16823,31 @@ function renderQuizStudioInsights(){
     doubleConfirm: settings.filters.doubleConfirm
   }) : 0;
   if(countEl){
+    countEl.min = settings.quizType === 'matching' ? '2' : '1';
     countEl.max = String(maxQuestions);
     countEl.value = String(normalizedQuestionCount);
   }
   if(countHintEl){
-    countHintEl.textContent = filtered.length
-      ? `Available range: 1-${maxQuestions}.`
-      : "No matching terms yet.";
+    countHintEl.textContent = capacity
+      ? `${tOr('study_available_range', 'Available range')}: ${settings.quizType === 'matching' ? 2 : 1}-${maxQuestions}.`
+      : tOr('study_no_pairs', 'No matching terms with both selected fields. Try another domain or direction.');
   }
   if(optionsEl){
     optionsEl.min = "2";
     optionsEl.max = "6";
     optionsEl.value = String(normalizedOptionsCount);
-    optionsEl.disabled = settings.quizType !== "multiple_choice";
+    optionsEl.disabled = !["multiple_choice", "mixed"].includes(settings.quizType);
   }
   if(timerEl){
-    timerEl.value = timerSeconds > 0 ? formatSecondsCompact(timerSeconds) : "-";
+    timerEl.value = settings.filters.useTimer && timerSeconds > 0 ? formatSecondsCompact(timerSeconds) : tOr('study_timer_off', 'Off');
     timerEl.dataset.seconds = String(timerSeconds);
   }
   if(timerHintEl){
-    timerHintEl.textContent = settings.quizType === "typing"
-      ? "Auto timer is extended for typing answers."
+    timerHintEl.textContent = !settings.filters.useTimer ? tOr('study_timer_pace', 'Study at your own pace. Enable the timer for a timed session.') : settings.quizType === "typing"
+      ? tOr('study_timer_typing', 'Auto timer is extended for typing answers.')
       : settings.quizType === "matching"
-        ? "Auto timer scales with the number of pairs to match."
-        : "Auto timer scales with question count and answer-option load.";
+        ? tOr('study_timer_matching', 'Auto timer scales with the number of pairs to match.')
+        : tOr('study_timer_choices', 'Auto timer scales with question count and answer options.');
   }
   if(settings.filters.preferWrong){
     const wrongIds = new Set(getWrongTermIdsForPair(settings.fromField, settings.toField));
@@ -15149,70 +16855,81 @@ function renderQuizStudioInsights(){
     if(planEl) planEl.dataset.wrongCount = String(wrongCount);
   }
   if(poolEl){
-    poolEl.textContent = `${filtered.length} available pairs`;
+    poolEl.textContent = `${capacity} ${tOr('study_available_questions', 'available questions')}`;
   }
   if(planEl){
-    if(filtered.length === 0){
-      planEl.textContent = "No matching terms with current filters.";
+    if(capacity === 0){
+      planEl.textContent = tOr('study_no_pairs', 'No matching terms with both selected fields. Try another domain or direction.');
+    } else if(settings.quizType === 'matching' && capacity < 2){
+      planEl.textContent = tOr('study_need_matching', 'Matching needs at least two distinct terms and answers. Try another direction.');
+    } else if(['multiple_choice','mixed'].includes(settings.quizType) && answerCount < 2){
+      planEl.textContent = tOr('study_need_options', 'Choose typed answers or a source with at least two distinct answers.');
     } else {
       const flags = [];
       if(settings.filters.onlyStarred) flags.push("starred");
       if(settings.filters.preferWrong) flags.push("weak-first");
+      if(settings.filters.selectionMode === 'smart') flags.push("smart");
+      if(settings.filters.sessionMode === 'exam') flags.push("exam");
       if(settings.filters.doubleConfirm) flags.push("double-confirm");
-      flags.push(`${formatSecondsCompact(timerSeconds)} timer`);
+      if(settings.filters.useTimer) flags.push(`${formatSecondsCompact(timerSeconds)} timer`);
       const optionSegment = settings.quizType === "multiple_choice" ? ` | ${normalizedOptionsCount} options` : "";
       planEl.textContent = `${settings.quizType} | ${normalizedQuestionCount} questions${optionSegment}${flags.length ? ` | ${flags.join(", ")}` : ""}`;
     }
   }
   const hasWrong = !!(quizLastFinishedState && Array.isArray(quizLastFinishedState.wrongAnswers) && quizLastFinishedState.wrongAnswers.length);
+  const startBtn = document.getElementById('start-quiz');
+  if(startBtn) startBtn.disabled = !capacity || (settings.quizType === 'matching' && capacity < 2) || (['multiple_choice','mixed'].includes(settings.quizType) && answerCount < 2);
   if(retryBtn) retryBtn.disabled = !hasWrong;
   if(reviewBtn) reviewBtn.disabled = !hasWrong;
 }
 
 function applyQuizStudioPreset(presetKey){
   const typeEl = document.getElementById("quiz-type");
+  const selectionEl = document.getElementById("quiz-selection-mode");
   const countEl = document.getElementById("quiz-question-count");
   const optionsEl = document.getElementById("quiz-options-count");
   const starredEl = document.getElementById("quiz-only-starred");
   const wrongEl = document.getElementById("quiz-prefer-wrong");
   const confirmEl = document.getElementById("quiz-double-confirm");
+  const timerToggle = document.getElementById("quiz-use-timer");
   const preset = String(presetKey || "").trim().toLowerCase();
-  if(typeEl && preset === "balanced") typeEl.value = "multiple_choice";
-  if(countEl && preset === "balanced") countEl.value = "12";
-  if(optionsEl && preset === "balanced") optionsEl.value = "4";
-  if(starredEl && preset === "balanced") starredEl.checked = false;
-  if(wrongEl && preset === "balanced") wrongEl.checked = false;
-  if(confirmEl && preset === "balanced") confirmEl.checked = false;
 
-  if(typeEl && preset === "exam") typeEl.value = "multiple_choice";
-  if(countEl && preset === "exam") countEl.value = "25";
-  if(optionsEl && preset === "exam") optionsEl.value = "6";
-  if(starredEl && preset === "exam") starredEl.checked = false;
-  if(wrongEl && preset === "exam") wrongEl.checked = false;
-  if(confirmEl && preset === "exam") confirmEl.checked = true;
+  if(starredEl) starredEl.checked = false;
+  if(confirmEl) confirmEl.checked = false;
+  if(selectionEl) selectionEl.value = "smart";
+  setQuizSessionMode(preset === "exam" ? "exam" : "study");
 
-  if(typeEl && preset === "speed") typeEl.value = "typing";
-  if(countEl && preset === "speed") countEl.value = "8";
-  if(optionsEl && preset === "speed") optionsEl.value = "2";
-  if(starredEl && preset === "speed") starredEl.checked = false;
-  if(wrongEl && preset === "speed") wrongEl.checked = false;
-  if(confirmEl && preset === "speed") confirmEl.checked = false;
-
-  if(typeEl && preset === "recovery") typeEl.value = "multiple_choice";
-  if(countEl && preset === "recovery") countEl.value = "15";
-  if(optionsEl && preset === "recovery") optionsEl.value = "3";
-  if(starredEl && preset === "recovery") starredEl.checked = false;
-  if(wrongEl && preset === "recovery") wrongEl.checked = true;
-  if(confirmEl && preset === "recovery") confirmEl.checked = false;
+  if(preset === "balanced"){
+    if(typeEl) typeEl.value = "multiple_choice";
+    if(countEl) countEl.value = "5";
+    if(optionsEl) optionsEl.value = "4";
+    if(wrongEl) wrongEl.checked = false;
+    if(timerToggle) timerToggle.checked = false;
+  } else if(preset === "exam"){
+    if(typeEl) typeEl.value = "multiple_choice";
+    if(countEl) countEl.value = "20";
+    if(optionsEl) optionsEl.value = "4";
+    if(selectionEl) selectionEl.value = "random";
+    if(wrongEl) wrongEl.checked = false;
+    if(timerToggle) timerToggle.checked = true;
+  } else if(preset === "speed"){
+    if(typeEl) typeEl.value = "mixed";
+    if(countEl) countEl.value = "10";
+    if(optionsEl) optionsEl.value = "4";
+    if(wrongEl) wrongEl.checked = false;
+    if(timerToggle) timerToggle.checked = false;
+  } else if(preset === "recovery"){
+    if(typeEl) typeEl.value = "mixed";
+    if(countEl) countEl.value = "15";
+    if(optionsEl) optionsEl.value = "4";
+    if(wrongEl) wrongEl.checked = true;
+    if(timerToggle) timerToggle.checked = false;
+  }
   renderQuizStudioInsights();
 }
 
 function retryLastWrongTermsFromStudio(){
-  if(!quizLastFinishedState || !quizLastFinishedState.wrongAnswers || quizLastFinishedState.wrongAnswers.length === 0) return;
-  const all = buildQuizCandidates(quizLastFinishedState.fromField, quizLastFinishedState.toField);
-  const wanted = new Set(quizLastFinishedState.wrongAnswers.map(w => `${w.termId}::${w.fromTerm}::${w.correctToTerm}`));
-  const retryItems = all.filter(c => wanted.has(`${c.termId}::${c.fromTerm}::${c.toTerm}`));
-  startQuiz({ retryItems, configOverrides: { fromField: quizLastFinishedState.fromField, toField: quizLastFinishedState.toField } });
+  retryFinishedMistakes();
 }
 
 function renderQuizGeneratorUi(){
@@ -15223,80 +16940,101 @@ function renderQuizGeneratorUi(){
   const sub2Wrap = document.getElementById("quiz-subdivision2-wrap");
   const sub2Label = document.getElementById("quiz-subdivision2-label");
   const sub2Sel = document.getElementById("quiz-subdivision2");
+  const sub3Wrap = document.getElementById("quiz-subdivision3-wrap");
+  const sub3Label = document.getElementById("quiz-subdivision3-label");
+  const sub3Sel = document.getElementById("quiz-subdivision3");
   const frontSel = document.getElementById("quiz-front-field");
   const backSel = document.getElementById("quiz-back-field");
   const legacyFrom = document.getElementById("quiz-from");
   const legacyTo = document.getElementById("quiz-to");
-  if(!domainsEl || !subWrap || !sub1Label || !sub1Sel || !sub2Wrap || !sub2Label || !sub2Sel || !frontSel || !backSel) return;
+  if(!domainsEl || !subWrap || !sub1Label || !sub1Sel || !sub2Wrap || !sub2Label || !sub2Sel || !sub3Wrap || !sub3Label || !sub3Sel || !frontSel || !backSel) return;
   if(!flashcardsV2State.loaded) return;
 
-  if(!quizGeneratorDomainKey && flashcardsV2State.adapters.length){
-    quizGeneratorDomainKey = flashcardsV2State.adapters[0].key;
-  }
+  const visibleAdapters = getVisibleStudyAdapters();
+  if(!quizGeneratorDomainKey && visibleAdapters.length) quizGeneratorDomainKey = visibleAdapters[0].key;
+  if(!visibleAdapters.some(adapter => adapter.key === quizGeneratorDomainKey)) quizGeneratorDomainKey = visibleAdapters[0]?.key || "";
+  const domainSummary = document.getElementById('quiz-domain-summary');
+  const currentAdapter = flashcardsV2State.adapterByKey.get(quizGeneratorDomainKey);
+  if(domainSummary) domainSummary.textContent = currentAdapter ? localizeDatasetLabel(currentAdapter.key, currentAdapter.label) : tOr('study_choose_domain', 'Choose a domain');
 
-  domainsEl.innerHTML = flashcardsV2State.adapters.map(adapter => {
+  domainsEl.innerHTML = visibleAdapters.map(adapter => {
     const checked = adapter.key === quizGeneratorDomainKey ? " checked" : "";
     return `<label class="checkbox-item"><input type="radio" name="quiz-domain" data-quiz-domain="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
 
   const adapter = flashcardsV2State.adapterByKey.get(quizGeneratorDomainKey);
   const cfg = getFlashcardsSubdivisionConfig(adapter);
+  subWrap.classList.toggle('is-progressive', !!cfg?.progressive);
   const domainRows = flashcardsV2State.allTerms.filter(row => row && row._domain === quizGeneratorDomainKey);
+  const hideLevel = (wrap, container)=>{ wrap.classList.add('hidden'); if(container) container.innerHTML=''; };
   if(!cfg){
     subWrap.classList.add("hidden");
-    sub2Wrap.classList.add("hidden");
-    quizGeneratorSubdivision1 = [];
-    quizGeneratorSubdivision2 = [];
-    if(sub1Sel) sub1Sel.innerHTML = "";
-    if(sub2Sel) sub2Sel.innerHTML = "";
+    hideLevel(sub2Wrap, sub2Sel); hideLevel(sub3Wrap, sub3Sel);
+    quizGeneratorSubdivision1 = []; quizGeneratorSubdivision2 = []; quizGeneratorSubdivision3 = [];
+    sub1Sel.innerHTML = "";
   } else {
     subWrap.classList.remove("hidden");
-    sub1Label.textContent = cfg.level1 ? cfg.level1.label : tOr("quiz_subdivision", "Subdivision");
+    sub1Label.textContent = cfg.level1?.label || tOr("quiz_subdivision", "Subdivision");
     const opts1 = cfg.level1 ? getSubdivisionOptions(adapter, cfg.level1.key, domainRows) : [];
-    const selectedLevel1 = normalizeSubdivisionSelection(quizGeneratorSubdivision1).filter(value => opts1.includes(value));
-    quizGeneratorSubdivision1 = selectedLevel1;
-    renderSubdivisionChecklist(sub1Sel, opts1, selectedLevel1, nextValues => {
+    const selected1 = normalizeSubdivisionSelection(quizGeneratorSubdivision1).filter(value => opts1.includes(value));
+    quizGeneratorSubdivision1 = selected1;
+    const render1 = cfg.progressive ? renderProgressiveStudyChoices : renderSubdivisionChecklist;
+    render1(sub1Sel, opts1, selected1, nextValues => {
       quizGeneratorSubdivision1 = nextValues;
-      quizGeneratorSubdivision2 = [];
-      renderQuizGeneratorUi();
-      renderQuizStudioInsights();
+      renderQuizGeneratorUi(); renderQuizStudioInsights();
     });
 
-    if(cfg.level2){
+    if(cfg.level2 && (!cfg.progressive || subdivisionHasSelection(quizGeneratorSubdivision1))){
       sub2Wrap.classList.remove("hidden");
       sub2Label.textContent = cfg.level2.label;
       const rows2 = subdivisionHasSelection(quizGeneratorSubdivision1)
-        ? domainRows.filter(row => {
-            const c1 = adapter.columns[cfg.level1.key];
-            return normalizeSubdivisionSelection(quizGeneratorSubdivision1).includes(String(row[c1] || "").trim());
-          })
+        ? domainRows.filter(row => normalizeSubdivisionSelection(quizGeneratorSubdivision1).includes(getSubdivisionRowValue(row, adapter, cfg.level1.key)))
         : domainRows;
       const opts2 = getSubdivisionOptions(adapter, cfg.level2.key, rows2);
-      const selectedLevel2 = normalizeSubdivisionSelection(quizGeneratorSubdivision2).filter(value => opts2.includes(value));
-      quizGeneratorSubdivision2 = selectedLevel2;
-      renderSubdivisionChecklist(sub2Sel, opts2, selectedLevel2, nextValues => {
-        quizGeneratorSubdivision2 = nextValues;
-        renderQuizGeneratorUi();
+      const selected2 = normalizeSubdivisionSelection(quizGeneratorSubdivision2).filter(value => opts2.includes(value));
+      quizGeneratorSubdivision2 = selected2;
+      if(cfg.progressive){
+        const groups2 = getProgressiveSubdivisionGroups(rows2, adapter, cfg.level1.key, cfg.level2.key, quizGeneratorSubdivision1);
+        renderProgressiveStudyGroups(sub2Sel, groups2, selected2, nextValues => {
+          quizGeneratorSubdivision2 = nextValues;
+          renderQuizGeneratorUi(); renderQuizStudioInsights();
+        });
+      } else {
+        renderSubdivisionChecklist(sub2Sel, opts2, selected2, nextValues => {
+          quizGeneratorSubdivision2 = nextValues;
+          renderQuizGeneratorUi(); renderQuizStudioInsights();
+        });
+      }
+    } else { quizGeneratorSubdivision2 = []; hideLevel(sub2Wrap, sub2Sel); }
+
+    if(cfg.level3 && subdivisionHasSelection(quizGeneratorSubdivision2)){
+      sub3Wrap.classList.remove("hidden");
+      sub3Label.textContent = cfg.level3.label;
+      const rows3 = domainRows.filter(row =>
+        (!subdivisionHasSelection(quizGeneratorSubdivision1) || normalizeSubdivisionSelection(quizGeneratorSubdivision1).includes(getSubdivisionRowValue(row, adapter, cfg.level1.key))) &&
+        (!subdivisionHasSelection(quizGeneratorSubdivision2) || normalizeSubdivisionSelection(quizGeneratorSubdivision2).includes(getSubdivisionRowValue(row, adapter, cfg.level2.key)))
+      );
+      const opts3 = getSubdivisionOptions(adapter, cfg.level3.key, rows3);
+      const selected3 = normalizeSubdivisionSelection(quizGeneratorSubdivision3).filter(value => opts3.includes(value));
+      quizGeneratorSubdivision3 = selected3;
+      renderProgressiveStudyChoices(sub3Sel, opts3, selected3, nextValues => {
+        quizGeneratorSubdivision3 = nextValues;
         renderQuizStudioInsights();
       });
-    } else {
-      sub2Wrap.classList.add("hidden");
-      quizGeneratorSubdivision2 = [];
-      if(sub2Sel) sub2Sel.innerHTML = "";
-    }
+    } else { quizGeneratorSubdivision3 = []; hideLevel(sub3Wrap, sub3Sel); }
   }
 
   const options = getFieldOptionsForDomains([quizGeneratorDomainKey]);
   frontSel.innerHTML = options.map(opt => `<option value="${escapeHTML(opt.key)}">${escapeHTML(opt.label)}</option>`).join("");
   backSel.innerHTML = options.map(opt => `<option value="${escapeHTML(opt.key)}">${escapeHTML(opt.label)}</option>`).join("");
   const keys = options.map(opt => opt.key);
-  if(!keys.includes(quizGeneratorFrontFieldKey)) quizGeneratorFrontFieldKey = keys[0] || "";
+  const preferred = getPreferredStudyFields(keys, quizGeneratorDomainKey);
+  if(!keys.includes(quizGeneratorFrontFieldKey)) quizGeneratorFrontFieldKey = preferred.front;
   if(!keys.includes(quizGeneratorBackFieldKey) || quizGeneratorBackFieldKey === quizGeneratorFrontFieldKey){
-    quizGeneratorBackFieldKey = keys.find(k => k !== quizGeneratorFrontFieldKey) || quizGeneratorFrontFieldKey || "";
+    quizGeneratorBackFieldKey = preferred.back !== quizGeneratorFrontFieldKey ? preferred.back : keys.find(k => k !== quizGeneratorFrontFieldKey) || "";
   }
   if(quizGeneratorFrontFieldKey) frontSel.value = quizGeneratorFrontFieldKey;
   if(quizGeneratorBackFieldKey) backSel.value = quizGeneratorBackFieldKey;
-
   if(legacyFrom) legacyFrom.value = makeDomainFieldPairKey(quizGeneratorDomainKey, quizGeneratorFrontFieldKey);
   if(legacyTo) legacyTo.value = makeDomainFieldPairKey(quizGeneratorDomainKey, quizGeneratorBackFieldKey);
 }
@@ -15307,7 +17045,7 @@ function initQuizGeneratorUI(){
   const sub2Sel = document.getElementById("quiz-subdivision2");
   const frontSel = document.getElementById("quiz-front-field");
   const backSel = document.getElementById("quiz-back-field");
-  const watchedIds = ["quiz-type", "quiz-question-count", "quiz-options-count", "quiz-timer", "quiz-only-starred", "quiz-prefer-wrong", "quiz-double-confirm"];
+  const watchedIds = ["quiz-type", "quiz-selection-mode", "quiz-question-count", "quiz-options-count", "quiz-use-timer", "quiz-only-starred", "quiz-prefer-wrong", "quiz-double-confirm", "quiz-source"];
   if(!domainsEl || !sub1Sel || !sub2Sel || !frontSel || !backSel) return;
   if(domainsEl.dataset.bound === "1") return;
   domainsEl.dataset.bound = "1";
@@ -15325,6 +17063,7 @@ function initQuizGeneratorUI(){
     quizGeneratorDomainKey = hit;
     quizGeneratorSubdivision1 = [];
     quizGeneratorSubdivision2 = [];
+    quizGeneratorSubdivision3 = [];
     quizGeneratorFrontFieldKey = "";
     quizGeneratorBackFieldKey = "";
     renderQuizGeneratorUi();
@@ -15362,6 +17101,11 @@ function initQuizGeneratorUI(){
     if(!el) return;
     el.addEventListener("change", renderQuizStudioInsights);
   });
+  document.querySelectorAll('[data-study-count]').forEach(button => button.addEventListener('click', ()=>{
+    const input = document.getElementById('quiz-question-count');
+    if(input) input.value = button.getAttribute('data-study-count') || '10';
+    renderQuizStudioInsights();
+  }));
 }
 
 function setQuizSetupCollapsed(collapsed){
@@ -15373,7 +17117,7 @@ function setQuizSetupCollapsed(collapsed){
   if(screen) screen.classList.toggle("quiz-builder-collapsed", !!collapsed);
   if(toggleBtn){
     toggleBtn.classList.toggle("hidden", !collapsed);
-    toggleBtn.textContent = tOr("quiz_builder_return", "Return to Quiz builder");
+    toggleBtn.textContent = `← ${tOr('study_quiz_setup', 'Quiz setup')}`;
   }
   if(legacyToggle){
     legacyToggle.classList.add("hidden");
@@ -15381,11 +17125,15 @@ function setQuizSetupCollapsed(collapsed){
       ? tOr("quiz_settings_show", "Show quiz settings")
       : tOr("quiz_settings_hide", "Hide quiz settings");
   }
+  const resume = document.getElementById('quiz-resume');
+  if(resume) resume.classList.toggle('hidden', !!collapsed || !quizEngine.getQuizState().active);
   syncQuizSessionStageVisibility(!!collapsed);
 }
 
 function startQuiz({ retryItems = null, configOverrides = null } = {}){
   const area = document.getElementById('quiz-area');
+  const builderMsg = document.getElementById('quiz-builder-msg');
+  if(builderMsg) builderMsg.textContent = '';
   if(area) area.innerHTML = '';
   const defaults = readQuizSettings();
   const cfg = { ...defaults, ...(configOverrides || {}) };
@@ -15398,14 +17146,15 @@ function startQuiz({ retryItems = null, configOverrides = null } = {}){
     termIds: cfg.termIds || null,
     customFilters: cfg.customFilters || null
   });
-  cfg.questionCount = clampQuizQuestionCount(cfg.questionCount, sessionCandidates.length || 1);
+  cfg.questionCount = Math.max(cfg.quizType === 'matching' ? 2 : 1, clampQuizQuestionCount(cfg.questionCount, getQuizSessionCapacity(sessionCandidates, cfg.quizType) || 1));
   cfg.optionsCount = clampQuizOptionsCount(cfg.optionsCount);
-  cfg.filters.timerSeconds = calculateQuizTimerSeconds({
+  cfg.filters.timerSeconds = cfg.filters.useTimer ? calculateQuizTimerSeconds({
     quizType: cfg.quizType,
     questionCount: cfg.questionCount,
     optionsCount: cfg.optionsCount,
     doubleConfirm: cfg.filters.doubleConfirm
-  });
+  }) : 0;
+  quizStudySnapshot = loadProgress(getUserStorageKey());
   const startRes = quizEngine.startQuiz({
     candidates: sessionCandidates,
     quizType: cfg.quizType || "multiple_choice",
@@ -15416,7 +17165,14 @@ function startQuiz({ retryItems = null, configOverrides = null } = {}){
     filters: { ...cfg.filters, customFilters: cfg.customFilters || null }
   });
   if(!startRes.ok){
-    if(area) area.textContent = t(startRes.reason) || startRes.reason;
+    const message = !sessionCandidates.length
+      ? cfg.filters.source === 'saved' ? tOr('study_no_saved_quiz', 'No saved terms have both selected fields. Save a term or change the direction.')
+        : cfg.filters.source === 'wrong' ? tOr('study_no_mistakes_quiz', 'No quiz mistakes in this domain and direction yet.')
+        : tOr('study_no_pairs', 'No matching terms have both selected fields. Choose another domain or direction.')
+      : startRes.reason === 'quiz_err_need_two_pairs' ? tOr('study_need_options', 'Multiple choice needs at least two distinct answers. Choose typed answers or another source.')
+      : t(startRes.reason) || startRes.reason;
+    if(area) area.textContent = message;
+    if(builderMsg) builderMsg.textContent = message;
     renderQuizStats(quizEngine.getQuizState());
     syncQuizSessionStageVisibility(false);
     return;
@@ -15432,6 +17188,12 @@ function handleQuizKeyboardShortcuts(event){
   if(!screen || screen.classList.contains('hidden')) return;
   const q = quizState.currentQuestion;
   if(!q) return;
+  if(event.key === 'Escape'){
+    event.preventDefault();
+    quizEngine.finishQuiz();
+    renderQuizUI();
+    return;
+  }
   if(q.type === "matching") return;
 
   if(q.type === "typing"){
@@ -17047,25 +18809,6 @@ function shuffle(arr){
 }
 
 const DATASET_ADAPTERS = [
-  { key: "anatomy", label: "Anatomy", file: "terminology/anatomy.csv", idColumn: "id", columns: {
-    en: ["english_term"], de: ["german_term"], sk: ["slovak_term"], la: ["latin_term"],
-    latin_term: ["latin_term"], latin_genitive: ["latin_genitive"], latin_gender: ["latin_gender"], latin_declension: ["latin_declension"],
-    definition: ["notes"], notes: ["notes"]
-  }},
-  { key: "anatomy_structures", label: "Anatomy structures v2.3", file: "anatomy/anatomy_structures_core_elaborated_flat.csv", idColumn: "id", columns: {
-    en: ["english"], de: ["german"], la: ["latin"],
-    latin_term: ["latin"], region: ["region"], category: ["type"],
-    definition: ["key_features", "clinical_notes"], notes: ["common_confusions"],
-    system: ["system"], course_tags: ["course_tags"], exam_importance: ["review_status"],
-    origo: ["muscle_origin"], insercio: ["muscle_insertion"], innervation: ["muscle_innervation"],
-    blood_supply: ["muscle_blood_supply"], movement_function: ["muscle_actions"], muscle_category: ["muscle_categories"]
-  }},
-  { key: "anatomy_question_seed", label: "Anatomy seed questions", file: "anatomy/anatomy_structures_question_bank_seed_flat.csv", idColumn: "question_id", columns: {
-    en: ["prompt"], definition: ["correct_answer"], notes: ["explanation"], category: ["type"]
-  }},
-  { key: "anatomy_question_graph", label: "Anatomy graph questions", file: "anatomy/anatomy_structures_question_bank_generated_flat.csv", idColumn: "question_id", rowFilter: row => String(row?.quiz_eligible || "").trim().toLowerCase() === "true", columns: {
-    en: ["prompt"], la: ["correct_answer_latin"], de: ["correct_answer_german"], definition: ["correct_answer"], notes: ["explanation"], category: ["relation_type", "generation_rule"]
-  }},
   { key: "clinical_correlations", label: "Clinical correlations", file: "anatomy/clinical_correlations_flat.csv", idColumn: "id", columns: {
     en: ["subject_name"], definition: ["answer"], notes: ["exam_traps"], category: ["category"],
     system: ["relation_type"], course_tags: ["course_tags"]
@@ -17135,17 +18878,22 @@ const flashcardsV2State = {
     domains: [],
     subdivision1: [],
     subdivision2: [],
+    subdivision3: [],
     frontFieldKey: "",
     frontFieldSecondaryKey: "",
     backFieldKey: "",
     backFieldSecondaryKey: "",
     only: "random",
+    reviewMode: "smart",
     limit: 20
   },
   session: {
     deck: [],
     index: 0,
     revealed: false,
+    completed: false,
+    completedCount: 0,
+    initialCount: 0,
     querySnapshot: null
   }
 };
@@ -17170,6 +18918,33 @@ function getDefaultFieldCatalogForAdapter(adapter){
   const fields = [];
   const add = (key, label, colKey)=>{ if(c[colKey]) fields.push({ key, label, getValue: row => getTrimmed(row, c[colKey]) }); };
   const addBuild = (key, label, build)=> fields.push({ key, label, getValue: row => String(build(row, c) || "").trim() });
+
+  if(adapter.key === "pharmacology"){
+    add("name_en", "Drug name", "en");
+    add("class_name", "Therapeutic class", "class_name");
+    add("atc_code", "ATC code", "atc_code");
+    add("mechanism", "Mechanism", "mechanism");
+    add("definition", "Summary", "definition");
+    return fields;
+  }
+  if(adapter.key === "custom_cards"){
+    add("front_text", "Question / front", "front");
+    add("back_text", "Answer / back", "back");
+    add("notes", "Notes", "notes");
+    return fields;
+  }
+  if(adapter.key === "anatomy_questions"){
+    add("name_en", "Question", "en");
+    add("definition", "Correct answer", "definition");
+    add("name_la", "Correct answer (LA)", "la");
+    add("name_de", "Correct answer (DE)", "de");
+    add("name_sk", "Correct answer (SK)", "sk");
+    add("notes", "Explanation", "notes");
+    add("category", "Question type", "category");
+    add("system", "Relation type", "system");
+    add("course_tags", "Linked anatomy concepts", "course_tags");
+    return fields;
+  }
 
   if(adapter.key === "lab_parameters"){
     add("name_en", "Analyte / Parameter name (EN)", "en");
@@ -17210,13 +18985,6 @@ function getDefaultFieldCatalogForAdapter(adapter){
   add("full_form", "Full form", "full_form");
   add("definition", "Definition", "definition");
   add("notes", "Notes", "notes");
-  if(adapter.key === "anatomy_question_seed" || adapter.key === "anatomy_question_graph"){
-    add("name_en", "Question", "en");
-    add("definition", "Correct answer", "definition");
-    add("notes", "Explanation", "notes");
-    add("category", "Question type", "category");
-    return fields;
-  }
   if(adapter.key === "clinical_correlations"){
     add("name_en", "Clinical relation", "en");
     add("definition", "Direct answer", "definition");
@@ -17226,13 +18994,11 @@ function getDefaultFieldCatalogForAdapter(adapter){
     add("course_tags", "Course tags", "course_tags");
     return fields;
   }
-  if(adapter.key === "anatomy_structures"){
-    add("region", "Region", "region");
-    add("category", "Structure type", "category");
-    add("system", "System", "system");
+  if(adapter.key === "anatomy"){
+    // Region/type/system are navigation metadata, not default test targets.
+    // Keep the learner-facing catalogue focused on names and meaningful anatomy content.
     add("definition", "Key features / clinical notes", "definition");
     add("notes", "Common confusions", "notes");
-    add("course_tags", "Course tags", "course_tags");
     add("origo", "Muscle origin", "origo");
     add("insercio", "Muscle insertion", "insercio");
     add("innervation", "Muscle innervation", "innervation");
@@ -17285,9 +19051,67 @@ function pickFirstNonEmpty(row, keys){
 }
 
 async function ensureFlashcardsV2DataLoaded(){
-  if(flashcardsV2State.loaded) return flashcardsV2State;
+  if(flashcardsV2State.loaded){
+    refreshManualStudyRows();
+    return flashcardsV2State;
+  }
   const adapters = [];
   const allTerms = [];
+
+  // Anatomy study data is built directly from the same structured JSON used by
+  // the Anatomy module. This removes the old terminology/anatomy.csv split and
+  // the generated flat-CSV dependency, so browsing, flashcards and quizzes all
+  // use one source of truth.
+  try{
+    await ensureAnatomyTermsLoaded();
+    const anatomy = {
+      key: "anatomy",
+      label: "Anatomy",
+      sourceFile: "anatomy/anatomy_structures_core_elaborated.json",
+      columns: {
+        en: "english_term", de: "german_term", sk: "slovak_term", la: "latin_term",
+        latin_term: "latin_term", region: "region", category: "type",
+        definition: "study_definition", notes: "common_confusions", system: "system",
+        course_tags: "course_tags", exam_importance: "review_status",
+        origo: "muscle_origin", insercio: "muscle_insertion", innervation: "muscle_innervation",
+        blood_supply: "muscle_blood_supply", movement_function: "muscle_actions", muscle_category: "muscle_categories"
+      }
+    };
+    const anatomyRows = buildAuthoritativeAnatomyStudyRows();
+    anatomy.fieldCatalog = getDefaultFieldCatalogForAdapter(anatomy)
+      .filter(field => anatomyRows.some(row => String(field.getValue(row) || '').trim()));
+    anatomy.fieldByKey = new Map(anatomy.fieldCatalog.map(field => [field.key, field]));
+    adapters.push(anatomy);
+    for(const row of anatomyRows){
+      // Keep the v2.3 ID prefix so existing progress for this dataset survives.
+      allTerms.push({ ...row, _domain: "anatomy", _id: `anatomy_structures:${row.id}` });
+    }
+
+    const anatomyQuestionRows = buildAuthoritativeAnatomyQuestionRows();
+    if(anatomyQuestionRows.length){
+      const anatomyQuestions = {
+        key: "anatomy_questions",
+        label: "Anatomy questions",
+        sourceFile: "anatomy/anatomy_structures_question_bank_*.json",
+        columns: {
+          en: "prompt", de: "correct_answer_german", sk: "correct_answer_slovak", la: "correct_answer_latin",
+          definition: "correct_answer", notes: "explanation", category: "type",
+          system: "relation_type", course_tags: "concept_ids"
+        }
+      };
+      anatomyQuestions.fieldCatalog = getDefaultFieldCatalogForAdapter(anatomyQuestions)
+        .filter(field => anatomyQuestionRows.some(row => String(field.getValue(row) || '').trim()));
+      anatomyQuestions.fieldByKey = new Map(anatomyQuestions.fieldCatalog.map(field => [field.key, field]));
+      anatomyQuestions.hiddenFromStudyPicker = true;
+      adapters.push(anatomyQuestions);
+      for(const row of anatomyQuestionRows){
+        const legacyPrefix = row.origin === 'graph' ? 'anatomy_question_graph' : 'anatomy_question_seed';
+        allTerms.push({ ...row, _domain: "anatomy_questions", _id: `${legacyPrefix}:${row.question_id}` });
+      }
+    }
+  }catch(error){
+    console.warn("[study] Authoritative Anatomy data could not load:", error?.message || error);
+  }
 
   for(const spec of DATASET_ADAPTERS){
     try{
@@ -17311,6 +19135,7 @@ async function ensureFlashcardsV2DataLoaded(){
         fieldCatalog,
         fieldByKey: new Map(fieldCatalog.map(field => [field.key, field]))
       };
+      if(adapter.key === "clinical_correlations") adapter.hiddenFromStudyPicker = true;
       adapters.push(adapter);
       for(const row of (parsed.objects || [])){
         if(adapter.rowFilter && !adapter.rowFilter(row)) continue;
@@ -17329,14 +19154,52 @@ async function ensureFlashcardsV2DataLoaded(){
     }
   }
 
+  try{
+    const database = JSON.parse(await loadBaseFile("pharmacology_database_test.json"));
+    const pharmacology = { key: "pharmacology", label: "Pharmacology", columns: { en: "drug_name", class_name: "class_name", atc_code: "atc_code", mechanism: "mechanism", definition: "summary" } };
+    pharmacology.fieldCatalog = getDefaultFieldCatalogForAdapter(pharmacology);
+    pharmacology.fieldByKey = new Map(pharmacology.fieldCatalog.map(field => [field.key, field]));
+    adapters.push(pharmacology);
+    for(const drug of Array.isArray(database.drugs) ? database.drugs : []){
+      const name = String(drug?.names?.english?.normalized || drug?.names?.english?.source_value || "").trim();
+      const drugClass = String(drug?.pharmacology?.therapeutic_class?.[0] || drug?.atc?.primary_hierarchy?.level_4?.name || "").trim();
+      if(!name || !drug.id) continue;
+      allTerms.push({ _id: `pharmacology:${drug.id}`, _domain: "pharmacology", _studyCategory: drugClass,
+        drug_name: name, class_name: drugClass, atc_code: String(drug?.atc?.primary_code || ""),
+        mechanism: String(drug?.pharmacology?.mechanisms_of_action?.[0]?.description || ""),
+        summary: String(drug?.pharmacology?.summary || "") });
+    }
+  }catch(error){
+    console.warn("[study] Pharmacology data could not load:", error);
+  }
+
+  const manual = { key: "manual_entry", label: "Saved terms", columns: { en: "english", de: "german", sk: "slovak", la: "latin", notes: "notes" } };
+  manual.fieldCatalog = getDefaultFieldCatalogForAdapter(manual);
+  manual.fieldByKey = new Map(manual.fieldCatalog.map(field => [field.key, field]));
+  adapters.push(manual);
+  const custom = { key: "custom_cards", label: "Custom cards", columns: { front: "frontText", back: "backText", notes: "notes" } };
+  custom.fieldCatalog = getDefaultFieldCatalogForAdapter(custom);
+  custom.fieldByKey = new Map(custom.fieldCatalog.map(field => [field.key, field]));
+  adapters.push(custom);
   flashcardsV2State.adapters = adapters;
   flashcardsV2State.adapterByKey = new Map(adapters.map(adapter => [adapter.key, adapter]));
   flashcardsV2State.allTerms = allTerms;
   flashcardsV2State.loaded = true;
+  refreshManualStudyRows();
   if(!flashcardsV2State.query.domains.length){
     flashcardsV2State.query.domains = adapters.length ? [adapters[0].key] : [];
   }
   return flashcardsV2State;
+}
+
+function refreshManualStudyRows(){
+  flashcardsV2State.allTerms = flashcardsV2State.allTerms.filter(row => row._domain !== "manual_entry" && row._domain !== "custom_cards");
+  for(const row of getLocalTerms()){
+    if(row && row.id) flashcardsV2State.allTerms.push({ ...row, _domain: "manual_entry", _id: `user:${row.id}` });
+  }
+  for(const card of getFlashcardCustomCards()){
+    if(card && card.id) flashcardsV2State.allTerms.push({ ...card, _domain: "custom_cards", _id: `customcard:${card.id}` });
+  }
 }
 
 function getUserStorageKey(){
@@ -17346,13 +19209,30 @@ function getUserStorageKey(){
 }
 
 function loadProgress(userKey){
+  let progress;
   if(isProfileSessionActive()){
     const bucket = userProfile.flashcards.v2_progress && typeof userProfile.flashcards.v2_progress === "object"
       ? userProfile.flashcards.v2_progress
       : {};
-    return deepClone(bucket[String(userKey || "")] || {});
+    progress = deepClone(bucket[String(userKey || "")] || {});
+  } else {
+    progress = readJsonLS(`${FLASHCARDS_V2_PROGRESS_PREFIX}${userKey}`, {}) || {};
   }
-  return readJsonLS(`${FLASHCARDS_V2_PROGRESS_PREFIX}${userKey}`, {});
+  if(!progress.__quizV1Imported){
+    for(const row of Object.values(progressStore._readProgress().terms || {})){
+      if(!row || !row.termId) continue;
+      const item = progress[row.termId] || {};
+      item.correct = Number(item.correct || 0) + Number(row.correct || 0);
+      item.wrong = Number(item.wrong || 0) + Number(row.wrong || 0);
+      item.reviews = Number(item.reviews || 0) + Number(row.attempts || 0);
+      if(!item.lastSeen || String(row.last_seen || "") > item.lastSeen) item.lastSeen = row.last_seen || item.lastSeen || null;
+      if(!item.nextReview && Number(row.wrong || 0)) item.nextReview = new Date(0).toISOString();
+      progress[row.termId] = item;
+    }
+    progress.__quizV1Imported = true;
+    saveProgress(userKey, progress);
+  }
+  return progress;
 }
 
 function saveProgress(userKey, progress){
@@ -17367,125 +19247,33 @@ function saveProgress(userKey, progress){
   writeJsonLS(`${FLASHCARDS_V2_PROGRESS_PREFIX}${userKey}`, progress || {});
 }
 
-function getProgressWeight(progressRow){
-  const wrong = Number((progressRow && progressRow.wrong) || 0);
-  const correct = Number((progressRow && progressRow.correct) || 0);
-  return Math.max(1, 1 + (wrong * 2) - correct);
-}
-
-function weightedSample(items, limit, weightFn){
-  const pool = items.slice();
-  const target = Math.max(0, Math.min(Number(limit) || 0, pool.length));
-  const out = [];
-  while(out.length < target && pool.length){
-    let total = 0;
-    const weights = pool.map(item => {
-      const w = Math.max(1, Number(weightFn(item)) || 1);
-      total += w;
-      return w;
-    });
-    let pick = Math.random() * total;
-    let idx = 0;
-    for(let i = 0; i < pool.length; i += 1){
-      pick -= weights[i];
-      if(pick <= 0){
-        idx = i;
-        break;
-      }
-    }
-    out.push(pool[idx]);
-    pool.splice(idx, 1);
-  }
-  return out;
-}
-
-function randomSample(items, limit){
-  const copy = items.slice();
-  shuffle(copy);
-  return copy.slice(0, Math.max(0, Math.min(Number(limit) || 0, copy.length)));
-}
-
 function buildDeck({ query, terms, progress, adapters }){
-  const adapterMap = new Map((adapters || []).map(adapter => [adapter.key, adapter]));
-  const domains = new Set((query.domains || []).map(v => String(v || "").trim()).filter(Boolean));
-  const only = String(query.only || "random");
-  const nowMs = Date.now();
-  const candidates = [];
+  return createStudyDeck({ query, terms, progress, adapters, matchesSubdivision: matchesFlashcardsSubdivision });
+}
 
-  for(const row of (terms || [])){
-    if(!row || !domains.has(String(row._domain || ""))) continue;
-    const adapter = adapterMap.get(String(row._domain || ""));
-    if(!adapter) continue;
-    if(!matchesFlashcardsSubdivision(row, adapter, query)) continue;
-    const frontField = adapter.fieldByKey.get(String(query.frontFieldKey || ""));
-    const frontFieldSecondary = adapter.fieldByKey.get(String(query.frontFieldSecondaryKey || ""));
-    const backField = adapter.fieldByKey.get(String(query.backFieldKey || ""));
-    const backFieldSecondary = adapter.fieldByKey.get(String(query.backFieldSecondaryKey || ""));
-    if(!frontField || !backField) continue;
-    const front = String(frontField.getValue(row) || "").trim();
-    const frontSecondary = frontFieldSecondary ? String(frontFieldSecondary.getValue(row) || "").trim() : "";
-    const back = String(backField.getValue(row) || "").trim();
-    const backSecondary = backFieldSecondary ? String(backFieldSecondary.getValue(row) || "").trim() : "";
-    if(!front || !back || front === back) continue;
-    const termId = String(row._id || "");
-    const p = (progress && progress[termId]) || null;
-
-    if(only === "new" && p) continue;
-    if(only === "wrong"){
-      const wrong = Number((p && p.wrong) || 0);
-      const correct = Number((p && p.correct) || 0);
-      if(!(wrong >= 1 || wrong > correct)) continue;
-    }
-    if(only === "due"){
-      const nextReview = p && p.nextReview ? new Date(p.nextReview).getTime() : 0;
-      if(!(nextReview && nextReview <= nowMs)) continue;
-    }
-    candidates.push({
-      termId,
-      domain: row._domain,
-      front,
-      frontSecondary,
-      back,
-      backSecondary,
-      meta: {
-        domainLabel: adapter.label,
-        frontLabel: frontField.label,
-        backLabel: backField.label
-      },
-      _progress: p
-    });
-  }
-
-  const limit = Math.max(1, Number(query.limit) || 20);
-  const sampled = (only === "wrong" || only === "due")
-    ? weightedSample(candidates, limit, item => getProgressWeight(item._progress))
-    : randomSample(candidates, limit);
-
-  return sampled.map(item => ({
-    termId: item.termId,
-    domain: item.domain,
-    front: item.front,
-    frontSecondary: item.frontSecondary || "",
-    back: item.back,
-    backSecondary: item.backSecondary || "",
-    meta: item.meta
-  }));
+function getVisibleStudyAdapters(){
+  return flashcardsV2State.adapters.filter(adapter => adapter && !adapter.hiddenFromStudyPicker);
 }
 
 function getSelectedFlashcardsDomains(){
   const root = document.getElementById("flashcards-domains");
   if(!root) return [];
-  return [...root.querySelectorAll('input[data-domain-key]')]
+  const selected = [...root.querySelectorAll('input[data-domain-key]')]
     .filter(el => el.checked)
     .map(el => String(el.getAttribute("data-domain-key") || "").trim())
     .filter(Boolean);
+  return selected.includes("all") ? getVisibleStudyAdapters().map(adapter => adapter.key) : selected;
 }
 
 function renderFlashcardsDomains(){
   const root = document.getElementById("flashcards-domains");
   if(!root) return;
-  const current = flashcardsV2State.query.domains[0] || (flashcardsV2State.adapters[0] && flashcardsV2State.adapters[0].key) || "";
-  root.innerHTML = flashcardsV2State.adapters.map(adapter => {
+  const visibleAdapters = getVisibleStudyAdapters();
+  const current = flashcardsV2State.query.domains[0] || (visibleAdapters[0] && visibleAdapters[0].key) || "";
+  const domainSummary = document.getElementById('flashcards-domain-summary');
+  const selectedAdapter = flashcardsV2State.adapterByKey.get(current);
+  if(domainSummary) domainSummary.textContent = current === 'all' ? tOr('study_all_domains', 'All available domains') : selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : tOr('study_choose_domain', 'Choose a domain');
+  root.innerHTML = visibleAdapters.map(adapter => {
     const checked = adapter.key === current ? " checked" : "";
     return `<label class="checkbox-item"><input type="radio" name="flashcards-domain" data-domain-key="${escapeHTML(adapter.key)}"${checked} /> ${escapeHTML(localizeDatasetLabel(adapter.key, adapter.label))}</label>`;
   }).join("");
@@ -17493,18 +19281,32 @@ function renderFlashcardsDomains(){
 }
 
 function getFieldOptionsForDomains(domainKeys){
-  const selected = (domainKeys || []).slice(0, 1);
+  const selected = domainKeys || [];
   const byKey = new Map();
   for(const domainKey of selected){
     const adapter = flashcardsV2State.adapterByKey.get(domainKey);
     if(!adapter) continue;
     for(const field of (adapter.fieldCatalog || [])){
+      const special = domainKey === 'pharmacology' ? { name_en: 'study_drug_name', class_name: 'study_therapeutic_class', atc_code: 'study_atc_code', mechanism: 'study_mechanism' }[field.key]
+        : domainKey === 'custom_cards' ? { front_text: 'study_question_front', back_text: 'study_answer_back' }[field.key] : null;
+      const label = special ? tOr(special, field.label) : localizeFlashcardsFieldLabel(field.key, field.label);
       const hit = byKey.get(field.key);
       if(hit) hit.domains.add(domainKey);
-      else byKey.set(field.key, { key: field.key, label: localizeFlashcardsFieldLabel(field.key, field.label), domains: new Set([domainKey]) });
+      else byKey.set(field.key, { key: field.key, label, domains: new Set([domainKey]) });
     }
   }
   return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function getPreferredStudyFields(keys, domainKey){
+  const available = new Set(keys);
+  const first = (...choices) => choices.find(key => available.has(key)) || keys[0] || "";
+  const front = domainKey === "custom_cards" ? first("front_text") : first("name_en", "unit_name", "name_la", "abbreviation");
+  const back = domainKey === "pharmacology" ? first("class_name", "definition", "atc_code")
+    : domainKey === "custom_cards" ? first("back_text")
+    : ["anatomy_questions", "clinical_correlations"].includes(domainKey) ? first("definition", "name_la")
+    : first("name_sk", "name_la", "definition", "name_de", "class_name");
+  return { front, back: back !== front ? back : keys.find(key => key !== front) || "" };
 }
 
 function getFlashcardsSubdivisionConfig(adapter){
@@ -17519,6 +19321,20 @@ function getFlashcardsSubdivisionConfig(adapter){
     return {
       level1: { key: "region", label: tOr("muscle_search_region", "Region") },
       level2: { key: "category", label: tOr("muscle_search_category", "Category") }
+    };
+  }
+  if(adapter.key === "anatomy"){
+    return {
+      progressive: true,
+      level1: { key: "__study_region_major", label: tOr("study_anatomy_region", "Region") },
+      level2: { key: "__study_region_part", label: tOr("study_anatomy_subregion", "Part of region") },
+      level3: { key: "__study_structure_group", label: tOr("study_anatomy_structure_type", "Structure type") }
+    };
+  }
+  if(adapter.key === "anatomy_questions"){
+    return {
+      level1: { key: "category", label: tOr("category", "Question type") },
+      level2: null
     };
   }
   return null;
@@ -17546,7 +19362,7 @@ function formatSubdivisionSelection(raw){
 
 function getChecklistSelectedValues(container){
   if(!(container instanceof HTMLElement)) return [];
-  return [...container.querySelectorAll('input[type="checkbox"]:checked')]
+  return [...container.querySelectorAll('input:checked')]
     .map(el => String(el.value || "").trim())
     .filter(Boolean);
 }
@@ -17576,10 +19392,89 @@ function renderSubdivisionChecklist(container, options, selectedValues, onChange
   });
 }
 
+function renderProgressiveStudyChoices(container, options, selectedValues, onChange){
+  if(!(container instanceof HTMLElement)) return;
+  const selected = new Set(normalizeSubdivisionSelection(selectedValues));
+  container.innerHTML = "";
+  (options || []).forEach(value => {
+    const item = document.createElement("label");
+    item.className = "checkbox-item study-taxonomy-choice";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = value;
+    checkbox.checked = selected.has(value);
+    checkbox.addEventListener("change", ()=>{
+      if(typeof onChange === "function") onChange(getChecklistSelectedValues(container));
+    });
+    const span = document.createElement("span");
+    span.textContent = value;
+    item.append(checkbox, span);
+    container.appendChild(item);
+  });
+}
+
+function getProgressiveSubdivisionGroups(rows, adapter, parentKey, childKey, selectedParents){
+  const selected = new Set(normalizeSubdivisionSelection(selectedParents));
+  const byParent = new Map();
+  for(const row of (rows || [])){
+    const parent = getSubdivisionRowValue(row, adapter, parentKey);
+    const child = getSubdivisionRowValue(row, adapter, childKey);
+    if(!parent || !child || (selected.size && !selected.has(parent))) continue;
+    if(!byParent.has(parent)) byParent.set(parent, []);
+    byParent.get(parent).push(child);
+  }
+  const parentOrder = sortStudyTaxonomyOptions(parentKey, [...byParent.keys()]);
+  return parentOrder.map(parent => ({
+    label: parent,
+    values: sortStudyTaxonomyOptions(childKey, byParent.get(parent) || [])
+  })).filter(group => group.values.length);
+}
+
+function renderProgressiveStudyGroups(container, groups, selectedValues, onChange){
+  if(!(container instanceof HTMLElement)) return;
+  const selected = new Set(normalizeSubdivisionSelection(selectedValues));
+  container.innerHTML = "";
+  (groups || []).forEach(group => {
+    const section = document.createElement('div');
+    section.className = 'study-taxonomy-group';
+    const heading = document.createElement('div');
+    heading.className = 'study-taxonomy-group-title';
+    heading.textContent = group.label;
+    const choices = document.createElement('div');
+    choices.className = 'study-taxonomy-group-choices';
+    (group.values || []).forEach(value => {
+      const item = document.createElement('label');
+      item.className = 'checkbox-item study-taxonomy-choice';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = value;
+      checkbox.checked = selected.has(value);
+      checkbox.addEventListener('change', ()=>{
+        if(typeof onChange === 'function') onChange(getChecklistSelectedValues(container));
+      });
+      const span = document.createElement('span');
+      span.textContent = value;
+      item.append(checkbox, span);
+      choices.appendChild(item);
+    });
+    section.append(heading, choices);
+    container.appendChild(section);
+  });
+}
+
 function getSubdivisionOptions(adapter, colKey, rows){
+  if(String(colKey || '').startsWith('__study_')){
+    return sortStudyTaxonomyOptions(colKey, (rows || []).map(row => getStudyHierarchyValue(row, colKey)));
+  }
   const col = adapter && adapter.columns ? adapter.columns[colKey] : "";
   if(!col) return [];
   return uniqueSorted((rows || []).map(row => row ? row[col] : ""));
+}
+
+function getSubdivisionRowValue(row, adapter, key){
+  if(String(key || '').startsWith('__study_')) return getStudyHierarchyValue(row, key);
+  const col = adapter?.columns?.[key];
+  return col ? String(row?.[col] || '').trim() : '';
 }
 
 function matchesFlashcardsSubdivision(row, adapter, query){
@@ -17587,14 +19482,10 @@ function matchesFlashcardsSubdivision(row, adapter, query){
   if(!cfg || !row || !adapter) return true;
   const level1Values = normalizeSubdivisionSelection(query.subdivision1);
   const level2Values = normalizeSubdivisionSelection(query.subdivision2);
-  if(cfg.level1 && level1Values.length){
-    const c1 = adapter.columns[cfg.level1.key];
-    if(!level1Values.includes(String(row[c1] || "").trim())) return false;
-  }
-  if(cfg.level2 && level2Values.length){
-    const c2 = adapter.columns[cfg.level2.key];
-    if(!level2Values.includes(String(row[c2] || "").trim())) return false;
-  }
+  const level3Values = normalizeSubdivisionSelection(query.subdivision3);
+  if(cfg.level1 && level1Values.length && !level1Values.includes(getSubdivisionRowValue(row, adapter, cfg.level1.key))) return false;
+  if(cfg.level2 && level2Values.length && !level2Values.includes(getSubdivisionRowValue(row, adapter, cfg.level2.key))) return false;
+  if(cfg.level3 && level3Values.length && !level3Values.includes(getSubdivisionRowValue(row, adapter, cfg.level3.key))) return false;
   return true;
 }
 
@@ -17661,7 +19552,7 @@ function syncFlashcardsDashboard(options = null){
     : getFieldOptionsForDomains(displayQuery.domains);
   const optionMap = new Map(optionList.map(opt => [opt.key, opt.label]));
   const selectedAdapter = flashcardsV2State.adapterByKey.get(displayQuery.domains[0] || "");
-  const selectedDomainLabel = selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : "-";
+  const selectedDomainLabel = displayQuery.domains.length > 1 ? tOr('study_all_domains', 'All available domains') : selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : "-";
   const frontLabel = getFlashcardsFieldLabel(displayQuery.frontFieldKey, optionMap);
   const backLabel = getFlashcardsFieldLabel(displayQuery.backFieldKey, optionMap);
   const frontSecondaryLabel = displayQuery.frontFieldSecondaryKey
@@ -17687,6 +19578,9 @@ function refreshFlashcardsBuilderUI(msgText = ""){
   const subdivision2Wrap = document.getElementById("flashcards-subdivision2-wrap");
   const subdivision2Label = document.getElementById("flashcards-subdivision2-label");
   const subdivision2Sel = document.getElementById("flashcards-subdivision2");
+  const subdivision3Wrap = document.getElementById("flashcards-subdivision3-wrap");
+  const subdivision3Label = document.getElementById("flashcards-subdivision3-label");
+  const subdivision3Sel = document.getElementById("flashcards-subdivision3");
   const frontSel = document.getElementById("flashcards-front-field");
   const frontSel2 = document.getElementById("flashcards-front-field-2");
   const backSel = document.getElementById("flashcards-back-field");
@@ -17694,61 +19588,71 @@ function refreshFlashcardsBuilderUI(msgText = ""){
   const onlySel = document.getElementById("flashcards-only");
   const limitSel = document.getElementById("flashcards-limit");
   const msg = document.getElementById("flashcards-builder-msg");
-  if(!subdivisionWrap || !subdivision1Label || !subdivision1Sel || !subdivision2Wrap || !subdivision2Label || !subdivision2Sel || !frontSel || !frontSel2 || !backSel || !backSel2 || !onlySel || !limitSel || !msg) return;
+  if(!subdivisionWrap || !subdivision1Label || !subdivision1Sel || !subdivision2Wrap || !subdivision2Label || !subdivision2Sel || !subdivision3Wrap || !subdivision3Label || !subdivision3Sel || !frontSel || !frontSel2 || !backSel || !backSel2 || !onlySel || !limitSel || !msg) return;
 
   const selectedDomains = getSelectedFlashcardsDomains();
-  if(selectedDomains.length){
-    flashcardsV2State.query.domains = [selectedDomains[0]];
-  } else if(!flashcardsV2State.query.domains.length && flashcardsV2State.adapters.length){
-    flashcardsV2State.query.domains = [flashcardsV2State.adapters[0].key];
-  }
+  if(selectedDomains.length) flashcardsV2State.query.domains = selectedDomains;
+  else if(!flashcardsV2State.query.domains.length && getVisibleStudyAdapters().length) flashcardsV2State.query.domains = [getVisibleStudyAdapters()[0].key];
   renderFlashcardsDomains();
 
   const domainKey = flashcardsV2State.query.domains[0] || "";
   const adapter = flashcardsV2State.adapterByKey.get(domainKey) || null;
   const cfg = getFlashcardsSubdivisionConfig(adapter);
+  subdivisionWrap.classList.toggle('is-progressive', !!cfg?.progressive);
   const domainRows = flashcardsV2State.allTerms.filter(row => row && row._domain === domainKey);
+  const hideLevel = (wrap, container)=>{ wrap.classList.add('hidden'); if(container) container.innerHTML=''; };
 
   if(!cfg){
-    subdivisionWrap.classList.add("hidden");
-    subdivision2Wrap.classList.add("hidden");
-    flashcardsV2State.query.subdivision1 = [];
-    flashcardsV2State.query.subdivision2 = [];
-    if(subdivision1Sel) subdivision1Sel.innerHTML = "";
-    if(subdivision2Sel) subdivision2Sel.innerHTML = "";
+    subdivisionWrap.classList.add("hidden"); hideLevel(subdivision2Wrap, subdivision2Sel); hideLevel(subdivision3Wrap, subdivision3Sel);
+    flashcardsV2State.query.subdivision1 = []; flashcardsV2State.query.subdivision2 = []; flashcardsV2State.query.subdivision3 = [];
+    subdivision1Sel.innerHTML = "";
   } else {
     subdivisionWrap.classList.remove("hidden");
-    subdivision1Label.textContent = cfg.level1 ? cfg.level1.label : tOr("quiz_subdivision", "Subdivision");
+    subdivision1Label.textContent = cfg.level1?.label || tOr("quiz_subdivision", "Subdivision");
     const level1Options = cfg.level1 ? getSubdivisionOptions(adapter, cfg.level1.key, domainRows) : [];
-    const selectedLevel1 = normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1).filter(value => level1Options.includes(value));
-    flashcardsV2State.query.subdivision1 = selectedLevel1;
-    renderSubdivisionChecklist(subdivision1Sel, level1Options, selectedLevel1, nextValues => {
+    const selected1 = normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1).filter(value => level1Options.includes(value));
+    flashcardsV2State.query.subdivision1 = selected1;
+    const render1 = cfg.progressive ? renderProgressiveStudyChoices : renderSubdivisionChecklist;
+    render1(subdivision1Sel, level1Options, selected1, nextValues => {
       flashcardsV2State.query.subdivision1 = nextValues;
-      flashcardsV2State.query.subdivision2 = [];
       refreshFlashcardsBuilderUI();
     });
 
-    if(cfg.level2){
-      subdivision2Wrap.classList.remove("hidden");
-      subdivision2Label.textContent = cfg.level2.label;
-      const rowsForLevel2 = subdivisionHasSelection(flashcardsV2State.query.subdivision1)
-        ? domainRows.filter(row => {
-            const c1 = adapter.columns[cfg.level1.key];
-            return normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1).includes(String(row[c1] || "").trim());
-          })
+    if(cfg.level2 && (!cfg.progressive || subdivisionHasSelection(flashcardsV2State.query.subdivision1))){
+      subdivision2Wrap.classList.remove("hidden"); subdivision2Label.textContent = cfg.level2.label;
+      const rows2 = subdivisionHasSelection(flashcardsV2State.query.subdivision1)
+        ? domainRows.filter(row => normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1).includes(getSubdivisionRowValue(row, adapter, cfg.level1.key)))
         : domainRows;
-      const level2Options = getSubdivisionOptions(adapter, cfg.level2.key, rowsForLevel2);
-      const selectedLevel2 = normalizeSubdivisionSelection(flashcardsV2State.query.subdivision2).filter(value => level2Options.includes(value));
-      flashcardsV2State.query.subdivision2 = selectedLevel2;
-      renderSubdivisionChecklist(subdivision2Sel, level2Options, selectedLevel2, nextValues => {
-        flashcardsV2State.query.subdivision2 = nextValues;
-        refreshFlashcardsBuilderUI();
+      const options2 = getSubdivisionOptions(adapter, cfg.level2.key, rows2);
+      const selected2 = normalizeSubdivisionSelection(flashcardsV2State.query.subdivision2).filter(value => options2.includes(value));
+      flashcardsV2State.query.subdivision2 = selected2;
+      if(cfg.progressive){
+        const groups2 = getProgressiveSubdivisionGroups(rows2, adapter, cfg.level1.key, cfg.level2.key, flashcardsV2State.query.subdivision1);
+        renderProgressiveStudyGroups(subdivision2Sel, groups2, selected2, nextValues => {
+          flashcardsV2State.query.subdivision2 = nextValues;
+          refreshFlashcardsBuilderUI();
+        });
+      } else {
+        renderSubdivisionChecklist(subdivision2Sel, options2, selected2, nextValues => {
+          flashcardsV2State.query.subdivision2 = nextValues;
+          refreshFlashcardsBuilderUI();
+        });
+      }
+    } else { flashcardsV2State.query.subdivision2 = []; hideLevel(subdivision2Wrap, subdivision2Sel); }
+
+    if(cfg.level3 && subdivisionHasSelection(flashcardsV2State.query.subdivision2)){
+      subdivision3Wrap.classList.remove("hidden"); subdivision3Label.textContent = cfg.level3.label;
+      const rows3 = domainRows.filter(row =>
+        (!subdivisionHasSelection(flashcardsV2State.query.subdivision1) || normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1).includes(getSubdivisionRowValue(row, adapter, cfg.level1.key))) &&
+        (!subdivisionHasSelection(flashcardsV2State.query.subdivision2) || normalizeSubdivisionSelection(flashcardsV2State.query.subdivision2).includes(getSubdivisionRowValue(row, adapter, cfg.level2.key)))
+      );
+      const options3 = getSubdivisionOptions(adapter, cfg.level3.key, rows3);
+      const selected3 = normalizeSubdivisionSelection(flashcardsV2State.query.subdivision3).filter(value => options3.includes(value));
+      flashcardsV2State.query.subdivision3 = selected3;
+      renderProgressiveStudyChoices(subdivision3Sel, options3, selected3, nextValues => {
+        flashcardsV2State.query.subdivision3 = nextValues; refreshFlashcardsBuilderUI();
       });
-    } else {
-      subdivision2Wrap.classList.add("hidden");
-      flashcardsV2State.query.subdivision2 = [];
-      if(subdivision2Sel) subdivision2Sel.innerHTML = "";
-    }
+    } else { flashcardsV2State.query.subdivision3 = []; hideLevel(subdivision3Wrap, subdivision3Sel); }
   }
 
   const options = getFieldOptionsForDomains(flashcardsV2State.query.domains);
@@ -17757,22 +19661,23 @@ function refreshFlashcardsBuilderUI(msgText = ""){
   backSel.innerHTML = options.map(opt => `<option value="${escapeHTML(opt.key)}">${escapeHTML(opt.label)}</option>`).join("");
   backSel2.innerHTML = [`<option value="">${escapeHTML(tOr("flashcards_none", "None"))}</option>`, ...options.map(opt => `<option value="${escapeHTML(opt.key)}">${escapeHTML(opt.label)}</option>`)].join("");
   const keys = options.map(opt => opt.key);
-  if(!keys.includes(flashcardsV2State.query.frontFieldKey)){
-    flashcardsV2State.query.frontFieldKey = keys[0] || "";
-  }
+  const preferred = getPreferredStudyFields(keys, flashcardsV2State.query.domains.length > 1 ? "all" : flashcardsV2State.query.domains[0]);
+  if(!keys.includes(flashcardsV2State.query.frontFieldKey)) flashcardsV2State.query.frontFieldKey = preferred.front;
   if(!keys.includes(flashcardsV2State.query.backFieldKey) || flashcardsV2State.query.backFieldKey === flashcardsV2State.query.frontFieldKey){
-    flashcardsV2State.query.backFieldKey = keys.find(key => key !== flashcardsV2State.query.frontFieldKey) || flashcardsV2State.query.frontFieldKey || "";
+    flashcardsV2State.query.backFieldKey = preferred.back !== flashcardsV2State.query.frontFieldKey ? preferred.back : keys.find(key => key !== flashcardsV2State.query.frontFieldKey) || "";
   }
   if(flashcardsV2State.query.frontFieldKey) frontSel.value = flashcardsV2State.query.frontFieldKey;
-  if(keys.includes(flashcardsV2State.query.frontFieldSecondaryKey)) frontSel2.value = flashcardsV2State.query.frontFieldSecondaryKey;
-  else frontSel2.value = "";
+  if(keys.includes(flashcardsV2State.query.frontFieldSecondaryKey)) frontSel2.value = flashcardsV2State.query.frontFieldSecondaryKey; else frontSel2.value = "";
   if(flashcardsV2State.query.backFieldKey) backSel.value = flashcardsV2State.query.backFieldKey;
-  if(keys.includes(flashcardsV2State.query.backFieldSecondaryKey)) backSel2.value = flashcardsV2State.query.backFieldSecondaryKey;
-  else backSel2.value = "";
+  if(keys.includes(flashcardsV2State.query.backFieldSecondaryKey)) backSel2.value = flashcardsV2State.query.backFieldSecondaryKey; else backSel2.value = "";
   onlySel.value = flashcardsV2State.query.only;
   limitSel.value = String(flashcardsV2State.query.limit || 20);
+  document.querySelectorAll('[data-flash-review-mode]').forEach(button => {
+    const active = String(button.getAttribute('data-flash-review-mode') || '') === String(flashcardsV2State.query.reviewMode || 'smart');
+    button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
   const selectedAdapter = flashcardsV2State.adapterByKey.get(flashcardsV2State.query.domains[0] || "");
-  const selectedDomainLabel = selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : "-";
+  const selectedDomainLabel = flashcardsV2State.query.domains.length > 1 ? tOr('study_all_domains', 'All available domains') : selectedAdapter ? localizeDatasetLabel(selectedAdapter.key, selectedAdapter.label) : "-";
   const base = `${tOr("flashcards_loaded_terms", "Loaded terms")}: ${flashcardsV2State.allTerms.length} | ${tOr("flashcards_selected_domain", "Selected domain")}: ${selectedDomainLabel}`;
   syncFlashcardsDashboard(options);
   msg.textContent = msgText ? `${msgText} | ${base}` : base;
@@ -17789,22 +19694,39 @@ function renderFlashcardsPlayer(){
   const revealBtn = document.getElementById("flashcards-reveal");
   const againBtn = document.getElementById("flashcards-again");
   const goodBtn = document.getElementById("flashcards-good");
+  const hardBtn = document.getElementById("flashcards-hard");
   const easyBtn = document.getElementById("flashcards-easy");
   const generatedCountEl = document.getElementById("flashcards-generated-count");
   const progressBarEl = document.getElementById("flashcards-progress-bar");
+  const masteryEl = document.getElementById("flashcards-mastery");
+  const difficultBtn = document.getElementById("flashcards-toggle-difficult");
   if(!cardBtn || !frontEl || !frontSubEl || !backEl || !backSubEl || !ratings || !progressEl || !revealBtn || !againBtn || !goodBtn || !easyBtn) return;
 
   const deck = flashcardsV2State.session.deck;
   const index = flashcardsV2State.session.index;
   const current = deck[index] || null;
-  const progressText = current ? `${Math.min(index + 1, deck.length)}/${deck.length}` : `0/${deck.length}`;
+  const currentProgress = current ? ((loadProgress(getUserStorageKey()) || {})[current.termId] || {}) : {};
+  const masteryState = current ? getMasteryState(currentProgress) : 'new';
+  const masteryLabelKey = `study_mastery_${masteryState}`;
+  const masteryFallback = ({ new: 'New', learning: 'Learning', familiar: 'Familiar', mastered: 'Mastered', difficult: 'Difficult' })[masteryState] || 'New';
+  const progressText = current ? `${Math.min(index + 1, deck.length)}/${deck.length}` : flashcardsV2State.session.completed ? `${flashcardsV2State.session.completedCount}/${flashcardsV2State.session.completedCount}` : `0/${deck.length}`;
+  if(masteryEl){
+    masteryEl.dataset.state = masteryState;
+    masteryEl.textContent = tOr(masteryLabelKey, masteryFallback);
+  }
+  if(difficultBtn){
+    const manuallyMarked = !!currentProgress.manualDifficult;
+    difficultBtn.disabled = !current;
+    difficultBtn.classList.toggle('is-active', manuallyMarked);
+    difficultBtn.textContent = manuallyMarked ? tOr('study_unmark_difficult', 'Unmark difficult') : tOr('study_mark_difficult', 'Mark difficult');
+  }
   syncFlashcardsDashboard();
-  if(generatedCountEl) generatedCountEl.textContent = String(deck.length);
-  if(progressBarEl) progressBarEl.style.width = deck.length ? `${(Math.min(index + 1, deck.length) / deck.length) * 100}%` : "0%";
+  if(generatedCountEl) generatedCountEl.textContent = String(flashcardsV2State.session.initialCount);
+  if(progressBarEl) progressBarEl.style.width = flashcardsV2State.session.completed ? "100%" : deck.length ? `${(Math.min(index + 1, deck.length) / deck.length) * 100}%` : "0%";
   cardBtn.classList.toggle("is-empty", !current);
   cardBtn.setAttribute("aria-disabled", current ? "false" : "true");
   if(!current){
-    frontEl.textContent = tOr("flashcards_no_active_session", "No active session. Generate a deck first.");
+    frontEl.textContent = flashcardsV2State.session.completed ? tOr('study_session_complete', 'Session complete. Open the builder to choose another deck.') : tOr("flashcards_no_active_session", "No active session. Generate a deck first.");
     frontSubEl.textContent = "";
     backEl.textContent = "";
     backSubEl.textContent = "";
@@ -17814,6 +19736,7 @@ function renderFlashcardsPlayer(){
     revealBtn.disabled = true;
     revealBtn.classList.remove("hidden");
     againBtn.disabled = true;
+    if(hardBtn) hardBtn.disabled = true;
     goodBtn.disabled = true;
     easyBtn.disabled = true;
     return;
@@ -17822,47 +19745,54 @@ function renderFlashcardsPlayer(){
   frontSubEl.textContent = String(current.frontSecondary || "");
   backEl.textContent = current.back;
   backSubEl.textContent = String(current.backSecondary || "");
-  cardBtn.classList.toggle("is-flipped", !!flashcardsV2State.session.revealed);
-  ratings.classList.toggle("hidden", !flashcardsV2State.session.revealed);
+  const showingBack = !!flashcardsV2State.session.revealed;
+  cardBtn.classList.toggle("is-flipped", showingBack);
+  cardBtn.setAttribute('aria-label', showingBack ? tOr('study_show_front', 'Show front') : tOr('study_show_answer', 'Show answer'));
+  ratings.classList.toggle("hidden", !showingBack);
   progressEl.textContent = progressText;
   revealBtn.disabled = false;
-  revealBtn.classList.toggle("hidden", !!flashcardsV2State.session.revealed);
-  const canRate = flashcardsV2State.session.revealed;
+  revealBtn.classList.remove("hidden");
+  revealBtn.textContent = showingBack ? tOr('study_show_front', 'Show front') : tOr('study_show_answer', 'Show answer');
+  const canRate = showingBack;
   againBtn.disabled = !canRate;
   goodBtn.disabled = !canRate;
+  if(hardBtn) hardBtn.disabled = !canRate;
   easyBtn.disabled = !canRate;
 }
 
 function applyFlashcardsRating(termId, rating){
   const userKey = getUserStorageKey();
   const progress = loadProgress(userKey) || {};
-  const row = progress[termId] || { correct: 0, wrong: 0, lastSeen: null, nextReview: null };
-  const now = new Date();
-  const dayMs = 86400000;
-  if(rating === "again"){
-    row.wrong = Number(row.wrong || 0) + 1;
-    row.nextReview = new Date(now.getTime() + (1 * dayMs)).toISOString();
-  } else if(rating === "good"){
-    row.correct = Number(row.correct || 0) + 1;
-    row.nextReview = new Date(now.getTime() + (3 * dayMs)).toISOString();
-  } else {
-    row.correct = Number(row.correct || 0) + 1;
-    row.nextReview = new Date(now.getTime() + (7 * dayMs)).toISOString();
-  }
-  row.lastSeen = now.toISOString();
-  progress[termId] = row;
+  progress[termId] = recordStudyEvent(progress[termId], rating);
   saveProgress(userKey, progress);
+  renderStudyOverview();
+}
+
+function toggleCurrentFlashcardDifficult(){
+  const current = flashcardsV2State.session.deck[flashcardsV2State.session.index] || null;
+  if(!current) return;
+  const userKey = getUserStorageKey();
+  const progress = loadProgress(userKey) || {};
+  const previous = progress[current.termId] || {};
+  progress[current.termId] = setManualDifficult(previous, !previous.manualDifficult);
+  saveProgress(userKey, progress);
+  renderStudyOverview();
+  renderFlashcardsPlayer();
 }
 
 function startFlashcardsSession(deck){
   flashcardsV2State.session.deck = Array.isArray(deck) ? deck : [];
+  flashcardsV2State.session.initialCount = flashcardsV2State.session.deck.length;
+  flashcardsV2State.session.completedCount = 0;
   flashcardsV2State.session.index = 0;
   flashcardsV2State.session.revealed = false;
+  flashcardsV2State.session.completed = false;
   flashcardsV2State.session.querySnapshot = flashcardsV2State.session.deck.length
     ? {
         ...flashcardsV2State.query,
         subdivision1: normalizeSubdivisionSelection(flashcardsV2State.query.subdivision1),
-        subdivision2: normalizeSubdivisionSelection(flashcardsV2State.query.subdivision2)
+        subdivision2: normalizeSubdivisionSelection(flashcardsV2State.query.subdivision2),
+        subdivision3: normalizeSubdivisionSelection(flashcardsV2State.query.subdivision3)
       }
     : null;
   renderFlashcardsPlayer();
@@ -17871,39 +19801,41 @@ function startFlashcardsSession(deck){
 function setFlashcardsBuilderCollapsed(collapsed){
   const builderCard = document.getElementById("flashcards-builder-card");
   const toggleBtn = document.getElementById("flashcards-builder-toggle");
+  const resume = document.getElementById("flashcards-resume");
   const screen = document.getElementById("screen-flashcards");
   if(builderCard) builderCard.classList.toggle("hidden", !!collapsed);
   if(screen) screen.classList.toggle("flashcards-builder-collapsed", !!collapsed);
   if(toggleBtn){
     toggleBtn.classList.toggle("hidden", !collapsed);
-    toggleBtn.textContent = collapsed
-      ? tOr("flashcards_builder_show", "Show builder settings")
-      : tOr("flashcards_builder_hide", "Hide builder settings");
+    toggleBtn.textContent = collapsed ? `← ${tOr('study_flashcard_setup', 'Flashcard setup')}` : tOr('flashcards_builder_hide', 'Hide setup');
   }
+  if(resume) resume.classList.toggle("hidden", !!collapsed || !flashcardsV2State.session.deck.length);
 }
 
 function generateFlashcardsSession(){
   const msg = document.getElementById("flashcards-builder-msg");
   const subdivision1Sel = document.getElementById("flashcards-subdivision1");
   const subdivision2Sel = document.getElementById("flashcards-subdivision2");
+  const subdivision3Sel = document.getElementById("flashcards-subdivision3");
   const frontSel = document.getElementById("flashcards-front-field");
   const frontSel2 = document.getElementById("flashcards-front-field-2");
   const backSel = document.getElementById("flashcards-back-field");
   const backSel2 = document.getElementById("flashcards-back-field-2");
   const onlySel = document.getElementById("flashcards-only");
   const limitSel = document.getElementById("flashcards-limit");
-  if(!msg || !subdivision1Sel || !subdivision2Sel || !frontSel || !frontSel2 || !backSel || !backSel2 || !onlySel || !limitSel) return;
+  if(!msg || !subdivision1Sel || !subdivision2Sel || !subdivision3Sel || !frontSel || !frontSel2 || !backSel || !backSel2 || !onlySel || !limitSel) return;
 
   const selected = getSelectedFlashcardsDomains();
-  flashcardsV2State.query.domains = selected.length ? [selected[0]] : [];
+  flashcardsV2State.query.domains = selected;
   flashcardsV2State.query.subdivision1 = getChecklistSelectedValues(subdivision1Sel);
   flashcardsV2State.query.subdivision2 = getChecklistSelectedValues(subdivision2Sel);
+  flashcardsV2State.query.subdivision3 = getChecklistSelectedValues(subdivision3Sel);
   flashcardsV2State.query.frontFieldKey = String(frontSel.value || "");
   flashcardsV2State.query.frontFieldSecondaryKey = String(frontSel2.value || "");
   flashcardsV2State.query.backFieldKey = String(backSel.value || "");
   flashcardsV2State.query.backFieldSecondaryKey = String(backSel2.value || "");
   flashcardsV2State.query.only = String(onlySel.value || "random");
-  flashcardsV2State.query.limit = Math.max(1, Number(limitSel.value) || 20);
+  flashcardsV2State.query.limit = String(limitSel.value || "20") === "all" ? "all" : Math.max(1, Number(limitSel.value) || 20);
 
   if(!flashcardsV2State.query.domains.length){
     msg.textContent = tOr("flashcards_select_one_domain", "Select at least one domain.");
@@ -17923,12 +19855,17 @@ function generateFlashcardsSession(){
 
   const progress = loadProgress(getUserStorageKey()) || {};
   const deck = buildDeck({
-    query: flashcardsV2State.query,
+    query: { ...flashcardsV2State.query, savedIds: getSavedStudyIds() },
     terms: flashcardsV2State.allTerms,
     progress,
     adapters: flashcardsV2State.adapters
   });
   msg.textContent = `${tOr("flashcards_generated_cards", "Generated")} ${deck.length} ${tOr("flashcards_cards_suffix", "card(s).")}`;
+  if(!deck.length) msg.textContent = flashcardsV2State.query.reviewMode === "due" || flashcardsV2State.query.only === "due" ? tOr('study_no_due', 'No cards due now. Switch to Smart or Random review to keep studying.')
+    : flashcardsV2State.query.only === "saved" ? tOr('study_no_saved_cards', 'No saved terms have both selected fields. Save a term or change the direction.')
+    : flashcardsV2State.query.only === "wrong" ? tOr('study_no_wrong_cards', 'No quiz mistakes for these fields yet.')
+    : flashcardsV2State.query.only === "recent" ? tOr('study_no_recent_cards', 'No recently added cards have both selected fields.')
+    : tOr('study_no_cards', 'No cards have both selected fields in this source. Try another domain or direction.');
   startFlashcardsSession(deck);
   if(deck.length > 0) setFlashcardsBuilderCollapsed(true);
 }
@@ -17939,17 +19876,47 @@ function handleFlashcardsRating(rating){
   const current = deck[index] || null;
   if(!current || !flashcardsV2State.session.revealed) return;
   applyFlashcardsRating(current.termId, rating);
+  if(rating === "again" && Number(current.retryCount || 0) < 2){
+    deck.splice(Math.min(index + 3, deck.length), 0, { ...current, retryCount: Number(current.retryCount || 0) + 1 });
+  }
   flashcardsV2State.session.index += 1;
   flashcardsV2State.session.revealed = false;
   if(flashcardsV2State.session.index >= deck.length){
     const msg = document.getElementById("flashcards-builder-msg");
     if(msg) msg.textContent = `${tOr("flashcards_session_finished", "Session finished.")} ${tOr("flashcards_reviewed", "Reviewed")} ${deck.length} ${tOr("flashcards_cards_suffix", "card(s).")}`;
+    flashcardsV2State.session.completedCount = deck.length;
     flashcardsV2State.session.deck = [];
     flashcardsV2State.session.index = 0;
+    flashcardsV2State.session.completed = true;
     flashcardsV2State.session.querySnapshot = null;
+    const resume = document.getElementById("flashcards-resume");
+    if(resume) resume.classList.add("hidden");
     saveUserProfileNow("flashcards_session_end");
   }
   renderFlashcardsPlayer();
+  requestAnimationFrame(()=>{
+    const next = flashcardsV2State.session.deck[flashcardsV2State.session.index]
+      ? document.getElementById('flashcards-reveal')
+      : document.getElementById('flashcards-builder-toggle');
+    next?.focus({ preventScroll: true });
+  });
+}
+
+function toggleCurrentFlashcardFace(forceBack = null){
+  if(!flashcardsV2State.session.deck[flashcardsV2State.session.index]) return;
+  const currentlyBack = !!flashcardsV2State.session.revealed;
+  flashcardsV2State.session.revealed = typeof forceBack === 'boolean' ? forceBack : !currentlyBack;
+  renderFlashcardsPlayer();
+  requestAnimationFrame(()=>{
+    const target = flashcardsV2State.session.revealed
+      ? document.getElementById('flashcards-again')
+      : document.getElementById('flashcards-reveal');
+    target?.focus({ preventScroll: true });
+  });
+}
+
+function revealCurrentFlashcard(){
+  toggleCurrentFlashcardFace(true);
 }
 
 function initFlashcardsV2(){
@@ -17967,7 +19934,10 @@ function initFlashcardsV2(){
   const revealBtn = document.getElementById("flashcards-reveal");
   const againBtn = document.getElementById("flashcards-again");
   const goodBtn = document.getElementById("flashcards-good");
+  const hardBtn = document.getElementById("flashcards-hard");
   const easyBtn = document.getElementById("flashcards-easy");
+  const swapBtn = document.getElementById("flashcards-swap-direction");
+  const difficultBtn = document.getElementById("flashcards-toggle-difficult");
   if(!domainsWrap || !subdivision1Sel || !subdivision2Sel || !frontSel || !frontSel2 || !backSel || !backSel2 || !onlySel || !limitSel || !generateBtn || !cardBtn || !revealBtn || !againBtn || !goodBtn || !easyBtn) return;
 
   ensureFlashcardsV2DataLoaded().then(()=>{
@@ -17978,10 +19948,16 @@ function initFlashcardsV2(){
   domainsWrap.addEventListener("change", ()=>{
     flashcardsV2State.query.subdivision1 = [];
     flashcardsV2State.query.subdivision2 = [];
+    flashcardsV2State.query.subdivision3 = [];
+    flashcardsV2State.query.frontFieldKey = "";
+    flashcardsV2State.query.backFieldKey = "";
+    flashcardsV2State.query.frontFieldSecondaryKey = "";
+    flashcardsV2State.query.backFieldSecondaryKey = "";
     refreshFlashcardsBuilderUI();
   });
   frontSel.addEventListener("change", ()=>{
     flashcardsV2State.query.frontFieldKey = String(frontSel.value || "");
+    if(frontSel2.value === frontSel.value){ frontSel2.value = ""; flashcardsV2State.query.frontFieldSecondaryKey = ""; }
     if(flashcardsV2State.query.frontFieldKey === String(backSel.value || "")){
       const alt = [...backSel.options].map(opt => opt.value).find(v => v !== flashcardsV2State.query.frontFieldKey);
       if(alt) backSel.value = alt;
@@ -17997,6 +19973,7 @@ function initFlashcardsV2(){
   });
   backSel.addEventListener("change", ()=>{
     flashcardsV2State.query.backFieldKey = String(backSel.value || "");
+    if(backSel2.value === backSel.value){ backSel2.value = ""; flashcardsV2State.query.backFieldSecondaryKey = ""; }
     if(flashcardsV2State.query.backFieldKey === String(frontSel.value || "")){
       const alt = [...frontSel.options].map(opt => opt.value).find(v => v !== flashcardsV2State.query.backFieldKey);
       if(alt) frontSel.value = alt;
@@ -18015,23 +19992,59 @@ function initFlashcardsV2(){
     syncFlashcardsDashboard();
   });
   limitSel.addEventListener("change", ()=>{
-    flashcardsV2State.query.limit = Math.max(1, Number(limitSel.value) || 20);
+    flashcardsV2State.query.limit = String(limitSel.value || "20") === "all" ? "all" : Math.max(1, Number(limitSel.value) || 20);
     syncFlashcardsDashboard();
   });
+  document.querySelectorAll('[data-flash-review-mode]').forEach(button => button.addEventListener('click', ()=>{
+    flashcardsV2State.query.reviewMode = String(button.getAttribute('data-flash-review-mode') || 'smart');
+    refreshFlashcardsBuilderUI();
+  }));
+  swapBtn?.addEventListener('click', ()=>{
+    const front = String(frontSel.value || '');
+    const back = String(backSel.value || '');
+    if(!front || !back || front === back) return;
+    frontSel.value = back;
+    backSel.value = front;
+    flashcardsV2State.query.frontFieldKey = back;
+    flashcardsV2State.query.backFieldKey = front;
+    const frontExtra = String(frontSel2.value || '');
+    const backExtra = String(backSel2.value || '');
+    frontSel2.value = backExtra;
+    backSel2.value = frontExtra;
+    flashcardsV2State.query.frontFieldSecondaryKey = backExtra;
+    flashcardsV2State.query.backFieldSecondaryKey = frontExtra;
+    syncFlashcardsDashboard();
+  });
+  difficultBtn?.addEventListener('click', toggleCurrentFlashcardDifficult);
   generateBtn.addEventListener("click", ()=> generateFlashcardsSession());
-  cardBtn.addEventListener("click", ()=>{
-    if(!flashcardsV2State.session.deck[flashcardsV2State.session.index]) return;
-    flashcardsV2State.session.revealed = true;
-    renderFlashcardsPlayer();
-  });
-  revealBtn.addEventListener("click", ()=>{
-    if(!flashcardsV2State.session.deck[flashcardsV2State.session.index]) return;
-    flashcardsV2State.session.revealed = true;
-    renderFlashcardsPlayer();
-  });
+  cardBtn.addEventListener("click", ()=> toggleCurrentFlashcardFace());
+  revealBtn.addEventListener("click", ()=> toggleCurrentFlashcardFace());
   againBtn.addEventListener("click", ()=> handleFlashcardsRating("again"));
   goodBtn.addEventListener("click", ()=> handleFlashcardsRating("good"));
+  hardBtn?.addEventListener("click", ()=> handleFlashcardsRating("hard"));
   easyBtn.addEventListener("click", ()=> handleFlashcardsRating("easy"));
+}
+
+function handleFlashcardsKeyboardShortcuts(event){
+  const screen = document.getElementById('screen-flashcards');
+  if(!screen || screen.classList.contains('hidden') || event.repeat) return;
+  if(event.target instanceof Element && event.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+  const current = flashcardsV2State.session.deck[flashcardsV2State.session.index];
+  if(event.key === 'Escape' && screen.classList.contains('flashcards-builder-collapsed')){
+    event.preventDefault();
+    setFlashcardsBuilderCollapsed(false);
+    return;
+  }
+  if(!current) return;
+  if(event.code === 'Space' && !(event.target instanceof Element && event.target.closest('button'))){
+    event.preventDefault();
+    toggleCurrentFlashcardFace();
+  }
+  const rating = { '1': 'again', '2': 'hard', '3': 'good', '4': 'easy' }[event.key];
+  if(rating && flashcardsV2State.session.revealed){
+    event.preventDefault();
+    handleFlashcardsRating(rating);
+  }
 }
 
 function isSmokeMode(){

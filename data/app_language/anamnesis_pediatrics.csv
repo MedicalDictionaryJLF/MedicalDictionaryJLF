@@ -1,4 +1,4 @@
-id_anamnesis,english_translation,slovak_translation
+﻿id_anamnesis,english_translation,slovak_translation
 ped_anamnesis,Anamnesis - Pediatrics,Anamnéza - Pediatria
 ped_n_1_identification,1. Identification,1. Identifikácia
 ped_full_name,Full name,Celé meno
@@ -103,7 +103,7 @@ ped_fertility_treatment,Fertility treatment,Liečba neplodnosti
 ped_question,Question,Otázka
 ped_yes,Yes,Áno
 ped_no,No,Nie
-ped_longer_hospital_stay_if_yes_how_long,Longer hospital stay if yes, how long,Dlhšia hospitalizácia ak áno, ako dlho
+ped_longer_hospital_stay_if_yes_how_long,"Longer hospital stay, if yes, how long?","Dlhšia hospitalizácia, ak áno, ako dlho?"
 ped_n_6_birth_neonatal,6. Birth & Neonatal History,6. Pôrodná a novorodenecká anamnéza
 ped_place_of_birth,Place of birth,Miesto narodenia
 ped_gestational_week_at_birth,Gestational week at birth,Gestačný týždeň pri pôrode
@@ -112,7 +112,7 @@ ped_birth_weight,Birth weight,Pôrodná hmotnosť
 ped_apgar_1,Apgar 1 min,Apgar 1 min
 ped_apgar_5,Apgar 5 min,Apgar 5 min
 ped_apgar_10,Apgar 10 min,Apgar 10 min
-ped_longer_hospital_stay,"Longer hospital stay? If yes, how long?","Dlhšia hospitalizácia? Ak áno ako dlho?""
+ped_longer_hospital_stay,"Longer hospital stay? If yes, how long?","Dlhšia hospitalizácia? Ak áno, ako dlho?"
 ped_gestational_age,Gestational age,Gestačný vek
 ped_preterm,Preterm,Predčasné
 ped_term,Term,Termínové
@@ -177,7 +177,7 @@ ped_incomplete_delayed,Incomplete / Delayed,Neúplné / Odložené
 ped_unknown,Unknown,Neznáme
 ped_immunization_notes,Immunization notes,Poznámky k očkovaniu
 ped_history_adverse_vaccine_reactions,History of adverse vaccine reactions,Anamnéza nežiaducich reakcií po očkovaní
-ped_if_yes_details,"If yes, details","Ak áno podrobnosti"
+ped_if_yes_details,"If yes, details",Ak áno podrobnosti
 ped_n_9_pmh,9. Past Medical History,9. Osobná anamnéza
 ped_varicella,Varicella,Ovčie kiahne
 ped_measles,Measles,Osýpky
@@ -231,7 +231,7 @@ ped_n_12_substance,12. Abuses / Substance Use,12. Abúzus / Užívanie návykov�
 ped_relevant_older_children,Relevant especially in older children / adolescents,Zvlášť relevantné u starších detí a adolescentov
 ped_coffee_dark_tea,Coffee / dark tea,Káva / čierny čaj
 ped_smoking_vaping,"Smoking (vaping, cigarettes, etc.)","Fajčenie (vapovanie, cigarety a pod.)"
-ped_drinking,"Drinking (beer, spirits, etc.)","Pitie alkoholu (pivo destiláty a pod.)"
+ped_drinking,"Drinking (beer, spirits, etc.)",Pitie alkoholu (pivo destiláty a pod.)
 ped_drugs_substance_abuse,Drugs (substance abuse),Drogy / zneužívanie látok
 ped_n_13_spg,13. Status Praesens Generalis (SPG),13. Status praesens generalis (SPG)
 ped_consciousness,Consciousness,Vedomie
@@ -290,7 +290,7 @@ ped_head_circumference,Head circumference (cm),Obvod hlavy (cm)
 ped_taken,Taken,Zaznamenané
 ped_directly_from_monitor,Directly from monitor,Priamo z monitora
 ped_from_patient_charts,From patient charts,Z pacientovej dokumentácie
-ped_if_from_charts_when,"If from charts, when","Ak z dokumentácie kedy"
+ped_if_from_charts_when,"If from charts, when",Ak z dokumentácie kedy
 ped_vital_signs_notes,Vital signs notes,Poznámky k vitálnym funkciám
 ped_n_15_spl,15. Status Praesens Localis (SPL),15. Status praesens localis (SPL)
 ped_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Zdravotnícke pomôcky / vstupy / katétre
@@ -340,3 +340,58 @@ ped_who_growth_references,WHO growth references 0-5 years,WHO referenčné hodno
 ped_p3,P3,P3
 ped_p50,P50,P50
 ped_p97,P97,P97
+ext_other_maternal_infection___fever,Other maternal infection / fever,Iná infekcia / horúčka matky
+ext_other_maternal_chronic_disease,Other maternal chronic disease,Iné chronické ochorenie matky
+ext_abnormal_prenatal_screening___ultrasound,Abnormal prenatal screening / ultrasound,Abnormálny prenatálny skríning / ultrazvuk
+ext_fetal_growth_concern,Fetal growth concern,Obavy z rastu plodu
+ext_folate___prenatal_vitamins,Folate / prenatal vitamins,Kyselina listová / prenatálne vitamíny
+ext_other_chronic_disease,Other chronic disease,Iné chronické ochorenie
+ext_recurrent___unusual_infections,Recurrent / unusual infections,Opakované / nezvyčajné infekcie
+ext_neurodevelopmental_diagnosis,Neurodevelopmental diagnosis,Neurovývinová diagnóza
+ext_serious_injury___trauma,Serious injury / trauma,Závažný úraz / trauma
+ext_congenital_anomalies,Congenital anomalies,Vrodené chyby
+ext_neurodevelopmental_conditions,Neurodevelopmental conditions,Neurovývinové poruchy
+ext_sudden___unexplained_young_death,Sudden / unexplained young death,Náhle / nevysvetliteľné úmrtie v mladom veku
+ext_consanguinity,Consanguinity,Pokrvné príbuzenstvo rodičov
+ext_recurrent_miscarriage___stillbirth,Recurrent miscarriage / stillbirth,Opakované potraty / mŕtvorodenie
+ext_bullying___peer_difficulties,Bullying / peer difficulties,Šikana / problémy s rovesníkmi
+ext_frequent_school_absence,Frequent school absence,Častá absencia v škole
+ext_sleep_concern,Sleep concern,Problém so spánkom
+ext_snoring___witnessed_apnoea,Snoring / witnessed apnoea,Chrápanie / pozorované apnoe
+ext_other_safety___safeguarding_concern,Other safety / safeguarding concern,Iná obava o bezpečnosť / ochranu dieťaťa
+ext_pregnancy_details,Pregnancy details,Detaily tehotenstva
+ext_maternal_age_during_pregnancy,Maternal age during pregnancy,Vek matky počas tehotenstva
+ext_antenatal_screening___scans___fetal_growth_details,Antenatal screening / scans / fetal growth details,Prenatálny skríning / ultrazvuky / detaily rastu plodu
+ext_medication__alcohol__nicotine__drugs__occupational_or_toxic_,"Medication, alcohol, nicotine, drugs, occupational or toxic exposures","Lieky, alkohol, nikotín, drogy, pracovné alebo toxické expozície"
+ext_feeding__nutrition__growth___elimination,"Feeding, nutrition, growth & elimination","Kŕmenie, výživa, rast a vylučovanie"
+ext_current_feeding_pattern___breast___formula___solids___meals,Current feeding pattern / breast / formula / solids / meals,Aktuálne kŕmenie / dojčenie / umelá výživa / príkrmy / jedlá
+ext_feeding_difficulties__latch__sucking__fatigue__choking__coug,"Feeding difficulties: latch, sucking, fatigue, choking, coughing or cyanosis","Ťažkosti pri kŕmení: prisatie, sanie, únava, dusenie, kašeľ alebo cyanóza"
+ext_reflux___vomiting___relationship_to_feeds,Reflux / vomiting / relationship to feeds,Reflux / vracanie / súvis s kŕmením
+ext_appetite__dietary_variety__restrictions_and_fluid_intake,"Appetite, dietary variety, restrictions and fluid intake","Apetít, pestrosť stravy, obmedzenia a príjem tekutín"
+ext_growth_concern___weight_or_height_trend___centile_crossing,Growth concern / weight or height trend / centile crossing,Obavy z rastu / trend hmotnosti alebo výšky / prechod percentilov
+ext_urine___wet_nappies___frequency___enuresis,Urine / wet nappies / frequency / enuresis,Močenie / mokré plienky / frekvencia / enuréza
+ext_stool_frequency__consistency__blood___mucus__constipation,"Stool frequency, consistency, blood / mucus, constipation","Frekvencia a konzistencia stolice, krv / hlien, zápcha"
+ext_toileting___continence___stool_withholding_concerns,Toileting / continence / stool withholding concerns,Toaleta / kontinencia / zadržiavanie stolice
+ext_developmental_surveillance,Developmental surveillance,Sledovanie vývinu
+ext_caregiver_concerns_about_development__behaviour_or_learning,"Caregiver concerns about development, behaviour or learning","Obavy opatrovateľa z vývinu, správania alebo učenia"
+ext_loss_of_previously_acquired_skills,Loss of previously acquired skills,Strata predtým nadobudnutých schopností
+ext_if_yes__which_skills__age_at_loss_and_progression,"If yes: which skills, age at loss and progression","Ak áno: ktoré schopnosti, vek pri strate a priebeh"
+ext_gross_motor_development,Gross motor development,Hrubý motorický vývin
+ext_fine_motor_development,Fine motor development,Jemný motorický vývin
+ext_language___communication_development,Language / communication development,Jazykový / komunikačný vývin
+ext_social___adaptive___self_care_development,Social / adaptive / self-care development,Sociálny / adaptačný vývin / sebastarostlivosť
+ext_home__school__sleep___support,"Home, school, sleep & support","Domov, škola, spánok a podpora"
+ext_who_lives_with_the_child___custody___siblings___main_caregiv,Who lives with the child / custody / siblings / main caregivers,Kto býva s dieťaťom / starostlivosť / súrodenci / hlavní opatrovatelia
+ext_family_support___caregiver_strain___community_or_professiona,Family support / caregiver strain / community or professional support,Rodinná podpora / záťaž opatrovateľa / komunitná alebo odborná podpora
+ext_school_year__attendance__performance__learning_support__frie,"School year, attendance, performance, learning support, friends and bullying","Ročník, dochádzka, výkon, podpora učenia, kamaráti a šikana"
+ext_bedtime__sleep_duration__waking__snoring___apnoea__daytime_s,"Bedtime, sleep duration, waking, snoring / apnoea, daytime sleepiness","Čas spánku, trvanie, budenie, chrápanie / apnoe, denná ospalosť"
+ext_home_and_transport_safety___safeguarding_concerns,Home and transport safety / safeguarding concerns,Bezpečnosť doma a pri doprave / obavy o ochranu dieťaťa
+ext_adolescent_psychosocial_history__headsss__when_age_appropria,"Adolescent psychosocial history (HEADSSS, when age-appropriate)","Adolescentná psychosociálna anamnéza (HEADSSS, podľa veku)"
+ext_for_sensitive_topics__offer_private_time_with_the_adolescent,"For sensitive topics, offer private time with the adolescent where appropriate and follow local safeguarding rules.",Pri citlivých témach ponúknite adolescentovi podľa okolností súkromný rozhovor a dodržujte miestne pravidlá ochrany dieťaťa.
+ext_home__relationships__living_arrangements__safety,"Home: relationships, living arrangements, safety","Domov: vzťahy, bývanie, bezpečnosť"
+ext_education__school__performance__attendance__bullying__future,"Education: school, performance, attendance, bullying, future plans","Vzdelávanie: škola, výkon, dochádzka, šikana, plány do budúcna"
+ext_activities__friends__hobbies__exercise__online___social_medi,"Activities: friends, hobbies, exercise, online / social media","Aktivity: kamaráti, záujmy, pohyb, internet / sociálne siete"
+ext_drugs__nicotine___vaping__alcohol__recreational_substances,"Drugs: nicotine / vaping, alcohol, recreational substances","Látky: nikotín / vaping, alkohol, rekreačné drogy"
+ext_relationships___sexuality___contraception___sti_concerns_whe,Relationships / sexuality / contraception / STI concerns when relevant,"Vzťahy / sexualita / antikoncepcia / obavy zo STI, ak relevantné"
+ext_mood__anxiety__self_harm__suicidal_thoughts,"Mood, anxiety, self-harm, suicidal thoughts","Nálada, úzkosť, sebapoškodzovanie, suicidálne myšlienky"
+ext_safety__violence__abuse__exploitation__risky_behaviour,"Safety: violence, abuse, exploitation, risky behaviour","Bezpečnosť: násilie, zneužívanie, vykorisťovanie, rizikové správanie"

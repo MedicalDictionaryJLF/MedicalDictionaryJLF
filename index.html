@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Medical Dictionary </title>
-  <link rel="stylesheet" href="assets/css/app.css?v=63">
+  <link rel="stylesheet" href="assets/css/app.css?v=77">
 </head>
 <body>
   <div id="app">    <header>
@@ -239,10 +239,10 @@
               <div class="home-focus-content">
                 <span class="home-card-kicker" data-i18n="continue_studying">Continue studying</span>
                 <h3 data-i18n="pick_up_where_left_off">Pick up where you left off.</h3>
-                <p data-i18n="continue_studying_desc">Open your structured courses, or jump straight into a focused quiz when you only have a few minutes.</p>
+                <p data-i18n="continue_studying_desc">Jump into a focused quiz or clear the flashcards that need your attention now.</p>
                 <div class="home-focus-actions">
-                  <button type="button" class="home-primary-action" data-open-control="to-courses" data-i18n="continue_course">Continue course</button>
-                  <button type="button" class="home-secondary-action" data-open-control="to-quiz" data-i18n="start_quick_quiz">Start quick quiz</button>
+                  <button type="button" class="home-primary-action" data-open-control="to-quiz" data-i18n="start_quick_quiz">Start quick quiz</button>
+                  <button type="button" class="home-secondary-action" data-open-control="to-flashcards" data-i18n="review_flashcards">Review flashcards</button>
                 </div>
               </div>
               <div class="home-focus-mark" aria-hidden="true"><span>MD</span></div>
@@ -479,32 +479,57 @@
 
       <section id="screen-quiz" class="screen hidden">
         <div class="quiz-shell-rebuilt">
-          <section id="quiz-studio-section" class="card quiz-launch-card">
-            <div class="quiz-launch-head">
-              <div>
-                <h3 class="quiz-launch-title" data-i18n="quiz">Quiz</h3>
+          <section id="quiz-studio-section" class="card quiz-launch-card study-page-card">
+            <div id="quiz-builder-card" class="study-builder-ordered">
+              <div class="study-page-head">
+                <div class="study-page-title-group">
+                  <h3 class="quiz-launch-title" data-i18n="quiz">Quiz</h3>
+                  <p class="quiz-launch-copy" data-i18n="study_quiz_copy">Choose what to study, then start a short session.</p>
+                </div>
+                <div class="study-overview study-overview-compact" id="quiz-study-overview" aria-live="polite"></div>
               </div>
-            </div>
-            <div class="quiz-launch-copy">
-              <span data-i18n="quiz_studio_copy">Build a session from any domain, pick the answer mode, and run the quiz directly in the same workspace.</span>
-            </div>
-            <div class="quiz-studio-presets">
-              <button type="button" id="quiz-preset-balanced" class="secondary" data-i18n="quiz_preset_balanced">Balanced review</button>
-              <button type="button" id="quiz-preset-exam" class="secondary" data-i18n="quiz_preset_exam">Exam cram</button>
-              <button type="button" id="quiz-preset-speed" class="secondary" data-i18n="quiz_preset_speed">Speed drill</button>
-              <button type="button" id="quiz-preset-recovery" class="secondary" data-i18n="quiz_preset_recovery">Weak spots</button>
-            </div>
-            <div class="quiz-launch-grid">
-              <aside id="quiz-builder-card" class="quiz-launch-sidebar">
-                <div id="quiz-setup-panel" class="quiz-setup-rebuilt">
-                  <div class="quiz-setup-block">
-                    <div class="quiz-block-head">
-                      <p class="quiz-kicker" data-i18n="scope">Scope</p>
-                      <h4 class="quiz-block-title" data-i18n="quiz_domain">Domain</h4>
+
+              <section class="study-control-section study-mode-section">
+                <div class="study-section-head compact">
+                  <h4 data-i18n="study_mode_label">Mode</h4>
+                </div>
+                <div class="quiz-mode-switch" id="quiz-session-mode" aria-label="Quiz mode">
+                  <button type="button" class="quiz-mode-card is-active" data-quiz-session-mode="study">
+                    <span class="quiz-mode-kicker" data-i18n="study_mode">Study mode</span>
+                    <strong class="quiz-mode-title" data-i18n="study_mode_title">Learn with feedback</strong>
+                    <span class="quiz-mode-copy" data-i18n="study_mode_copy">See the answer after each question and reinforce weak terms as you go.</span>
+                  </button>
+                  <button type="button" class="quiz-mode-card" data-quiz-session-mode="exam">
+                    <span class="quiz-mode-kicker" data-i18n="exam_mode">Exam mode</span>
+                    <strong class="quiz-mode-title" data-i18n="exam_mode_title">Test without hints</strong>
+                    <span class="quiz-mode-copy" data-i18n="exam_mode_copy">Answers stay hidden until the final results, with an optional timer.</span>
+                  </button>
+                </div>
+              </section>
+
+              <div id="quiz-setup-panel" class="study-config-stack quiz-setup-rebuilt">
+                <section class="study-control-section">
+                  <div class="study-section-head">
+                    <span class="study-step" aria-hidden="true">1</span>
+                    <div>
+                      <h4 data-i18n="study_content">Study content</h4>
+                      <p data-i18n="study_content_copy">Choose the domain and which terms should enter the quiz.</p>
                     </div>
-                    <div id="quiz-domains" class="checkbox-grid"></div>
                   </div>
-                  <div class="quiz-setup-block row hidden" id="quiz-subdivision-wrap">
+                  <div class="study-form-grid study-form-grid-2">
+                    <div class="study-field-block">
+                      <label data-i18n="quiz_domain">Domain</label>
+                      <details class="study-domain-picker">
+                        <summary id="quiz-domain-summary" data-i18n="study_choose_domain">Choose a domain</summary>
+                        <div id="quiz-domains" class="checkbox-grid study-domain-options"></div>
+                      </details>
+                    </div>
+                    <div class="study-field-block">
+                      <label for="quiz-source" data-i18n="study_source">Study source</label>
+                      <select id="quiz-source"><option value="all" data-i18n="study_selected_domain">Selected domain</option><option value="saved" data-i18n="study_saved_terms">Saved terms</option><option value="wrong" data-i18n="study_quiz_mistakes">Quiz mistakes</option><option value="difficult" data-i18n="study_difficult_terms">Difficult terms</option></select>
+                    </div>
+                  </div>
+                  <div class="study-subdivision-row row hidden" id="quiz-subdivision-wrap">
                     <div>
                       <label id="quiz-subdivision1-label" data-i18n="quiz_subdivision">Subdivision</label>
                       <div id="quiz-subdivision1" class="checkbox-grid subdivision-checklist"></div>
@@ -513,110 +538,146 @@
                       <label id="quiz-subdivision2-label" data-i18n="quiz_subdivision2">Subdivision 2</label>
                       <div id="quiz-subdivision2" class="checkbox-grid subdivision-checklist"></div>
                     </div>
+                    <div id="quiz-subdivision3-wrap" class="hidden">
+                      <label id="quiz-subdivision3-label">Structure type</label>
+                      <div id="quiz-subdivision3" class="checkbox-grid subdivision-checklist"></div>
+                    </div>
                   </div>
-                  <div class="quiz-setup-block quiz-field-pair">
+                </section>
+
+                <section class="study-control-section quiz-direction-block">
+                  <div class="study-section-head">
+                    <span class="study-step" aria-hidden="true">2</span>
                     <div>
+                      <h4 data-i18n="study_direction">Question direction</h4>
+                      <p data-i18n="study_direction_copy">Choose what appears in the question and what you need to recall.</p>
+                    </div>
+                  </div>
+                  <div class="study-direction-row">
+                    <div class="study-field-block">
                       <label for="quiz-front-field" data-i18n="quiz_from">From</label>
                       <select id="quiz-front-field"></select>
                     </div>
-                    <div>
+                    <button type="button" id="quiz-swap-direction" class="secondary study-swap-button study-swap-icon" data-i18n="study_swap_direction">Swap direction</button>
+                    <div class="study-field-block">
                       <label for="quiz-back-field" data-i18n="quiz_to">To</label>
                       <select id="quiz-back-field"></select>
                     </div>
                   </div>
-                  <div class="row hidden">
-                    <label data-i18n="quiz_from">From:</label>
-                    <select id="quiz-from">
-                      <option value="english_translation" data-i18n="english">English</option>
-                      <option value="german_translation" data-i18n="german">German</option>
-                      <option value="slovak_translation" data-i18n="slovak">Slovak</option>
-                      <option value="latin_translation" data-i18n="latin">Latin</option>
-                    </select>
-                    <label data-i18n="quiz_to">To:</label>
-                    <select id="quiz-to">
-                      <option value="latin_translation" data-i18n="latin">Latin</option>
-                      <option value="english_translation" data-i18n="english">English</option>
-                      <option value="german_translation" data-i18n="german">German</option>
-                      <option value="slovak_translation" data-i18n="slovak">Slovak</option>
-                    </select>
-                  </div>
-                  <div id="quiz-settings-panel" class="quiz-settings-panel quiz-settings-rebuilt">
-                    <div class="quiz-settings-grid">
-                      <div>
-                        <label for="quiz-type" data-i18n="quiz_type">Quiz type</label>
-                        <select id="quiz-type">
-                          <option value="multiple_choice" selected data-i18n="quiz_type_multiple_choice">Multiple choice</option>
-                          <option value="matching" data-i18n="quiz_type_matching">Matching</option>
-                          <option value="typing" data-i18n="quiz_type_typing">Typing</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label for="quiz-question-count" data-i18n="quiz_question_count">Question count</label>
-                        <input id="quiz-question-count" type="number" min="1" step="1" value="10" />
-                        <p id="quiz-question-count-hint" class="small muted">Choose any number from 1 to the current pool size.</p>
-                      </div>
-                      <div>
-                        <label for="quiz-options-count" data-i18n="quiz_options_count">Answer options per question</label>
-                        <input id="quiz-options-count" type="number" min="2" max="6" step="1" value="4" />
-                      </div>
-                      <div>
-                        <label for="quiz-timer" data-i18n="quiz_timer">Timer</label>
-                        <input id="quiz-timer" type="text" value="Auto" readonly />
-                        <p id="quiz-timer-hint" class="small muted">Calculated automatically from quiz type, question count, and answer complexity.</p>
-                      </div>
-                    </div>
-                    <div class="quiz-toggle-grid">
-                      <label class="quiz-toggle">
-                        <input type="checkbox" id="quiz-only-starred" />
-                        <span data-i18n="quiz_only_starred">Include only starred</span>
-                      </label>
-                      <label class="quiz-toggle">
-                        <input type="checkbox" id="quiz-prefer-wrong" />
-                        <span data-i18n="quiz_prefer_wrong">Prefer wrong terms</span>
-                      </label>
-                      <label class="quiz-toggle">
-                        <input type="checkbox" id="quiz-double-confirm" />
-                        <span data-i18n="quiz_double_confirm">Double-tap to confirm answer</span>
-                      </label>
-                    </div>
-                  </div>
+                </section>
+
+                <div class="row hidden">
+                  <label data-i18n="quiz_from">From:</label>
+                  <select id="quiz-from">
+                    <option value="english_translation" data-i18n="english">English</option>
+                    <option value="german_translation" data-i18n="german">German</option>
+                    <option value="slovak_translation" data-i18n="slovak">Slovak</option>
+                    <option value="latin_translation" data-i18n="latin">Latin</option>
+                  </select>
+                  <label data-i18n="quiz_to">To:</label>
+                  <select id="quiz-to">
+                    <option value="latin_translation" data-i18n="latin">Latin</option>
+                    <option value="english_translation" data-i18n="english">English</option>
+                    <option value="german_translation" data-i18n="german">German</option>
+                    <option value="slovak_translation" data-i18n="slovak">Slovak</option>
+                  </select>
                 </div>
-                <button type="button" id="quiz-settings-toggle" class="linklike hidden" data-i18n="quiz_settings_show">Show quiz settings</button>
+
+                <section id="quiz-settings-panel" class="study-control-section quiz-settings-panel quiz-settings-rebuilt">
+                  <div class="study-section-head">
+                    <span class="study-step" aria-hidden="true">3</span>
+                    <div>
+                      <h4 data-i18n="study_session_setup">Session setup</h4>
+                      <p data-i18n="study_session_setup_copy">Set the question style, selection method and session length.</p>
+                    </div>
+                  </div>
+                  <div class="study-form-grid study-form-grid-3 quiz-settings-grid">
+                    <div class="study-field-block">
+                      <label for="quiz-type" data-i18n="quiz_type">Quiz type</label>
+                      <select id="quiz-type">
+                        <option value="multiple_choice" selected data-i18n="quiz_type_multiple_choice">Multiple choice</option>
+                        <option value="matching" data-i18n="quiz_type_matching">Matching</option>
+                        <option value="typing" data-i18n="quiz_type_typing">Typing</option>
+                        <option value="true_false" data-i18n="quiz_type_true_false">True / False</option>
+                        <option value="mixed" data-i18n="study_mixed">Mixed</option>
+                      </select>
+                    </div>
+                    <div class="study-field-block">
+                      <label for="quiz-selection-mode" data-i18n="study_selection_mode">Question selection</label>
+                      <select id="quiz-selection-mode">
+                        <option value="smart" selected data-i18n="study_smart_practice">Smart practice</option>
+                        <option value="random" data-i18n="study_random_practice">Random</option>
+                      </select>
+                    </div>
+                    <div class="study-field-block study-count-field">
+                      <label for="quiz-question-count" data-i18n="quiz_question_count">Question count</label>
+                      <input id="quiz-question-count" type="number" min="1" step="1" value="10" />
+                      <div class="study-counts"><button type="button" class="secondary" data-study-count="5">5</button><button type="button" class="secondary" data-study-count="10">10</button><button type="button" class="secondary" data-study-count="20">20</button></div>
+                      <p id="quiz-question-count-hint" class="small muted">Choose any number from 1 to the current pool size.</p>
+                    </div>
+                  </div>
+                  <div class="quiz-studio-presets study-preset-row">
+                    <button type="button" id="quiz-preset-balanced" class="secondary" data-i18n="quiz_preset_balanced">Quick 5</button>
+                    <button type="button" id="quiz-preset-speed" class="secondary" data-i18n="quiz_preset_speed">Standard 10</button>
+                    <button type="button" id="quiz-preset-exam" class="secondary" data-i18n="quiz_preset_exam">Exam 20</button>
+                    <button type="button" id="quiz-preset-recovery" class="secondary" data-i18n="quiz_preset_recovery">Weak spots</button>
+                  </div>
+                  <details class="study-advanced" id="quiz-advanced">
+                    <summary data-i18n="study_more_options">More options</summary>
+                    <div class="study-advanced-body">
+                      <div class="study-form-grid study-form-grid-2">
+                        <div class="study-field-block">
+                          <label for="quiz-options-count" data-i18n="quiz_options_count">Answer options per question</label>
+                          <input id="quiz-options-count" type="number" min="2" max="6" step="1" value="4" />
+                        </div>
+                        <div class="study-field-block">
+                          <label class="quiz-toggle"><input id="quiz-use-timer" type="checkbox" /> <span data-i18n="study_timed_session">Timed session</span></label>
+                          <input id="quiz-timer" type="text" value="Off" readonly aria-label="Estimated time limit" />
+                          <p id="quiz-timer-hint" class="small muted">Study at your own pace. Enable the timer for a timed session.</p>
+                        </div>
+                      </div>
+                      <div class="quiz-toggle-grid">
+                        <label class="quiz-toggle"><input type="checkbox" id="quiz-only-starred" /><span data-i18n="quiz_only_starred">Include only starred</span></label>
+                        <label class="quiz-toggle"><input type="checkbox" id="quiz-prefer-wrong" /><span data-i18n="quiz_prefer_wrong">Prefer wrong terms</span></label>
+                        <label class="quiz-toggle"><input type="checkbox" id="quiz-double-confirm" /><span data-i18n="quiz_double_confirm">Double-tap to confirm answer</span></label>
+                      </div>
+                    </div>
+                  </details>
+                </section>
+              </div>
+
+              <button type="button" id="quiz-settings-toggle" class="linklike hidden" data-i18n="quiz_settings_show">Show quiz settings</button>
+              <div class="study-start-bar">
+                <div class="study-start-summary">
+                  <span id="quiz-studio-pool" class="muted"></span>
+                  <span id="quiz-studio-plan" class="muted"></span>
+                  <p id="quiz-builder-msg" class="small muted" role="status"></p>
+                </div>
                 <div class="quiz-launch-actions">
+                  <button type="button" id="quiz-resume" class="secondary hidden" data-i18n="study_continue_quiz">Continue quiz</button>
                   <button type="button" id="start-quiz" class="primary" data-i18n="start_quiz">Start</button>
-                  <button type="button" id="quiz-preview-stage" class="secondary">Show playing field only</button>
-                  <button type="button" id="end-quiz" class="danger" data-i18n="quiz_end">End quiz</button>
                 </div>
-              </aside>
-              <div id="quiz-session-stage" class="quiz-session-stage hidden">
-                <div class="quiz-session-head">
-                  <button type="button" id="quiz-builder-toggle" class="linklike hidden">Return to Quiz builder</button>
-                </div>
-                <div class="quiz-session-metrics">
-                  <div class="quiz-metric-card">
-                    <span class="quiz-metric-label" data-i18n="status">Status</span>
-                    <div id="quiz-stats" class="quiz-stats muted"></div>
-                  </div>
-                  <div class="quiz-metric-card">
-                    <span class="quiz-metric-label" data-i18n="score">Score</span>
-                    <p id="quiz-score" class="muted"></p>
-                  </div>
-                  <div class="quiz-metric-card">
-                    <span class="quiz-metric-label" data-i18n="quiz_metric_pool">Pool</span>
-                    <p id="quiz-studio-pool" class="muted"></p>
-                  </div>
-                  <div class="quiz-metric-card">
-                    <span class="quiz-metric-label" data-i18n="quiz_metric_session_plan">Session plan</span>
-                    <p id="quiz-studio-plan" class="muted"></p>
-                  </div>
-                </div>
-                <div class="quiz-recovery-bar">
-                  <button type="button" id="quiz-studio-retry-last-wrong" class="secondary" data-i18n="quiz_retry_last_wrong_terms">Retry last wrong terms</button>
-                  <button type="button" id="quiz-studio-review-last-wrong" class="secondary" data-i18n="quiz_review_last_wrong_terms">Send last wrong terms to review</button>
-                </div>
-                <div class="quiz-session-card">
-                  <div id="quiz-area"></div>
-                </div>
+              </div>
+
+              <details class="study-history-panel study-history-bottom">
+                <summary data-i18n="study_recent_quiz_history">Recent quiz history</summary>
+                <div id="quiz-history-list" class="study-history-list"></div>
+              </details>
+            </div>
+
+            <div id="quiz-session-stage" class="quiz-session-stage hidden">
+              <div class="quiz-session-head">
+                <button type="button" id="quiz-builder-toggle" class="linklike hidden">← Quiz setup</button>
+                <strong id="quiz-position">Question 0 / 0</strong>
+              </div>
+              <div class="study-progress-track"><span id="quiz-progress-fill"></span></div>
+              <div class="study-session-toolbar">
+                <span id="quiz-score"></span><span id="quiz-stats" class="muted"></span>
+                <button type="button" id="quiz-skip" class="secondary" data-i18n="study_skip">Skip</button>
+                <button type="button" id="quiz-end-session" class="linklike" data-i18n="quiz_end">End quiz</button>
+              </div>
+              <div class="quiz-session-card">
+                <div id="quiz-area"></div>
               </div>
             </div>
           </section>
@@ -626,102 +687,141 @@
       <section id="screen-flashcards" class="screen hidden">
         <div class="flashcards-layout">
           <div class="flashcards-workspace">
-            <aside class="card flashcards-builder-panel" id="flashcards-builder-card">
-              <div class="flashcards-panel-head">
-                <div>
+            <aside class="card flashcards-builder-panel study-page-card" id="flashcards-builder-card">
+              <div class="study-page-head">
+                <div class="study-page-title-group">
                   <h3 data-i18n="flashcards">Flashcards</h3>
+                  <p class="muted" data-i18n="study_flashcards_copy">Choose a deck, reveal each answer, then rate how well you recalled it.</p>
                 </div>
+                <div class="study-overview study-overview-compact" id="flashcards-study-overview" aria-live="polite"></div>
               </div>
 
-              <div class="flashcards-builder-section">
-                <label data-i18n="flashcards_domains">Domains</label>
-                <div id="flashcards-domains" class="checkbox-grid flashcards-domain-grid"></div>
-              </div>
-
-              <div id="flashcards-subdivision-wrap" class="flashcards-builder-section hidden">
-                <div class="row flashcards-builder-grid">
+              <section class="study-control-section">
+                <div class="study-section-head">
+                  <span class="study-step" aria-hidden="true">1</span>
                   <div>
-                    <label id="flashcards-subdivision1-label" data-i18n="quiz_subdivision">Subdivision</label>
-                    <div id="flashcards-subdivision1" class="checkbox-grid subdivision-checklist"></div>
-                  </div>
-                  <div id="flashcards-subdivision2-wrap" class="hidden">
-                    <label id="flashcards-subdivision2-label" data-i18n="quiz_subdivision2">Subdivision 2</label>
-                    <div id="flashcards-subdivision2" class="checkbox-grid subdivision-checklist"></div>
+                    <h4 data-i18n="study_content">Study content</h4>
+                    <p data-i18n="study_flash_content_copy">Choose a domain and the card pool you want to review.</p>
                   </div>
                 </div>
-              </div>
-
-              <div class="flashcards-builder-section">
-                <div class="row flashcards-builder-grid">
-                  <div>
-                    <label for="flashcards-front-field" data-i18n="flashcards_front_primary">Front field (primary)</label>
-                    <select id="flashcards-front-field"></select>
+                <div class="study-form-grid study-form-grid-2">
+                  <div class="study-field-block">
+                    <label data-i18n="flashcards_domains">Domains</label>
+                    <details class="study-domain-picker">
+                      <summary id="flashcards-domain-summary" data-i18n="study_choose_domain">Choose a domain</summary>
+                      <div id="flashcards-domains" class="checkbox-grid flashcards-domain-grid study-domain-options"></div>
+                    </details>
                   </div>
-                  <div>
-                    <label for="flashcards-front-field-2" data-i18n="flashcards_front_secondary">Front field (secondary)</label>
-                    <select id="flashcards-front-field-2"></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flashcards-builder-section">
-                <div class="row flashcards-builder-grid">
-                  <div>
-                    <label for="flashcards-back-field" data-i18n="flashcards_back_primary">Back field (primary)</label>
-                    <select id="flashcards-back-field"></select>
-                  </div>
-                  <div>
-                    <label for="flashcards-back-field-2" data-i18n="flashcards_back_secondary">Back field (secondary)</label>
-                    <select id="flashcards-back-field-2"></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flashcards-builder-section">
-                <div class="row flashcards-builder-grid">
-                  <div>
-                    <label for="flashcards-only" data-i18n="flashcards_only">Only</label>
+                  <div class="study-field-block">
+                    <label for="flashcards-only" data-i18n="study_card_source">Cards to review</label>
                     <select id="flashcards-only">
-                      <option value="random" data-i18n="flashcards_random">Random</option>
+                      <option value="random" data-i18n="study_all_cards">All cards</option>
                       <option value="new" data-i18n="flashcards_new">New</option>
                       <option value="wrong" data-i18n="flashcards_wrong">Wrong</option>
-                      <option value="due" data-i18n="flashcards_due">Due</option>
+                      <option value="saved" data-i18n="study_saved_terms">Saved terms</option>
+                      <option value="difficult" data-i18n="study_difficult_terms">Difficult terms</option>
+                      <option value="recent" data-i18n="study_recently_added">Recently added</option>
                     </select>
                   </div>
+                </div>
+                <div id="flashcards-subdivision-wrap" class="study-subdivision-row hidden">
+                  <div class="row flashcards-builder-grid">
+                    <div>
+                      <label id="flashcards-subdivision1-label" data-i18n="quiz_subdivision">Subdivision</label>
+                      <div id="flashcards-subdivision1" class="checkbox-grid subdivision-checklist"></div>
+                    </div>
+                    <div id="flashcards-subdivision2-wrap" class="hidden">
+                      <label id="flashcards-subdivision2-label" data-i18n="quiz_subdivision2">Subdivision 2</label>
+                      <div id="flashcards-subdivision2" class="checkbox-grid subdivision-checklist"></div>
+                    </div>
+                    <div id="flashcards-subdivision3-wrap" class="hidden">
+                      <label id="flashcards-subdivision3-label">Structure type</label>
+                      <div id="flashcards-subdivision3" class="checkbox-grid subdivision-checklist"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="study-control-section">
+                <div class="study-section-head">
+                  <span class="study-step" aria-hidden="true">2</span>
                   <div>
-                    <label for="flashcards-limit" data-i18n="flashcards_limit">Limit</label>
-                    <select id="flashcards-limit">
-                      <option value="10">10</option>
-                      <option value="20" selected>20</option>
-                      <option value="30">30</option>
-                      <option value="50">50</option>
-                    </select>
+                    <h4 data-i18n="study_review_mode">Review mode</h4>
+                    <p data-i18n="study_review_mode_copy">Choose whether scheduling or simple random practice should drive the session.</p>
                   </div>
                 </div>
-              </div>
-
-              <div class="flashcards-builder-actions">
-                <button type="button" id="flashcards-generate" class="primary" data-i18n="flashcards_generate_session">Generate session</button>
-                <button type="button" id="flashcards-preview-player" class="secondary">Show playing field only</button>
-              </div>
-
-              <div class="flashcards-builder-footer">
-                <div class="flashcards-mini-stat">
-                  <span data-i18n="flashcards_loaded_terms">Loaded terms</span>
-                  <strong id="flashcards-loaded-terms">0</strong>
+                <div class="flashcards-review-modes" id="flashcards-review-modes" aria-label="Review mode">
+                  <button type="button" class="flashcards-review-mode" data-flash-review-mode="due">
+                    <strong data-i18n="study_due_review">Due</strong><span data-i18n="study_due_review_copy">Review cards scheduled for now.</span>
+                  </button>
+                  <button type="button" class="flashcards-review-mode is-active" data-flash-review-mode="smart">
+                    <strong data-i18n="study_smart_review">Smart</strong><span data-i18n="study_smart_review_copy">Prioritise weak, overdue and unseen cards.</span>
+                  </button>
+                  <button type="button" class="flashcards-review-mode" data-flash-review-mode="random">
+                    <strong data-i18n="study_random_review">Random</strong><span data-i18n="study_random_review_copy">Mix the selected source without weighting.</span>
+                  </button>
                 </div>
-                <div class="flashcards-mini-stat">
-                  <span data-i18n="flashcards_selected_domain">Selected domain</span>
-                  <strong id="flashcards-selected-domain">-</strong>
+                <div class="study-limit-row">
+                  <label for="flashcards-limit" data-i18n="flashcards_limit">Session size</label>
+                  <select id="flashcards-limit">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="all" data-i18n="study_all_due">All available</option>
+                  </select>
+                </div>
+              </section>
+
+              <section class="study-control-section">
+                <div class="study-section-head">
+                  <span class="study-step" aria-hidden="true">3</span>
+                  <div>
+                    <h4 data-i18n="study_card_direction">Card direction</h4>
+                    <p data-i18n="study_card_direction_copy">Choose what you see first and what is revealed on the back.</p>
+                  </div>
+                </div>
+                <div class="study-direction-row">
+                  <div class="study-field-block">
+                    <label for="flashcards-front-field" data-i18n="study_front">Front</label>
+                    <select id="flashcards-front-field"></select>
+                  </div>
+                  <button type="button" id="flashcards-swap-direction" class="secondary study-swap-button study-swap-icon" data-i18n="study_swap_direction">Swap direction</button>
+                  <div class="study-field-block">
+                    <label for="flashcards-back-field" data-i18n="study_back">Back</label>
+                    <select id="flashcards-back-field"></select>
+                  </div>
+                </div>
+                <details class="study-advanced flashcards-details-clean">
+                  <summary data-i18n="study_more_options">Additional card details</summary>
+                  <div class="study-advanced-body">
+                    <div class="study-form-grid study-form-grid-2">
+                      <div class="study-field-block">
+                        <label for="flashcards-front-field-2" data-i18n="study_extra_front">Extra on front</label>
+                        <select id="flashcards-front-field-2"></select>
+                      </div>
+                      <div class="study-field-block">
+                        <label for="flashcards-back-field-2" data-i18n="study_extra_back">Extra on back</label>
+                        <select id="flashcards-back-field-2"></select>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </section>
+
+              <div class="study-start-bar flashcards-start-bar">
+                <p id="flashcards-builder-msg" class="muted" role="status"></p>
+                <div class="flashcards-builder-actions">
+                  <button type="button" id="flashcards-resume" class="secondary hidden" data-i18n="study_continue_review">Continue review</button>
+                  <button type="button" id="flashcards-generate" class="primary" data-i18n="study_start_review">Start review</button>
                 </div>
               </div>
-              <p id="flashcards-builder-msg" class="muted"></p>
             </aside>
 
             <section class="flashcards-player-panel">
               <div class="card flashcards-player-card">
                 <div class="flashcards-panel-head flashcards-player-head">
-                  <button type="button" id="flashcards-builder-toggle" class="linklike hidden" data-i18n="flashcards_builder_show">Show builder settings</button>
+                  <button type="button" id="flashcards-builder-toggle" class="linklike hidden">← Flashcard setup</button>
                 </div>
 
                 <div class="flashcards-session-strip">
@@ -744,6 +844,11 @@
 
                 <div class="flashcards-progress-track" aria-hidden="true">
                   <span id="flashcards-progress-bar"></span>
+                </div>
+                <div class="flashcards-learning-bar">
+                  <span id="flashcards-mastery" class="study-mastery-badge" data-state="new">New</span>
+                  <button type="button" id="flashcards-toggle-difficult" class="secondary study-difficult-toggle" data-i18n="study_mark_difficult">Mark difficult</button>
+                  <span class="flashcards-keyboard-hint" data-i18n="study_flashcard_shortcuts">Space reveal · 1–4 rate</span>
                 </div>
 
                 <div class="flashcard-scene">
@@ -777,6 +882,7 @@
                   <button type="button" id="flashcards-reveal" class="secondary" data-i18n="reveal">Reveal</button>
                   <div class="row hidden flashcards-rating-row" id="flashcards-ratings">
                     <button type="button" id="flashcards-again" class="danger" data-i18n="flashcards_again">Again</button>
+                    <button type="button" id="flashcards-hard" class="secondary" data-i18n="study_hard">Hard</button>
                     <button type="button" id="flashcards-good" class="primary" data-i18n="flashcards_good">Good</button>
                     <button type="button" id="flashcards-easy" class="secondary" data-i18n="flashcards_easy">Easy</button>
                   </div>
@@ -863,13 +969,13 @@
               <div>
                 <h3 class="dataset-title" data-i18n="anatomy">Anatomy</h3>
               </div>
-              <p id="anatomy-selection-copy" class="dataset-copy" data-i18n="anatomy_unified_selection_copy">Filter the complete anatomy library by structure type, system or region.</p>
+              <p id="anatomy-selection-copy" class="dataset-copy" data-i18n="anatomy_unified_selection_copy">Choose a region, then a part of the region, then a structure type. Only relevant options are shown.</p>
             </div>
             <div class="anatomy-region-card">
               <div class="dataset-head dataset-head-compact">
                 <div>
                   <p class="dataset-kicker" data-i18n="filters">Filters</p>
-                  <h3 id="anatomy-filter-title" class="dataset-title" data-i18n="anatomy_structure_filters">Structure filters</h3>
+                  <h3 id="anatomy-filter-title" class="dataset-title" data-i18n="anatomy_structure_filters">Anatomy classification</h3>
                 </div>
               </div>
               <div id="muscle-region-list" class="anatomy-filter-list scrollable"></div>
@@ -1275,6 +1381,7 @@
                 <label><input type="checkbox" name="ros_general_weight_gain" /> Weight gain (12 months)</label>
                 <label><input type="checkbox" name="ros_general_fatigue" /> Fatigue</label>
                 <label><input type="checkbox" name="ros_general_night_sweats" /> Night sweats</label>
+                <label><input type="checkbox" name="ros_general_appetite" /> Appetite change</label>
               </div>
               <textarea name="ros_general_notes" placeholder="General - Other/Notes"></textarea>
 
@@ -1295,6 +1402,11 @@
                 <label><input type="checkbox" name="ros_cardio_palpitations" /> Palpitations</label>
                 <label><input type="checkbox" name="ros_cardio_doe" /> Dyspnea on exertion</label>
                 <label><input type="checkbox" name="ros_cardio_mi" /> History of MI</label>
+                <label><input type="checkbox" name="ros_cardio_orthopnea" /> Orthopnea</label>
+                <label><input type="checkbox" name="ros_cardio_pnd" /> Paroxysmal nocturnal dyspnea</label>
+                <label><input type="checkbox" name="ros_cardio_edema" /> Peripheral edema</label>
+                <label><input type="checkbox" name="ros_cardio_syncope" /> Syncope / presyncope</label>
+                <label><input type="checkbox" name="ros_cardio_claudication" /> Claudication</label>
               </div>
               <textarea name="ros_cardio_notes" placeholder="Cardiovascular - Other/Notes"></textarea>
 
@@ -1304,6 +1416,8 @@
                 <label><input type="checkbox" name="ros_resp_cough" /> Cough</label>
                 <label><input type="checkbox" name="ros_resp_productive" /> Productive cough</label>
                 <label><input type="checkbox" name="ros_resp_hemoptysis" /> Hemoptysis</label>
+                <label><input type="checkbox" name="ros_resp_wheeze" /> Wheezing</label>
+                <label><input type="checkbox" name="ros_resp_pleuritic_pain" /> Pleuritic chest pain</label>
               </div>
               <textarea name="ros_resp_notes" placeholder="Respiratory - Other/Notes"></textarea>
 
@@ -1316,6 +1430,14 @@
                 <label><input type="checkbox" name="ros_gi_diarrhea" /> Diarrhea</label>
                 <label><input type="checkbox" name="ros_gi_constipation" /> Constipation</label>
                 <label><input type="checkbox" name="ros_gi_blood_stool" /> Blood in stool</label>
+                <label><input type="checkbox" name="ros_gi_heartburn" /> Heartburn / reflux</label>
+                <label><input type="checkbox" name="ros_gi_regurgitation" /> Regurgitation</label>
+                <label><input type="checkbox" name="ros_gi_odynophagia" /> Odynophagia</label>
+                <label><input type="checkbox" name="ros_gi_hematemesis" /> Hematemesis</label>
+                <label><input type="checkbox" name="ros_gi_melena" /> Melena</label>
+                <label><input type="checkbox" name="ros_gi_jaundice" /> Jaundice</label>
+                <label><input type="checkbox" name="ros_gi_distension" /> Abdominal distension</label>
+                <label><input type="checkbox" name="ros_gi_bowel_change" /> Change in bowel habit</label>
               </div>
               <textarea name="ros_gi_notes" placeholder="Gastrointestinal - Other/Notes"></textarea>
 
@@ -1326,8 +1448,63 @@
                 <label><input type="checkbox" name="ros_gu_nocturia" /> Nocturia</label>
                 <label><input type="checkbox" name="ros_gu_incontinence" /> Incontinence</label>
                 <label><input type="checkbox" name="ros_gu_pain_urination" /> Pain on urination</label>
+                <label><input type="checkbox" name="ros_gu_hematuria" /> Hematuria</label>
+                <label><input type="checkbox" name="ros_gu_urgency" /> Urgency</label>
+                <label><input type="checkbox" name="ros_gu_hesitancy" /> Hesitancy</label>
+                <label><input type="checkbox" name="ros_gu_weak_stream" /> Weak urinary stream</label>
+                <label><input type="checkbox" name="ros_gu_incomplete_emptying" /> Incomplete emptying</label>
+                <label><input type="checkbox" name="ros_gu_retention" /> Urinary retention</label>
+                <label><input type="checkbox" name="ros_gu_polyuria" /> Polyuria</label>
+                <label><input type="checkbox" name="ros_gu_oliguria" /> Oliguria</label>
+                <label><input type="checkbox" name="ros_gu_flank_pain" /> Flank pain / renal colic</label>
               </div>
               <textarea name="ros_gu_notes" placeholder="Genitourinary - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Neurological</strong>
+                <label><input type="checkbox" name="ros_neuro_seizures" /> Seizures</label>
+                <label><input type="checkbox" name="ros_neuro_weakness" /> Focal weakness</label>
+                <label><input type="checkbox" name="ros_neuro_numbness" /> Numbness / tingling</label>
+                <label><input type="checkbox" name="ros_neuro_tremor" /> Tremor</label>
+                <label><input type="checkbox" name="ros_neuro_balance" /> Balance / gait change</label>
+                <label><input type="checkbox" name="ros_neuro_memory" /> Memory / confusion</label>
+              </div>
+              <textarea name="ros_neuro_notes" placeholder="Neurological - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Musculoskeletal</strong>
+                <label><input type="checkbox" name="ros_msk_joint_pain" /> Joint pain</label>
+                <label><input type="checkbox" name="ros_msk_joint_swelling" /> Joint swelling</label>
+                <label><input type="checkbox" name="ros_msk_morning_stiffness" /> Morning stiffness</label>
+                <label><input type="checkbox" name="ros_msk_muscle_pain" /> Muscle pain</label>
+                <label><input type="checkbox" name="ros_msk_weakness" /> Muscle weakness</label>
+                <label><input type="checkbox" name="ros_msk_back_pain" /> Back pain</label>
+                <label><input type="checkbox" name="ros_msk_trauma" /> Recent fall / trauma</label>
+              </div>
+              <textarea name="ros_msk_notes" placeholder="Musculoskeletal - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Endocrine / Metabolic</strong>
+                <label><input type="checkbox" name="ros_endo_heat_cold" /> Heat / cold intolerance</label>
+                <label><input type="checkbox" name="ros_endo_thirst" /> Excessive thirst</label>
+                <label><input type="checkbox" name="ros_endo_sweating" /> Excessive sweating</label>
+                <label><input type="checkbox" name="ros_endo_tremor" /> Tremor</label>
+                <label><input type="checkbox" name="ros_endo_neck_swelling" /> Neck swelling</label>
+                <label><input type="checkbox" name="ros_endo_hair_skin" /> Hair / skin change</label>
+              </div>
+              <textarea name="ros_endo_notes" placeholder="Endocrine / Metabolic - Other/Notes"></textarea>
+
+              <div class="anam-row">
+                <strong>Skin / Hematological</strong>
+                <label><input type="checkbox" name="ros_skin_rash" /> Rash</label>
+                <label><input type="checkbox" name="ros_skin_itching" /> Itching</label>
+                <label><input type="checkbox" name="ros_heme_bruising" /> Easy bruising</label>
+                <label><input type="checkbox" name="ros_heme_bleeding" /> Prolonged bleeding</label>
+                <label><input type="checkbox" name="ros_skin_wound_healing" /> Poor wound healing</label>
+                <label><input type="checkbox" name="ros_skin_ulcers" /> Ulcers</label>
+                <label><input type="checkbox" name="ros_skin_lesion_change" /> New / changing lesion</label>
+              </div>
+              <textarea name="ros_skin_heme_notes" placeholder="Skin / Hematological - Other/Notes"></textarea>
             </div>
 
             <div class="anam-section">
@@ -1458,6 +1635,24 @@
                   </div>
                 </div>
               </div>
+              <div class="anam-capture-subsection">
+                <h4>Previous anaesthesia / perioperative problems</h4>
+                <div class="anam-row">
+                  <span>Previous anaesthesia</span>
+                  <label><input type="radio" name="pmh_anesthesia_previous" value="yes" /> Yes</label>
+                  <label><input type="radio" name="pmh_anesthesia_previous" value="no" /> No</label>
+                </div>
+                <textarea name="pmh_anesthesia_details" placeholder="Type of anaesthesia, when, procedure, recovery and relevant details"></textarea>
+                <div class="anam-row">
+                  <label><input type="checkbox" name="pmh_anesthesia_difficult_airway" /> Difficult airway / intubation</label>
+                  <label><input type="checkbox" name="pmh_anesthesia_ponv" /> Severe postoperative nausea / vomiting</label>
+                  <label><input type="checkbox" name="pmh_anesthesia_allergy" /> Anaesthetic reaction / allergy</label>
+                  <label><input type="checkbox" name="pmh_anesthesia_slow_wake" /> Delayed awakening</label>
+                  <label><input type="checkbox" name="pmh_anesthesia_icu" /> Unexpected ICU admission</label>
+                  <label><input type="checkbox" name="pmh_anesthesia_family_problem" /> Family anaesthetic complication</label>
+                </div>
+                <textarea name="pmh_anesthesia_problem_notes" placeholder="Anaesthesia complication details"></textarea>
+              </div>
               <div style="margin-top:8px">
                 <strong>Previous Examinations</strong>
                 <div class="anam-row">
@@ -1499,6 +1694,18 @@
                 </div>
                 <div class="anam-repeater-body" id="medication-rows"></div>
                 <button type="button" id="medication-add" class="anam-add-row">+</button>
+              </div>
+              <div class="anam-capture-subsection">
+                <h4>Medication safety check</h4>
+                <div class="anam-row">
+                  <label><input type="checkbox" name="med_anticoagulant" /> Anticoagulant</label>
+                  <label><input type="checkbox" name="med_antiplatelet" /> Antiplatelet</label>
+                  <label><input type="checkbox" name="med_insulin_antidiabetic" /> Insulin / antidiabetic</label>
+                  <label><input type="checkbox" name="med_steroid" /> Long-term corticosteroid</label>
+                  <label><input type="checkbox" name="med_immunosuppressant" /> Immunosuppressant</label>
+                  <label><input type="checkbox" name="med_hormonal" /> Hormonal contraception / therapy</label>
+                </div>
+                <input name="med_last_dose_notes" placeholder="Recent changes, adherence and last relevant dose" />
               </div>
               <div class="anam-row">
                 <span class="anam-med-question" data-anam-key="anam_over_the_counter_medicine">Regular use of over the counter medicine</span>
@@ -1602,6 +1809,17 @@
                   </tbody>
                 </table>
               </div>
+              <div class="anam-capture-subsection">
+                <h4>Menstrual & pregnancy details</h4>
+                <div class="anam-grid">
+                  <input name="gyn_lmp" placeholder="Last menstrual period (LMP)" />
+                  <input name="gyn_cycle_details" placeholder="Cycle length, duration and regularity" />
+                  <input name="gyn_bleeding_details" placeholder="Heavy / intermenstrual / postcoital bleeding" />
+                  <input name="gyn_pregnancy_current" placeholder="Current pregnancy / possibility of pregnancy" />
+                  <input name="gyn_gravidity_parity" placeholder="Gravidity / parity" />
+                  <input name="gyn_pregnancy_complications" placeholder="Previous pregnancy / delivery complications" />
+                </div>
+              </div>
             </div>
 
             <div class="anam-section">
@@ -1631,6 +1849,14 @@
                 <input name="epi_pets_which" placeholder="Which" />
               </div>
               <div class="anam-row">
+                <label><input type="checkbox" name="epi_sick_contacts" /> Recent infectious / sick contacts</label>
+                <input name="epi_sick_contacts_details" placeholder="Who / illness / timing" />
+                <label><input type="checkbox" name="epi_tb_exposure" /> Tuberculosis exposure</label>
+                <label><input type="checkbox" name="epi_tick_insect" /> Tick / insect exposure</label>
+              </div>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_vaccination_review" /> Vaccination status reviewed</label>
+                <input name="epi_vaccination_notes" placeholder="Relevant vaccines / missing doses / reactions" />
                 <label><input type="checkbox" name="epi_covid_vax" /> COVID-19 vaccination</label>
                 <input name="epi_covid_vax_number" placeholder="Number" />
                 <label><input type="checkbox" name="epi_covid_infection" /> COVID-19 infection</label>
@@ -1681,6 +1907,28 @@
               <div id="social-homeless-wrap" class="hidden">
                 <textarea name="social_homeless_notes" placeholder="Homeless notes"></textarea>
               </div>
+              <div class="anam-capture-subsection">
+                <h4>Function, support & lifestyle</h4>
+                <div class="anam-grid">
+                  <textarea name="social_function_adl" placeholder="ADLs / independence: washing, dressing, meals, shopping, medication, finances"></textarea>
+                  <textarea name="social_mobility_exercise" placeholder="Mobility / exercise tolerance / walking distance / stairs"></textarea>
+                  <textarea name="social_support" placeholder="Family, caregiver, home nursing and other support"></textarea>
+                  <textarea name="social_occupational_exposure" placeholder="Occupational exposures: dust, asbestos, chemicals, infection, heavy lifting"></textarea>
+                  <textarea name="social_diet" placeholder="Diet / appetite / relevant restrictions"></textarea>
+                  <textarea name="social_sleep" placeholder="Sleep pattern / snoring / daytime sleepiness"></textarea>
+                </div>
+              </div>
+              <details class="anam-capture-subsection">
+                <summary>Sexual history (optional, ask privately when clinically relevant)</summary>
+                <p class="anam-capture-subsection-note">Use a non-judgmental approach. Document only information relevant to the clinical problem.</p>
+                <div class="anam-grid">
+                  <textarea name="sexual_partners" placeholder="Partners / relationship context"></textarea>
+                  <textarea name="sexual_practices" placeholder="Relevant sexual practices / exposure sites"></textarea>
+                  <textarea name="sexual_protection" placeholder="Condom / barrier use and contraception"></textarea>
+                  <textarea name="sexual_sti" placeholder="Previous STI / testing / symptoms"></textarea>
+                  <textarea name="sexual_pregnancy_intentions" placeholder="Pregnancy possibility / intentions when relevant"></textarea>
+                </div>
+              </details>
             </div>
 
             <div class="anam-section">
@@ -1725,6 +1973,15 @@
                     <label><input type="radio" name="abuse_drugs" value="no" /> No</label>
                   </div>
                   <input name="abuse_drugs_notes" placeholder="Notes" />
+                </div>
+              </div>
+              <div class="anam-capture-subsection">
+                <h4>Quantification</h4>
+                <div class="anam-grid">
+                  <input name="abuse_smoking_pack_years" placeholder="Smoking: cigarettes/day, years, pack-years, quit date / vaping" />
+                  <input name="abuse_alcohol_amount" placeholder="Alcohol: type, amount, frequency, last drink" />
+                  <input name="abuse_drugs_pattern" placeholder="Drugs: substance, amount, route, frequency, last use" />
+                  <input name="abuse_withdrawal_notes" placeholder="Tolerance / withdrawal / attempts to cut down / consequences" />
                 </div>
               </div>
             </div>
@@ -2076,7 +2333,7 @@
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="assets/js/app-shell.js?v=51" defer></script>
-<script type="module" src="assets/js/app.js?v=62"></script>
+<script type="module" src="assets/js/app.js?v=78"></script>
 </body>
 </html>
 

@@ -1,4 +1,4 @@
-id_anamnesis,english_translation,slovak_translation
+﻿id_anamnesis,english_translation,slovak_translation
 anam_anamnesis,Anamnesis,Anamnéza
 anam_n_1_identification,1. Identification,1. Identifikácia
 anam_full_name,Full name,Celé meno
@@ -297,3 +297,109 @@ anam_temperature_c_2,Temperature (°C),Teplota (°C)
 anam_taken_2,Taken from,Odobrané z
 anam_if_from_charts_when_2,"If from charts, when they were taken?","Ak z dokumentácie, kedy boli odobrané?"
 anam_write_your_general_notes_here_2,"If needed, write your general notes here...","Ak potrebujete, sem napíšte svoje všeobecné poznámky..."
+ext_appetite_change,Appetite change,Zmena chuti do jedla
+ext_orthopnea,Orthopnea,Ortopnoe
+ext_paroxysmal_nocturnal_dyspnea,Paroxysmal nocturnal dyspnea,Paroxyzmálna nočná dýchavica
+ext_syncope___presyncope,Syncope / presyncope,Synkopa / presynkopa
+ext_claudication,Claudication,Klaudikácie
+ext_wheezing,Wheezing,Pískoty
+ext_pleuritic_chest_pain,Pleuritic chest pain,Pleuritická bolesť na hrudníku
+ext_heartburn___reflux,Heartburn / reflux,Pálenie záhy / reflux
+ext_regurgitation,Regurgitation,Regurgitácia
+ext_odynophagia,Odynophagia,Odynofágia
+ext_hematemesis,Hematemesis,Hemateméza
+ext_melena,Melena,Meléna
+ext_jaundice,Jaundice,Ikterus
+ext_abdominal_distension,Abdominal distension,Distenzia brucha
+ext_change_in_bowel_habit,Change in bowel habit,Zmena charakteru vyprázdňovania
+ext_hematuria,Hematuria,Hematúria
+ext_urgency,Urgency,Urgencia
+ext_hesitancy,Hesitancy,Ťažkosti so začatím močenia
+ext_weak_urinary_stream,Weak urinary stream,Slabý prúd moču
+ext_incomplete_emptying,Incomplete emptying,Pocit neúplného vyprázdnenia
+ext_urinary_retention,Urinary retention,Retencia moču
+ext_polyuria,Polyuria,Polyúria
+ext_oliguria,Oliguria,Oligúria
+ext_flank_pain___renal_colic,Flank pain / renal colic,Bolesť v boku / renálna kolika
+ext_neurological,Neurological,Neurologické
+ext_focal_weakness,Focal weakness,Fokálna slabosť
+ext_numbness___tingling,Numbness / tingling,Znecitlivenie / mravčenie
+ext_tremor,Tremor,Tras
+ext_balance___gait_change,Balance / gait change,Zmena rovnováhy / chôdze
+ext_memory___confusion,Memory / confusion,Pamäť / zmätenosť
+ext_neurological___other_notes,Neurological - Other/Notes,Neurologické - iné/poznámky
+ext_musculoskeletal,Musculoskeletal,Muskuloskeletálne
+ext_joint_pain,Joint pain,Bolesť kĺbov
+ext_joint_swelling,Joint swelling,Opuch kĺbov
+ext_morning_stiffness,Morning stiffness,Ranná stuhnutosť
+ext_muscle_pain,Muscle pain,Bolesť svalov
+ext_muscle_weakness,Muscle weakness,Svalová slabosť
+ext_back_pain,Back pain,Bolesť chrbta
+ext_recent_fall___trauma,Recent fall / trauma,Nedávny pád / úraz
+ext_musculoskeletal___other_notes,Musculoskeletal - Other/Notes,Muskuloskeletálne - iné/poznámky
+ext_endocrine___metabolic,Endocrine / Metabolic,Endokrinné / metabolické
+ext_heat___cold_intolerance,Heat / cold intolerance,Neznášanlivosť tepla / chladu
+ext_excessive_thirst,Excessive thirst,Nadmerný smäd
+ext_excessive_sweating,Excessive sweating,Nadmerné potenie
+ext_neck_swelling,Neck swelling,Opuch / zväčšenie krku
+ext_hair___skin_change,Hair / skin change,Zmena vlasov / kože
+ext_endocrine___metabolic___other_notes,Endocrine / Metabolic - Other/Notes,Endokrinné / metabolické - iné/poznámky
+ext_skin___hematological,Skin / Hematological,Koža / hematologické
+ext_rash,Rash,Vyrážka
+ext_itching,Itching,Svrbenie
+ext_easy_bruising,Easy bruising,Ľahká tvorba modrín
+ext_prolonged_bleeding,Prolonged bleeding,Predĺžené krvácanie
+ext_poor_wound_healing,Poor wound healing,Zlé hojenie rán
+ext_ulcers,Ulcers,Vredy
+ext_new___changing_lesion,New / changing lesion,Nová / meniaca sa lézia
+ext_skin___hematological___other_notes,Skin / Hematological - Other/Notes,Koža / hematologické - iné/poznámky
+ext_previous_anaesthesia___perioperative_problems,Previous anaesthesia / perioperative problems,Predchádzajúca anestézia / perioperačné problémy
+ext_previous_anaesthesia,Previous anaesthesia,Predchádzajúca anestézia
+ext_type_of_anaesthesia__when__procedure__recovery_and_relevant_,"Type of anaesthesia, when, procedure, recovery and relevant details","Typ anestézie, kedy, výkon, zotavenie a relevantné detaily"
+ext_difficult_airway___intubation,Difficult airway / intubation,Ťažké zabezpečenie dýchacích ciest / intubácia
+ext_severe_postoperative_nausea___vomiting,Severe postoperative nausea / vomiting,Silná pooperačná nevoľnosť / vracanie
+ext_anaesthetic_reaction___allergy,Anaesthetic reaction / allergy,Reakcia / alergia pri anestézii
+ext_delayed_awakening,Delayed awakening,Oneskorené prebudenie
+ext_unexpected_icu_admission,Unexpected ICU admission,Neplánované prijatie na JIS
+ext_family_anaesthetic_complication,Family anaesthetic complication,Komplikácia anestézie v rodine
+ext_anaesthesia_complication_details,Anaesthesia complication details,Detaily komplikácie pri anestézii
+ext_medication_safety_check,Medication safety check,Kontrola rizikových liekov
+ext_anticoagulant,Anticoagulant,Antikoagulans
+ext_antiplatelet,Antiplatelet,Antiagregans
+ext_insulin___antidiabetic,Insulin / antidiabetic,Inzulín / antidiabetikum
+ext_long_term_corticosteroid,Long-term corticosteroid,Dlhodobý kortikosteroid
+ext_immunosuppressant,Immunosuppressant,Imunosupresívum
+ext_hormonal_contraception___therapy,Hormonal contraception / therapy,Hormonálna antikoncepcia / liečba
+ext_recent_changes__adherence_and_last_relevant_dose,"Recent changes, adherence and last relevant dose","Nedávne zmeny, adherencia a posledná relevantná dávka"
+ext_menstrual___pregnancy_details,Menstrual & pregnancy details,Menštruačné a tehotenské údaje
+ext_last_menstrual_period__lmp,Last menstrual period (LMP),Posledná menštruácia (LMP)
+ext_cycle_length__duration_and_regularity,"Cycle length, duration and regularity","Dĺžka cyklu, trvanie a pravidelnosť"
+ext_heavy___intermenstrual___postcoital_bleeding,Heavy / intermenstrual / postcoital bleeding,Silné / medzimenštruačné / postkoitálne krvácanie
+ext_current_pregnancy___possibility_of_pregnancy,Current pregnancy / possibility of pregnancy,Aktuálne tehotenstvo / možnosť tehotenstva
+ext_gravidity___parity,Gravidity / parity,Gravidita / parita
+ext_previous_pregnancy___delivery_complications,Previous pregnancy / delivery complications,Komplikácie predchádzajúcich tehotenstiev / pôrodov
+ext_recent_infectious___sick_contacts,Recent infectious / sick contacts,Nedávny kontakt s infekčne chorými
+ext_who___illness___timing,Who / illness / timing,Kto / ochorenie / čas
+ext_tuberculosis_exposure,Tuberculosis exposure,Kontakt s tuberkulózou
+ext_tick___insect_exposure,Tick / insect exposure,Expozícia kliešťom / hmyzu
+ext_vaccination_status_reviewed,Vaccination status reviewed,Očkovací stav skontrolovaný
+ext_relevant_vaccines___missing_doses___reactions,Relevant vaccines / missing doses / reactions,Relevantné vakcíny / chýbajúce dávky / reakcie
+ext_function__support___lifestyle,"Function, support & lifestyle","Fungovanie, podpora a životný štýl"
+ext_adls___independence__washing__dressing__meals__shopping__med,"ADLs / independence: washing, dressing, meals, shopping, medication, finances","ADL / samostatnosť: hygiena, obliekanie, jedlo, nákupy, lieky, financie"
+ext_mobility___exercise_tolerance___walking_distance___stairs,Mobility / exercise tolerance / walking distance / stairs,Mobilita / tolerancia záťaže / vzdialenosť chôdze / schody
+ext_family__caregiver__home_nursing_and_other_support,"Family, caregiver, home nursing and other support","Rodina, opatrovateľ, domáca ošetrovateľská a iná podpora"
+ext_occupational_exposures__dust__asbestos__chemicals__infection,"Occupational exposures: dust, asbestos, chemicals, infection, heavy lifting","Pracovné expozície: prach, azbest, chemikálie, infekcie, ťažká fyzická práca"
+ext_diet___appetite___relevant_restrictions,Diet / appetite / relevant restrictions,Strava / apetít / relevantné obmedzenia
+ext_sleep_pattern___snoring___daytime_sleepiness,Sleep pattern / snoring / daytime sleepiness,Spánok / chrápanie / denná ospalosť
+ext_sexual_history__optional__ask_privately_when_clinically_rele,"Sexual history (optional, ask privately when clinically relevant)","Sexuálna anamnéza (voliteľná, pýtať sa v súkromí, ak je klinicky relevantná)"
+ext_use_a_non_judgmental_approach__document_only_information_rel,Use a non-judgmental approach. Document only information relevant to the clinical problem.,Použite nehodnotiaci prístup. Zaznamenajte iba informácie relevantné ku klinickému problému.
+ext_partners___relationship_context,Partners / relationship context,Partneri / kontext vzťahov
+ext_relevant_sexual_practices___exposure_sites,Relevant sexual practices / exposure sites,Relevantné sexuálne praktiky / miesta expozície
+ext_condom___barrier_use_and_contraception,Condom / barrier use and contraception,Používanie kondómov / bariérovej ochrany a antikoncepcie
+ext_previous_sti___testing___symptoms,Previous STI / testing / symptoms,Predchádzajúce STI / testovanie / príznaky
+ext_pregnancy_possibility___intentions_when_relevant,Pregnancy possibility / intentions when relevant,"Možnosť / zámer tehotenstva, ak je relevantné"
+ext_quantification,Quantification,Kvantifikácia
+ext_smoking__cigarettes_day__years__pack_years__quit_date___vapi,"Smoking: cigarettes/day, years, pack-years, quit date / vaping","Fajčenie: cigarety/deň, roky, balíčkoroky, dátum ukončenia / vaping"
+ext_alcohol__type__amount__frequency__last_drink,"Alcohol: type, amount, frequency, last drink","Alkohol: druh, množstvo, frekvencia, posledné užitie"
+ext_drugs__substance__amount__route__frequency__last_use,"Drugs: substance, amount, route, frequency, last use","Drogy: látka, množstvo, spôsob podania, frekvencia, posledné užitie"
+ext_tolerance___withdrawal___attempts_to_cut_down___consequences,Tolerance / withdrawal / attempts to cut down / consequences,Tolerancia / abstinenčné príznaky / pokusy obmedziť / dôsledky
