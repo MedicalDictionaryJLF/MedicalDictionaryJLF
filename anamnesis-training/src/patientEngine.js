@@ -1,4 +1,4 @@
-import { INTENTS, QUESTION_AREAS } from './data/interviewSchema.js';
+import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=134';
 import { renderIntentAnswer } from './dialogue/responseTemplates.js';
 
 const MATCH_THRESHOLD = 0.24;
@@ -40,80 +40,165 @@ const ATTEMPT_RULES = [
 ];
 
 export const MEDICAL_TERMINOLOGY = {
-  dyspnea: { intent: 'ros_respiratory', patientFriendly: 'Do you feel short of breath?', difficulty: 'high' },
-  dysuria: { intent: 'ros_genitourinary', patientFriendly: 'Do you have pain or burning when passing urine?', difficulty: 'high' },
-  hemoptysis: { intent: 'ros_respiratory', patientFriendly: 'Have you coughed up blood?', difficulty: 'high' },
-  orthopnea: { intent: 'ros_respiratory', patientFriendly: 'Do you feel short of breath when lying flat?', difficulty: 'high' },
-  syncope: { intent: 'ros_cardiovascular', patientFriendly: 'Have you fainted or lost consciousness?', difficulty: 'medium' },
-  palpitations: { intent: 'ros_cardiovascular', patientFriendly: 'Do you feel your heart racing or beating irregularly?', difficulty: 'medium' },
-  edema: { intent: 'ros_cardiovascular', patientFriendly: 'Have you noticed swelling, especially in your legs or ankles?', difficulty: 'medium' },
-  melena: { intent: 'ros_gastrointestinal', patientFriendly: 'Have your stools been black or tar-like?', difficulty: 'high' },
-  hematemesis: { intent: 'ros_gastrointestinal', patientFriendly: 'Have you vomited blood?', difficulty: 'high' },
-  nocturia: { intent: 'ros_genitourinary', patientFriendly: 'Do you wake up at night to urinate?', difficulty: 'medium' },
-  polyuria: { intent: 'ros_genitourinary', patientFriendly: 'Are you urinating much more than usual?', difficulty: 'high' },
+  dyspnea: { intent: 'ros_dyspnea', patientFriendly: 'Do you feel short of breath?', difficulty: 'high' },
+  dysuria: { intent: 'ros_dysuria', patientFriendly: 'Do you have pain or burning when passing urine?', difficulty: 'high' },
+  hemoptysis: { intent: 'ros_hemoptysis', patientFriendly: 'Have you coughed up blood?', difficulty: 'high' },
+  orthopnea: { intent: 'ros_orthopnea', patientFriendly: 'Do you feel short of breath when lying flat?', difficulty: 'high' },
+  syncope: { intent: 'ros_syncope', patientFriendly: 'Have you fainted or lost consciousness?', difficulty: 'medium' },
+  palpitations: { intent: 'ros_palpitations', patientFriendly: 'Do you feel your heart racing or beating irregularly?', difficulty: 'medium' },
+  edema: { intent: 'ros_edema', patientFriendly: 'Have you noticed swelling, especially in your legs or ankles?', difficulty: 'medium' },
+  melena: { intent: 'ros_gi_bleeding', patientFriendly: 'Have your stools been black or tar-like?', difficulty: 'high' },
+  hematemesis: { intent: 'ros_gi_bleeding', patientFriendly: 'Have you vomited blood?', difficulty: 'high' },
+  nocturia: { intent: 'ros_urinary_frequency', patientFriendly: 'Do you wake up at night to urinate?', difficulty: 'medium' },
+  polyuria: { intent: 'ros_urinary_frequency', patientFriendly: 'Are you urinating much more than usual?', difficulty: 'high' },
   polydipsia: { intent: 'ros_general', patientFriendly: 'Are you much more thirsty than usual?', difficulty: 'high' },
-  dysphagia: { intent: 'ros_gastrointestinal', patientFriendly: 'Do you have difficulty swallowing?', difficulty: 'high' },
-  paresthesia: { intent: 'ros_neurological', patientFriendly: 'Do you feel tingling, numbness, or pins and needles?', difficulty: 'high' },
-  vertigo: { intent: 'ros_head_neck', patientFriendly: 'Do you feel like the room is spinning?', difficulty: 'medium' },
-  cephalgia: { intent: 'ros_head_neck', patientFriendly: 'Do you have a headache?', difficulty: 'high' },
+  dysphagia: { intent: 'ros_swallowing', patientFriendly: 'Do you have difficulty swallowing?', difficulty: 'high' },
+  paresthesia: { intent: 'ros_sensory', patientFriendly: 'Do you feel tingling, numbness, or pins and needles?', difficulty: 'high' },
+  vertigo: { intent: 'ros_dizziness', patientFriendly: 'Do you feel like the room is spinning?', difficulty: 'medium' },
+  cephalgia: { intent: 'ros_headache', patientFriendly: 'Do you have a headache?', difficulty: 'high' },
   cyanosis: { intent: 'ros_skin', patientFriendly: 'Have your lips or fingers turned blue?', difficulty: 'high' },
   diaphoresis: { intent: 'hpi_associated_symptoms', patientFriendly: 'Were you sweating unusually?', difficulty: 'high' }
 };
 
 const DIRECT_RULES = [
   [/\b(what is your name|your name|who are you|full name)\b/, ['identity_name'], 'single_intent'],
-  [/\b(date of birth|birth date|when were you born|born exactly|exact date of birth|birthday)\b/, ['identity_dob'], 'single_intent'],
-  [/\b(how old|what is your age|age\??)\b/, ['identity_age'], 'single_intent'],
+  [/\b(date of birth|birth date|when were you born|birthday)\b/, ['identity_dob'], 'single_intent'],
+  [/\b(how old|what is your age|your age)\b/, ['identity_age'], 'single_intent'],
   [/\b(male or female|sex|gender)\b/, ['identity_sex'], 'single_intent'],
-  [/\b(where are you from|where do you live|which town|what town|what city|address|residence)\b/, ['identity_residence'], 'single_intent'],
-  [/\b(when did (they )?admit you|when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
-  [/\b(how did you get here|how did you arrive|how did you get to (the )?hospital|by which mode of transport did you (come|get to (the )?hospital)|what transportation brought you here|did you come by ambulance|did someone drive you|who brought you|did you walk here|were you brought by emergency services|come alone|came alone|ambulance|how did you come)\b/, ['administrative_arrival_method'], 'single_intent'],
-  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|what was the reason|what is the reason|reason for coming|reason for admission|reason you came)\b/, ['chief_complaint'], 'broad_open_history'],
+  [/\b(where are you from|where do you live|which town|what city|address|residence)\b/, ['identity_residence'], 'single_intent'],
+  [/\b(are you giving (me )?the history|history yourself|who is giving (me )?the history|who can give (me )?the history)\b/, ['history_source'], 'single_intent'],
+  [/\b(when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
+  [/\b(how did you get here|how did you arrive|how did you get to (the )?hospital|did you come by ambulance|did someone drive you|who brought you|were you brought by emergency services)\b/, ['administrative_arrival_method'], 'single_intent'],
+  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission))\b/, ['chief_complaint'], 'broad_open_history'],
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],
   [/\b(what were you doing|doing when it started|activity at onset|circumstances at onset)\b/, ['hpi_activity_at_onset'], 'single_intent'],
-  [/\b(character of (the )?pain|what is the character|what is its character|what character is (the )?pain|what type of pain|what type is it|what kind of pain|what kind is it|what is the pain like|what does it feel like|how would you describe (it|your pain|the pain)|describe (your|the) pain)\b/, ['hpi_character'], 'single_intent'],
-  [/\b(radiation of (the )?pain|does it radiate|is it radiating|does the pain radiate|does it spread|does the pain spread|does it go anywhere|was the pain moving somewhere|does it move|does it travel|does it shoot|go to (your )?(arm|jaw|back))\b/, ['hpi_radiation'], 'single_intent'],
-  [/\b(associated symptoms|any other symptoms|anything else with it|symptoms accompanying|accompanying the pain)\b/, ['hpi_associated_symptoms'], 'single_intent'],
-  [/\b(shortness of breath|feel short of breath|breathless|trouble breathing|problem with breathing)\b/, ['ros_respiratory'], 'single_intent'],
-  [/\b(for how long|how long (did|does|was|is|has|had) (the )?(pain|symptom|problem|it)?.*(last|lasting|continue)|how long was (the )?(pain|symptom|problem) lasting|duration|timing|lasting|lasted|constant|continuous|intermittent|comes and goes|come and go)\b/, ['hpi_timing'], 'single_intent'],
-  [/\b(what makes it worse|makes the pain worse|does anything worsen it|is something worsening it|is something worsening the pain|what worsens the pain|aggravating factors|exacerbating factors|trigger)\b/, ['hpi_exacerbating'], 'single_intent'],
-  [/\b(what makes it better|makes the pain better|go away|relieving factors|alleviating|what relieves|helps the pain|help ease the pain|helping with the pain|anything help.*pain|anything helping.*pain|ease the pain|eased the pain|improve the pain|improved the pain)\b/, ['hpi_relieving'], 'single_intent'],
-  [/\b(how bad|how strong|severity|vas|scale from|scale 1|scale of 1|rate it)\b/, ['hpi_severity'], 'single_intent'],
-  [/\b(getting worse over time|getting better over time|course since onset|has it changed|changed since it started|progressing|improving over time|worsening over time)\b/, ['hpi_course'], 'single_intent'],
-  [/\b(heart condition|cvs condition|heart disease|cardiac condition|cardiovascular disease|coronary disease|angina|previous mi|heart attack|stent|bypass|arrhythmia|heart failure)\b/, ['pmh_cardiovascular_disease'], 'single_intent'],
+  [/\b(character of (the )?pain|what type of pain|what kind of pain|what is the pain like|what does it feel like|describe (your|the) pain)\b/, ['hpi_character'], 'single_intent'],
+  [/\b(does (it|the pain) radiate|does (it|the pain) spread|does it go anywhere|does it travel|radiation of (the )?pain)\b/, ['hpi_radiation'], 'single_intent'],
+  [/\b(associated symptoms|any other symptoms|anything else with it|symptoms accompanying)\b/, ['hpi_associated_symptoms'], 'single_intent'],
+  [/\b(for how long|how long .*last|duration|constant|continuous|intermittent|comes and goes|how often)\b/, ['hpi_timing'], 'single_intent'],
+  [/\b(what makes it worse|worsens the pain|aggravating factors|exacerbating factors|what triggers it)\b/, ['hpi_exacerbating'], 'single_intent'],
+  [/\b(what makes it better|relieving factors|what relieves|helps the pain|anything help)\b/, ['hpi_relieving'], 'single_intent'],
+  [/\b(how bad|how strong|severity|vas|scale from|out of ten|rate (the )?pain)\b/, ['hpi_severity'], 'single_intent'],
+  [/\b(getting worse over time|getting better over time|course since onset|has it changed|progressing|improving|worsening)\b/, ['hpi_course'], 'single_intent'],
+
+  // Atomic ROS rules must precede broad system screens.
+  [/\b(fever|chills|rigors|shaking chills)\b/, ['ros_fever'], 'single_intent'],
+  [/\b(weight loss|lost weight|weight gain|gained weight)\b/, ['ros_weight'], 'single_intent'],
+  [/\b(fatigue|unusually tired|low energy|exhausted)\b/, ['ros_fatigue'], 'single_intent'],
+  [/\b(night sweats|sweating at night)\b/, ['ros_night_sweats'], 'single_intent'],
+  [/\b(appetite|eating less|eating more)\b/, ['ros_appetite'], 'single_intent'],
+  [/\b(headache|head pain)\b/, ['ros_headache'], 'single_intent'],
+  [/\b(dizzy|dizziness|vertigo|room spinning|light headed|light-headed)\b/, ['ros_dizziness'], 'single_intent'],
+  [/\b(vision|visual|blurred vision|double vision)\b/, ['ros_vision'], 'single_intent'],
+  [/\b(hearing|hearing loss|ear problems)\b/, ['ros_hearing'], 'single_intent'],
+  [/\b(difficulty swallowing|pain.*swallow|swallowing|dysphagia|food sticking)\b/, ['ros_swallowing'], 'single_intent'],
+  [/\b(chest pain|chest pressure|chest discomfort)\b/, ['ros_chest_pain'], 'single_intent'],
+  [/\b(palpitations|heart racing|heart pounding|irregular heartbeat)\b/, ['ros_palpitations'], 'single_intent'],
+  [/\b(leg swelling|ankle swelling|swollen legs|oedema|edema)\b/, ['ros_edema'], 'single_intent'],
+  [/\b(faint|fainted|syncope|blackout|passed out|nearly faint)\b/, ['ros_syncope'], 'single_intent'],
+  [/\b(orthopn|lying flat.*breath|pillows.*breath|wake.*night.*breath|pnd)\b/, ['ros_orthopnea'], 'single_intent'],
+  [/\b(shortness of breath|feel short of breath|breathless|trouble breathing|dyspn)\b/, ['ros_dyspnea'], 'single_intent'],
+  [/\b(cough|coughing)\b/, ['ros_cough'], 'single_intent'],
+  [/\b(sputum|phlegm|mucus.*cough)\b/, ['ros_sputum'], 'single_intent'],
+  [/\b(cough.*blood|coughed.*blood|ha?emoptysis)\b/, ['ros_hemoptysis'], 'single_intent'],
+  [/\b(wheeze|wheezing|whistling.*breath)\b/, ['ros_wheeze'], 'single_intent'],
+  [/\b(nausea|nauseous|feel sick)\b/, ['ros_nausea'], 'single_intent'],
+  [/\b(vomit|vomiting|threw up|sick up)\b/, ['ros_vomiting'], 'single_intent'],
+  [/\b(abdominal pain|stomach pain|belly pain|tummy pain)\b/, ['ros_abdominal_pain'], 'single_intent'],
+  [/\b(diarrh|constipat|bowel habit|stool frequency)\b/, ['ros_bowel_habit'], 'single_intent'],
+  [/\b(black stool|black stools|blood in stool|bloody stool|mela?ena|vomit.*blood|ha?ematemesis)\b/, ['ros_gi_bleeding'], 'single_intent'],
+  [/\b(jaundice|yellow eyes|yellow skin|dark urine|pale stool)\b/, ['ros_jaundice'], 'single_intent'],
+  [/\b(dysuria|burning.*urin|pain.*urin|pain.*passing urine)\b/, ['ros_dysuria'], 'single_intent'],
+  [/\b(urinary frequency|urinate often|pee often|urgency|nocturia)\b/, ['ros_urinary_frequency'], 'single_intent'],
+  [/\b(blood in urine|ha?ematuria|red urine)\b/, ['ros_hematuria'], 'single_intent'],
+  [/\b(flank pain|loin pain|kidney pain|pain in your side)\b/, ['ros_flank_pain'], 'single_intent'],
+  [/\b(weakness|weak arm|weak leg|facial weakness)\b/, ['ros_weakness'], 'single_intent'],
+  [/\b(numb|numbness|tingling|pins and needles|paresthesia)\b/, ['ros_sensory'], 'single_intent'],
+  [/\b(seizure|fit|convulsion)\b/, ['ros_seizures'], 'single_intent'],
+  [/\b(slurred speech|speech problem|difficulty speaking|finding words)\b/, ['ros_speech'], 'single_intent'],
+  [/\b(balance|unsteady|gait problem)\b/, ['ros_balance'], 'single_intent'],
+  [/\b(joint pain|joint swelling|painful joints)\b/, ['ros_joint_pain'], 'single_intent'],
+  [/\b(morning stiffness|joint stiffness|stiff joints)\b/, ['ros_stiffness'], 'single_intent'],
+  [/\b(back pain|lower back|low back pain)\b/, ['ros_back_pain'], 'single_intent'],
+  [/\b(rash|skin rash|new spots)\b/, ['ros_rash'], 'single_intent'],
+  [/\b(itch|itching|pruritus)\b/, ['ros_pruritus'], 'single_intent'],
+  [/\b(bruising|bruise easily|bleeding easily|petechiae|purpura)\b/, ['ros_bruising'], 'single_intent'],
+
+  [/\b(general symptoms|anything generally|fever weight tired appetite)\b/, ['ros_general'], 'single_intent'],
+  [/\b(head and neck symptoms|head or neck problems)\b/, ['ros_head_neck'], 'single_intent'],
+  [/\b(cardiovascular symptoms|heart symptoms|cardiac symptoms)\b/, ['ros_cardiovascular'], 'single_intent'],
+  [/\b(respiratory symptoms|breathing symptoms|lung symptoms)\b/, ['ros_respiratory'], 'single_intent'],
+  [/\b(gastrointestinal symptoms|gastrointestinal problems|digestive symptoms|digestive problems|digestive issues|stomach or bowel problems)\b/, ['ros_gastrointestinal'], 'single_intent'],
+  [/\b(urinary symptoms|urination problems|genitourinary symptoms)\b/, ['ros_genitourinary'], 'single_intent'],
+  [/\b(neurological symptoms|neurologic symptoms)\b/, ['ros_neurological'], 'single_intent'],
+  [/\b(musculoskeletal symptoms|joint or muscle problems)\b/, ['ros_musculoskeletal'], 'single_intent'],
+  [/\b(skin symptoms|skin problems)\b/, ['ros_skin'], 'single_intent'],
+
+  [/\b(heart condition|heart disease|cardiac condition|cardiovascular disease|coronary disease|angina|previous mi|heart attack|stent|bypass|arrhythmia|heart failure)\b/, ['pmh_cardiovascular_disease'], 'single_intent'],
   [/\b(chronic disease|medical problems|previous diseases|high blood pressure|hypertension|diabetes|cholesterol|kidney disease|thyroid|liver disease)\b/, ['pmh_chronic_diseases'], 'single_intent'],
+  [/\b(specialist|cardiologist|diabetologist|endocrinologist|nephrologist|pulmonologist|gastroenterologist|neurologist|oncologist)\b/, ['pmh_specialists'], 'single_intent'],
   [/\b(any operation|operation history|any surgery|surgeries|were you operated)\b/, ['pmh_operations'], 'single_intent'],
-  [/\b(hospitalized before|previous admission|hospitalisation|hospitalization)\b/, ['pmh_hospitalizations'], 'single_intent'],
+  [/\b(hospitalized before|hospitalised before|previous admission|hospitalisation|hospitalization)\b/, ['pmh_hospitalizations'], 'single_intent'],
+  [/\b(anesthesia problem|anaesthesia problem|anaesthetic complication|anesthetic complication|difficult intubation|malignant hyperthermia|slow to wake)\b/, ['pmh_anesthesia_complications'], 'single_intent'],
   [/\b(open or laparoscopic|laparoscopic|open surgery|type of procedure)\b/, ['operation_approach'], 'contextual_followup'],
-  [/\b(date of operation|what year was (the )?(operation|surgery)|when was (the )?(operation|surgery))\b/, ['operation_date'], 'contextual_followup'],
-  [/\b(ct scan|computed tomography)\b/, ['pmh_previous_exams'], 'single_intent'],
-  [/\b(ecg|blood tests|ultrasound|mri|previous examination)\b/, ['pmh_previous_exams'], 'single_intent'],
+  [/\b(date of operation|what year was .*operation|when was .*operation)\b/, ['operation_date'], 'contextual_followup'],
+  [/\b(ct scan|computed tomography|ecg|blood tests|ultrasound|mri|previous examination|previous scan)\b/, ['pmh_previous_exams'], 'single_intent'],
   [/\b(any allergies|allergies|are you allergic|drug allergy|latex allergy)\b/, ['allergies'], 'single_intent'],
-  [/\b(for environment or food|food or environment|food allergy|environmental allergy)\b/, ['allergy_environment_food'], 'contextual_followup'],
-  [/\b(pollen|hay fever)\b/, ['allergy_pollen'], 'contextual_followup'],
-  [/\b(what reaction|reaction|what happens)\b/, ['allergy_reaction'], 'contextual_followup'],
+  [/\b(food allergy|environmental allergy|latex)\b/, ['allergy_environment_food'], 'contextual_followup'],
+  [/\b(what reaction|allergy reaction|what happens when)\b/, ['allergy_reaction'], 'contextual_followup'],
   [/\b(transfusion|blood transfusion|received blood)\b/, ['transfusions'], 'single_intent'],
-  [/\b(nitroglycerin|nitroglycerine|nitroglicerin|\bntg\b|\bnitro\b|spray under tongue|tablet under tongue)\b/, ['medication_nitroglycerin_previous'], 'single_intent'],
+
+  [/\b(nitroglycerin|nitroglycerine|\bntg\b|\bnitro\b|spray under tongue|tablet under tongue)\b/, ['medication_nitroglycerin_previous'], 'single_intent'],
   [/\b(what medications|do you take medication|medicines|meds|pills|tablets|what are you on)\b/, ['medication_regular'], 'single_intent'],
-  [/\b(over the counter|otc|supplements|vitamins|herbal)\b/, ['medication_otc_supplements'], 'single_intent'],
-  [/\b(forget|adherence|do you take them regularly|took today|miss)\b/, ['medication_adherence'], 'single_intent'],
-  [/\b(family history|parents|mother|father|heart attack in family|stroke in family|diabetes in family|cancer in family|genetic disease)\b/, ['family_history'], 'single_intent'],
-  [/\b(travel|abroad|pets|farm animals|animals|covid|vaccination|sick contact|infectious contact|tick|suspicious food)\b/, ['epidemiology'], 'single_intent'],
+  [/\b(what dose|what dosage|how many mg|what strength|dose of)\b/, ['medication_dose'], 'single_intent'],
+  [/\b(how often do you take|medication frequency|once daily|twice daily)\b/, ['medication_frequency'], 'single_intent'],
+  [/\b(what is .* medication for|why do you take|what do you take .* for|indication)\b/, ['medication_indication'], 'single_intent'],
+  [/\b(recent medication change|new medication|changed dose|stopped medication|started medication)\b/, ['medication_recent_changes'], 'single_intent'],
+  [/\b(over the counter|\botc\b|non prescription|without prescription)\b/, ['medication_otc'], 'single_intent'],
+  [/\b(supplements|vitamins|herbal|herbs)\b/, ['medication_supplements'], 'single_intent'],
+  [/\b(forget|adherence|take them regularly|took today|miss doses|missed dose)\b/, ['medication_adherence'], 'single_intent'],
+
+  [/\b(heart attack in family|family heart disease|stroke in family|premature heart|sudden cardiac)\b/, ['family_cardiovascular'], 'single_intent'],
+  [/\b(diabetes in family|family diabetes)\b/, ['family_diabetes'], 'single_intent'],
+  [/\b(cancer in family|family cancer)\b/, ['family_cancer'], 'single_intent'],
+  [/\b(genetic disease|inherited disease|runs in (the )?family|sudden unexplained death)\b/, ['family_inherited'], 'single_intent'],
+  [/\b(family history|parents|mother|father|siblings|relatives)\b/, ['family_history'], 'single_intent'],
+
+  [/\b(travel|abroad|recent trip)\b/, ['epi_travel'], 'single_intent'],
+  [/\b(sick contact|infectious contact|anyone ill|contact with infection)\b/, ['epi_contacts'], 'single_intent'],
+  [/\b(pets|farm animals|animal exposure|tick bite|tick|animal bite|animal scratch)\b/, ['epi_animals_ticks'], 'single_intent'],
+  [/\b(vaccination|vaccinated|suspicious food|unsafe water|food poisoning)\b/, ['epi_vaccination_food'], 'single_intent'],
+
   [/\b(do you work|occupation|job|retired|unemployed)\b/, ['identity_occupation'], 'single_intent'],
-  [/\b(married|single|divorced|widowed|who do you live with|live alone|house or apartment|which floor|elevator|housing)\b/, ['social_living'], 'single_intent'],
-  [/\b(do you smoke|smoking|cigarettes|pack years)\b/, ['substance_smoking'], 'single_intent'],
+  [/\b(who do you live with|live alone|partner|children at home|married)\b/, ['social_household'], 'single_intent'],
+  [/\b(house or apartment|housing|which floor|stairs|elevator|lift at home)\b/, ['social_housing'], 'single_intent'],
+  [/\b(who helps you|support at home|carer|caregiver|home nurse)\b/, ['social_support'], 'single_intent'],
+  [/\b(usual function|baseline function|before this illness|normally independent|normally walk)\b/, ['social_baseline_function'], 'single_intent'],
+  [/\b(current function|now manage|now walk|since this illness|currently independent|current mobility)\b/, ['social_current_function'], 'single_intent'],
+
+  [/\b(last period|last menstrual|\blmp\b|periods regular|menstruation|menopause)\b/, ['gyn_lmp'], 'single_intent'],
+  [/\b(could you be pregnant|possibly pregnant|pregnancy possibility|are you pregnant)\b/, ['gyn_pregnancy'], 'single_intent'],
+  [/\b(contraception|birth control|contraceptive|iud|coil)\b/, ['gyn_contraception'], 'single_intent'],
+  [/\b(previous pregnancies|deliveries|miscarriage|abortion|c section|caesarean|children.*pregnan)\b/, ['gyn_obstetric'], 'single_intent'],
+
+  [/\b(how many cigarettes|cigarettes per day|cigarettes a day|years.*smok|pack years|how much do you smoke)\b/, ['substance_smoking_quantity'], 'single_intent'],
+  [/\b(do you smoke|smoking|cigarettes|tobacco|vape|vaping)\b/, ['substance_smoking'], 'single_intent'],
   [/\b(alcohol|drink alcohol|beer|wine|spirits)\b/, ['substance_alcohol'], 'single_intent'],
   [/\b(coffee|black tea|energy drinks|caffeine)\b/, ['substance_caffeine'], 'single_intent'],
-  [/\b(recreational drugs|street drugs|marijuana|cocaine)\b/, ['substance_drugs'], 'single_intent'],
-  [/\b(period|menstruation|last period|menopause|contraception|pregnant|children|deliveries|miscarriage|abortion|pelvic pain)\b/, ['gyn_history'], 'single_intent'],
+  [/\b(recreational drugs|street drugs|marijuana|cannabis|cocaine|opioid|drug use)\b/, ['substance_drugs'], 'single_intent'],
+
+  [/\b(anything else|anything i have missed|anything important i should know|something else)\b/, ['closure_anything_else'], 'single_intent'],
+  [/\b(what worries you most|what are you worried about|main concern|concerns about this)\b/, ['closure_concerns'], 'single_intent'],
+  [/\b(any questions for me|do you understand|does that make sense|anything you want me to clarify)\b/, ['closure_understanding'], 'single_intent'],
+
   [/\b(blood pressure|\bbp\b)\b/, ['vital_bp'], 'objective_exam_request'],
   [/\b(heart rate|pulse|\bhr\b)\b/, ['vital_hr'], 'objective_exam_request'],
   [/\b(respiratory rate|\brr\b)\b/, ['vital_rr'], 'objective_exam_request'],
   [/\b(oxygen saturation|spo2|saturation)\b/, ['vital_spo2'], 'objective_exam_request'],
   [/\b(temperature)\b/, ['vital_temperature'], 'objective_exam_request'],
-  [/\b(lungs|wheezing|crackles|breath sounds|auscultation lungs)\b/, ['exam_lungs'], 'objective_exam_request'],
-  [/\b(heart sounds|murmur|rhythm|auscultation heart)\b/, ['exam_heart'], 'objective_exam_request'],
+  [/\b(lungs|crackles|breath sounds|auscultation lungs)\b/, ['exam_lungs'], 'objective_exam_request'],
+  [/\b(heart sounds|murmur|auscultation heart)\b/, ['exam_heart'], 'objective_exam_request'],
   [/\b(abdominal exam|guarding|blumberg|murphy|mcburney|rovsing)\b/, ['exam_abdomen'], 'objective_exam_request'],
   [/\b(bowel sounds)\b/, ['exam_bowel_sounds'], 'objective_exam_request'],
   [/\b(wbc|white blood cells)\b/, ['lab_wbc'], 'objective_exam_request'],
@@ -147,7 +232,8 @@ export class PatientEngine {
       rapport: this.rapport,
       rapportEvents: structuredCopy(this.rapportEvents),
       lastRapportEvent: structuredCopy(this.lastRapportEvent),
-      turn: this.turn
+      turn: this.turn,
+      disclosureAttempts: Object.fromEntries(this.disclosureAttempts ?? new Map())
     };
   }
 
@@ -172,6 +258,7 @@ export class PatientEngine {
     this.rapportEvents = structuredCopy(Array.isArray(state.rapportEvents) ? state.rapportEvents : []);
     this.lastRapportEvent = structuredCopy(state.lastRapportEvent || null);
     this.turn = Math.max(0, Number(state.turn || 0));
+    this.disclosureAttempts = new Map(Object.entries(state.disclosureAttempts || {}).map(([key, value]) => [key, Number(value || 0)]));
     return this;
   }
 
@@ -196,12 +283,14 @@ export class PatientEngine {
     this.rapportEvents = [];
     this.lastRapportEvent = null;
     this.turn = 0;
+    this.disclosureAttempts = new Map();
     return '';
   }
 
   ask(question, detectionOverride = null) {
     this.turn += 1;
-    const detection = detectionOverride || this.detect(question);
+    let detection = detectionOverride || this.detect(question);
+    detection = this.applyDisclosurePolicy(question, detection);
     const rapportEvent = this.updateRapport(question, detection);
     const attemptedIntentIds = this.inferAttemptedIntents(question, detection);
     const previouslyAttempted = new Set(this.attemptedIntents);
@@ -298,8 +387,13 @@ export class PatientEngine {
     const top = usable[0] || candidates[0];
     const second = usable[1] || candidates[1];
     const confidence = calculateConfidence(top?.score ?? 0, second?.score ?? 0, normalized.length);
-    const strong = confidence >= MATCH_THRESHOLD || (top?.score ?? 0) >= MIN_TOP_SCORE_FOR_MATCH;
-    const weak = confidence >= WEAK_MATCH_THRESHOLD || (top?.score ?? 0) >= MIN_TOP_SCORE_FOR_WEAK_MATCH;
+    const difficulty = this.difficulty;
+    const strongThreshold = difficulty === 'beginner' ? MATCH_THRESHOLD - 0.04 : difficulty === 'advanced' ? MATCH_THRESHOLD + 0.035 : MATCH_THRESHOLD;
+    const weakThreshold = difficulty === 'beginner' ? WEAK_MATCH_THRESHOLD - 0.03 : difficulty === 'advanced' ? WEAK_MATCH_THRESHOLD + 0.025 : WEAK_MATCH_THRESHOLD;
+    const topStrong = difficulty === 'beginner' ? MIN_TOP_SCORE_FOR_MATCH - 0.20 : difficulty === 'advanced' ? MIN_TOP_SCORE_FOR_MATCH + 0.20 : MIN_TOP_SCORE_FOR_MATCH;
+    const topWeak = difficulty === 'beginner' ? MIN_TOP_SCORE_FOR_WEAK_MATCH - 0.15 : difficulty === 'advanced' ? MIN_TOP_SCORE_FOR_WEAK_MATCH + 0.15 : MIN_TOP_SCORE_FOR_WEAK_MATCH;
+    const strong = confidence >= strongThreshold || (top?.score ?? 0) >= topStrong;
+    const weak = confidence >= weakThreshold || (top?.score ?? 0) >= topWeak;
     if (strong || weak) {
       const scope = this.classifyResponseScope(normalized, tokens, [top], strong ? 'strong' : 'weak_answered');
       const answers = scope === 'single_intent' || scope === 'contextual_followup' || scope === 'objective_exam_request' ? [top] : this.selectMultipleIntents(usable, normalized, tokens);
@@ -307,6 +401,48 @@ export class PatientEngine {
     }
 
     return this.makeDetection({ kind: 'uncertain', responseScope: 'clarification', normalized, tokens, phrases, primaryIntent: null, answerIntents: [], candidates: candidates.slice(0, 5), suppressedCandidates: suppressed, confidence });
+  }
+
+  get difficulty() {
+    return String(this.options?.difficulty || 'intermediate').toLowerCase();
+  }
+
+  applyDisclosurePolicy(question, detection) {
+    if (!detection?.primaryIntent?.id || this.difficulty !== 'advanced') return detection;
+    const intentId = detection.primaryIntent.id;
+    const intent = INTENTS[intentId];
+    if (!intent?.sensitive) return detection;
+    const guardedness = Number(this.case.personality?.guardedness ?? 0);
+    if (guardedness < 0.2 || this.rapport >= 72) return detection;
+    const q = normalize(question);
+    const permission = PERMISSION_TERMS.some((term) => q.includes(term));
+    const previous = Number(this.disclosureAttempts.get(intentId) || 0);
+    this.disclosureAttempts.set(intentId, previous + 1);
+    if (permission || previous >= 1) return detection;
+    return this.makeDetection({
+      ...detection,
+      kind: 'guarded',
+      responseScope: 'guarded_withholding',
+      primaryIntent: detection.primaryIntent,
+      answerIntents: [],
+      candidates: detection.candidates,
+      confidence: detection.confidence,
+      normalized: detection.normalized,
+      tokens: detection.tokens,
+      phrases: detection.phrases,
+      questionType: detection.questionType,
+      contextUsed: detection.contextUsed,
+      contextResolutionReason: 'Advanced-mode guarded patient: ask respectfully or establish rapport before disclosure.'
+    });
+  }
+
+  guardedReply() {
+    const options = [
+      'I would rather not get into that straight away. Why do you need to know?',
+      'That is a bit personal. Could you explain why you are asking?',
+      'I am not very comfortable talking about that yet.'
+    ];
+    return options[this.turn % options.length];
   }
 
   inferAttemptedIntents(question, detection) {
@@ -317,6 +453,9 @@ export class PatientEngine {
       .filter((intentId, index, list) => INTENTS[intentId] && list.indexOf(intentId) === index);
 
     if (explicitAttempts.length) {
+      const detectedIds = [...new Set((detection?.answerIntents ?? []).map((intent) => intent.id).filter((intentId) => INTENTS[intentId]))];
+      const legacyOverview = new Set(['family_history','epidemiology','social_living','daily_independence','gyn_history','ros_general','ros_head_neck','ros_cardiovascular','ros_respiratory','ros_gastrointestinal','ros_genitourinary','ros_neurological','ros_musculoskeletal','ros_skin']);
+      if (detectedIds.length && explicitAttempts.every((intentId) => legacyOverview.has(intentId) || !detectedIds.includes(intentId))) return detectedIds.slice(0, 3);
       const hpiAttempts = explicitAttempts.filter((intentId) => intentId.startsWith('hpi_'));
       if (hpiAttempts.length) return hpiAttempts.slice(0, 2);
       return explicitAttempts.slice(0, 3);
@@ -405,6 +544,9 @@ export class PatientEngine {
       if (/\b(how often|frequency)\b/.test(normalized)) return this.contextCandidate('medication_regular', 'Medication frequency follow-up.');
       return this.contextCandidate('medication_regular', 'Medication indication follow-up.');
     }
+
+    // Explicit consultation-closing language must not be swallowed by an active pain context.
+    if (/\b(before (we|i) (finish|end)|anything else (you think )?i should know|anything else before we finish)\b/.test(normalized)) return null;
 
     if (this.currentSymptom?.type === 'pain' && !this.isClearlyNonHpi(normalized)) {
       if (/\b(where do you feel it|where is it|where exactly is it|where exactly|where do you feel the pain)\b/.test(normalized)) return this.contextCandidate('hpi_site', 'Pronoun/location follow-up resolved to active pain symptom.');
@@ -539,6 +681,7 @@ export class PatientEngine {
   composeReply(question, detection) {
     if (detection.kind === 'empty') return 'I did not catch a question. Could you ask me something specific?';
     if (detection.responseScope === 'terminology_not_understood') return this.terminologyConfusionReply(detection);
+    if (detection.responseScope === 'guarded_withholding') return this.guardedReply();
     if (detection.responseScope === 'clarification' || detection.kind === 'uncertain') return this.uncertainReply(question, detection);
 
     if (detection.questionType === 'statement_assertion' && detection.primaryIntent?.id === 'identity_sex') {
@@ -583,9 +726,33 @@ export class PatientEngine {
   }
 
   applyPatientPersonality(reply, detection) {
-    let styled = reply;
+    let styled = String(reply || '').trim();
     const p = this.case.personality ?? {};
-    if ((p.anxiety ?? 0) > 0.72 && detection.primaryIntent?.id?.startsWith('hpi_') && this.turn < 5 && detection.responseScope !== 'terminology_not_understood') styled = `${styled} It really worries me.`;
+    const difficulty = this.difficulty;
+    const primaryId = detection.primaryIntent?.id;
+    const related = INTENTS[primaryId]?.relatedIntents || [];
+
+    if (related.length) {
+      const available = related.map((id) => this.answerFor(id)).filter(Boolean);
+      if (difficulty === 'advanced') {
+        styled = 'Could you ask me about one symptom at a time? I can answer more clearly that way.';
+      } else if (difficulty === 'intermediate' && available.length) {
+        styled = available[0];
+      } else if (difficulty === 'beginner' && available.length) {
+        styled = available.slice(0, 2).join(' ');
+      }
+    } else if (difficulty === 'advanced' && detection.responseScope === 'broad_open_history') {
+      const firstSentence = styled.split(/(?<=[.!?])\s+/)[0];
+      if (firstSentence) styled = firstSentence;
+    }
+
+    if (difficulty === 'beginner' && primaryId && !related.length && detection.responseScope === 'broad_open_history') {
+      const volunteerIds = ['hpi_site', 'hpi_onset'];
+      const extra = volunteerIds.map((id) => this.answerFor(id)).filter(Boolean).slice(0, (p.talkativeness ?? 0.5) >= 0.55 ? 2 : 1);
+      if (extra.length) styled = `${styled} ${extra.join(' ')}`.trim();
+    }
+
+    if ((p.anxiety ?? 0) > 0.72 && primaryId?.startsWith('hpi_') && this.turn < 5 && detection.responseScope !== 'terminology_not_understood') styled = `${styled} It really worries me.`;
     if (this.rapport < 35) styled = `${styled} I am getting a bit stressed, please ask one thing at a time.`;
     return styled;
   }
@@ -594,17 +761,26 @@ export class PatientEngine {
     const normalized = normalize(question);
     const words = normalized.split(' ').filter(Boolean);
     const issues = [];
+    const positives = [];
 
     const shorthand = detection.questionType === 'fragment_or_statement' && words.length <= 4 && /\b(factors?|history|timing|duration|severity|radiation|onset|character|allergies|medication)\b/.test(normalized);
     if (shorthand) issues.push({ type: 'checklist_shorthand', message: 'Phrase this as a patient-facing question rather than a checklist heading.' });
     if (detection.responseScope === 'terminology_not_understood') issues.push({ type: 'too_technical', message: 'Use patient-friendly wording instead of unexplained medical terminology.' });
     if (normalized.length > 180) issues.push({ type: 'overlong', message: 'Ask one focused question at a time.' });
+    if (detection.responseScope === 'guarded_withholding') issues.push({ type: 'sensitive_without_context', message: 'For sensitive topics, explain why you are asking and ask permission where appropriate.' });
 
+    const verifying = /\b(just to (clarify|confirm)|to confirm|so you said|did i understand|is that right|correct me if)\b/.test(normalized);
     const unnecessaryRepeats = attemptedIntentIds.filter((intentId) => previouslyAttempted.has(intentId) && previouslyResolved.has(intentId));
-    if (unnecessaryRepeats.length) issues.push({ type: 'repeated_resolved_area', message: 'This area had already been successfully covered.' });
+    if (unnecessaryRepeats.length && !verifying) issues.push({ type: 'repeated_resolved_area', message: 'This area had already been successfully covered.' });
+    if (verifying && unnecessaryRepeats.length) positives.push({ type: 'verification', message: 'Appropriate clarification / verification.' });
+    if (this.turn <= 3 && INTRO_TERMS.some((term) => normalized.includes(term))) positives.push({ type: 'introduction', message: 'Introduced self or greeted the patient.' });
+    if (EMPATHY_TERMS.some((term) => normalized.includes(term))) positives.push({ type: 'empathy', message: 'Acknowledged the patient’s experience.' });
+    if (PERMISSION_TERMS.some((term) => normalized.includes(term))) positives.push({ type: 'permission', message: 'Asked permission respectfully.' });
+    if (PATIENT_CENTERED_TERMS.some((term) => normalized.includes(term))) positives.push({ type: 'patient_centered', message: 'Used patient-centred open wording.' });
+    if (attemptedIntentIds.some((id) => INTENT_TO_AREA[id] === 'closure')) positives.push({ type: 'closure', message: 'Closed the consultation with the patient rather than simply stopping.' });
 
-    const penalty = issues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2 }[issue.type] ?? 0), 0);
-    return { score: Math.max(0, 100 - penalty), issues, shorthand, unnecessaryRepeats };
+    const penalty = issues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2, sensitive_without_context: 3 }[issue.type] ?? 0), 0);
+    return { score: Math.max(0, 80 + Math.min(20, positives.length * 5) - penalty), issues, positives, shorthand, unnecessaryRepeats };
   }
 
   makeFeedbackLabel(detection, communicationAssessment = null) {
@@ -712,17 +888,17 @@ export class PatientEngine {
 
   getDebriefPriorities() {
     const configured = this.case.debriefPriorities ?? {};
-    const required = QUESTION_AREAS
-      .filter((area) => area.required && (area.id !== 'gynecological' || /female/i.test(this.case.identity.sex)))
+    const applicableRequired = QUESTION_AREAS
+      .filter((area) => area.required && area.id !== 'objective' && (area.id !== 'gynecological' || /female/i.test(this.case.identity.sex)))
       .flatMap((area) => area.intents);
-    const essential = [...new Set(configured.essential ?? [
-      'chief_complaint', 'hpi_site', 'hpi_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_severity',
-      'pmh_chronic_diseases', 'allergies', 'medication_regular'
-    ])].filter((id) => INTENTS[id]);
-    const caseCritical = [...new Set(configured.caseCritical ?? [])].filter((id) => INTENTS[id] && !essential.includes(id));
-    const comprehensive = required.filter((id) => !essential.includes(id) && !caseCritical.includes(id));
-    const criticalSafety = [...new Set(configured.criticalSafety ?? [...essential, ...caseCritical])].filter((id) => INTENTS[id]);
-    return { essential, caseCritical, comprehensive, criticalSafety };
+    const notRelevant = new Set((configured.notRelevant ?? []).filter((id) => INTENTS[id]));
+    const clean = (values) => [...new Set(values ?? [])].filter((id) => INTENTS[id] && !notRelevant.has(id));
+    const essential = clean(configured.essential?.length ? configured.essential : ['chief_complaint','hpi_onset','hpi_character','hpi_severity','allergies','medication_regular']);
+    const caseCritical = clean(configured.caseCritical).filter((id) => !essential.includes(id));
+    const recommended = clean(configured.recommended?.length ? configured.recommended : applicableRequired.filter((id) => !essential.includes(id) && !caseCritical.includes(id)));
+    const optional = clean(configured.optional);
+    const criticalSafety = clean(configured.criticalSafety?.length ? configured.criticalSafety : [...essential, ...caseCritical]);
+    return { essential, caseCritical, recommended, comprehensive: recommended, optional, notRelevant: [...notRelevant], criticalSafety };
   }
 
   percentForIntents(intentIds, intentSet = this.attemptedIntents) {
@@ -733,25 +909,48 @@ export class PatientEngine {
 
   getCommunicationAssessment() {
     const allIssues = this.communicationEvents.flatMap((event) => (event.issues ?? []).map((issue) => ({ ...issue, turnNumber: event.turnNumber, question: event.question })));
-    const penalty = allIssues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2 }[issue.type] ?? 0), 0);
-    return {
-      score: Math.max(0, 100 - Math.min(35, penalty)),
-      issues: allIssues
-    };
+    const allPositives = this.communicationEvents.flatMap((event) => (event.positives ?? []).map((item) => ({ ...item, turnNumber: event.turnNumber, question: event.question })));
+    const uniquePositiveTypes = new Set(allPositives.map((item) => item.type));
+    const penalty = allIssues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2, sensitive_without_context: 3 }[issue.type] ?? 0), 0);
+    const score = Math.max(0, Math.min(100, 75 + Math.min(25, uniquePositiveTypes.size * 5) - Math.min(40, penalty)));
+    return { score, issues: allIssues, positives: allPositives };
+  }
+
+  getStructureAssessment() {
+    const attempted = this.attemptEvents.filter((event) => event?.intentId);
+    const firstTurnForArea = (areaId) => attempted.find((event) => INTENT_TO_AREA[event.intentId] === areaId)?.turnNumber ?? Infinity;
+    const firstIntentTurn = (intentId) => attempted.find((event) => event.intentId === intentId)?.turnNumber ?? Infinity;
+    const feedback = [];
+    let score = 0;
+    const introEarly = this.rapportEvents.some((event) => event.turnNumber <= 3 && event.factors?.some((factor) => factor.id === 'introduction'));
+    if (introEarly) score += 15; else feedback.push('Introduce yourself and establish the interaction early.');
+    if (firstIntentTurn('chief_complaint') <= 5) score += 20; else feedback.push('Establish the presenting complaint early before moving into checklists.');
+    const hpiTurn = firstTurnForArea('hpi_socrates');
+    const backgroundTurn = Math.min(firstTurnForArea('past_medical_history'), firstTurnForArea('social_history'), firstTurnForArea('substance_use'));
+    if (hpiTurn < backgroundTurn) score += 25; else feedback.push('Explore the current problem before moving deeply into background history.');
+    const sensitiveTurn = Math.min(firstTurnForArea('substance_use'), firstTurnForArea('gynecological'));
+    if (!Number.isFinite(sensitiveTurn) || firstIntentTurn('chief_complaint') < sensitiveTurn) score += 15; else feedback.push('Avoid opening with sensitive history before establishing the clinical problem and rapport.');
+    const closureTurn = firstTurnForArea('closure');
+    if (Number.isFinite(closureTurn) && closureTurn >= Math.max(5, Math.ceil(this.turn * 0.55))) score += 15; else feedback.push('Close the interview explicitly: ask if anything was missed and address the patient’s concerns.');
+    const coherentCore = firstTurnForArea('medication') >= hpiTurn && firstTurnForArea('allergies_transfusions') >= hpiTurn;
+    if (coherentCore) score += 10; else feedback.push('Keep medication/allergy review after the presenting problem unless the situation requires otherwise.');
+    return { score: Math.min(100, score), feedback, firstTurnByArea: Object.fromEntries(QUESTION_AREAS.filter((area) => area.id !== 'objective').map((area) => [area.id, firstTurnForArea(area.id)])) };
   }
 
   getScoreBreakdown() {
     const priorities = this.getDebriefPriorities();
     const essential = this.percentForIntents(priorities.essential);
     const caseCritical = this.percentForIntents(priorities.caseCritical);
-    const comprehensive = this.percentForIntents(priorities.comprehensive);
+    const recommended = this.percentForIntents(priorities.recommended);
+    const comprehensive = recommended;
     const communication = this.getCommunicationAssessment().score;
-    const overall = Math.round((essential * 0.50) + (caseCritical * 0.30) + (comprehensive * 0.15) + (communication * 0.05));
-    const requiredResolved = this.getCoverage().filter((area) => area.required);
+    const structure = this.getStructureAssessment().score;
+    const overall = Math.round((essential * 0.40) + (caseCritical * 0.25) + (recommended * 0.15) + (communication * 0.10) + (structure * 0.10));
+    const requiredResolved = this.getCoverage().filter((area) => area.required && area.id !== 'objective');
     const resolvedAsked = requiredResolved.reduce((sum, area) => sum + area.asked, 0);
     const resolvedTotal = requiredResolved.reduce((sum, area) => sum + area.total, 0);
     const engineResolvedCoverage = resolvedTotal ? Math.round((resolvedAsked / resolvedTotal) * 100) : 0;
-    return { overall, essential, caseCritical, comprehensive, communication, engineResolvedCoverage };
+    return { overall, essential, caseCritical, recommended, comprehensive, communication, structure, engineResolvedCoverage };
   }
 
   getScore() { return this.getScoreBreakdown().overall; }
@@ -762,14 +961,14 @@ export class PatientEngine {
 
   getMissedFeedback() {
     return this.getStudentCoverage()
-      .filter((area) => area.required && area.percent < 100)
+      .filter((area) => area.required && area.id !== 'objective' && area.percent < 100)
       .map((area) => ({ title: area.title, missing: area.missing, modelQuestion: area.modelQuestion }));
   }
 
   getResolutionIssues() {
     const eventuallyResolved = this.askedIntents;
     return this.attemptEvents
-      .filter((event) => !event.resolved)
+      .filter((event) => !event.resolved && event.responseScope !== 'guarded_withholding')
       .map((event) => ({
         ...event,
         label: INTENTS[event.intentId]?.title ?? event.intentId,
@@ -777,18 +976,55 @@ export class PatientEngine {
       }));
   }
 
+  makeMissDetail(intentId, tier) {
+    const area = QUESTION_AREAS.find((item) => item.intents.includes(intentId));
+    return {
+      id: intentId,
+      label: INTENTS[intentId]?.title ?? intentId,
+      area: area?.title ?? 'History',
+      tier,
+      examples: getModelQuestions(intentId).slice(0, 2)
+    };
+  }
+
+  getStrengths() {
+    const priorities = this.getDebriefPriorities();
+    const strengths = [];
+    const completedCritical = priorities.caseCritical.filter((id) => this.isIntentSatisfied(id, this.attemptedIntents));
+    if (completedCritical.length) strengths.push(`Covered ${completedCritical.length}/${priorities.caseCritical.length || completedCritical.length} case-critical history item${completedCritical.length === 1 ? '' : 's'}.`);
+    const communication = this.getCommunicationAssessment();
+    const positiveTypes = new Set(communication.positives.map((item) => item.type));
+    if (positiveTypes.has('introduction')) strengths.push('Introduced yourself / established the interaction early.');
+    if (positiveTypes.has('empathy')) strengths.push('Used explicit empathic language.');
+    if (positiveTypes.has('permission')) strengths.push('Used respectful permission before sensitive questioning.');
+    if (positiveTypes.has('closure')) strengths.push('Closed the consultation explicitly.');
+    return strengths;
+  }
+
   getDebrief() {
     const priorities = this.getDebriefPriorities();
+    const missedEssential = priorities.essential.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
+    const missedCaseCritical = priorities.caseCritical.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
+    const missedRecommended = priorities.recommended.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
     return {
       score: this.getScore(),
       scoreBreakdown: this.getScoreBreakdown(),
       studentCoverage: this.getStudentCoverage(),
       engineResolvedCoverage: this.getCoverage(),
       missedRequired: this.getMissedFeedback(),
-      missedCaseCritical: priorities.caseCritical.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents)),
+      missedEssential,
+      missedCaseCritical,
+      missedRecommended,
+      missedDetails: [
+        ...missedEssential.map((id) => this.makeMissDetail(id, 'Essential')),
+        ...missedCaseCritical.map((id) => this.makeMissDetail(id, 'Case-critical')),
+        ...missedRecommended.map((id) => this.makeMissDetail(id, 'Recommended'))
+      ],
       criticalSafetyMisses: this.getCriticalMisses(),
       resolutionIssues: this.getResolutionIssues(),
-      communication: this.getCommunicationAssessment()
+      communication: this.getCommunicationAssessment(),
+      structure: this.getStructureAssessment(),
+      strengths: this.getStrengths()
     };
   }
 
@@ -799,10 +1035,20 @@ export class PatientEngine {
   }
 
   generateSummary() {
-    const section = (title, intentIds) => [title, intentIds.filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Not asked / incomplete]'].join('\n');
-    const patient = ['identity_name', 'identity_age', 'identity_dob', 'identity_sex', 'identity_residence'].filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Identity not assessed]';
-    const gyn = /female/i.test(this.case.identity.sex) ? section('Gynecological History:', ['gyn_history']) : 'Gynecological History:\nNot applicable.';
-    return ['Anamnesis Summary', '', `Patient: ${patient}`, '', section('Chief Complaint:', ['chief_complaint']), '', section('History Of Present Illness:', ['hpi_site', 'hpi_onset', 'hpi_activity_at_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_timing', 'hpi_exacerbating', 'hpi_relieving', 'hpi_severity', 'hpi_course']), '', section('Review Of Systems:', ['ros_general', 'ros_head_neck', 'ros_cardiovascular', 'ros_respiratory', 'ros_gastrointestinal', 'ros_genitourinary', 'ros_neurological', 'ros_musculoskeletal', 'ros_skin']), '', section('Past Medical History:', ['pmh_chronic_diseases', 'pmh_cardiovascular_disease', 'pmh_specialists', 'pmh_hospitalizations', 'pmh_operations', 'pmh_previous_exams']), '', section('Medication:', ['medication_regular', 'medication_nitroglycerin_previous', 'medication_otc_supplements', 'medication_adherence']), '', section('Allergies And Transfusions:', ['allergies', 'allergy_environment_food', 'allergy_pollen', 'allergy_reaction', 'transfusions']), '', gyn, '', section('Family History:', ['family_history']), '', section('Epidemiological History:', ['epidemiology']), '', section('Social And Functional History:', ['identity_occupation', 'social_living', 'daily_independence']), '', section('Substance Use:', ['substance_smoking', 'substance_alcohol', 'substance_caffeine', 'substance_drugs']), '', 'Terminology feedback:', ...(this.terminologyEvents.length ? this.terminologyEvents.map((event) => `- Used "${event.term}"; patient-friendly wording: ${event.suggestedPatientFriendlyQuestion}`) : ['None.'])].join('\n');
+    const visibleAreas = QUESTION_AREAS.filter((area) => area.id !== 'objective' && (area.id !== 'gynecological' || /female/i.test(this.case.identity.sex)));
+    const lines = ['Anamnesis Summary', ''];
+    for (const area of visibleAreas) {
+      const facts = [...area.intents, ...(area.optionalIntents ?? [])]
+        .filter((id) => this.askedIntents.has(id))
+        .map((id) => this.answerFor(id))
+        .filter(Boolean);
+      lines.push(`${area.title}:`);
+      lines.push(facts.length ? [...new Set(facts)].join(' ') : '[Not asked / incomplete]');
+      lines.push('');
+    }
+    lines.push('Terminology feedback:');
+    lines.push(...(this.terminologyEvents.length ? this.terminologyEvents.map((event) => `- Used "${event.term}"; patient-friendly wording: ${event.suggestedPatientFriendlyQuestion}`) : ['None.']));
+    return lines.join('\n').trim();
   }
 
   getDebugExport() {

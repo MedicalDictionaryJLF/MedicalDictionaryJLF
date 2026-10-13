@@ -4,7 +4,7 @@ import { PatientEngine } from './patientEngine.js';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, mountEmbeddedVitalsMonitor, stopEmbeddedVitalsMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js?v=132';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from './ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';

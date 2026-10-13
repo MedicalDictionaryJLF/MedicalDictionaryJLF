@@ -1,4 +1,4 @@
-import { getChecklistItemsByCategory } from './categoryModel.js';
+import { getChecklistItemsByCategory } from './categoryModel.js?v=134';
 
 export function renderModeLayout({ container, mode, engine, patientCase }) {
   if (!container || !engine) return;

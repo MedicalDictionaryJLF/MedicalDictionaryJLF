@@ -1,6 +1,6 @@
 export const janaKovacova = {
   "id": "abdominal_pain_cholecystitis",
-  "title": "Case 2",
+  "title": "Right upper abdominal pain",
   "difficulty": "Intermediate",
   "patientCard": "43-year-old woman with abdominal pain and nausea after a fatty meal.",
   "stationBrief": {
@@ -15,6 +15,7 @@ export const janaKovacova = {
     "interpretation": ""
   },
   "openingLine": "I have strong pain under my right ribs and I feel sick.",
+  "historySource": "I can give you the history myself.",
   "administrative": {
     "admissionTime": "this morning",
     "arrivalMethod": "My husband drove me here.",
@@ -49,6 +50,17 @@ export const janaKovacova = {
     "severity": "About 7 out of 10.",
     "course": "It is getting worse compared with yesterday."
   },
+  "rosDetails": {
+    "general": {"fever":"I had chills and I feel feverish.","weight":"No recent unintentional weight change.","fatigue":"I feel tired since the pain started.","nightSweats":"No night sweats.","appetite":"I do not feel like eating because I feel sick."},
+    "headNeck": {"headache":"No headache.","dizziness":"No dizziness.","vision":"No visual problems.","hearing":"No hearing problems.","swallowing":"No difficulty swallowing."},
+    "cardiovascular": {"chestPain":"No chest pain.","palpitations":"No palpitations.","edema":"No leg or ankle swelling.","syncope":"I have not fainted.","orthopnea":"No breathlessness when lying flat."},
+    "respiratory": {"dyspnea":"No shortness of breath.","cough":"No cough.","sputum":"No sputum.","hemoptysis":"I have not coughed up blood.","wheeze":"No wheezing."},
+    "gastrointestinal": {"nausea":"Yes, I feel nauseous.","vomiting":"I vomited once.","abdominalPain":"Yes, the pain is mainly under my right ribs.","bowelHabit":"No diarrhea, constipation, or change in bowel habit.","bleeding":"No black stool, blood in the stool, or vomiting blood.","jaundice":"My husband thought my eyes looked a little yellow this morning. I am not sure."},
+    "genitourinary": {"dysuria":"No pain or burning when passing urine.","frequency":"No increased frequency or urgency.","hematuria":"No blood in my urine.","flankPain":"No pain in the kidney area."},
+    "neurological": {"weakness":"No focal weakness.","sensory":"No numbness or tingling.","seizures":"No seizures.","speech":"No speech problem.","balance":"No balance problem."},
+    "musculoskeletal": {"joints":"No joint pain or swelling.","stiffness":"No unusual stiffness.","backPain":"No back pain."},
+    "skin": {"rash":"No rash.","pruritus":"No itching.","bruising":"No unusual bruising or bleeding."}
+  },
   "ros": {
     "general": "I feel tired and had chills. No weight loss or night sweats.",
     "headNeck": "No headache, dizziness, vision, hearing, or throat problems.",
@@ -70,6 +82,7 @@ export const janaKovacova = {
       "date": "No previous operation date because I have not had surgery.",
       "approach": "No previous operation approach because I have not had surgery."
     },
+    "anesthesiaHistory": "I have not had an operation, so I have no previous anaesthetic history.",
     "previousExams": "I had an abdominal ultrasound two years ago and they mentioned gallstones."
   },
   "allergies": "I am allergic to penicillin. I had a rash as a child.",
@@ -80,24 +93,59 @@ export const janaKovacova = {
   },
   "transfusions": "No transfusions.",
   "medication": {
-    "regular": "I do not take regular prescribed medicines.",
+    "regular": "I do not take any regular prescribed medicines.",
     "nitroglycerinPrevious": "No, I have never used nitroglycerin.",
     "otcSupplements": "Sometimes paracetamol. No supplements.",
-    "adherence": "No regular medication."
+    "adherence": "There is no regular medicine for me to miss.",
+    "details": {
+      "dose": "No regular prescription dose. When I take paracetamol it is usually 500 mg.",
+      "frequency": "No regular medicines. Paracetamol only occasionally when needed.",
+      "indication": "Paracetamol is only for occasional pain.",
+      "recentChanges": "No recent medication changes.",
+      "otc": "Occasional paracetamol bought without a prescription.",
+      "supplements": "No supplements or herbal products."
+    }
   },
   "gynHistory": "My periods are regular. Last menstrual period was about two weeks ago. I am not pregnant as far as I know. I have two children, both vaginal deliveries. No miscarriages.",
+  "gynDetails": {
+    "lmp": "My periods are regular and my last menstrual period was about two weeks ago.",
+    "pregnancy": "I do not think I am pregnant. My last period was normal.",
+    "contraception": "We use condoms for contraception.",
+    "obstetric": "I have been pregnant twice and have two children, both vaginal deliveries. No miscarriages."
+  },
   "familyHistory": "My mother had gallbladder surgery. Father has hypertension.",
+  "familyDetails": {
+    "cardiovascular": "My father has high blood pressure. No premature heart attacks or strokes that I know of.",
+    "diabetes": "No diabetes in my close family that I know of.",
+    "cancer": "No important cancer history in my close family.",
+    "inherited": "No known inherited disease. My mother had gallstones and had her gallbladder removed."
+  },
   "epidemiology": "No travel, no sick contacts, no farm animals. We have a cat. No tick bite recently.",
+  "epidemiologyDetails": {
+    "travel": "No recent travel.",
+    "contacts": "No sick or infectious contacts.",
+    "animalsTicks": "We have a cat, but no farm-animal exposure and no recent tick bite.",
+    "vaccinationFood": "My routine vaccinations are up to date as far as I know. The pain started after a fatty meal, not after suspicious food or unsafe water."
+  },
   "social": {
     "living": "I am married and live with my husband and children in a house.",
     "independence": "I am independent in all daily activities."
   },
+  "socialDetails": {
+    "household": "I live with my husband and our two children.",
+    "housing": "We live in a house and I normally manage the stairs without difficulty.",
+    "support": "My husband is with me and can help at home.",
+    "baselineFunction": "Normally I am fully independent, work as an accountant, and manage all daily activities without help.",
+    "currentFunction": "Today the abdominal pain makes bending, walking quickly, and doing normal household tasks difficult."
+  },
   "substances": {
-    "smoking": "I do not smoke.",
+    "smoking": "I do not smoke and I do not vape.",
     "alcohol": "Rarely, maybe a glass of wine once a month.",
     "caffeine": "One coffee a day.",
     "drugs": "No recreational drugs."
   },
+  "substanceDetails": {"smokingQuantity":"I do not smoke, so there is nothing to quantify."},
+  "closure": {"anythingElse":"No, the pain, nausea, and chills are the main problems.","concerns":"I am worried it might be my gallbladder because my mother needed gallbladder surgery.","understanding":"Yes, I understand. I do not have another question right now."},
   "vitals": {
     "bp": "Her blood pressure is 130/80 mmHg.",
     "hr": "Heart rate is 104 per minute.",
@@ -178,5 +226,21 @@ export const janaKovacova = {
     "Known gallstones",
     "Possible jaundice reported by family"
   ],
+  "debriefPriorities": {
+    "essential": [
+      "chief_complaint","hpi_site","hpi_onset","hpi_character","hpi_radiation","hpi_associated_symptoms","hpi_timing","hpi_exacerbating","hpi_relieving","hpi_severity","hpi_course","allergies","allergy_reaction","medication_regular"
+    ],
+    "caseCritical": [
+      "ros_fever","ros_nausea","ros_vomiting","ros_jaundice","pmh_previous_exams","gyn_pregnancy"
+    ],
+    "recommended": [
+      "identity_name","identity_age","identity_residence","history_source","administrative_admission_time","administrative_arrival_method","ros_bowel_habit","ros_gi_bleeding","ros_dysuria","ros_flank_pain","pmh_chronic_diseases","pmh_hospitalizations","pmh_operations","medication_otc","family_inherited","gyn_lmp","gyn_obstetric","social_baseline_function","social_current_function","closure_anything_else","closure_concerns"
+    ],
+    "optional": ["substance_caffeine","family_cancer","epi_animals_ticks"],
+    "notRelevant": ["medication_nitroglycerin_previous"],
+    "criticalSafety": [
+      "chief_complaint","hpi_onset","hpi_severity","ros_fever","ros_vomiting","ros_jaundice","allergies","allergy_reaction","gyn_pregnancy","pmh_previous_exams"
+    ]
+  },
   "expectedDiagnosisIdea": "Possible acute cholecystitis or biliary obstruction. Needs abdominal exam, inflammatory markers, liver tests, bilirubin, ultrasound, and surgical review."
 };

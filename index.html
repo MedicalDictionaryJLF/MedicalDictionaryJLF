@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Medical Dictionary </title>
-  <link rel="stylesheet" href="assets/css/app.css?v=77">
+  <link rel="stylesheet" href="assets/css/app.css?v=80">
 </head>
 <body>
   <div id="app">    <header>
@@ -1250,10 +1250,10 @@
                     </select>
                   </label>
                   <label class="anamnesis-toolbar-field">
-                    <span>Depiction</span>
+                    <span data-anam-key="v80_depiction">Depiction</span>
                     <select id="anamnesis-layout-mode" name="anamnesis_layout_mode">
-                      <option value="desktop">PC</option>
-                      <option value="phone">Phone / Tablet</option>
+                      <option value="desktop" data-anam-key="v80_pc">PC</option>
+                      <option value="phone" data-anam-key="v80_phone_tablet">Phone / Tablet</option>
                     </select>
                   </label>
                   <label class="anamnesis-toolbar-field">
@@ -1301,6 +1301,17 @@
                   <label><input type="radio" name="ident_sex" value="female" /> Female</label>
                 </div>
                 <input name="ident_city" placeholder="Address (City)" />
+              </div>
+              <div class="anam-inline-group anam-history-source">
+                <h4 data-anam-key="v80_history_source_heading">Anamnesis obtained from</h4>
+                <div class="anam-row">
+                  <label data-anam-key="v80_source_patient"><input type="checkbox" name="ident_source_patient" /> Patient</label>
+                  <label data-anam-key="v80_source_relative"><input type="checkbox" name="ident_source_relative" /> Relative / caregiver</label>
+                  <label data-anam-key="v80_source_documentation"><input type="checkbox" name="ident_source_documentation" /> Medical documentation</label>
+                  <label data-anam-key="v80_source_healthcare"><input type="checkbox" name="ident_source_healthcare" /> EMS / healthcare professional</label>
+                  <label data-anam-key="v80_source_combination"><input type="checkbox" name="ident_source_combination" /> Combination</label>
+                </div>
+                <input name="ident_source_other" data-anam-key="v80_source_other" placeholder="Other source / details" />
               </div>
             </div>
 
@@ -1509,90 +1520,46 @@
 
             <div class="anam-section">
               <h3>5. Past Medical History</h3>
-              <div class="anam-grid">
-                <div>
-                  <strong>Hypertension</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_htn" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_htn" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_htn_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Diabetes mellitus</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_dm" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_dm" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_dm_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Dyslipidemia</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_dyslip" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_dyslip" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_dyslip_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Ischemic heart disease / CAD</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_cad" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_cad" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_cad_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Chronic heart failure</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_chf" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_chf" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_chf_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Chronic kidney disease</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_ckd" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_ckd" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_ckd_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Chronic lung disease (COPD / asthma)</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_copd" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_copd" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_copd_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Thyroid disease (hypo / hyper)</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_thyroid" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_thyroid" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_thyroid_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Chronic liver disease</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_liver" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_liver" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_liver_notes" placeholder="Notes" />
-                </div>
-                <div>
-                  <strong>Other chronic diseases</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="pmh_other" value="yes" /> Yes</label>
-                    <label><input type="radio" name="pmh_other" value="no" /> No</label>
-                  </div>
-                  <input name="pmh_other_notes" placeholder="Notes" />
+              <p class="anam-section-intro">Record known chronic disease first, then clarify diagnosis, control, treatment, complications and follow-up for every positive item.</p>
+
+              <div class="anam-inline-group">
+                <h4>Common chronic diseases</h4>
+                <div class="anam-condition-grid">
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_htn" data-anam-key="anam_hypertension">Hypertension</strong><div class="anam-row"><label><input type="radio" name="pmh_htn" value="yes" /> Yes</label><label><input type="radio" name="pmh_htn" value="no" /> No</label></div><input name="pmh_htn_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_dm" data-anam-key="anam_diabetes_mellitus">Diabetes mellitus</strong><div class="anam-row"><label><input type="radio" name="pmh_dm" value="yes" /> Yes</label><label><input type="radio" name="pmh_dm" value="no" /> No</label></div><input name="pmh_dm_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_dyslip" data-anam-key="anam_dyslipidemia">Dyslipidemia</strong><div class="anam-row"><label><input type="radio" name="pmh_dyslip" value="yes" /> Yes</label><label><input type="radio" name="pmh_dyslip" value="no" /> No</label></div><input name="pmh_dyslip_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-key="ext_pmh_obesity" data-anam-question-key="pmh_obesity">Obesity / metabolic disease</strong><div class="anam-row"><label><input type="radio" name="pmh_obesity" value="yes" /> Yes</label><label><input type="radio" name="pmh_obesity" value="no" /> No</label></div><input name="pmh_obesity_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-key="ext_pmh_gout" data-anam-question-key="pmh_gout">Gout / hyperuricaemia</strong><div class="anam-row"><label><input type="radio" name="pmh_gout" value="yes" /> Yes</label><label><input type="radio" name="pmh_gout" value="no" /> No</label></div><input name="pmh_gout_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_cad" data-anam-key="anam_ischemic_heart_disease_cad">Ischemic heart disease / CAD</strong><div class="anam-row"><label><input type="radio" name="pmh_cad" value="yes" /> Yes</label><label><input type="radio" name="pmh_cad" value="no" /> No</label></div><input name="pmh_cad_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_chf" data-anam-key="anam_chronic_heart_failure">Chronic heart failure</strong><div class="anam-row"><label><input type="radio" name="pmh_chf" value="yes" /> Yes</label><label><input type="radio" name="pmh_chf" value="no" /> No</label></div><input name="pmh_chf_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_arrhythmia">Atrial fibrillation / other arrhythmia</strong><div class="anam-row"><label><input type="radio" name="pmh_arrhythmia" value="yes" /> Yes</label><label><input type="radio" name="pmh_arrhythmia" value="no" /> No</label></div><input name="pmh_arrhythmia_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_valvular">Valvular heart disease</strong><div class="anam-row"><label><input type="radio" name="pmh_valvular" value="yes" /> Yes</label><label><input type="radio" name="pmh_valvular" value="no" /> No</label></div><input name="pmh_valvular_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_stroke_tia">Stroke / TIA</strong><div class="anam-row"><label><input type="radio" name="pmh_stroke_tia" value="yes" /> Yes</label><label><input type="radio" name="pmh_stroke_tia" value="no" /> No</label></div><input name="pmh_stroke_tia_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_pad">Peripheral arterial disease</strong><div class="anam-row"><label><input type="radio" name="pmh_pad" value="yes" /> Yes</label><label><input type="radio" name="pmh_pad" value="no" /> No</label></div><input name="pmh_pad_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_vte">Previous DVT / pulmonary embolism</strong><div class="anam-row"><label><input type="radio" name="pmh_vte" value="yes" /> Yes</label><label><input type="radio" name="pmh_vte" value="no" /> No</label></div><input name="pmh_vte_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_ckd" data-anam-key="anam_chronic_kidney_disease">Chronic kidney disease</strong><div class="anam-row"><label><input type="radio" name="pmh_ckd" value="yes" /> Yes</label><label><input type="radio" name="pmh_ckd" value="no" /> No</label></div><input name="pmh_ckd_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_nephrolithiasis">Recurrent nephrolithiasis</strong><div class="anam-row"><label><input type="radio" name="pmh_nephrolithiasis" value="yes" /> Yes</label><label><input type="radio" name="pmh_nephrolithiasis" value="no" /> No</label></div><input name="pmh_nephrolithiasis_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_copd" data-anam-key="anam_chronic_lung_disease_copd_asthma">Chronic lung disease (COPD / asthma)</strong><div class="anam-row"><label><input type="radio" name="pmh_copd" value="yes" /> Yes</label><label><input type="radio" name="pmh_copd" value="no" /> No</label></div><input name="pmh_copd_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_osa">Obstructive sleep apnoea</strong><div class="anam-row"><label><input type="radio" name="pmh_osa" value="yes" /> Yes</label><label><input type="radio" name="pmh_osa" value="no" /> No</label></div><input name="pmh_osa_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_thyroid" data-anam-key="anam_thyroid_disease_hypo_hyper">Thyroid disease (hypo / hyper)</strong><div class="anam-row"><label><input type="radio" name="pmh_thyroid" value="yes" /> Yes</label><label><input type="radio" name="pmh_thyroid" value="no" /> No</label></div><input name="pmh_thyroid_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_liver" data-anam-key="anam_chronic_liver_disease">Chronic liver disease</strong><div class="anam-row"><label><input type="radio" name="pmh_liver" value="yes" /> Yes</label><label><input type="radio" name="pmh_liver" value="no" /> No</label></div><input name="pmh_liver_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_gi_ulcer_reflux">GERD / peptic ulcer disease</strong><div class="anam-row"><label><input type="radio" name="pmh_gi_ulcer_reflux" value="yes" /> Yes</label><label><input type="radio" name="pmh_gi_ulcer_reflux" value="no" /> No</label></div><input name="pmh_gi_ulcer_reflux_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_ibd">Inflammatory bowel disease</strong><div class="anam-row"><label><input type="radio" name="pmh_ibd" value="yes" /> Yes</label><label><input type="radio" name="pmh_ibd" value="no" /> No</label></div><input name="pmh_ibd_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_epilepsy">Epilepsy / seizures</strong><div class="anam-row"><label><input type="radio" name="pmh_epilepsy" value="yes" /> Yes</label><label><input type="radio" name="pmh_epilepsy" value="no" /> No</label></div><input name="pmh_epilepsy_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_migraine">Migraine / recurrent severe headache</strong><div class="anam-row"><label><input type="radio" name="pmh_migraine" value="yes" /> Yes</label><label><input type="radio" name="pmh_migraine" value="no" /> No</label></div><input name="pmh_migraine_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_oa">Osteoarthritis</strong><div class="anam-row"><label><input type="radio" name="pmh_oa" value="yes" /> Yes</label><label><input type="radio" name="pmh_oa" value="no" /> No</label></div><input name="pmh_oa_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_autoimmune">Rheumatoid / autoimmune disease</strong><div class="anam-row"><label><input type="radio" name="pmh_autoimmune" value="yes" /> Yes</label><label><input type="radio" name="pmh_autoimmune" value="no" /> No</label></div><input name="pmh_autoimmune_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_anemia">Chronic anaemia</strong><div class="anam-row"><label><input type="radio" name="pmh_anemia" value="yes" /> Yes</label><label><input type="radio" name="pmh_anemia" value="no" /> No</label></div><input name="pmh_anemia_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_bleeding_disorder">Bleeding disorder</strong><div class="anam-row"><label><input type="radio" name="pmh_bleeding_disorder" value="yes" /> Yes</label><label><input type="radio" name="pmh_bleeding_disorder" value="no" /> No</label></div><input name="pmh_bleeding_disorder_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_thrombophilia">Thrombophilia / recurrent thrombosis</strong><div class="anam-row"><label><input type="radio" name="pmh_thrombophilia" value="yes" /> Yes</label><label><input type="radio" name="pmh_thrombophilia" value="no" /> No</label></div><input name="pmh_thrombophilia_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_malignancy">Current / previous malignancy</strong><div class="anam-row"><label><input type="radio" name="pmh_malignancy" value="yes" /> Yes</label><label><input type="radio" name="pmh_malignancy" value="no" /> No</label></div><input name="pmh_malignancy_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_psychiatric">Psychiatric illness</strong><div class="anam-row"><label><input type="radio" name="pmh_psychiatric" value="yes" /> Yes</label><label><input type="radio" name="pmh_psychiatric" value="no" /> No</label></div><input name="pmh_psychiatric_notes" placeholder="Notes" /></div>
+                  <div class="anam-condition-item"><strong class="anam-question-label" data-anam-question-key="pmh_other">Other chronic diseases</strong><div class="anam-row"><label><input type="radio" name="pmh_other" value="yes" /> Yes</label><label><input type="radio" name="pmh_other" value="no" /> No</label></div><input name="pmh_other_notes" placeholder="Notes" /></div>
                 </div>
               </div>
-              <div style="margin-top:8px">
-                <strong>Specialist Care</strong>
+
+              <div class="anam-inline-group">
+                <strong class="anam-question-label" data-anam-question-key="pmh_specialist" data-anam-key="anam_specialist_care">Specialist Care</strong>
                 <div class="anam-row">
                   <label><input type="radio" name="pmh_specialist" value="no" /> No</label>
                   <label><input type="radio" name="pmh_specialist" value="yes" /> Yes</label>
@@ -1610,51 +1577,70 @@
                   <label><input type="checkbox" name="pmh_spec_psych" /> Psychiatrist</label>
                   <input name="pmh_spec_other" placeholder="Other" />
                 </div>
+                <input name="pmh_specialist_details" placeholder="Reason / diagnosis / frequency of visits / last review / planned follow-up" />
               </div>
-              <div style="margin-top:8px">
-                <strong>Operations & Hospitalizations</strong>
+
+              <div class="anam-inline-group">
+                <strong>Previous hospitalizations / operations</strong>
+                <div class="anam-row">
+                  <span class="anam-question-label" data-anam-question-key="pmh_previous_hospitalization">Previous hospitalization</span>
+                  <label><input type="radio" name="pmh_previous_hospitalization" value="yes" /> Yes</label>
+                  <label><input type="radio" name="pmh_previous_hospitalization" value="no" /> No</label>
+                </div>
+                <div class="anam-row">
+                  <span class="anam-question-label" data-anam-question-key="pmh_previous_operations">Previous operations</span>
+                  <label><input type="radio" name="pmh_previous_operations" value="yes" /> Yes</label>
+                  <label><input type="radio" name="pmh_previous_operations" value="no" /> No</label>
+                </div>
                 <div class="anam-repeater" data-repeater="pmh_operations">
                   <div class="anam-repeater-head">
-                    <span>Date</span><span>Procedure/Diagnosis</span><span>Outcome</span><span></span>
+                    <span class="anam-question-label">Date</span><span class="anam-question-label">Procedure/Diagnosis</span><span class="anam-question-label">Outcome</span><span></span>
                   </div>
                   <div class="anam-repeater-body" id="pmh-operations-rows"></div>
                   <button type="button" id="pmh-operations-add" class="anam-add-row">+</button>
                 </div>
+                <input name="pmh_operations_complications" placeholder="Complications / ICU / infection / bleeding / thrombosis / other relevant outcome" />
+
+                <div id="pmh-anesthesia-wrap" class="anam-anesthesia-inline hidden">
+                  <h4>Previous anaesthesia / perioperative problems</h4>
+                  <div class="anam-row">
+                    <span class="anam-question-label" data-anam-question-key="pmh_anesthesia_previous">Previous anaesthesia</span>
+                    <label><input type="radio" name="pmh_anesthesia_previous" value="yes" /> Yes</label>
+                    <label><input type="radio" name="pmh_anesthesia_previous" value="no" /> No</label>
+                  </div>
+                  <textarea name="pmh_anesthesia_details" placeholder="Type of anaesthesia, when, procedure, recovery and relevant details"></textarea>
+                  <div class="anam-row">
+                    <label><input type="checkbox" name="pmh_anesthesia_difficult_airway" /> Difficult airway / intubation</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_ponv" /> Severe postoperative nausea / vomiting</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_allergy" /> Anaesthetic reaction / allergy</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_slow_wake" /> Delayed awakening</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_icu" /> Unexpected ICU admission</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_family_problem" /> Family anaesthetic complication</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_mh" /> Malignant hyperthermia in patient / family</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_awareness" /> Awareness during anaesthesia</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_difficult_iv" /> Difficult IV access</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_bleeding_transfusion" /> Major perioperative bleeding / transfusion</label>
+                    <label><input type="checkbox" name="pmh_anesthesia_thrombosis" /> Postoperative thrombosis / PE</label>
+                  </div>
+                  <textarea name="pmh_anesthesia_problem_notes" placeholder="Anaesthesia complication details"></textarea>
+                </div>
+
                 <div class="anam-row">
-                  <span>Planned operation now</span>
+                  <span class="anam-question-label" data-anam-question-key="pmh_planned_op">Planned operation now</span>
                   <label><input type="radio" name="pmh_planned_op" value="yes" /> Yes</label>
                   <label><input type="radio" name="pmh_planned_op" value="no" /> No</label>
                 </div>
                 <div id="pmh-planned-op-wrap" class="hidden" style="margin-top:8px">
                   <div class="anam-repeater" data-repeater="pmh_planned_op">
-                    <div class="anam-repeater-head">
-                      <span>Date</span><span>Procedure/Diagnosis</span><span>Outcome</span><span></span>
-                    </div>
+                    <div class="anam-repeater-head"><span>Date</span><span>Procedure/Diagnosis</span><span>Outcome</span><span></span></div>
                     <div class="anam-repeater-body" id="pmh-planned-op-rows"></div>
                     <button type="button" id="pmh-planned-op-add" class="anam-add-row">+</button>
                   </div>
                 </div>
               </div>
-              <div class="anam-capture-subsection">
-                <h4>Previous anaesthesia / perioperative problems</h4>
-                <div class="anam-row">
-                  <span>Previous anaesthesia</span>
-                  <label><input type="radio" name="pmh_anesthesia_previous" value="yes" /> Yes</label>
-                  <label><input type="radio" name="pmh_anesthesia_previous" value="no" /> No</label>
-                </div>
-                <textarea name="pmh_anesthesia_details" placeholder="Type of anaesthesia, when, procedure, recovery and relevant details"></textarea>
-                <div class="anam-row">
-                  <label><input type="checkbox" name="pmh_anesthesia_difficult_airway" /> Difficult airway / intubation</label>
-                  <label><input type="checkbox" name="pmh_anesthesia_ponv" /> Severe postoperative nausea / vomiting</label>
-                  <label><input type="checkbox" name="pmh_anesthesia_allergy" /> Anaesthetic reaction / allergy</label>
-                  <label><input type="checkbox" name="pmh_anesthesia_slow_wake" /> Delayed awakening</label>
-                  <label><input type="checkbox" name="pmh_anesthesia_icu" /> Unexpected ICU admission</label>
-                  <label><input type="checkbox" name="pmh_anesthesia_family_problem" /> Family anaesthetic complication</label>
-                </div>
-                <textarea name="pmh_anesthesia_problem_notes" placeholder="Anaesthesia complication details"></textarea>
-              </div>
-              <div style="margin-top:8px">
-                <strong>Previous Examinations</strong>
+
+              <div class="anam-inline-group">
+                <strong class="anam-question-label" data-anam-question-key="pmh_exam_details">Previous Examinations</strong>
                 <div class="anam-row">
                   <label><input type="checkbox" name="pmh_exam_ecg" /> ECG</label>
                   <label><input type="checkbox" name="pmh_exam_blood" /> Blood tests</label>
@@ -1663,6 +1649,7 @@
                   <label><input type="checkbox" name="pmh_exam_mri" /> MRI</label>
                   <input name="pmh_exam_other" placeholder="Other" />
                 </div>
+                <input name="pmh_exam_details" placeholder="When / why / important result / where performed" />
               </div>
             </div>
 
@@ -1688,14 +1675,16 @@
             </div>
             <div class="anam-section">
               <h3>7. Medication</h3>
+              <p class="anam-section-intro">Record regular prescribed medicines first. Clarify the exact drug, dose, frequency and indication before adding safety details.</p>
               <div class="anam-repeater" data-repeater="medication_list">
                 <div class="anam-repeater-head">
-                  <span data-anam-key="anam_drug">Drug</span><span data-anam-key="anam_dose">Dose</span><span data-anam-key="anam_medication_frequency">Frequency</span><span data-anam-key="anam_indication">Indication</span><span></span><span></span>
+                  <span class="anam-question-label" data-anam-key="anam_drug">Drug</span><span class="anam-question-label" data-anam-key="anam_dose">Dose</span><span class="anam-question-label" data-anam-key="anam_medication_frequency">Frequency</span><span class="anam-question-label" data-anam-key="anam_indication">Indication</span><span></span><span></span>
                 </div>
                 <div class="anam-repeater-body" id="medication-rows"></div>
                 <button type="button" id="medication-add" class="anam-add-row">+</button>
               </div>
-              <div class="anam-capture-subsection">
+
+              <div class="anam-inline-group anam-medication-safety">
                 <h4>Medication safety check</h4>
                 <div class="anam-row">
                   <label><input type="checkbox" name="med_anticoagulant" /> Anticoagulant</label>
@@ -1705,36 +1694,195 @@
                   <label><input type="checkbox" name="med_immunosuppressant" /> Immunosuppressant</label>
                   <label><input type="checkbox" name="med_hormonal" /> Hormonal contraception / therapy</label>
                 </div>
-                <input name="med_last_dose_notes" placeholder="Recent changes, adherence and last relevant dose" />
+                <div class="anam-grid">
+                  <input name="med_last_dose_notes" placeholder="Recent changes, adherence and last relevant dose" />
+                  <input name="med_adverse_effects" placeholder="Adverse effects / intolerance / medication problems" />
+                </div>
               </div>
+
               <div class="anam-row">
                 <span class="anam-med-question" data-anam-key="anam_over_the_counter_medicine">Regular use of over the counter medicine</span>
                 <label data-anam-key="anam_yes"><input type="radio" name="med_otc" value="yes" /> Yes</label>
                 <label data-anam-key="anam_no"><input type="radio" name="med_otc" value="no" /> No</label>
               </div>
-              <div id="med-otc-details-wrap" class="hidden">
-                <input name="med_otc_details" data-anam-key="anam_notes" placeholder="Notes" />
-              </div>
+              <div id="med-otc-details-wrap" class="hidden"><input name="med_otc_details" data-anam-key="anam_notes" placeholder="Notes" /></div>
               <div class="anam-row">
                 <span class="anam-med-question" data-anam-key="anam_supplements_vitamins_herbal_products">Regular use of supplements / vitamins / herbal products</span>
                 <label data-anam-key="anam_yes"><input type="radio" name="med_supplements" value="yes" /> Yes</label>
                 <label data-anam-key="anam_no"><input type="radio" name="med_supplements" value="no" /> No</label>
               </div>
-              <div id="med-supplements-details-wrap" class="hidden">
-                <input name="med_supplements_details" data-anam-key="anam_notes" placeholder="Notes" />
-              </div>
+              <div id="med-supplements-details-wrap" class="hidden"><input name="med_supplements_details" data-anam-key="anam_notes" placeholder="Notes" /></div>
               <div class="anam-row">
                 <span class="anam-med-question" data-anam-key="anam_history_of_misuse_of_prescribed_drugs">History of misuse of prescribed drugs</span>
                 <label data-anam-key="anam_yes"><input type="radio" name="med_misuse" value="yes" /> Yes</label>
                 <label data-anam-key="anam_no"><input type="radio" name="med_misuse" value="no" /> No</label>
               </div>
-              <div id="med-misuse-notes-wrap" class="hidden">
-                <input name="med_misuse_notes" data-anam-key="anam_notes" placeholder="Notes" />
+              <div id="med-misuse-notes-wrap" class="hidden"><input name="med_misuse_notes" data-anam-key="anam_notes" placeholder="Notes" /></div>
+            </div>
+
+            <div class="anam-section">
+              <h3 data-anam-key="anam_n_9_family_history">8. Family History</h3>
+              <p class="anam-section-intro">Ask about important disease in first-degree relatives and clarify age at diagnosis, premature disease, cause of death and repeated patterns in the family.</p>
+              <div class="anam-repeater" data-repeater="family_history_details">
+                <div class="anam-repeater-head">
+                  <span class="anam-question-label" data-anam-key="anam_choroba">Disease</span><span class="anam-question-label" data-anam-key="anam_detaily">Details</span><span class="anam-question-label" data-anam-key="anam_relation_to_p">Relation to p.</span><span></span>
+                </div>
+                <div class="anam-repeater-body" id="family-history-rows"></div>
+                <button type="button" id="family-history-add" class="anam-add-row">+</button>
+              </div>
+              <div class="anam-row">
+                <span class="anam-question-label" data-anam-key="anam_parents_alive">Parents alive</span>
+                <label data-anam-key="anam_both"><input type="checkbox" name="family_parents_both" /> Both</label>
+                <label data-anam-key="anam_one"><input type="checkbox" name="family_parents_one" /> One</label>
+                <label data-anam-key="anam_none"><input type="checkbox" name="family_parents_none" /> None</label>
+              </div>
+              <div class="anam-grid">
+                <input name="family_mother_cause" data-anam-key="anam_mother_cause_of_death" placeholder="Mother cause of death" />
+                <input name="family_father_cause" data-anam-key="anam_father_cause_of_death" placeholder="Father cause of death" />
+                <input name="family_mother_age" placeholder="Mother: current age / age at death" />
+                <input name="family_father_age" placeholder="Father: current age / age at death" />
+                <input name="family_siblings" placeholder="Siblings: number / major illnesses / premature deaths" />
+                <input name="family_children" placeholder="Children: major illnesses / hereditary concerns" />
+              </div>
+              <div class="anam-inline-group">
+                <strong>Important familial patterns to ask about</strong>
+                <div class="anam-row">
+                  <label><input type="checkbox" name="family_premature_cvd" /> Premature cardiovascular disease</label>
+                  <label><input type="checkbox" name="family_stroke" /> Stroke</label>
+                  <label><input type="checkbox" name="family_diabetes" /> Diabetes</label>
+                  <label><input type="checkbox" name="family_cancer" /> Cancer</label>
+                  <label><input type="checkbox" name="family_vte" /> DVT / PE / thrombophilia</label>
+                  <label><input type="checkbox" name="family_renal" /> Renal disease</label>
+                  <label><input type="checkbox" name="family_autoimmune" /> Autoimmune disease</label>
+                  <label><input type="checkbox" name="family_neurologic" /> Neurological disease</label>
+                  <label><input type="checkbox" name="family_psychiatric" /> Psychiatric illness</label>
+                  <label><input type="checkbox" name="family_genetic" /> Hereditary / genetic disease</label>
+                  <label><input type="checkbox" name="family_sudden_death" /> Sudden unexplained death</label>
+                </div>
+                <input name="family_pattern_notes" placeholder="Age at diagnosis / relation / clustering / relevant details" />
+              </div>
+            </div>
+            <div class="anam-section">
+              <h3 data-anam-key="anam_n_10_epidemiological_history">9. Epidemiological History</h3>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_travel" /> Recent travel abroad (12 months)</label>
+                <input name="epi_travel_where" placeholder="Where" />
+                <label><input type="checkbox" name="epi_pets" /> Pets / farm animals</label>
+                <input name="epi_pets_which" placeholder="Which" />
+              </div>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_sick_contacts" /> Recent infectious / sick contacts</label>
+                <input name="epi_sick_contacts_details" placeholder="Who / illness / timing" />
+                <label><input type="checkbox" name="epi_tb_exposure" /> Tuberculosis exposure</label>
+                <label><input type="checkbox" name="epi_tick_insect" /> Tick / insect exposure</label>
+              </div>
+              <div class="anam-row">
+                <label><input type="checkbox" name="epi_vaccination_review" /> Vaccination status reviewed</label>
+                <input name="epi_vaccination_notes" placeholder="Relevant vaccines / missing doses / reactions" />
+                <label><input type="checkbox" name="epi_covid_vax" /> COVID-19 vaccination</label>
+                <input name="epi_covid_vax_number" placeholder="Number" />
+                <label><input type="checkbox" name="epi_covid_infection" /> COVID-19 infection</label>
+                <input name="epi_covid_infection_number" placeholder="Number" />
+              </div>
+            </div>
+
+            <div class="anam-section">
+              <h3 data-anam-key="anam_n_11_social_history">10. Social History</h3>
+              <p class="anam-section-intro">Document the patient's living context, function and support. Keep sensitive questions private and clinically relevant.</p>
+
+              <div class="anam-social-layout">
+                <div class="anam-inline-group">
+                  <h4>Employment & occupation</h4>
+                  <div class="anam-row">
+                    <span class="anam-question-label" data-anam-question-key="social_working">Employment</span>
+                    <label><input type="checkbox" name="social_working" /> Working</label>
+                    <label><input type="checkbox" name="social_retired" /> Retired</label>
+                    <label><input type="checkbox" name="social_unemployed" /> Unemployed</label>
+                    <input name="social_unemployed_how_long" placeholder="How long" />
+                  </div>
+                  <input name="social_occupation" placeholder="Occupation / previous jobs" />
+                  <input name="social_occupational_exposure" placeholder="Relevant exposures: dust, asbestos, chemicals, infection, heavy lifting, shift work" />
+                </div>
+
+                <div class="anam-inline-group">
+                  <h4>Relationships & household</h4>
+                  <div class="anam-row">
+                    <span class="anam-question-label" data-anam-question-key="social_marital_status">Marital status</span>
+                    <label><input type="checkbox" name="social_single" /> Single</label>
+                    <label><input type="checkbox" name="social_married" /> Married</label>
+                    <label><input type="checkbox" name="social_divorced" /> Divorced</label>
+                    <label><input type="checkbox" name="social_widowed" /> Widowed</label>
+                  </div>
+                  <div class="anam-row">
+                    <span class="anam-question-label" data-anam-question-key="social_living_situation">Living situation</span>
+                    <label><input type="checkbox" name="social_alone" /> Alone</label>
+                    <label><input type="checkbox" name="social_family" /> With family</label>
+                    <input name="social_other" placeholder="Other" />
+                  </div>
+                </div>
+
+                <div class="anam-inline-group">
+                  <h4>Housing & access</h4>
+                  <div class="anam-row">
+                    <span class="anam-question-label" data-anam-question-key="social_housing">Housing</span>
+                    <label><input type="checkbox" id="social-house" name="social_house" /> House</label>
+                    <label><input type="checkbox" id="social-flat" name="social_flat" /> Flat</label>
+                    <label><input type="checkbox" id="social-homeless" name="social_homeless" /> Homeless</label>
+                  </div>
+                  <div id="social-house-wrap" class="hidden"><textarea name="social_house_notes" placeholder="House notes / access barriers"></textarea></div>
+                  <div id="social-flat-wrap" class="hidden">
+                    <input name="social_flat_floor" placeholder="Which floor" />
+                    <div class="anam-row"><label><input type="checkbox" name="social_elevator_yes" /> Elevator yes</label><label><input type="checkbox" name="social_elevator_no" /> Elevator no</label></div>
+                    <textarea name="social_flat_notes" placeholder="Flat notes / access barriers"></textarea>
+                  </div>
+                  <div id="social-homeless-wrap" class="hidden"><textarea name="social_homeless_notes" placeholder="Homeless notes / current shelter / support"></textarea></div>
+                </div>
+
+                <div class="anam-inline-group">
+                  <h4 data-anam-key="v80_function_mobility">Function & mobility</h4>
+                  <div class="anam-function-comparison">
+                    <div class="anam-function-period">
+                      <strong data-anam-key="v80_baseline_function">Usual / baseline function before current illness</strong>
+                      <div class="anam-grid">
+                        <textarea name="social_function_adl" data-anam-key="v80_baseline_adl" placeholder="Baseline ADLs / independence: washing, dressing, meals, shopping, medication, finances"></textarea>
+                        <textarea name="social_mobility_exercise" data-anam-key="v80_baseline_mobility" placeholder="Baseline mobility / exercise tolerance / walking distance / stairs / mobility aids"></textarea>
+                      </div>
+                    </div>
+                    <div class="anam-function-period">
+                      <strong data-anam-key="v80_current_function">Current function during this illness</strong>
+                      <div class="anam-grid">
+                        <textarea name="social_current_function_adl" data-anam-key="v80_current_adl" placeholder="Current ADLs / independence and any new assistance needed"></textarea>
+                        <textarea name="social_current_mobility" data-anam-key="v80_current_mobility" placeholder="Current mobility / walking distance / stairs / mobility aids compared with baseline"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="anam-inline-group">
+                  <h4>Support & lifestyle</h4>
+                  <div class="anam-grid">
+                    <textarea name="social_support" placeholder="Family, caregiver, home nursing, social services and other support"></textarea>
+                    <textarea name="social_diet" placeholder="Diet / appetite / relevant restrictions"></textarea>
+                    <textarea name="social_sleep" placeholder="Sleep pattern / snoring / witnessed apnoea / daytime sleepiness"></textarea>
+                  </div>
+                </div>
+
+                <div class="anam-inline-group anam-sensitive-block">
+                  <h4>Sexual history <span class="small">(optional, ask privately when clinically relevant)</span></h4>
+                  <p class="anam-section-intro">Use a non-judgmental approach and document only information relevant to the clinical problem.</p>
+                  <div class="anam-grid">
+                    <textarea name="sexual_partners" placeholder="Partners / relationship context"></textarea>
+                    <textarea name="sexual_practices" placeholder="Relevant sexual practices / exposure sites"></textarea>
+                    <textarea name="sexual_protection" placeholder="Condom / barrier use and contraception"></textarea>
+                    <textarea name="sexual_sti" placeholder="Previous STI / testing / symptoms"></textarea>
+                    <textarea name="sexual_pregnancy_intentions" placeholder="Pregnancy possibility / intentions when relevant"></textarea>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div id="anam-gyn-section" class="anam-section hidden">
-              <h3 data-anam-key="anam_n_8_gynecological_history_females">8. Gynecological History (Females)</h3>
+              <h3 data-anam-key="anam_n_8_gynecological_history_females">11. Gynecological History (Females)</h3>
               <div class="anam-gyn-table-wrap">
                 <table class="anam-table anam-gyn-table">
                   <thead>
@@ -1822,166 +1970,45 @@
               </div>
             </div>
 
+            
             <div class="anam-section">
-              <h3>9. Family History</h3>
-              <div class="anam-repeater" data-repeater="family_history_details">
-                <div class="anam-repeater-head">
-                  <span data-anam-key="anam_choroba">Disease</span><span data-anam-key="anam_detaily">Details</span><span data-anam-key="anam_relation_to_p">Relation to p.</span><span></span>
-                </div>
-                <div class="anam-repeater-body" id="family-history-rows"></div>
-                <button type="button" id="family-history-add" class="anam-add-row">+</button>
-              </div>
-              <div class="anam-row">
-                <span data-anam-key="anam_parents_alive">Parents alive</span>
-                <label data-anam-key="anam_both"><input type="checkbox" name="family_parents_both" /> Both</label>
-                <label data-anam-key="anam_one"><input type="checkbox" name="family_parents_one" /> One</label>
-                <label data-anam-key="anam_none"><input type="checkbox" name="family_parents_none" /> None</label>
-                <input name="family_mother_cause" data-anam-key="anam_mother_cause_of_death" placeholder="Mother cause of death" />
-                <input name="family_father_cause" data-anam-key="anam_father_cause_of_death" placeholder="Father cause of death" />
-              </div>
-            </div>
-            <div class="anam-section">
-              <h3>10. Epidemiological History</h3>
-              <div class="anam-row">
-                <label><input type="checkbox" name="epi_travel" /> Recent travel abroad (12 months)</label>
-                <input name="epi_travel_where" placeholder="Where" />
-                <label><input type="checkbox" name="epi_pets" /> Pets / farm animals</label>
-                <input name="epi_pets_which" placeholder="Which" />
-              </div>
-              <div class="anam-row">
-                <label><input type="checkbox" name="epi_sick_contacts" /> Recent infectious / sick contacts</label>
-                <input name="epi_sick_contacts_details" placeholder="Who / illness / timing" />
-                <label><input type="checkbox" name="epi_tb_exposure" /> Tuberculosis exposure</label>
-                <label><input type="checkbox" name="epi_tick_insect" /> Tick / insect exposure</label>
-              </div>
-              <div class="anam-row">
-                <label><input type="checkbox" name="epi_vaccination_review" /> Vaccination status reviewed</label>
-                <input name="epi_vaccination_notes" placeholder="Relevant vaccines / missing doses / reactions" />
-                <label><input type="checkbox" name="epi_covid_vax" /> COVID-19 vaccination</label>
-                <input name="epi_covid_vax_number" placeholder="Number" />
-                <label><input type="checkbox" name="epi_covid_infection" /> COVID-19 infection</label>
-                <input name="epi_covid_infection_number" placeholder="Number" />
-              </div>
-            </div>
-
-            <div class="anam-section">
-              <h3>11. Social History</h3>
-              <div class="anam-row">
-                <span>Employment</span>
-                <label><input type="checkbox" name="social_working" /> Working</label>
-                <label><input type="checkbox" name="social_retired" /> Retired</label>
-                <label><input type="checkbox" name="social_unemployed" /> Unemployed</label>
-                <input name="social_unemployed_how_long" placeholder="How long" />
-              </div>
-              <input name="social_occupation" placeholder="Occupation / previous jobs" />
-              <div class="anam-row">
-                <span>Marital status</span>
-                <label><input type="checkbox" name="social_single" /> Single</label>
-                <label><input type="checkbox" name="social_married" /> Married</label>
-                <label><input type="checkbox" name="social_divorced" /> Divorced</label>
-                <label><input type="checkbox" name="social_widowed" /> Widowed</label>
-              </div>
-              <div class="anam-row">
-                <span>Living situation</span>
-                <label><input type="checkbox" name="social_alone" /> Alone</label>
-                <label><input type="checkbox" name="social_family" /> With family</label>
-                <input name="social_other" placeholder="Other" />
-              </div>
-              <div class="anam-row">
-                <span>Housing</span>
-                <label><input type="checkbox" id="social-house" name="social_house" /> House</label>
-                <label><input type="checkbox" id="social-flat" name="social_flat" /> Flat</label>
-                <label><input type="checkbox" id="social-homeless" name="social_homeless" /> Homeless</label>
-              </div>
-              <div id="social-house-wrap" class="hidden">
-                <textarea name="social_house_notes" placeholder="House notes"></textarea>
-              </div>
-              <div id="social-flat-wrap" class="hidden">
-                <input name="social_flat_floor" placeholder="Which floor" />
-                <div class="anam-row">
-                  <label><input type="checkbox" name="social_elevator_yes" /> Elevator yes</label>
-                  <label><input type="checkbox" name="social_elevator_no" /> Elevator no</label>
-                </div>
-                <textarea name="social_flat_notes" placeholder="Flat notes"></textarea>
-              </div>
-              <div id="social-homeless-wrap" class="hidden">
-                <textarea name="social_homeless_notes" placeholder="Homeless notes"></textarea>
-              </div>
-              <div class="anam-capture-subsection">
-                <h4>Function, support & lifestyle</h4>
-                <div class="anam-grid">
-                  <textarea name="social_function_adl" placeholder="ADLs / independence: washing, dressing, meals, shopping, medication, finances"></textarea>
-                  <textarea name="social_mobility_exercise" placeholder="Mobility / exercise tolerance / walking distance / stairs"></textarea>
-                  <textarea name="social_support" placeholder="Family, caregiver, home nursing and other support"></textarea>
-                  <textarea name="social_occupational_exposure" placeholder="Occupational exposures: dust, asbestos, chemicals, infection, heavy lifting"></textarea>
-                  <textarea name="social_diet" placeholder="Diet / appetite / relevant restrictions"></textarea>
-                  <textarea name="social_sleep" placeholder="Sleep pattern / snoring / daytime sleepiness"></textarea>
-                </div>
-              </div>
-              <details class="anam-capture-subsection">
-                <summary>Sexual history (optional, ask privately when clinically relevant)</summary>
-                <p class="anam-capture-subsection-note">Use a non-judgmental approach. Document only information relevant to the clinical problem.</p>
-                <div class="anam-grid">
-                  <textarea name="sexual_partners" placeholder="Partners / relationship context"></textarea>
-                  <textarea name="sexual_practices" placeholder="Relevant sexual practices / exposure sites"></textarea>
-                  <textarea name="sexual_protection" placeholder="Condom / barrier use and contraception"></textarea>
-                  <textarea name="sexual_sti" placeholder="Previous STI / testing / symptoms"></textarea>
-                  <textarea name="sexual_pregnancy_intentions" placeholder="Pregnancy possibility / intentions when relevant"></textarea>
-                </div>
-              </details>
-            </div>
-
-            <div class="anam-section">
-              <h3>12. Abuses</h3>
-              <div class="anam-grid">
-                <div>
-                  <strong>Smoking</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="abuse_smoking" value="yes" /> Yes</label>
-                    <label><input type="radio" name="abuse_smoking" value="no" /> No</label>
+              <h3 data-anam-key="anam_n_12_abuses">11. Abuses</h3>
+              <p class="anam-section-intro">Screen first, then quantify only what is relevant. The original yes/no items and the newer quantification fields are kept together here.</p>
+              <div class="anam-abuse-list">
+                <div class="anam-inline-group anam-abuse-item">
+                  <strong class="anam-question-label" data-anam-question-key="abuse_smoking">Smoking</strong>
+                  <div class="anam-row"><label><input type="radio" name="abuse_smoking" value="yes" /> Yes</label><label><input type="radio" name="abuse_smoking" value="no" /> No</label></div>
+                  <div class="anam-grid">
+                    <input name="abuse_smoking_pack_years" placeholder="Cigarettes/day, years smoked, pack-years, quit date / vaping" />
+                    <input name="abuse_smoking_notes" placeholder="Notes" />
                   </div>
-                  <input name="abuse_smoking_notes" placeholder="Notes" />
                 </div>
-                <div>
-                  <strong>Alcohol</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="abuse_alcohol" value="yes" /> Yes</label>
-                    <label><input type="radio" name="abuse_alcohol" value="no" /> No</label>
+                <div class="anam-inline-group anam-abuse-item">
+                  <strong class="anam-question-label" data-anam-question-key="abuse_alcohol">Alcohol</strong>
+                  <div class="anam-row"><label><input type="radio" name="abuse_alcohol" value="yes" /> Yes</label><label><input type="radio" name="abuse_alcohol" value="no" /> No</label></div>
+                  <div class="anam-grid">
+                    <input name="abuse_alcohol_amount" placeholder="Type, amount, frequency, binge pattern, alcohol-free days, last drink" />
+                    <input name="abuse_alcohol_notes" placeholder="Notes" />
                   </div>
-                  <input name="abuse_alcohol_notes" placeholder="Notes" />
                 </div>
-                <div>
-                  <strong>Coffee</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="abuse_coffee" value="yes" /> Yes</label>
-                    <label><input type="radio" name="abuse_coffee" value="no" /> No</label>
+                <div class="anam-inline-group anam-abuse-item">
+                  <strong class="anam-question-label" data-anam-question-key="abuse_drugs">Drugs</strong>
+                  <div class="anam-row"><label><input type="radio" name="abuse_drugs" value="yes" /> Yes</label><label><input type="radio" name="abuse_drugs" value="no" /> No</label></div>
+                  <div class="anam-grid">
+                    <input name="abuse_drugs_pattern" placeholder="Substance, amount, route, frequency, duration, last use" />
+                    <input name="abuse_withdrawal_notes" placeholder="Tolerance / withdrawal / attempts to cut down / health, work, relationship or legal consequences" />
+                    <input name="abuse_drugs_notes" placeholder="Notes" />
                   </div>
-                  <input name="abuse_coffee_notes" placeholder="Notes" />
                 </div>
-                <div>
-                  <strong>Black tea</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="abuse_black_tea" value="yes" /> Yes</label>
-                    <label><input type="radio" name="abuse_black_tea" value="no" /> No</label>
-                  </div>
-                  <input name="abuse_black_tea_notes" placeholder="Notes" />
+                <div class="anam-inline-group anam-abuse-item anam-abuse-compact">
+                  <strong class="anam-question-label" data-anam-question-key="abuse_coffee">Coffee</strong>
+                  <div class="anam-row"><label><input type="radio" name="abuse_coffee" value="yes" /> Yes</label><label><input type="radio" name="abuse_coffee" value="no" /> No</label></div>
+                  <input name="abuse_coffee_notes" placeholder="Amount / frequency / notes" />
                 </div>
-                <div>
-                  <strong>Drugs</strong>
-                  <div class="anam-row">
-                    <label><input type="radio" name="abuse_drugs" value="yes" /> Yes</label>
-                    <label><input type="radio" name="abuse_drugs" value="no" /> No</label>
-                  </div>
-                  <input name="abuse_drugs_notes" placeholder="Notes" />
-                </div>
-              </div>
-              <div class="anam-capture-subsection">
-                <h4>Quantification</h4>
-                <div class="anam-grid">
-                  <input name="abuse_smoking_pack_years" placeholder="Smoking: cigarettes/day, years, pack-years, quit date / vaping" />
-                  <input name="abuse_alcohol_amount" placeholder="Alcohol: type, amount, frequency, last drink" />
-                  <input name="abuse_drugs_pattern" placeholder="Drugs: substance, amount, route, frequency, last use" />
-                  <input name="abuse_withdrawal_notes" placeholder="Tolerance / withdrawal / attempts to cut down / consequences" />
+                <div class="anam-inline-group anam-abuse-item anam-abuse-compact">
+                  <strong class="anam-question-label" data-anam-question-key="abuse_black_tea">Black tea</strong>
+                  <div class="anam-row"><label><input type="radio" name="abuse_black_tea" value="yes" /> Yes</label><label><input type="radio" name="abuse_black_tea" value="no" /> No</label></div>
+                  <input name="abuse_black_tea_notes" placeholder="Amount / frequency / notes" />
                 </div>
               </div>
             </div>
@@ -2085,12 +2112,13 @@
                 <input name="vital_temp" placeholder="Temperature (C)" />
                 <input name="vital_spo2" placeholder="SpO2 (%)" />
                 <input name="vital_hr" placeholder="Heart rate (/min)" />
-                <input name="vital_weight" placeholder="Weight (kg)" />
+                <input name="vital_weight" placeholder="Weight (kg)" inputmode="decimal" />
                 <input name="vital_rr" placeholder="Respiratory rate (/min)" />
-                <input name="vital_height" placeholder="Height (cm)" />
+                <input name="vital_height" placeholder="Height (cm)" inputmode="decimal" />
                 <input name="vital_bp" placeholder="Blood pressure (mmHg)" />
-                <input name="vital_bmi" placeholder="BMI (kg/m2)" />
+                <input name="vital_bmi" data-anam-key="anam_bmi_kg_m2" placeholder="BMI (kg/m2)" readonly aria-readonly="true" />
               </div>
+              <p class="anam-reference-note" data-anam-key="v80_bmi_auto_note">BMI is calculated automatically from height and weight.</p>
               <div class="anam-row">
                 <span>Taken</span>
                 <label><input type="checkbox" name="vital_taken_monitor" /> From monitor</label>
@@ -2160,69 +2188,234 @@
                   <input name="spl_vital_monitor_notes" placeholder="Notes" />
                 </div>
               </div>
-              <div style="margin-top:10px">
-                <strong>Head</strong>
-                <textarea name="spl_head_notes" placeholder="Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx"></textarea>
-              </div>
-              <div style="margin-top:10px">
-                <strong>Neck</strong>
-                <textarea name="spl_neck_notes" placeholder="Lymph nodes, thyroid, trachea, JVP, carotids, mobility"></textarea>
-              </div>
-              <div style="margin-top:10px">
-                <strong>Thorax</strong>
-                <textarea name="spl_thorax_notes" placeholder="Chest, lungs, heart"></textarea>
-              </div>
-              <div style="margin-top:10px">
-                <strong>Abdomen</strong>
-                <textarea name="spl_abdomen_notes" placeholder="Inspection, palpation, percussion, auscultation, special signs"></textarea>
-              </div>
-              <div style="margin-top:10px">
-                <strong>Limbs</strong>
-                <textarea name="spl_limbs_notes" placeholder="Inspection, skin changes, mobility, joints, pulses"></textarea>
-              </div>
-              <div style="margin-top:10px">
-                <strong>Spine</strong>
-                <textarea name="spl_spine_notes" placeholder="Posture, curvature, mobility"></textarea>
+              <div class="anam-spl-findings">
+                <div class="anam-inline-group" data-spl-region="head">
+                  <h4>Head / face</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Head / face examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_head_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_head_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_head_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-head-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_head_face_asymmetry" /> Facial asymmetry</label>
+                    <label><input type="checkbox" name="spl_head_scalp_hair_abnormal" /> Scalp / hair abnormality</label>
+                    <label><input type="checkbox" name="spl_head_eye_abnormal" /> Eye abnormality</label>
+                    <label><input type="checkbox" name="spl_head_ear_nose_abnormal" /> Ear / nose abnormality</label>
+                    <label><input type="checkbox" name="spl_head_oral_pharynx_abnormal" /> Oral / pharyngeal abnormality</label>
+                    <label><input type="checkbox" name="spl_head_cranial_nerve_abnormal" /> Cranial nerve abnormality</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_head_notes" placeholder="Face symmetry, scalp & hair, cranial nerves, eyes, ears & nose, mouth & pharynx"></textarea>
+                </div>
+
+                <div class="anam-inline-group" data-spl-region="neck">
+                  <h4>Neck</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Neck examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_neck_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_neck_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_neck_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-neck-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_neck_lymphadenopathy" /> Lymphadenopathy</label>
+                    <label><input type="checkbox" name="spl_neck_thyroid_enlarged" /> Thyroid enlargement</label>
+                    <label><input type="checkbox" name="spl_neck_thyroid_nodule" /> Thyroid nodule</label>
+                    <label><input type="checkbox" name="spl_neck_tracheal_deviation" /> Tracheal deviation</label>
+                    <label><input type="checkbox" name="spl_neck_jvp_elevated" /> Elevated JVP</label>
+                    <label><input type="checkbox" name="spl_neck_carotid_bruit" /> Carotid bruit</label>
+                    <label><input type="checkbox" name="spl_neck_mobility_restricted" /> Restricted neck mobility</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_neck_notes" placeholder="Lymph nodes, thyroid, trachea, JVP, carotids, mobility"></textarea>
+                </div>
+
+                <div class="anam-inline-group" data-spl-region="thorax">
+                  <h4>Thorax / respiratory</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Respiratory examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_resp_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_resp_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_resp_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-resp-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_thorax_asymmetric_expansion" /> Asymmetric chest expansion</label>
+                    <label><input type="checkbox" name="spl_resp_decreased_breath_sounds" /> Decreased breath sounds</label>
+                    <label><input type="checkbox" name="spl_resp_crackles" /> Crackles</label>
+                    <label><input type="checkbox" name="spl_resp_wheeze" /> Wheeze</label>
+                    <label><input type="checkbox" name="spl_resp_dull_percussion" /> Dull percussion note</label>
+                    <label><input type="checkbox" name="spl_resp_hyperresonance" /> Hyperresonance</label>
+                    <label><input type="checkbox" name="spl_resp_distress" /> Respiratory distress / accessory muscles</label>
+                  </div>
+                  </div>
+                  <h4 class="anam-subheading">Cardiovascular</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Cardiovascular examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_cv_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_cv_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_cv_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-cv-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_cv_irregular_rhythm" /> Irregular rhythm</label>
+                    <label><input type="checkbox" name="spl_cv_murmur" /> Murmur</label>
+                    <label><input type="checkbox" name="spl_cv_abnormal_heart_sounds" /> Abnormal heart sounds</label>
+                    <label><input type="checkbox" name="spl_cv_perfusion_abnormal" /> Abnormal peripheral perfusion</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_thorax_notes" placeholder="Chest, lungs, heart"></textarea>
+                </div>
+
+                <div class="anam-inline-group" data-spl-region="abdomen">
+                  <h4>Abdomen</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Abdominal examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_abd_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_abd_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_abd_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-abd-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_abd_distended" /> Distension</label>
+                    <label><input type="checkbox" name="spl_abd_scars" /> Surgical scars</label>
+                    <label><input type="checkbox" name="spl_abd_bowel_sounds_reduced" /> Reduced / absent bowel sounds</label>
+                    <label><input type="checkbox" name="spl_abd_bowel_sounds_increased" /> Increased bowel sounds</label>
+                    <label><input type="checkbox" name="spl_abd_tenderness" /> Tenderness</label>
+                    <label><input type="checkbox" name="spl_abd_guarding" /> Guarding</label>
+                    <label><input type="checkbox" name="spl_abd_rigidity" /> Rigidity</label>
+                    <label><input type="checkbox" name="spl_abd_rebound" /> Rebound tenderness</label>
+                    <label><input type="checkbox" name="spl_abd_mass" /> Palpable mass</label>
+                    <label><input type="checkbox" name="spl_abd_hepatomegaly" /> Hepatomegaly</label>
+                    <label><input type="checkbox" name="spl_abd_splenomegaly" /> Splenomegaly</label>
+                    <label><input type="checkbox" name="spl_abd_murphy" /> Murphy sign positive</label>
+                    <label><input type="checkbox" name="spl_abd_mcburney" /> McBurney tenderness</label>
+                    <label><input type="checkbox" name="spl_abd_rovsing" /> Rovsing sign positive</label>
+                    <label><input type="checkbox" name="spl_abd_cva_tenderness" /> CVA / renal angle tenderness</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_abdomen_notes" placeholder="Inspection, palpation, percussion, auscultation, special signs"></textarea>
+                </div>
+
+                <div class="anam-inline-group" data-spl-region="limbs">
+                  <h4>Limbs</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Limb examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_limbs_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_limbs_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_limbs_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-limbs-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_limbs_edema" /> Peripheral oedema</label>
+                    <label><input type="checkbox" name="spl_limbs_cyanosis" /> Peripheral cyanosis</label>
+                    <label><input type="checkbox" name="spl_limbs_clubbing" /> Clubbing</label>
+                    <label><input type="checkbox" name="spl_limbs_skin_ulcer" /> Skin change / ulcer</label>
+                    <label><input type="checkbox" name="spl_limbs_joint_swelling" /> Joint swelling / deformity</label>
+                    <label><input type="checkbox" name="spl_limbs_mobility_reduced" /> Reduced mobility</label>
+                    <label><input type="checkbox" name="spl_limbs_pulses_abnormal" /> Abnormal peripheral pulses</label>
+                    <label><input type="checkbox" name="spl_limbs_dvt_signs" /> Unilateral swelling / DVT concern</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_limbs_notes" placeholder="Inspection, skin changes, mobility, joints, pulses"></textarea>
+                </div>
+
+                <div class="anam-inline-group" data-spl-region="spine">
+                  <h4>Spine</h4>
+                  <div class="anam-exam-status" role="group" aria-label="Spine examination status">
+                    <span data-anam-key="v80_exam_status">Examination status</span>
+                    <label data-anam-key="v80_not_examined"><input type="radio" name="spl_spine_status" value="not_examined" /> Not examined</label>
+                    <label data-anam-key="v80_normal"><input type="radio" name="spl_spine_status" value="normal" /> Normal</label>
+                    <label data-anam-key="v80_abnormal"><input type="radio" name="spl_spine_status" value="abnormal" /> Abnormal</label>
+                  </div>
+                  <div id="spl-spine-abnormal" class="anam-abnormal-findings hidden">
+                  <div class="anam-finding-grid">
+                    <label><input type="checkbox" name="spl_spine_scoliosis" /> Scoliosis</label>
+                    <label><input type="checkbox" name="spl_spine_kyphosis" /> Kyphosis</label>
+                    <label><input type="checkbox" name="spl_spine_lordosis" /> Lordosis</label>
+                    <label><input type="checkbox" name="spl_spine_tenderness" /> Spinal tenderness</label>
+                    <label><input type="checkbox" name="spl_spine_mobility_restricted" /> Restricted spinal mobility</label>
+                  </div>
+                  </div>
+                  <textarea name="spl_spine_notes" placeholder="Posture, curvature, mobility"></textarea>
+                </div>
               </div>
             </div>
             <details class="anam-section" open>
-              <summary><strong>16. Reference values</strong></summary>
-              <table class="anam-table">
-                <thead>
-                  <tr>
-                    <th>Parameter</th>
-                    <th>Male</th>
-                    <th>Female</th>
-                    <th>Units</th>
-                    <th>Pt. values</th>
-                  </tr>
-                </thead>
+              <summary><strong data-anam-key="anam_n_16_reference_values">15. Reference values</strong></summary>
+              <p class="anam-reference-note"><strong>Study reference:</strong> approximate adult intervals are shown for orientation. Local laboratory, assay-, sex-, age-, pregnancy- and disease-specific reference intervals take precedence.</p>
+              <table class="anam-table anam-reference-table">
+                <thead><tr><th>Parameter</th><th>Male</th><th>Female</th><th>Units</th><th>Pt. values</th></tr></thead>
                 <tbody>
-                  <tr><td>Hemoglobin (Hb)</td><td>135-175</td><td>120-155</td><td>g/L</td><td><input name="ref_hb" /></td></tr>
-                  <tr><td>Red blood cells (RBC)</td><td>4.5-5.9</td><td>4.0-5.2</td><td>x10^12/L</td><td><input name="ref_rbc" /></td></tr>
-                  <tr><td>Hematocrit (Hct)</td><td>0.40-0.52</td><td>0.36-0.46</td><td>L/L</td><td><input name="ref_hct" /></td></tr>
-                  <tr><td>White blood cells (WBC)</td><td>4.0-10.0</td><td>4.0-10.0</td><td>x10^9/L</td><td><input name="ref_wbc" /></td></tr>
-                  <tr><td>Platelets (PLT)</td><td>150-400</td><td>150-400</td><td>x10^9/L</td><td><input name="ref_plt" /></td></tr>
-                  <tr><td>C-reactive protein (CRP)</td><td>&lt; 5</td><td>&lt; 5</td><td>mg/L</td><td><input name="ref_crp" /></td></tr>
-                  <tr><td>Creatinine</td><td>64-104</td><td>49-90</td><td>umol/L</td><td><input name="ref_crea" /></td></tr>
-                  <tr><td>Urea</td><td>2.5-7.8</td><td>2.5-7.8</td><td>mmol/L</td><td><input name="ref_urea" /></td></tr>
-                  <tr><td>Sodium (Na)</td><td>135-145</td><td>135-145</td><td>mmol/L</td><td><input name="ref_na" /></td></tr>
-                  <tr><td>Potassium (K)</td><td>3.5-5.1</td><td>3.5-5.1</td><td>mmol/L</td><td><input name="ref_k" /></td></tr>
-                  <tr><td>Chloride (Cl)</td><td>98-107</td><td>98-107</td><td>mmol/L</td><td><input name="ref_cl" /></td></tr>
-                  <tr><td>Calcium (total)</td><td>2.15-2.55</td><td>2.15-2.55</td><td>mmol/L</td><td><input name="ref_ca" /></td></tr>
-                  <tr><td>ALT</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_alt" /></td></tr>
-                  <tr><td>AST</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_ast" /></td></tr>
-                  <tr><td>Bilirubin - total</td><td>5-21</td><td>5-21</td><td>umol/L</td><td><input name="ref_bili_total" /></td></tr>
-                  <tr><td>Bilirubin - direct</td><td>&lt; 5</td><td>&lt; 5</td><td>umol/L</td><td><input name="ref_bili_direct" /></td></tr>
-                  <tr><td>Bilirubin - indirect</td><td>3-17</td><td>3-17</td><td>umol/L</td><td><input name="ref_bili_indirect" /></td></tr>
-                  <tr><td>Fasting glucose</td><td>3.9-5.5</td><td>3.9-5.5</td><td>mmol/L</td><td><input name="ref_glucose" /></td></tr>
-                  <tr><td>Total cholesterol</td><td>&lt; 5.0</td><td>&lt; 5.0</td><td>mmol/L</td><td><input name="ref_chol_total" /></td></tr>
-                  <tr><td>LDL cholesterol</td><td>&lt; 3.0</td><td>&lt; 3.0</td><td>mmol/L</td><td><input name="ref_ldl" /></td></tr>
-                  <tr><td>HDL cholesterol</td><td>&gt; 1.0</td><td>&gt; 1.2</td><td>mmol/L</td><td><input name="ref_hdl" /></td></tr>
-                  <tr><td>Triglycerides</td><td>&lt; 1.7</td><td>&lt; 1.7</td><td>mmol/L</td><td><input name="ref_trig" /></td></tr>
-                  <tr><td>TSH</td><td>0.4-4.0</td><td>0.4-4.0</td><td>mIU/L</td><td><input name="ref_tsh" /></td></tr>
+                  <tr class="anam-ref-category"><th colspan="5">Complete blood count</th></tr>
+                  <tr><td data-anam-key="ref_label_hb">Hemoglobin (Hb)</td><td>135-175</td><td>120-155</td><td>g/L</td><td><input name="ref_hb" /></td></tr>
+                  <tr><td data-anam-key="ref_label_rbc">Red blood cells (RBC)</td><td>4.5-5.9</td><td>4.0-5.2</td><td>x10^12/L</td><td><input name="ref_rbc" /></td></tr>
+                  <tr><td data-anam-key="ref_label_hct">Hematocrit (Hct)</td><td>0.40-0.52</td><td>0.36-0.46</td><td>L/L</td><td><input name="ref_hct" /></td></tr>
+                  <tr><td data-anam-key="ref_label_wbc">White blood cells (WBC)</td><td>4.0-10.0</td><td>4.0-10.0</td><td>x10^9/L</td><td><input name="ref_wbc" /></td></tr>
+                  <tr><td data-anam-key="ref_label_neutrophils">Neutrophils</td><td>2.0-7.5*</td><td>2.0-7.5*</td><td>x10^9/L</td><td><input name="ref_neutrophils" /></td></tr>
+                  <tr><td data-anam-key="ref_label_lymphocytes">Lymphocytes</td><td>1.0-4.0*</td><td>1.0-4.0*</td><td>x10^9/L</td><td><input name="ref_lymphocytes" /></td></tr>
+                  <tr><td data-anam-key="ref_label_plt">Platelets (PLT)</td><td>150-400</td><td>150-400</td><td>x10^9/L</td><td><input name="ref_plt" /></td></tr>
+                  <tr><td data-anam-key="ref_label_mcv">MCV</td><td>80-100</td><td>80-100</td><td>fL</td><td><input name="ref_mcv" /></td></tr>
+                  <tr><td data-anam-key="ref_label_mch">MCH</td><td>27-33</td><td>27-33</td><td>pg</td><td><input name="ref_mch" /></td></tr>
+                  <tr><td data-anam-key="ref_label_rdw">RDW</td><td>11.5-14.5</td><td>11.5-14.5</td><td>%</td><td><input name="ref_rdw" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Inflammation</th></tr>
+                  <tr><td data-anam-key="ref_label_crp">C-reactive protein (CRP)</td><td>&lt; 5</td><td>&lt; 5</td><td>mg/L</td><td><input name="ref_crp" /></td></tr>
+                  <tr><td data-anam-key="ref_label_esr">ESR</td><td>lab / age dependent</td><td>lab / age dependent</td><td>mm/h</td><td><input name="ref_esr" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Renal function & electrolytes</th></tr>
+                  <tr><td data-anam-key="ref_label_creatinine">Creatinine</td><td>64-104</td><td>49-90</td><td>umol/L</td><td><input name="ref_crea" /></td></tr>
+                  <tr><td data-anam-key="ref_label_egfr">eGFR</td><td>&ge; 90*</td><td>&ge; 90*</td><td>mL/min/1.73m²</td><td><input name="ref_egfr" /></td></tr>
+                  <tr><td data-anam-key="ref_label_urea">Urea</td><td>2.5-7.8</td><td>2.5-7.8</td><td>mmol/L</td><td><input name="ref_urea" /></td></tr>
+                  <tr><td data-anam-key="ref_label_na">Sodium (Na)</td><td>135-145</td><td>135-145</td><td>mmol/L</td><td><input name="ref_na" /></td></tr>
+                  <tr><td data-anam-key="ref_label_k">Potassium (K)</td><td>3.5-5.1</td><td>3.5-5.1</td><td>mmol/L</td><td><input name="ref_k" /></td></tr>
+                  <tr><td data-anam-key="ref_label_cl">Chloride (Cl)</td><td>98-107</td><td>98-107</td><td>mmol/L</td><td><input name="ref_cl" /></td></tr>
+                  <tr><td data-anam-key="ref_label_hco3">Bicarbonate / total CO2</td><td>23-29</td><td>23-29</td><td>mmol/L</td><td><input name="ref_hco3" /></td></tr>
+                  <tr><td data-anam-key="ref_label_ca">Calcium (total)</td><td>2.13-2.55</td><td>2.13-2.55</td><td>mmol/L</td><td><input name="ref_ca" /></td></tr>
+                  <tr><td data-anam-key="ref_label_mg">Magnesium</td><td>0.70-0.91</td><td>0.70-0.91</td><td>mmol/L</td><td><input name="ref_mg" /></td></tr>
+                  <tr><td data-anam-key="ref_label_phosphate">Phosphate</td><td>0.90-1.45</td><td>0.90-1.45</td><td>mmol/L</td><td><input name="ref_phosphate" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Liver & proteins</th></tr>
+                  <tr><td data-anam-key="ref_label_alt">ALT</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_alt" /></td></tr>
+                  <tr><td data-anam-key="ref_label_ast">AST</td><td>&lt; 50</td><td>&lt; 35</td><td>U/L</td><td><input name="ref_ast" /></td></tr>
+                  <tr><td data-anam-key="ref_label_alp">ALP</td><td>20-130*</td><td>20-130*</td><td>U/L</td><td><input name="ref_alp" /></td></tr>
+                  <tr><td data-anam-key="ref_label_ggt">GGT</td><td>lab dependent</td><td>lab dependent</td><td>U/L</td><td><input name="ref_ggt" /></td></tr>
+                  <tr><td data-anam-key="ref_label_bili_total">Bilirubin - total</td><td>2-21</td><td>2-21</td><td>umol/L</td><td><input name="ref_bili_total" /></td></tr>
+                  <tr><td data-anam-key="ref_label_bili_direct">Bilirubin - direct</td><td>&lt; 5</td><td>&lt; 5</td><td>umol/L</td><td><input name="ref_bili_direct" /></td></tr>
+                  <tr><td data-anam-key="ref_label_bili_indirect">Bilirubin - indirect</td><td>3-17</td><td>3-17</td><td>umol/L</td><td><input name="ref_bili_indirect" /></td></tr>
+                  <tr><td data-anam-key="ref_label_albumin">Albumin</td><td>34-54</td><td>34-54</td><td>g/L</td><td><input name="ref_albumin" /></td></tr>
+                  <tr><td data-anam-key="ref_label_total_protein">Total protein</td><td>60-83</td><td>60-83</td><td>g/L</td><td><input name="ref_total_protein" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Glucose & metabolic</th></tr>
+                  <tr><td data-anam-key="ref_label_glucose">Fasting glucose</td><td>3.9-5.6</td><td>3.9-5.6</td><td>mmol/L</td><td><input name="ref_glucose" /></td></tr>
+                  <tr><td data-anam-key="ref_label_hba1c">HbA1c</td><td>&lt; 5.7*</td><td>&lt; 5.7*</td><td>%</td><td><input name="ref_hba1c" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Lipids</th></tr>
+                  <tr><td data-anam-key="ref_label_chol_total">Total cholesterol</td><td>&lt; 5.0</td><td>&lt; 5.0</td><td>mmol/L</td><td><input name="ref_chol_total" /></td></tr>
+                  <tr><td data-anam-key="ref_label_ldl">LDL cholesterol</td><td>target depends on CV risk</td><td>target depends on CV risk</td><td>mmol/L</td><td><input name="ref_ldl" /></td></tr>
+                  <tr><td data-anam-key="ref_label_hdl">HDL cholesterol</td><td>&gt; 1.0</td><td>&gt; 1.2</td><td>mmol/L</td><td><input name="ref_hdl" /></td></tr>
+                  <tr><td data-anam-key="ref_label_trig">Triglycerides</td><td>&lt; 1.7</td><td>&lt; 1.7</td><td>mmol/L</td><td><input name="ref_trig" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Coagulation</th></tr>
+                  <tr><td data-anam-key="ref_label_inr">INR (not anticoagulated)</td><td>0.8-1.1</td><td>0.8-1.1</td><td>ratio</td><td><input name="ref_inr" /></td></tr>
+                  <tr><td data-anam-key="ref_label_pt">Prothrombin time (PT)</td><td>11-13.5*</td><td>11-13.5*</td><td>s</td><td><input name="ref_pt" /></td></tr>
+                  <tr><td data-anam-key="ref_label_aptt">aPTT</td><td>lab / reagent dependent</td><td>lab / reagent dependent</td><td>s</td><td><input name="ref_aptt" /></td></tr>
+                  <tr><td data-anam-key="ref_label_fibrinogen">Fibrinogen</td><td>2.0-4.0*</td><td>2.0-4.0*</td><td>g/L</td><td><input name="ref_fibrinogen" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Thyroid</th></tr>
+                  <tr><td data-anam-key="ref_label_tsh">TSH</td><td>0.4-4.8*</td><td>0.4-4.8*</td><td>mIU/L</td><td><input name="ref_tsh" /></td></tr>
+                  <tr><td data-anam-key="ref_label_ft4">Free T4</td><td>10.3-24.5*</td><td>10.3-24.5*</td><td>pmol/L</td><td><input name="ref_ft4" /></td></tr>
+
+                  <tr class="anam-ref-category"><th colspan="5">Acid-base / perfusion</th></tr>
+                  <tr><td data-anam-key="ref_label_ph">Arterial pH</td><td>7.35-7.45</td><td>7.35-7.45</td><td>-</td><td><input name="ref_ph" /></td></tr>
+                  <tr><td data-anam-key="ref_label_pco2">PaCO2</td><td>35-45</td><td>35-45</td><td>mmHg</td><td><input name="ref_pco2" /></td></tr>
+                  <tr><td data-anam-key="ref_label_hco3_abg">HCO3- (ABG)</td><td>22-26</td><td>22-26</td><td>mmol/L</td><td><input name="ref_hco3_abg" /></td></tr>
+                  <tr><td data-anam-key="ref_label_lactate">Lactate</td><td>lab / sample dependent</td><td>lab / sample dependent</td><td>mmol/L</td><td><input name="ref_lactate" /></td></tr>
                 </tbody>
               </table>
+              <p class="anam-reference-footnote">* Indicative study value. Interpret in clinical context and against the reporting laboratory's own interval or treatment target.</p>
             </details>
           </form>
                 </div>
@@ -2333,7 +2526,7 @@
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="assets/js/app-shell.js?v=51" defer></script>
-<script type="module" src="assets/js/app.js?v=78"></script>
+<script type="module" src="assets/js/app.js?v=80"></script>
 </body>
 </html>
 

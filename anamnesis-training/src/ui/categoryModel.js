@@ -1,4 +1,4 @@
-import { QUESTION_AREAS, INTENTS } from '../data/interviewSchema.js';
+import { QUESTION_AREAS, INTENTS } from '../data/interviewSchema.js?v=134';
 
 const LAB_LABELS = {
   wbc: 'White blood cell count',

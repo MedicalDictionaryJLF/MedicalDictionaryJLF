@@ -9,6 +9,7 @@ export const peterNovak = {
     "task": "Assess a patient with ongoing chest discomfort. Take a focused history, identify immediately important risks and red flags, perform a targeted examination, choose investigations, form a differential, and hand over your plan."
   },
   "openingLine": "I have this heavy pressure in my chest and it really scared me.",
+  "historySource": "I can give you the history myself.",
   "ecg": {
     "available": true,
     "label": "12-lead ECG · Peter Novak",
@@ -49,6 +50,17 @@ export const peterNovak = {
     "severity": "At worst it was 8 out of 10. Right now it is around 4 out of 10.",
     "course": "It improved after resting but has not disappeared completely."
   },
+  "rosDetails": {
+    "general": {"fever":"No fever or chills.","weight":"No unintentional weight loss or gain.","fatigue":"I have felt more tired lately.","nightSweats":"No drenching night sweats.","appetite":"My appetite is normal."},
+    "headNeck": {"headache":"No headache.","dizziness":"I felt slightly dizzy during the chest pressure but did not pass out.","vision":"No new visual problems.","hearing":"No hearing problems.","swallowing":"No difficulty swallowing."},
+    "cardiovascular": {"chestPain":"Yes, the pressure in the middle of my chest is the main problem.","palpitations":"I sometimes notice my heart beating fast, including during the pain.","edema":"No swelling of my legs or ankles.","syncope":"I have not fainted or blacked out.","orthopnea":"I do not get short of breath lying flat and I do not wake gasping at night."},
+    "respiratory": {"dyspnea":"I felt short of breath with the chest pressure, especially while walking.","cough":"No cough.","sputum":"No sputum or phlegm.","hemoptysis":"I have not coughed up blood.","wheeze":"No wheezing."},
+    "gastrointestinal": {"nausea":"I felt mildly nauseous with the pain.","vomiting":"I did not vomit.","abdominalPain":"No abdominal pain.","bowelHabit":"No diarrhea, constipation, or recent change in bowel habit.","bleeding":"No blood in the stool, black stool, or vomiting blood.","jaundice":"No yellowing of my eyes or skin."},
+    "genitourinary": {"dysuria":"No pain or burning when passing urine.","frequency":"No unusual urinary frequency or urgency.","hematuria":"No blood in my urine.","flankPain":"No flank or kidney-area pain."},
+    "neurological": {"weakness":"No new weakness of my face, arms, or legs.","sensory":"No numbness or tingling.","seizures":"No seizures.","speech":"No speech difficulty.","balance":"No new balance or walking problem."},
+    "musculoskeletal": {"joints":"No painful or swollen joints.","stiffness":"No significant morning stiffness.","backPain":"I sometimes get lower back pain from sitting for long periods at work."},
+    "skin": {"rash":"No rash.","pruritus":"No unusual itching.","bruising":"I have not been bruising or bleeding unusually."}
+  },
   "ros": {
     "general": "No fever, no weight loss, and no night sweats. I have felt more tired lately.",
     "headNeck": "No headache, no visual problems, and my hearing is okay. I felt slightly dizzy during the pain.",
@@ -71,6 +83,7 @@ export const peterNovak = {
       "approach": "I am not sure whether it was open or laparoscopic. I was young.",
       "complications": "No complications that I know of."
     },
+    "anesthesiaHistory": "I do not remember any problem with the anaesthetic, intubation, severe sickness, delayed waking, or family anaesthetic reaction.",
     "previousExams": "I had blood tests last year and an ECG maybe two years ago. No recent CT scan that I remember."
   },
   "allergies": "No known drug allergies.",
@@ -81,24 +94,53 @@ export const peterNovak = {
   },
   "transfusions": "No previous blood transfusions.",
   "medication": {
-    "regular": "If I remember correctly, ramipril 5 mg once daily. Atorvastatin 20 mg at night, though I sometimes forget it. Occasional ibuprofen for back pain.",
+    "regular": "I take ramipril and atorvastatin regularly, and occasional ibuprofen for back pain.",
     "nitroglycerinPrevious": "No, I have never used nitroglycerin before.",
     "otcSupplements": "Occasional ibuprofen for back pain. No supplements.",
-    "adherence": "I took ramipril today. I sometimes forget atorvastatin."
+    "adherence": "I took ramipril today. I sometimes forget atorvastatin.",
+    "details": {
+      "dose": "Ramipril is 5 mg. Atorvastatin is 20 mg. I usually take 400 mg ibuprofen when I need it.",
+      "frequency": "Ramipril once each morning, atorvastatin once at night, and ibuprofen only occasionally.",
+      "indication": "Ramipril is for high blood pressure, atorvastatin for cholesterol, and ibuprofen for back pain.",
+      "recentChanges": "No recent medication changes.",
+      "otc": "Only occasional ibuprofen bought without a prescription.",
+      "supplements": "No vitamins, herbal products, or supplements."
+    }
   },
   "gynHistory": "That does not apply to me.",
   "familyHistory": "My father died of a heart attack at 62. My mother has diabetes and high blood pressure.",
+  "familyDetails": {
+    "cardiovascular": "My father died of a heart attack at 62. My mother has high blood pressure.",
+    "diabetes": "My mother has type 2 diabetes.",
+    "cancer": "No important cancer history in my close family that I know of.",
+    "inherited": "No known inherited disorder or sudden unexplained death in the family."
+  },
   "epidemiology": "No recent travel, no sick contacts, no pets. I had COVID two years ago and I am vaccinated twice.",
+  "epidemiologyDetails": {
+    "travel": "No recent travel abroad.",
+    "contacts": "No known sick or infectious contacts.",
+    "animalsTicks": "No pets, farm-animal exposure, or recent tick bites.",
+    "vaccinationFood": "I had COVID two years ago and received two COVID vaccinations. No suspicious food or water exposure."
+  },
   "social": {
     "living": "I am married and live with my wife in an apartment on the third floor, with an elevator.",
     "independence": "I am independent in daily activities and walk without aids."
   },
+  "socialDetails": {
+    "household": "I live with my wife.",
+    "housing": "We live in a third-floor apartment with an elevator.",
+    "support": "My wife can help me if I need it.",
+    "baselineFunction": "Normally I am fully independent, drive a bus for work, walk without aids and can climb stairs.",
+    "currentFunction": "Today the chest pressure and breathlessness make walking and stairs much harder than normal."
+  },
   "substances": {
-    "smoking": "I smoke about 15 cigarettes a day, for around 35 years.",
+    "smoking": "I smoke cigarettes every day.",
     "alcohol": "I drink beer on weekends, maybe two or three beers.",
     "caffeine": "Two coffees a day, sometimes black tea.",
     "drugs": "No recreational drugs."
   },
+  "substanceDetails": {"smokingQuantity":"About 15 cigarettes per day for around 35 years."},
+  "closure": {"anythingElse":"No, I think the chest pressure and breathlessness are the main things.","concerns":"I am worried this could be a heart attack because my father died from one.","understanding":"Yes, I understand. I do not have another question right now."},
   "vitals": {
     "bp": "Blood pressure is 154/94 mmHg in the right arm and 152/92 mmHg in the left arm.",
     "hr": "Heart rate is 96 per minute and regular.",
@@ -213,50 +255,18 @@ export const peterNovak = {
   ],
   "debriefPriorities": {
     "essential": [
-      "identity_name",
-      "identity_age",
-      "identity_sex",
-      "identity_residence",
-      "administrative_admission_time",
-      "administrative_arrival_method",
-      "chief_complaint",
-      "hpi_site",
-      "hpi_onset",
-      "hpi_activity_at_onset",
-      "hpi_character",
-      "hpi_radiation",
-      "hpi_associated_symptoms",
-      "hpi_timing",
-      "hpi_exacerbating",
-      "hpi_relieving",
-      "hpi_severity",
-      "hpi_course",
-      "pmh_chronic_diseases",
-      "allergies",
-      "medication_regular"
+      "chief_complaint","hpi_site","hpi_onset","hpi_character","hpi_radiation","hpi_associated_symptoms","hpi_timing","hpi_exacerbating","hpi_relieving","hpi_severity","hpi_course","allergies","allergy_reaction","medication_regular"
     ],
     "caseCritical": [
-      "pmh_cardiovascular_disease",
-      "ros_cardiovascular",
-      "ros_respiratory",
-      "family_history",
-      "substance_smoking",
-      "medication_nitroglycerin_previous"
+      "ros_dyspnea","ros_palpitations","ros_syncope","pmh_cardiovascular_disease","family_cardiovascular","substance_smoking","substance_smoking_quantity","medication_nitroglycerin_previous"
     ],
+    "recommended": [
+      "identity_name","identity_age","identity_residence","history_source","administrative_admission_time","administrative_arrival_method","ros_fever","ros_edema","ros_orthopnea","pmh_chronic_diseases","pmh_specialists","pmh_hospitalizations","pmh_operations","medication_dose","medication_frequency","medication_indication","medication_adherence","social_baseline_function","social_current_function","substance_alcohol","closure_anything_else","closure_concerns"
+    ],
+    "optional": ["substance_caffeine","epi_animals_ticks","family_cancer"],
+    "notRelevant": ["gyn_lmp","gyn_pregnancy","gyn_contraception","gyn_obstetric"],
     "criticalSafety": [
-      "chief_complaint",
-      "hpi_site",
-      "hpi_onset",
-      "hpi_character",
-      "hpi_radiation",
-      "hpi_associated_symptoms",
-      "hpi_severity",
-      "pmh_chronic_diseases",
-      "pmh_cardiovascular_disease",
-      "allergies",
-      "medication_regular",
-      "substance_smoking",
-      "family_history"
+      "chief_complaint","hpi_onset","hpi_character","hpi_radiation","hpi_associated_symptoms","hpi_severity","ros_dyspnea","ros_syncope","pmh_cardiovascular_disease","allergies","medication_regular","substance_smoking","family_cardiovascular"
     ]
   },
   "expectedDiagnosisIdea": "Acute coronary syndrome with an ECG pattern compatible with an inferior STEMI. This requires immediate STEMI-pathway escalation, continuous monitoring, antiplatelet therapy according to protocol, appropriate antithrombotic/reperfusion planning, and urgent cardiology/catheterization-laboratory involvement."

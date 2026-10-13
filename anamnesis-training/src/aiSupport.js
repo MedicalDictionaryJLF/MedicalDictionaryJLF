@@ -1,5 +1,5 @@
 import { buildApiUrl, resolveContextWithAI, resolveIntentWithAI, rewritePatientAnswer } from '../../src/ai/client.js';
-import { INTENTS } from './data/interviewSchema.js';
+import { INTENTS } from './data/interviewSchema.js?v=134';
 
 const AI_CONFIDENCE_THRESHOLD = 0.45;
 const CONTEXTUAL_QUESTION = /\b(it|this|that|where exactly|when exactly|what type|what kind|what reaction)\b/i;

@@ -1,6 +1,6 @@
-﻿id_anamnesis,english_translation,slovak_translation
+id_anamnesis,english_translation,slovak_translation
 anam_anamnesis,Anamnesis,Anamnéza
-anam_n_1_identification,1. Identification,1. Identifikácia
+anam_n_1_identification,1. Identification,1. Identifikačné údaje
 anam_full_name,Full name,Celé meno
 anam_date_of_birth_age,Date of birth / Age,Dátum narodenia / Vek
 anam_sex,Sex,Pohlavie
@@ -8,19 +8,19 @@ anam_male,Male,Muž
 anam_female,Female,Žena
 anam_address_city,Address (City),Adresa (Mesto)
 anam_admitted_on_date_time,Admitted on (date/time),Prijatý dňa (dátum/čas)
-anam_n_2_chief_complaint,2. Chief Complaint,2. Terajšie ochorenie
-anam_main_reason_for_admission_caregiver_s_patient_s_words,Main reason for admission (caregiver's / patient's words),Hlavný dôvod prijatia (slová opatrovníka/pacienta)
+anam_n_2_chief_complaint,2. Chief Complaint,2. Hlavné ťažkosti
+anam_main_reason_for_admission_caregiver_s_patient_s_words,Main reason for admission (caregiver's / patient's words),Hlavný dôvod prijatia (slovami pacienta / opatrovateľa)
 anam_n_3_history_of_present_illness_socrates,3. History of Present Illness (SOCRATES),3. Anamnéza terajšieho ochorenia
-anam_site_system_involved,Site / System involved,Miesto / Postihnutý systém
-anam_onset_when_did_it_start,Onset (When did it start?),Nástup (Kedy to začalo?)
-anam_what_were_you_doing_at_onset,What were you doing at onset?,Čo ste robili keď vám to začalo?
-anam_timing_duration,Timing / Duration,Trvanie
+anam_site_system_involved,Site / System involved,Lokalizácia / postihnutý systém
+anam_onset_when_did_it_start,Onset (When did it start?),Začiatok (Kedy sa ťažkosti začali?)
+anam_what_were_you_doing_at_onset,What were you doing at onset?,Čo ste robili v čase vzniku ťažkostí?
+anam_timing_duration,Timing / Duration,Časový priebeh / trvanie
 anam_exacerbating_factors,Exacerbating factors,Zhoršujúce faktory
 anam_relieving_factors,Relieving factors,Zmierňujúce faktory
 anam_character_type_of_symptoms,Character / Type of symptoms,Charakter / Typ symptómov
 anam_mild,Mild,Mierne
-anam_moderate,Moderate,Mierne silné
-anam_severe,Severe,Ťažké
+anam_moderate,Moderate,Stredne závažné
+anam_severe,Severe,Závažné
 anam_progressive,Progressive,Progresívne
 anam_episodic,Episodic,Epizodický
 anam_fluctuating,Fluctuating,Kolísavý
@@ -45,15 +45,15 @@ anam_dyspnea,Dyspnea,Dýchavičnosť
 anam_palpitations,Palpitations,Palpitácie
 anam_severity_vas,Severity (VAS),Závažnosť (VAS)
 anam_n_1_10,1-10,1-10
-anam_course_since_onset,Course since onset,Priebeh od začiatku
-anam_improving,Improving,Zlepšovanie
-anam_worsening,Worsening,Zhoršenie
-anam_unchanged,Unchanged,Nezmenené
+anam_course_since_onset,Course since onset,Priebeh od začiatku ťažkostí
+anam_improving,Improving,Zlepšuje sa
+anam_worsening,Worsening,Zhoršuje sa
+anam_unchanged,Unchanged,Bez zmeny
 anam_recurrent,Recurrent,Opakujúce sa
 anam_notes,Notes,Poznámky
 anam_question,Question,Otázka
-anam_n_4_review_of_systems,4. Review of Systems,4. Prehľad systémov
-anam_general,General,Všeobecné symptómy
+anam_n_4_review_of_systems,4. Review of Systems,4. Prehľad orgánových systémov
+anam_general,General,Celkové
 anam_weight_loss_12_months,Weight loss (12 months),Strata hmotnosti (12 mesiacov)
 anam_weight_gain_12_months,Weight gain (12 months),Nárast hmotnosti (12 mesiacov)
 anam_fatigue,Fatigue,Únava
@@ -69,19 +69,19 @@ anam_head_and_neck_other_notes,Head & Neck - Other/Notes,Hlava a krk - iné/pozn
 anam_cardiovascular,Cardiovascular,Kardiovaskulárny systém
 anam_chest_pain,Chest pain,Bolesť na hrudníku
 anam_dyspnea_on_exertion,Dyspnea on exertion,Dýchavičnosť pri námahe
-anam_history_of_mi,History of MI,História MI
+anam_history_of_mi,History of MI,Prekonaný infarkt myokardu
 anam_cardiovascular_other_notes,Cardiovascular - Other/Notes,Kardiovaskulárny systém - Iné/Poznámky
 anam_respiratory,Respiratory,Respiračný systém
 anam_productive_cough,Productive cough,Produktívny kašeľ
 anam_hemoptysis,Hemoptysis,Hemoptýza
 anam_respiratory_other_notes,Respiratory - Other/Notes,Respiračný systém - Iné/Poznámky
-anam_gastrointestinal,Gastrointestinal,Gastrointestinálný systém
+anam_gastrointestinal,Gastrointestinal,Gastrointestinálny systém
 anam_dysphagia,Dysphagia,Dysfágia
 anam_abdominal_pain,Abdominal pain,Bolesť brucha
 anam_diarrhea,Diarrhea,Hnačka
 anam_constipation,Constipation,Zápcha
 anam_blood_in_stool,Blood in stool,Krv v stolici
-anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,Gastrointestinálný systém - Iné/Poznámky
+anam_gastrointestinal_other_notes,Gastrointestinal - Other/Notes,Gastrointestinálny systém - iné / poznámky
 anam_genitourinary,Genitourinary,Genitourinárny systém
 anam_dysuria,Dysuria,Dyzúria
 anam_frequency,Frequent urination,Časté močenie
@@ -89,7 +89,7 @@ anam_nocturia,Nocturia,Noktúria
 anam_incontinence,Incontinence,Inkontinencia
 anam_pain_on_urination,Pain on urination,Bolesť pri močení
 anam_genitourinary_other_notes,Genitourinary - Other/Notes,Genitourinárny systém - iné/poznámky
-anam_n_5_past_medical_history,5. Past Medical History,5. Anamnéza predošlých ochorení
+anam_n_5_past_medical_history,5. Past Medical History,5. Osobná anamnéza
 anam_hypertension,Hypertension,Hypertenzia
 anam_diabetes_mellitus,Diabetes mellitus,Diabetes mellitus
 anam_dyslipidemia,Dyslipidemia,Dyslipidémia
@@ -100,7 +100,7 @@ anam_chronic_lung_disease_copd_asthma,Chronic lung disease (COPD / asthma),Chron
 anam_thyroid_disease_hypo_hyper,Thyroid disease (hypo / hyper),Ochorenie štítnej žľazy (hypo/hyper)
 anam_chronic_liver_disease,Chronic liver disease,Chronické ochorenie pečene
 anam_other_chronic_diseases,Other chronic diseases,Iné chronické ochorenia
-anam_specialist_care,Specialist Care,Špecializovaná starostlivosť
+anam_specialist_care,Specialist Care,Odborná starostlivosť
 anam_cardiologist,Cardiologist,Kardiológ
 anam_diabetologist,Diabetologist,Diabetológ
 anam_endocrinologist,Endocrinologist,Endokrinológ
@@ -115,17 +115,17 @@ anam_gynaecologist,Gynaecologist,Gynekológ
 anam_psychiatrist,Psychiatrist,Psychiater
 anam_operations_and_hospitalizations,Operations & Hospitalizations,Operácie a hospitalizácie
 anam_date,Date,Dátum
-anam_procedure_diagnosis,Procedure/Diagnosis,Zákrok/Diagnóza
+anam_procedure_diagnosis,Procedure/Diagnosis,Výkon / diagnóza
 anam_outcome,Outcome,Výsledok
-anam_planned_operation_now,Planned operation now,Teraz plánovaná/é operácia/e
+anam_planned_operation_now,Planned operation now,Aktuálne plánovaná operácia
 anam_previous_examinations,Previous Examinations,Predchádzajúce vyšetrenia
 anam_ecg,ECG,EKG
-anam_blood_tests,Blood tests,Krvné testy
+anam_blood_tests,Blood tests,Laboratórne vyšetrenia krvi
 anam_ultrasound,Ultrasound,Ultrazvuk
 anam_ct,CT,CT
 anam_mri,MRI,MRI
 anam_n_6_allergies_and_transfusions,6. Allergies & Transfusions,6. Alergie a transfúzie
-anam_allergy_reaction,"Allergy / Reaction (Medication, food, environmental(pollen,chemicals,etc.), Topical(Soap,cosmetics,etc.), Vaccines, Contrast agents","Alergia / Reakcia (Liek, jedlo, prostredie (peľ, chemikálie, atď.), Topické (mydlo, kozmetika, atď.), Vakcíny, Kontrastné látky"
+anam_allergy_reaction,"Allergy / Reaction (Medication, food, environmental(pollen,chemicals,etc.), Topical(Soap,cosmetics,etc.), Vaccines, Contrast agents)","Alergia / reakcia (lieky, potraviny, environmentálne alergény, lokálne prípravky, vakcíny, kontrastné látky)"
 anam_blood_transfusion_in_past,Blood transfusion in past,Krvná transfúzia v minulosti
 anam_number,Number,Číslo
 anam_reaction,Reaction,Reakcia
@@ -136,35 +136,35 @@ anam_dose,Dose,Dávka
 anam_medication_frequency,Frequency,Frekvencia
 anam_indication,Indication,Indikácia
 anam_history_of_misuse_of_prescribed_drugs,History of misuse of prescribed drugs,Anamnéza zneužívania predpísaných liekov
-anam_n_8_gynecological_history_females,8. Gynecological History (Females),8. Gynekologická anamnéza (ženy)
+anam_n_8_gynecological_history_females,8. Gynecological History (Females),8. Gynekologická anamnéza
 anam_regular_menstruation,Regular menstruation,Pravidelná menštruácia
 anam_menopause,Menopause,Menopauza
 anam_contraception,Contraception,Antikoncepcia
 anam_children,Children,Deti
 anam_if_yes_number,"If yes, number","Ak áno, koľko?"
 anam_deliveries,Deliveries,Pôrody
-anam_vaginal,Vaginal,Vaginálny
+anam_vaginal,Vaginal,Vaginálny pôrod
 anam_c_section,C-section,Cisársky rez
-anam_miscarriage_abortion,Miscarriage / abortion,Spontánny potrat /Umelé prerušenie tehotenstva
+anam_miscarriage_abortion,Miscarriage / abortion,Spontánny potrat / umelé prerušenie tehotenstva
 anam_pelvic_pain,Pelvic pain,Bolesť panvy
 anam_n_9_family_history,9. Family History,9. Rodinná anamnéza
 anam_choroba,Disease,Choroba
 anam_detaily,Details,Detaily
-anam_relation_to_p,Relation to p.,Vzťah k p.
+anam_relation_to_p,Relation to p.,Príbuzenský vzťah k pacientovi
 anam_parents_alive,Parents alive,Rodičia nažive
 anam_both,Both,Obaja
 anam_one,One,Jeden
 anam_none,None,Žiaden
 anam_mother_cause_of_death,Mother cause of death,Príčina smrti matky
 anam_father_cause_of_death,Father cause of death,Príčína smrti otca
-anam_n_10_epidemiological_history,10. Epidemiological History,10. Epidemiologická história
+anam_n_10_epidemiological_history,10. Epidemiological History,10. Epidemiologická anamnéza
 anam_recent_travel_abroad_12_months,Recent travel abroad (12 months),Nedávna cesta do zahraničia (12 mesiacov)
 anam_where_2,Where,Kde?
 anam_pets_farm_animals,Pets / farm animals,Domáce / hospodárske zvieratá
-anam_which,Which,Ktorý?
+anam_which,Which,Aké?
 anam_covid_19_vaccination,COVID-19 vaccination,Očkovanie proti COVID-19
-anam_covid_19_infection,COVID-19 infection,Infekcia spôsobená ochorením covid-19
-anam_n_11_social_history,11. Social History,11. Sociálna história
+anam_covid_19_infection,COVID-19 infection,Prekonané ochorenie COVID-19
+anam_n_11_social_history,11. Social History,11. Sociálna anamnéza
 anam_employment,Employment,Pracovný stav
 anam_working,Working,Pracuje
 anam_retired,Retired,Na dôchodku
@@ -176,8 +176,8 @@ anam_single,Single,Slobodný/á
 anam_married,Married,Ženatý/Vidatá
 anam_divorced,Divorced,Rozvedený/á
 anam_widowed,Widowed,Vdova/Vdovec
-anam_living_situation,Living situation,Životná situácia
-anam_alone,Alone,Sám
+anam_living_situation,Living situation,S kým pacient žije
+anam_alone,Alone,Sám / sama
 anam_with_family,With family,S rodinou
 anam_housing,Housing,Bývanie
 anam_house,House,Dom
@@ -187,7 +187,7 @@ anam_house_notes,House notes,Poznámky k bývaniu
 anam_which_floor,Which floor,Ktoré poschodie?
 anam_elevator_yes,Elevator yes,Má výťah
 anam_elevator_no,Elevator no,Nemá výťah
-anam_n_12_abuses,12. Abuses,12. Abúzy
+anam_n_12_abuses,12. Abuses,12. Návyky a abúzy
 anam_smoking,Smoking,Fajčenie
 anam_alcohol,Alcohol,Alkohol
 anam_coffee,Coffee,Káva
@@ -205,10 +205,10 @@ anam_place,Place,Miesto
 anam_time,Time,Čas
 anam_general_appearance,General appearance,Celkový vzhľad
 anam_calm,Calm,Pokojný
-anam_distressed,Distressed,Utrápený
+anam_distressed,Distressed,V tiesni / nepohode
 anam_in_pain,In pain,V bolestiach
 anam_dyspneic,Dyspneic,Dyspnoický
-anam_cachectic,Cachectic,Cachectic
+anam_cachectic,Cachectic,Kachektický
 anam_hydration,Hydration,Hydratácia
 anam_normal,Normal,Normálne
 anam_mild_dehydration,Mild dehydration,Mierna dehydratácia
@@ -217,22 +217,22 @@ anam_underweight,Underweight,Podváha
 anam_overweight,Overweight,Nadváha
 anam_obese,Obese,Obézny
 anam_habitus,Habitus,Habitus
-anam_asthenic,Asthenic,Astenické
+anam_asthenic,Asthenic,Astenický
 anam_normosthenic,Normosthenic,Normostenický
-anam_hypersthenic,Hypersthenic,Hyperstenické
+anam_hypersthenic,Hypersthenic,Hyperstenický
 anam_gait_mobility,Gait / mobility,Chôdza / pohyblivosť
 anam_ataxic,Ataxic,Ataxický
 anam_hemiparetic,Hemiparetic,Hemiparetický
-anam_shuffling,Shuffling,Miešanie
-anam_uses_aid,Uses aid,Používa pomoc
+anam_shuffling,Shuffling,Šuchtavá chôdza
+anam_uses_aid,Uses aid,Používa pomôcku
 anam_aid_cane_walker_wheelchair,Aid (cane / walker / wheelchair),Pomôcky (palička / chodítko / invalidný vozík)
 anam_speech,Speech,Reč
 anam_dysarthria,Dysarthria,Dyzartria
 anam_aphasia,Aphasia,Afázia
-anam_slurred,Slurred,Nezrozumiteľný
-anam_position,Position,Pozícia
-anam_active,Active,Aktívne
-anam_passive,Passive,Pasívne
+anam_slurred,Slurred,Nezreteľná reč
+anam_position,Position,Poloha
+anam_active,Active,Aktívna
+anam_passive,Passive,Pasívna
 anam_forced,Forced,Nútená
 anam_skin,Skin,Koža
 anam_rashes,Rashes,Vyrážky
@@ -243,13 +243,13 @@ anam_cyanosis,Cyanosis,Cyanóza
 anam_pallor,Pallor,Bledosť
 anam_skin_notes,Skin notes,Poznámky ku koži
 anam_peripheral_edema,Peripheral edema,Periférny edém
-anam_pretibial,Pretibial,Pretibial
+anam_pretibial,Pretibial,Pretibiálny
 anam_sacral,Sacral,Sakrálny
 anam_odor,Odor,Zápach
 anam_ketosis,Ketosis,Ketóza
 anam_uremic,Uremic,Uremický
-anam_hepatic,Hepatic,Pečeňový
-anam_n_14_vital_signs_and_values_adult,14. Vital Signs and Values (Adult),14. Vitálne znaky a hodnoty (dospelí)
+anam_hepatic,Hepatic,Hepatálny
+anam_n_14_vital_signs_and_values_adult,14. Vital Signs and Values (Adult),14. Vitálne funkcie a hodnoty (dospelý)
 anam_temperature_c,Temperature (°C),Teplota (°C)
 anam_spo2,SpO2 (%),SpO2 (%)
 anam_heart_rate_min,Heart rate (/min),Srdcová frekvencia (/min)
@@ -258,16 +258,16 @@ anam_respiratory_rate_min,Respiratory rate (/min),Dychová frekvencia (/min)
 anam_height_cm,Height (cm),Výška (cm)
 anam_blood_pressure_mmhg,Blood pressure (mmHg),Krvný tlak (mmHg)
 anam_bmi_kg_m2,BMI (kg/m2),BMI (kg/m2)
-anam_taken,Taken from,Odobrané z
+anam_taken,Taken from,Zdroj hodnoty
 anam_from_monitor,From monitor,Z monitora
-anam_from_pt_charts,From Pt. charts,Z p. dokumentácie
-anam_if_from_charts_when,"If from charts, when were they taken?","Ak z dokumentácie, kedy boli odobrané?"
+anam_from_pt_charts,From Pt. charts,Z dokumentácie pacienta
+anam_if_from_charts_when,"If from charts, when were they taken?","Ak z dokumentácie, kedy boli hodnoty namerané?"
 anam_n_15_status_praesens_localis_spl,15. Status Praesens Localis (SPL),15. Status Praesens Localis (SPL)
-anam_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Prístroje / Vstupy / Katétre
-anam_peripheral_iv_line,Peripheral IV line,Periférna IV linka
+anam_medical_devices_lines_catheters,Medical Devices / Lines / Catheters,Zdravotnícke pomôcky / vstupy / katétre
+anam_peripheral_iv_line,Peripheral IV line,Periférny venózny vstup
 anam_central_venous_catheter,Central venous catheter,Centrálny venózny katéter
 anam_foley_catheter,Foley catheter,Foleyho katéter
-anam_drains,Drains,Odtoky
+anam_drains,Drains,Drény
 anam_oxygen_therapy,Oxygen therapy,Kyslíková terapia
 anam_ecg_monitoring,ECG monitoring,Monitorovanie EKG
 anam_vital_function_monitor,Vital function monitor,Monitor vitálnych funkcií
@@ -286,23 +286,23 @@ anam_posture_curvature_mobility,"Posture, curvature, mobility","Držanie tela, z
 anam_n_16_reference_values,16. Reference values,16. Referenčné hodnoty
 anam_parameter,Parameter,Parameter
 anam_units,Units,Jednotky
-anam_pt_values,Pt. values,P. hodnoty
+anam_pt_values,Pt. values,Hodnota pacienta
 anam_back,Back,Späť
 anam_item,x,x
 anam_bullet_mode,Bullet mode,Režim odrážok
 anam_write_your_general_notes_here,Space for notes...,Miesto pre poznámky...
-anam_over_the_counter_medicine,Regular use of over the counter medicine,Pravidelné užívanie voľnopredajnych liekov
-anam_supplements_vitamins_herbal_products,Regular use of supplements / vitamins / herbal products,Pravidelné užívanie doplnkov / vitaminov / bylinných produktov
+anam_over_the_counter_medicine,Regular use of over the counter medicine,Pravidelné užívanie voľnopredajných liekov
+anam_supplements_vitamins_herbal_products,Regular use of supplements / vitamins / herbal products,Pravidelné užívanie doplnkov / vitamínov / rastlinných prípravkov
 anam_temperature_c_2,Temperature (°C),Teplota (°C)
-anam_taken_2,Taken from,Odobrané z
-anam_if_from_charts_when_2,"If from charts, when they were taken?","Ak z dokumentácie, kedy boli odobrané?"
+anam_taken_2,Taken from,Zdroj hodnoty
+anam_if_from_charts_when_2,"If from charts, when they were taken?","Ak z dokumentácie, kedy boli hodnoty namerané?"
 anam_write_your_general_notes_here_2,"If needed, write your general notes here...","Ak potrebujete, sem napíšte svoje všeobecné poznámky..."
 ext_appetite_change,Appetite change,Zmena chuti do jedla
 ext_orthopnea,Orthopnea,Ortopnoe
 ext_paroxysmal_nocturnal_dyspnea,Paroxysmal nocturnal dyspnea,Paroxyzmálna nočná dýchavica
 ext_syncope___presyncope,Syncope / presyncope,Synkopa / presynkopa
 ext_claudication,Claudication,Klaudikácie
-ext_wheezing,Wheezing,Pískoty
+ext_wheezing,Wheezing,Pískanie / sipot pri dýchaní
 ext_pleuritic_chest_pain,Pleuritic chest pain,Pleuritická bolesť na hrudníku
 ext_heartburn___reflux,Heartburn / reflux,Pálenie záhy / reflux
 ext_regurgitation,Regurgitation,Regurgitácia
@@ -386,7 +386,7 @@ ext_vaccination_status_reviewed,Vaccination status reviewed,Očkovací stav skon
 ext_relevant_vaccines___missing_doses___reactions,Relevant vaccines / missing doses / reactions,Relevantné vakcíny / chýbajúce dávky / reakcie
 ext_function__support___lifestyle,"Function, support & lifestyle","Fungovanie, podpora a životný štýl"
 ext_adls___independence__washing__dressing__meals__shopping__med,"ADLs / independence: washing, dressing, meals, shopping, medication, finances","ADL / samostatnosť: hygiena, obliekanie, jedlo, nákupy, lieky, financie"
-ext_mobility___exercise_tolerance___walking_distance___stairs,Mobility / exercise tolerance / walking distance / stairs,Mobilita / tolerancia záťaže / vzdialenosť chôdze / schody
+ext_mobility___exercise_tolerance___walking_distance___stairs,Mobility / exercise tolerance / walking distance / stairs,Mobilita / tolerancia záťaže / prejdená vzdialenosť / schody
 ext_family__caregiver__home_nursing_and_other_support,"Family, caregiver, home nursing and other support","Rodina, opatrovateľ, domáca ošetrovateľská a iná podpora"
 ext_occupational_exposures__dust__asbestos__chemicals__infection,"Occupational exposures: dust, asbestos, chemicals, infection, heavy lifting","Pracovné expozície: prach, azbest, chemikálie, infekcie, ťažká fyzická práca"
 ext_diet___appetite___relevant_restrictions,Diet / appetite / relevant restrictions,Strava / apetít / relevantné obmedzenia
@@ -403,3 +403,223 @@ ext_smoking__cigarettes_day__years__pack_years__quit_date___vapi,"Smoking: cigar
 ext_alcohol__type__amount__frequency__last_drink,"Alcohol: type, amount, frequency, last drink","Alkohol: druh, množstvo, frekvencia, posledné užitie"
 ext_drugs__substance__amount__route__frequency__last_use,"Drugs: substance, amount, route, frequency, last use","Drogy: látka, množstvo, spôsob podania, frekvencia, posledné užitie"
 ext_tolerance___withdrawal___attempts_to_cut_down___consequences,Tolerance / withdrawal / attempts to cut down / consequences,Tolerancia / abstinenčné príznaky / pokusy obmedziť / dôsledky
+ext_pmh_arrhythmia,Atrial fibrillation / other arrhythmia,Fibrilácia predsiení / iná arytmia
+ext_pmh_valvular,Valvular heart disease,Chlopňové ochorenie srdca
+ext_pmh_stroke_tia,Stroke / TIA,Cievna mozgová príhoda / TIA
+ext_pmh_pad,Peripheral arterial disease,Periférne artériové ochorenie
+ext_pmh_vte,Previous DVT / pulmonary embolism,Predchádzajúca HŽT / pľúcna embólia
+ext_pmh_osa,Obstructive sleep apnoea,Obštrukčné spánkové apnoe
+ext_pmh_nephrolithiasis,Recurrent nephrolithiasis,Opakovaná nefrolitiáza
+ext_pmh_gi,GERD / peptic ulcer disease,GERD / peptická vredová choroba
+ext_pmh_ibd,Inflammatory bowel disease,Zápalové ochorenie čreva
+ext_pmh_epilepsy,Epilepsy / seizures,Epilepsia / záchvaty
+ext_pmh_migraine,Migraine / recurrent severe headache,Migréna / opakované silné bolesti hlavy
+ext_pmh_oa,Osteoarthritis,Osteoartróza
+ext_pmh_autoimmune,Rheumatoid / autoimmune disease,Reumatoidné / autoimunitné ochorenie
+ext_pmh_anemia,Chronic anaemia,Chronická anémia
+ext_pmh_bleeding,Bleeding disorder,Krvácavé ochorenie
+ext_pmh_thrombophilia,Thrombophilia / recurrent thrombosis,Trombofília / opakovaná trombóza
+ext_pmh_malignancy,Current / previous malignancy,Súčasná / prekonaná malignita
+ext_pmh_psych,Psychiatric illness,Psychiatrické ochorenie
+ext_pmh_obesity,Obesity / metabolic disease,Obezita / metabolické ochorenie
+ext_pmh_gout,Gout / hyperuricaemia,Dna / hyperurikémia
+v80_history_source_heading,Anamnesis obtained from,Anamnéza získaná od
+v80_source_patient,Patient,Pacienta / pacientky
+v80_source_relative,Relative / caregiver,Príbuzného / opatrovateľa
+v80_source_documentation,Medical documentation,Zdravotnej dokumentácie
+v80_source_healthcare,EMS / healthcare professional,ZZS / zdravotníckeho pracovníka
+v80_source_combination,Combination,Kombinácie zdrojov
+v80_source_other,Other source / details,Iný zdroj / podrobnosti
+v80_function_mobility,Function & mobility,Funkčný stav a mobilita
+v80_baseline_function,Usual / baseline function before current illness,Bežný / východiskový funkčný stav pred aktuálnym ochorením
+v80_baseline_adl,"Baseline ADLs / independence: washing, dressing, meals, shopping, medication, finances","Východiskové ADL / samostatnosť: hygiena, obliekanie, stravovanie, nákupy, lieky, financie"
+v80_baseline_mobility,Baseline mobility / exercise tolerance / walking distance / stairs / mobility aids,Východisková mobilita / tolerancia záťaže / prejdená vzdialenosť / schody / pomôcky
+v80_current_function,Current function during this illness,Aktuálny funkčný stav počas tohto ochorenia
+v80_current_adl,Current ADLs / independence and any new assistance needed,Aktuálne ADL / samostatnosť a nová potreba pomoci
+v80_current_mobility,Current mobility / walking distance / stairs / mobility aids compared with baseline,Aktuálna mobilita / prejdená vzdialenosť / schody / pomôcky v porovnaní s východiskovým stavom
+v80_bmi_auto_note,BMI is calculated automatically from height and weight.,BMI sa vypočíta automaticky z výšky a hmotnosti.
+v80_exam_status,Examination status,Stav vyšetrenia
+v80_not_examined,Not examined,Nevyšetrené
+v80_normal,Normal,Fyziologický nález
+v80_abnormal,Abnormal,Patologický nález
+v80_depiction,Depiction,Zobrazenie
+v80_pc,PC,PC
+v80_phone_tablet,Phone / Tablet,Telefón / tablet
+v80_text_date_of_birth,Date of birth,Dátum narodenia
+v80_text_age,Age,Vek
+v80_text_reason_diagnosis_frequency_of_visits_last_review_planned_follow_up,Reason / diagnosis / frequency of visits / last review / planned follow-up,Dôvod / diagnóza / frekvencia kontrol / posledná kontrola / plánovaná kontrola
+v80_text_complications_icu_infection_bleeding_thrombosis_other_relevant_outcome,Complications / ICU / infection / bleeding / thrombosis / other relevant outcome,Komplikácie / JIS / infekcia / krvácanie / trombóza / iný relevantný výsledok
+v80_text_when_why_important_result_where_performed,When / why / important result / where performed,Kedy / prečo / dôležitý výsledok / kde bolo vyšetrenie vykonané
+v80_text_adverse_effects_intolerance_medication_problems,Adverse effects / intolerance / medication problems,Nežiaduce účinky / intolerancia / problémy s liečbou
+v80_text_mother_current_age_age_at_death,Mother: current age / age at death,Matka: aktuálny vek / vek pri úmrtí
+v80_text_father_current_age_age_at_death,Father: current age / age at death,Otec: aktuálny vek / vek pri úmrtí
+v80_text_siblings_number_major_illnesses_premature_deaths,Siblings: number / major illnesses / premature deaths,Súrodenci: počet / závažné ochorenia / predčasné úmrtia
+v80_text_children_major_illnesses_hereditary_concerns,Children: major illnesses / hereditary concerns,Deti: závažné ochorenia / podozrenie na dedičné ochorenia
+v80_text_age_at_diagnosis_relation_clustering_relevant_details,Age at diagnosis / relation / clustering / relevant details,Vek pri diagnóze / príbuzenský vzťah / výskyt v rodine / relevantné podrobnosti
+v80_text_relevant_exposures_dust_asbestos_chemicals_infection_heavy_lifting_shift,"Relevant exposures: dust, asbestos, chemicals, infection, heavy lifting, shift work","Relevantné pracovné expozície: prach, azbest, chemikálie, infekcie, ťažká fyzická práca, zmenová práca"
+v80_text_house_notes_access_barriers,House notes / access barriers,Poznámky k domu / bariéry prístupu
+v80_text_flat_notes_access_barriers,Flat notes / access barriers,Poznámky k bytu / bariéry prístupu
+v80_text_homeless_notes_current_shelter_support,Homeless notes / current shelter / support,Poznámky / aktuálne ubytovanie / dostupná podpora
+v80_text_family_caregiver_home_nursing_social_services_and_other_support,"Family, caregiver, home nursing, social services and other support","Rodina, opatrovateľ, domáca ošetrovateľská starostlivosť, sociálne služby a iná podpora"
+v80_text_sleep_pattern_snoring_witnessed_apnoea_daytime_sleepiness,Sleep pattern / snoring / witnessed apnoea / daytime sleepiness,Spánkový režim / chrápanie / pozorované apnoické pauzy / denná ospalosť
+v80_text_cigarettes_day_years_smoked_pack_years_quit_date_vaping,"Cigarettes/day, years smoked, pack-years, quit date / vaping","Cigarety/deň, roky fajčenia, balíčkoroky, dátum skončenia / vaping"
+v80_text_type_amount_frequency_binge_pattern_alcohol_free_days_last_drink,"Type, amount, frequency, binge pattern, alcohol-free days, last drink","Druh, množstvo, frekvencia, nárazové pitie, dni bez alkoholu, posledné požitie"
+v80_text_substance_amount_route_frequency_duration_last_use,"Substance, amount, route, frequency, duration, last use","Látka, množstvo, spôsob podania, frekvencia, trvanie, posledné užitie"
+v80_text_tolerance_withdrawal_attempts_to_cut_down_health_work_relationship_or_le,"Tolerance / withdrawal / attempts to cut down / health, work, relationship or legal consequences","Tolerancia / abstinenčné príznaky / pokusy obmedziť užívanie / zdravotné, pracovné, vzťahové alebo právne dôsledky"
+v80_text_amount_frequency_notes,Amount / frequency / notes,Množstvo / frekvencia / poznámky
+v80_text_temperature_c,Temperature (C),Teplota (°C)
+v80_text_if_from_charts_when,"If from charts, when","Ak z dokumentácie, kedy boli hodnoty namerané"
+v80_text_taken,Taken,Zdroj
+v80_text_seizures,Seizures,Záchvaty
+v80_text_record_known_chronic_disease_first_then_clarify_diagnosis_control_treatm,"Record known chronic disease first, then clarify diagnosis, control, treatment, complications and follow-up for every positive item.","Najprv zaznamenajte známe chronické ochorenia; pri každom pozitívnom údaji doplňte diagnózu, kontrolu ochorenia, liečbu, komplikácie a sledovanie."
+v80_text_common_chronic_diseases,Common chronic diseases,Časté chronické ochorenia
+v80_text_previous_hospitalizations_operations,Previous hospitalizations / operations,Predchádzajúce hospitalizácie / operácie
+v80_text_previous_hospitalization,Previous hospitalization,Predchádzajúca hospitalizácia
+v80_text_previous_operations,Previous operations,Predchádzajúce operácie
+v80_text_malignant_hyperthermia_in_patient_family,Malignant hyperthermia in patient / family,Malígna hypertermia u pacienta / v rodine
+v80_text_awareness_during_anaesthesia,Awareness during anaesthesia,Bdelosť počas anestézie
+v80_text_difficult_iv_access,Difficult IV access,Ťažké zabezpečenie intravenózneho vstupu
+v80_text_major_perioperative_bleeding_transfusion,Major perioperative bleeding / transfusion,Závažné perioperačné krvácanie / transfúzia
+v80_text_postoperative_thrombosis_pe,Postoperative thrombosis / PE,Pooperačná trombóza / pľúcna embólia
+v80_text_record_regular_prescribed_medicines_first_clarify_the_exact_drug_dose_fr,"Record regular prescribed medicines first. Clarify the exact drug, dose, frequency and indication before adding safety details.","Najprv zaznamenajte pravidelne predpísané lieky. Pred doplnením bezpečnostných údajov uveďte presný liek, dávku, frekvenciu užívania a indikáciu."
+v80_text_ask_about_important_disease_in_first_degree_relatives_and_clarify_age_at,"Ask about important disease in first-degree relatives and clarify age at diagnosis, premature disease, cause of death and repeated patterns in the family.","Pýtajte sa na významné ochorenia u príbuzných prvého stupňa a upresnite vek pri diagnóze, predčasný výskyt ochorenia, príčinu úmrtia a opakovaný výskyt v rodine."
+v80_text_important_familial_patterns_to_ask_about,Important familial patterns to ask about,Dôležité rodinné ochorenia a vzorce výskytu
+v80_text_premature_cardiovascular_disease,Premature cardiovascular disease,Predčasné kardiovaskulárne ochorenie
+v80_text_stroke,Stroke,Cievna mozgová príhoda
+v80_text_diabetes,Diabetes,Diabetes mellitus
+v80_text_cancer,Cancer,Nádorové ochorenie
+v80_text_dvt_pe_thrombophilia,DVT / PE / thrombophilia,HŽT / pľúcna embólia / trombofília
+v80_text_renal_disease,Renal disease,Ochorenie obličiek
+v80_text_autoimmune_disease,Autoimmune disease,Autoimunitné ochorenie
+v80_text_neurological_disease,Neurological disease,Neurologické ochorenie
+v80_text_hereditary_genetic_disease,Hereditary / genetic disease,Dedičné / genetické ochorenie
+v80_text_sudden_unexplained_death,Sudden unexplained death,Náhle nevysvetlené úmrtie
+v80_text_document_the_patient_s_living_context_function_and_support_keep_sensitiv,"Document the patient's living context, function and support. Keep sensitive questions private and clinically relevant.","Zaznamenajte životné podmienky pacienta, funkčný stav a dostupnú podporu. Citlivé otázky klaďte v súkromí a iba v klinicky relevantnom rozsahu."
+v80_text_employment_occupation,Employment & occupation,Pracovný stav a povolanie
+v80_text_relationships_household,Relationships & household,Vzťahy a domácnosť
+v80_text_housing_access,Housing & access,Bývanie a prístupnosť
+v80_text_support_lifestyle,Support & lifestyle,Podpora a životný štýl
+v80_text_sexual_history,Sexual history,Sexuálna anamnéza
+v80_text_optional_ask_privately_when_clinically_relevant,"(optional, ask privately when clinically relevant)","(voliteľné, pýtať sa v súkromí, ak je klinicky relevantné)"
+v80_text_use_a_non_judgmental_approach_and_document_only_information_relevant_to_,Use a non-judgmental approach and document only information relevant to the clinical problem.,Použite nehodnotiaci prístup a zaznamenajte iba informácie relevantné ku klinickému problému.
+v80_text_screen_first_then_quantify_only_what_is_relevant_the_original_yes_no_ite,"Screen first, then quantify only what is relevant. The original yes/no items and the newer quantification fields are kept together here.",Najprv urobte základný skríning a následne kvantifikujte iba relevantné údaje. Pôvodné položky áno/nie a doplnené kvantifikačné údaje sú uvedené spolu.
+v80_text_head_face,Head / face,Hlava / tvár
+v80_text_facial_asymmetry,Facial asymmetry,Asymetria tváre
+v80_text_scalp_hair_abnormality,Scalp / hair abnormality,Abnormalita vlasovej pokožky / vlasov
+v80_text_eye_abnormality,Eye abnormality,Abnormalita očí
+v80_text_ear_nose_abnormality,Ear / nose abnormality,Abnormalita uší / nosa
+v80_text_oral_pharyngeal_abnormality,Oral / pharyngeal abnormality,Abnormalita ústnej dutiny / hltana
+v80_text_cranial_nerve_abnormality,Cranial nerve abnormality,Abnormalita hlavových nervov
+v80_text_lymphadenopathy,Lymphadenopathy,Lymfadenopatia
+v80_text_thyroid_enlargement,Thyroid enlargement,Zväčšenie štítnej žľazy
+v80_text_thyroid_nodule,Thyroid nodule,Uzol štítnej žľazy
+v80_text_tracheal_deviation,Tracheal deviation,Deviácia trachey
+v80_text_elevated_jvp,Elevated JVP,Zvýšená náplň jugulárnych žíl (JVP)
+v80_text_carotid_bruit,Carotid bruit,Šelest nad karotídou
+v80_text_restricted_neck_mobility,Restricted neck mobility,Obmedzená pohyblivosť krku
+v80_text_thorax_respiratory,Thorax / respiratory,Hrudník / dýchací systém
+v80_text_asymmetric_chest_expansion,Asymmetric chest expansion,Asymetrické rozvíjanie hrudníka
+v80_text_decreased_breath_sounds,Decreased breath sounds,Oslabené dychové fenomény
+v80_text_crackles,Crackles,Krepitácie / chrôpky
+v80_text_wheeze,Wheeze,Pískoty
+v80_text_dull_percussion_note,Dull percussion note,Skrátený poklop
+v80_text_hyperresonance,Hyperresonance,Hypersonórny poklop
+v80_text_respiratory_distress_accessory_muscles,Respiratory distress / accessory muscles,Respiračná tieseň / zapájanie pomocných dýchacích svalov
+v80_text_irregular_rhythm,Irregular rhythm,Nepravidelný rytmus
+v80_text_murmur,Murmur,Srdcový šelest
+v80_text_abnormal_heart_sounds,Abnormal heart sounds,Abnormálne srdcové ozvy
+v80_text_abnormal_peripheral_perfusion,Abnormal peripheral perfusion,Abnormálna periférna perfúzia
+v80_text_distension,Distension,Distenzia
+v80_text_surgical_scars,Surgical scars,Operačné jazvy
+v80_text_reduced_absent_bowel_sounds,Reduced / absent bowel sounds,Oslabená / neprítomná črevná peristaltika
+v80_text_increased_bowel_sounds,Increased bowel sounds,Zvýšená črevná peristaltika
+v80_text_tenderness,Tenderness,Palpačná citlivosť
+v80_text_guarding,Guarding,Défense / svalová obrana
+v80_text_rigidity,Rigidity,Rigidita
+v80_text_rebound_tenderness,Rebound tenderness,Peritoneálne dráždenie / rebound tenderness
+v80_text_palpable_mass,Palpable mass,Palpovateľná rezistencia
+v80_text_hepatomegaly,Hepatomegaly,Hepatomegália
+v80_text_splenomegaly,Splenomegaly,Splenomegália
+v80_text_murphy_sign_positive,Murphy sign positive,Pozitívny Murphyho príznak
+v80_text_mcburney_tenderness,McBurney tenderness,Citlivosť v McBurneyovom bode
+v80_text_rovsing_sign_positive,Rovsing sign positive,Pozitívny Rovsingov príznak
+v80_text_cva_renal_angle_tenderness,CVA / renal angle tenderness,Citlivosť v kostovertebrálnom / renálnom uhle
+v80_text_peripheral_oedema,Peripheral oedema,Periférny edém
+v80_text_peripheral_cyanosis,Peripheral cyanosis,Periférna cyanóza
+v80_text_clubbing,Clubbing,Paličkovité prsty
+v80_text_skin_change_ulcer,Skin change / ulcer,Kožná zmena / ulcerácia
+v80_text_joint_swelling_deformity,Joint swelling / deformity,Opuch / deformita kĺbu
+v80_text_reduced_mobility,Reduced mobility,Obmedzená pohyblivosť
+v80_text_abnormal_peripheral_pulses,Abnormal peripheral pulses,Abnormálne periférne pulzy
+v80_text_unilateral_swelling_dvt_concern,Unilateral swelling / DVT concern,Jednostranný opuch / podozrenie na HŽT
+v80_text_scoliosis,Scoliosis,Skolióza
+v80_text_kyphosis,Kyphosis,Kyfóza
+v80_text_lordosis,Lordosis,Lordóza
+v80_text_spinal_tenderness,Spinal tenderness,Citlivosť chrbtice
+v80_text_restricted_spinal_mobility,Restricted spinal mobility,Obmedzená pohyblivosť chrbtice
+v80_text_study_reference,Study reference:,Študijné referenčné hodnoty:
+v80_text_approximate_adult_intervals_are_shown_for_orientation_local_laboratory_a,"approximate adult intervals are shown for orientation. Local laboratory, assay-, sex-, age-, pregnancy- and disease-specific reference intervals take precedence.","uvedené intervaly pre dospelých sú orientačné. Prednosť majú referenčné intervaly konkrétneho laboratória a hodnoty špecifické pre metódu, pohlavie, vek, tehotenstvo a ochorenie."
+v80_text_complete_blood_count,Complete blood count,Krvný obraz
+v80_text_inflammation,Inflammation,Zápalové parametre
+v80_text_renal_function_electrolytes,Renal function & electrolytes,Renálne funkcie a elektrolyty
+v80_text_liver_proteins,Liver & proteins,Pečeňové parametre a bielkoviny
+v80_text_glucose_metabolic,Glucose & metabolic,Glukóza a metabolické parametre
+v80_text_lipids,Lipids,Lipidy
+v80_text_coagulation,Coagulation,Koagulácia
+v80_text_thyroid,Thyroid,Štítna žľaza
+v80_text_acid_base_perfusion,Acid-base / perfusion,Acidobázická rovnováha / perfúzia
+v80_text_lab_age_dependent,lab / age dependent,závisí od laboratória / veku
+v80_text_lab_dependent,lab dependent,závisí od laboratória
+v80_text_target_depends_on_cv_risk,target depends on CV risk,cieľ závisí od KV rizika
+v80_text_lab_reagent_dependent,lab / reagent dependent,závisí od laboratória / reagencie
+v80_text_lab_sample_dependent,lab / sample dependent,závisí od laboratória / typu vzorky
+v80_text_indicative_study_value_interpret_in_clinical_context_and_against_the_rep,* Indicative study value. Interpret in clinical context and against the reporting laboratory's own interval or treatment target.,* Orientačná študijná hodnota. Interpretujte v klinickom kontexte a podľa referenčného intervalu alebo terapeutického cieľa konkrétneho laboratória.
+ref_label_hb,Hemoglobin (Hb),Hemoglobín (Hb)
+ref_label_rbc,Red blood cells (RBC),Erytrocyty (RBC)
+ref_label_hct,Hematocrit (Hct),Hematokrit (Hct)
+ref_label_wbc,White blood cells (WBC),Leukocyty (WBC)
+ref_label_neutrophils,Neutrophils,Neutrofily
+ref_label_lymphocytes,Lymphocytes,Lymfocyty
+ref_label_plt,Platelets (PLT),Trombocyty (PLT)
+ref_label_mcv,MCV,MCV
+ref_label_mch,MCH,MCH
+ref_label_rdw,RDW,RDW
+ref_label_crp,C-reactive protein (CRP),C-reaktívny proteín (CRP)
+ref_label_esr,ESR,Sedimentácia erytrocytov (ESR/FW)
+ref_label_creatinine,Creatinine,Kreatinín
+ref_label_egfr,eGFR,eGFR
+ref_label_urea,Urea,Močovina
+ref_label_na,Sodium (Na),Sodík (Na)
+ref_label_k,Potassium (K),Draslík (K)
+ref_label_cl,Chloride (Cl),Chloridy (Cl)
+ref_label_hco3,Bicarbonate / total CO2,Bikarbonát / celkový CO₂
+ref_label_ca,Calcium (total),Vápnik (celkový)
+ref_label_mg,Magnesium,Horčík
+ref_label_phosphate,Phosphate,Fosfáty
+ref_label_alt,ALT,ALT
+ref_label_ast,AST,AST
+ref_label_alp,ALP,ALP
+ref_label_ggt,GGT,GGT
+ref_label_bili_total,Bilirubin - total,Bilirubín - celkový
+ref_label_bili_direct,Bilirubin - direct,Bilirubín - priamy
+ref_label_bili_indirect,Bilirubin - indirect,Bilirubín - nepriamy
+ref_label_albumin,Albumin,Albumín
+ref_label_total_protein,Total protein,Celkové bielkoviny
+ref_label_glucose,Fasting glucose,Glukóza nalačno
+ref_label_hba1c,HbA1c,HbA1c
+ref_label_chol_total,Total cholesterol,Celkový cholesterol
+ref_label_ldl,LDL cholesterol,LDL cholesterol
+ref_label_hdl,HDL cholesterol,HDL cholesterol
+ref_label_trig,Triglycerides,Triglyceridy
+ref_label_inr,INR (not anticoagulated),INR (bez antikoagulačnej liečby)
+ref_label_pt,Prothrombin time (PT),Protrombínový čas (PT)
+ref_label_aptt,aPTT,aPTT
+ref_label_fibrinogen,Fibrinogen,Fibrinogén
+ref_label_tsh,TSH,TSH
+ref_label_ft4,Free T4,Voľný T4
+ref_label_ph,Arterial pH,Arteriálne pH
+ref_label_pco2,PaCO2,PaCO₂
+ref_label_hco3_abg,HCO3- (ABG),HCO₃⁻ (ABR)
+ref_label_lactate,Lactate,Laktát
+anam_n_6_allergies_transfusions,6. Allergies & Transfusions,6. Alergie a transfúzie
+v80_search_drug_google,Search this drug on Google,Vyhľadať tento liek na Googli

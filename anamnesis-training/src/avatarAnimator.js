@@ -1,4 +1,29 @@
-import { Patient3DRenderer } from './scene/patient3DRenderer.js';
+let patient3DRendererModulePromise = null;
+
+async function loadPatient3DRenderer(timeoutMs = 2500) {
+  if (!patient3DRendererModulePromise) {
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js')
+      .catch((error) => {
+        patient3DRendererModulePromise = null;
+        throw error;
+      });
+  }
+
+  let timeoutId = null;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error('3D patient renderer timed out.')), timeoutMs);
+  });
+
+  try {
+    const module = await Promise.race([patient3DRendererModulePromise, timeoutPromise]);
+    if (typeof module?.Patient3DRenderer !== 'function') {
+      throw new Error('3D patient renderer module did not provide Patient3DRenderer.');
+    }
+    return module.Patient3DRenderer;
+  } finally {
+    if (timeoutId !== null) window.clearTimeout(timeoutId);
+  }
+}
 
 const state = {
   renderer3d: null,
@@ -18,6 +43,7 @@ export async function initAvatarAnimator(activeCase) {
   state.fallbackReady = false;
 
   try {
+    const Patient3DRenderer = await loadPatient3DRenderer();
     const renderer = new Patient3DRenderer(state.mount, { activeCase });
     await renderer.init();
     state.renderer3d = renderer;

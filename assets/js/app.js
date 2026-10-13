@@ -128,7 +128,7 @@ window.addEventListener("storage", (event)=>{
 const IDB_NAME = "mdict_cache";
 const IDB_STORE = "files";
 const IDB_VERSION = 1;
-const BUNDLED_DATA_CACHE_VERSION = "2026-10-06-anatomy-taxonomy-v1";
+const BUNDLED_DATA_CACHE_VERSION = "2026-10-12-anamnesis-v80";
 const ATTACHMENTS_DB_NAME = "medical_dictionary_db";
 const ATTACHMENTS_DB_VERSION = 1;
 const ATTACHMENTS_STORE = "attachments";
@@ -2648,6 +2648,7 @@ function isClinicalAnamnesisQuestionTarget(target){
 function getExplicitAnamnesisQuestionPrompt(target, explicitLabel = ""){
   const keys = [];
   if(target && target.name) keys.push(normalizeAnamnesisQuestionKey(target.name));
+  if(target && target.dataset && target.dataset.anamQuestionKey) keys.push(normalizeAnamnesisQuestionKey(target.dataset.anamQuestionKey));
   if(target && target.dataset && target.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(target.dataset.anamKey));
   const keyed = target && target.closest ? target.closest("[data-anam-key]") : null;
   if(keyed && keyed.dataset && keyed.dataset.anamKey) keys.push(normalizeAnamnesisQuestionKey(keyed.dataset.anamKey));
@@ -2943,7 +2944,7 @@ function createAnamnesisQuestionHelpButton(target, explicitLabel = ""){
   button.textContent = "?";
   button.__anamQuestionPrompt = prompt;
   button.__anamQuestionLabel = labelPair;
-  button.dataset.anamQuestionKey = String(target && target.name || target && target.dataset && target.dataset.anamKey || labelPair.en || labelPair.sk || "");
+  button.dataset.anamQuestionKey = String(target && target.dataset && target.dataset.anamQuestionKey || target && target.name || target && target.dataset && target.dataset.anamKey || labelPair.en || labelPair.sk || "");
   button.setAttribute("aria-label", prompt.kind === "clinical"
     ? "Show assessment prompt in English and Slovak"
     : "Show suggested question in English and Slovak");
@@ -3068,7 +3069,7 @@ function decorateAnamnesisTableRows(root){
 }
 
 function decorateAnamnesisGroupLabels(root){
-  root.querySelectorAll(".anam-row > span:first-child, .anam-row > strong:first-child, .anam-psych-field-label").forEach(label=>{
+  root.querySelectorAll(".anam-row > span:first-child, .anam-row > strong:first-child, .anam-psych-field-label, .anam-question-label").forEach(label=>{
     decorateAnamnesisQuestionLabel(label);
   });
 }
@@ -3415,7 +3416,18 @@ function applyAnamnesisTranslationsToDom(){
     el.setAttribute('placeholder', translateAnamnesisText(base));
   });
 
-  section.querySelectorAll('h2,h3,strong,span,label,summary,th,td,button,option').forEach(el=>{
+  section.querySelectorAll('[data-anam-title-key]').forEach(el=>{
+    const key = String(el.dataset.anamTitleKey || '').trim();
+    if(!key) return;
+    if(!el.dataset.anamBaseTitle) el.dataset.anamBaseTitle = el.getAttribute('title') || el.getAttribute('aria-label') || '';
+    const translated = translateAnamnesisById(key, el.dataset.anamBaseTitle || '');
+    if(translated){
+      el.setAttribute('title', translated);
+      el.setAttribute('aria-label', translated);
+    }
+  });
+
+  section.querySelectorAll('h2,h3,h4,h5,strong,span,label,summary,th,td,button,option,p,small').forEach(el=>{
     const key = String(el.dataset.anamKey || '').trim();
     if(key){
       const baseText = String(el.dataset.anamBaseText || el.textContent || '');
@@ -9118,9 +9130,12 @@ function buildRepeaterRow(rowsId, index){
     const searchBtn = document.createElement("button");
     searchBtn.type = "button";
     searchBtn.className = "anam-remove-row anam-search-row";
-    searchBtn.textContent = "Ã°Å¸â€Â";
-    searchBtn.title = "Search this drug on Google";
-    searchBtn.setAttribute("aria-label", "Search this drug on Google");
+    searchBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.5 4a6.5 6.5 0 1 0 4.02 11.61l4.44 4.43 1.41-1.41-4.43-4.44A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg>`;
+    searchBtn.dataset.anamTitleKey = "v80_search_drug_google";
+    searchBtn.dataset.anamBaseTitle = "Search this drug on Google";
+    const searchDrugLabel = translateAnamnesisById("v80_search_drug_google", "Search this drug on Google");
+    searchBtn.title = searchDrugLabel;
+    searchBtn.setAttribute("aria-label", searchDrugLabel);
     searchBtn.addEventListener("click", ()=>{
       const drugInput = row.querySelector(`input[name="${cfg.prefix}_drug_${index}"]`);
       const query = String(drugInput?.value || "").trim();
@@ -9129,7 +9144,7 @@ function buildRepeaterRow(rowsId, index){
         return;
       }
       const lang = normalizeLanguage(state.language);
-      const suffix = (lang === "Slovensky") ? "pouÃ…Â¾itie lieku" : "drug use";
+      const suffix = (lang === "Slovensky") ? "použitie lieku" : "drug use";
       const q = encodeURIComponent(`${query} ${suffix}`);
       window.open(`https://www.google.com/search?q=${q}`, "_blank", "noopener,noreferrer");
     });
@@ -9216,6 +9231,13 @@ function updatePlannedOperationVisibility(){
   if(!wrap) return;
   const yes = document.querySelector('input[name="pmh_planned_op"][value="yes"]');
   wrap.classList.toggle("hidden", !(yes && yes.checked));
+}
+
+function updatePmhAnaesthesiaVisibility(form = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document;
+  const yes = scope.querySelector('input[name="pmh_previous_operations"][value="yes"]');
+  const wrap = document.getElementById("pmh-anesthesia-wrap");
+  if(wrap) wrap.classList.toggle("hidden", !(yes && yes.checked));
 }
 
 function updateHousingVisibility(){
@@ -9356,6 +9378,93 @@ function updateBloodTransfusionVisibility(){
     const showReactionNotes = showDetails && !!(reactionYes && reactionYes.checked);
     reactionNotesWrap.classList.toggle("hidden", !showReactionNotes);
   }
+}
+
+const SPL_EXAMINATION_REGIONS = [
+  { name: "spl_head_status", wrapId: "spl-head-abnormal", prefix: "spl_head_", notes: ["spl_head_notes"] },
+  { name: "spl_neck_status", wrapId: "spl-neck-abnormal", prefix: "spl_neck_", notes: ["spl_neck_notes"] },
+  { name: "spl_resp_status", wrapId: "spl-resp-abnormal", prefix: "spl_resp_", extraPrefixes: ["spl_thorax_"], notes: ["spl_thorax_notes"] },
+  { name: "spl_cv_status", wrapId: "spl-cv-abnormal", prefix: "spl_cv_", notes: [] },
+  { name: "spl_abd_status", wrapId: "spl-abd-abnormal", prefix: "spl_abd_", notes: ["spl_abdomen_notes"] },
+  { name: "spl_limbs_status", wrapId: "spl-limbs-abnormal", prefix: "spl_limbs_", notes: ["spl_limbs_notes"] },
+  { name: "spl_spine_status", wrapId: "spl-spine-abnormal", prefix: "spl_spine_", notes: ["spl_spine_notes"] }
+];
+
+function updateAutomaticBmi(form = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
+  if(!scope) return;
+  const weightInput = scope.querySelector('input[name="vital_weight"]');
+  const heightInput = scope.querySelector('input[name="vital_height"]');
+  const bmiInput = scope.querySelector('input[name="vital_bmi"]');
+  if(!weightInput || !heightInput || !bmiInput) return;
+  const normalizeNumber = value => Number(String(value || "").trim().replace(",", "."));
+  const weightKg = normalizeNumber(weightInput.value);
+  const heightCm = normalizeNumber(heightInput.value);
+  if(Number.isFinite(weightKg) && weightKg > 0 && Number.isFinite(heightCm) && heightCm > 0){
+    const heightM = heightCm / 100;
+    const bmi = weightKg / (heightM * heightM);
+    bmiInput.value = Number.isFinite(bmi) ? bmi.toFixed(1) : "";
+  } else if(weightInput.value || heightInput.value){
+    bmiInput.value = "";
+  }
+}
+
+function getSplExaminationStatus(scope, config){
+  const checked = scope.querySelector(`input[name="${config.name}"]:checked`);
+  return checked ? checked.value : "";
+}
+
+function updateSplExaminationRegionVisibility(form = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
+  if(!scope) return;
+  SPL_EXAMINATION_REGIONS.forEach(config => {
+    const wrap = document.getElementById(config.wrapId);
+    if(!wrap) return;
+    wrap.classList.toggle("hidden", getSplExaminationStatus(scope, config) !== "abnormal");
+  });
+}
+
+function clearSplAbnormalSelections(scope, config){
+  const wrap = document.getElementById(config.wrapId);
+  if(!wrap) return;
+  wrap.querySelectorAll('input[type="checkbox"]').forEach(input => { input.checked = false; });
+}
+
+function normalizeSplExaminationSelections(form = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
+  if(!scope) return;
+  SPL_EXAMINATION_REGIONS.forEach(config => {
+    const status = getSplExaminationStatus(scope, config);
+    if(status && status !== "abnormal") clearSplAbnormalSelections(scope, config);
+  });
+  updateSplExaminationRegionVisibility(scope);
+}
+
+function inferLegacySplExaminationStatus(form = null, data = null){
+  const scope = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
+  if(!scope || !data || typeof data !== "object") return;
+  SPL_EXAMINATION_REGIONS.forEach(config => {
+    if(Object.prototype.hasOwnProperty.call(data, config.name)) return;
+    const prefixes = [config.prefix, ...(config.extraPrefixes || [])];
+    const hasPositiveFinding = Object.entries(data).some(([key, value]) =>
+      prefixes.some(prefix => key.startsWith(prefix)) && key !== config.name && value === true
+    );
+    if(hasPositiveFinding){
+      const abnormal = scope.querySelector(`input[name="${config.name}"][value="abnormal"]`);
+      if(abnormal) abnormal.checked = true;
+    }
+  });
+}
+
+function handleSplExaminationStatusChange(target, form = null){
+  if(!target || !String(target.name || "").startsWith("spl_") || !String(target.name || "").endsWith("_status")) return false;
+  const config = SPL_EXAMINATION_REGIONS.find(item => item.name === target.name);
+  if(!config) return false;
+  const scope = form && typeof form.querySelector === "function" ? form : document.getElementById("anamnesis-form");
+  if(!scope) return false;
+  if(target.checked && target.value !== "abnormal") clearSplAbnormalSelections(scope, config);
+  updateSplExaminationRegionVisibility(scope);
+  return true;
 }
 
 function renumberInternalAnamnesisSections(form = null){
@@ -12646,6 +12755,7 @@ async function loadInternalAnamnesisForm(data = null){
   if(!data || typeof data !== "object"){
     initAnamnesisRepeaters(null);
     updatePlannedOperationVisibility();
+    updatePmhAnaesthesiaVisibility(form);
     normalizeEmploymentSelection();
     normalizeMaritalSelection();
     normalizeLivingSelection();
@@ -12657,6 +12767,8 @@ async function loadInternalAnamnesisForm(data = null){
     updateBloodTransfusionVisibility();
     updateGynecologicalVisibility(form);
     updateHpiRadiationVisibility();
+    updateAutomaticBmi(form);
+    updateSplExaminationRegionVisibility(form);
     applyAnamnesisTranslationsToDom();
     enhanceAnamnesisSections(form);
     await enhanceAnamnesisQuestionHelp(form);
@@ -12665,7 +12777,21 @@ async function loadInternalAnamnesisForm(data = null){
   }
   initAnamnesisRepeaters(data);
   applyAnamnesisData(form, data);
+  // Backward compatibility: older saved records predate the explicit previous-operations Yes/No field.
+  if(!Object.prototype.hasOwnProperty.call(data, "pmh_previous_operations")){
+    const hasLegacyOperation = Object.entries(data).some(([key, value]) =>
+      /^pmh_operations_(?:date|procedure|outcome)_\d+$/.test(key) && String(value || "").trim()
+    );
+    const hasLegacyAnaesthesia = data.pmh_anesthesia_previous === "yes" || Object.entries(data).some(([key, value]) =>
+      /^pmh_anesthesia_/.test(key) && key !== "pmh_anesthesia_previous" && (value === true || String(value || "").trim())
+    );
+    if(hasLegacyOperation || hasLegacyAnaesthesia){
+      const yes = form.querySelector('input[name="pmh_previous_operations"][value="yes"]');
+      if(yes) yes.checked = true;
+    }
+  }
   updatePlannedOperationVisibility();
+  updatePmhAnaesthesiaVisibility(form);
   normalizeEmploymentSelection();
   normalizeMaritalSelection();
   normalizeLivingSelection();
@@ -12677,6 +12803,9 @@ async function loadInternalAnamnesisForm(data = null){
   updateBloodTransfusionVisibility();
   updateGynecologicalVisibility(form);
   updateHpiRadiationVisibility();
+  inferLegacySplExaminationStatus(form, data);
+  normalizeSplExaminationSelections(form);
+  updateAutomaticBmi(form);
   syncAgeFromDob(form);
   applyAnamnesisTranslationsToDom();
   enhanceAnamnesisSections(form);
@@ -14707,11 +14836,19 @@ async function init(){
     initAnamnesisNotesDrawer();
     syncAnamnesisMobileToolbar();
     updateGynecologicalVisibility(anamForm);
+    updateAutomaticBmi(anamForm);
+    updateSplExaminationRegionVisibility(anamForm);
     anamForm.addEventListener('input', (event)=>{
       const target = event.target instanceof HTMLElement ? event.target : null;
       const targetName = target && "name" in target ? String(target.name || "") : "";
       if(targetName === "ident_dob"){
         syncAgeFromDob(anamForm);
+      }
+      if(targetName === "vital_weight" || targetName === "vital_height"){
+        updateAutomaticBmi(anamForm);
+      }
+      if(handleSplExaminationStatusChange(target, anamForm)){
+        updateAnamnesisDocumentationProgress();
       }
       if(targetName === "ident_sex"){
         updateGynecologicalVisibility(anamForm);
@@ -14729,6 +14866,9 @@ async function init(){
       const targetName = target && "name" in target ? String(target.name || "") : "";
       if(targetName === "ident_dob"){
         syncAgeFromDob(anamForm);
+      }
+      if(targetName === "vital_weight" || targetName === "vital_height"){
+        updateAutomaticBmi(anamForm);
       }
       if(targetName === "ident_sex"){
         updateGynecologicalVisibility(anamForm);
@@ -14841,6 +14981,12 @@ async function init(){
     });
   }
   bindAllAnamnesisRepeaterButtons();
+  document.querySelectorAll('input[name="pmh_previous_operations"]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      updatePmhAnaesthesiaVisibility(document.getElementById("anamnesis-form"));
+      scheduleAnamnesisSave();
+    });
+  });
   document.querySelectorAll('input[name="pmh_planned_op"]').forEach(el=>{
     el.addEventListener('change', ()=>{
       updatePlannedOperationVisibility();

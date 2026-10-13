@@ -1,5 +1,5 @@
-import { PatientEngine } from './patientEngine.js';
-import { PATIENT_CASES } from './cases/index.js';
+import { PatientEngine } from './patientEngine.js?v=134';
+import { PATIENT_CASES } from './cases/index.js?v=134';
 import { simulationTests } from './simulationTests.js';
 
 function normalizeList(value) {

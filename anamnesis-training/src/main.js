@@ -1,14 +1,14 @@
-import { PATIENT_CASES } from './cases/index.js';
-import { INTENTS } from './data/interviewSchema.js';
-import { PatientEngine } from './patientEngine.js';
+import { PATIENT_CASES } from './cases/index.js?v=134';
+import { INTENTS } from './data/interviewSchema.js?v=134';
+import { PatientEngine } from './patientEngine.js?v=134';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
-import { runSimulationTests } from './simulationRunner.js';
+import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js';
-import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js?v=132';
+import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js?v=134';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
-import { renderModeLayout } from './ui/modeLayout.js';
+import { renderModeLayout } from './ui/modeLayout.js?v=134';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
@@ -16,8 +16,8 @@ import { buildEncounterReport, countCompletedNoteSections, createEncounterState 
 import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js';
 import { PatientStateEngine } from './patientState.js';
 import { renderPatientStatePanel } from './ui/patientStatePanel.js';
-import { renderAnamnesisCompanion, buildWorksheetText, getCoverageTopicState } from './ui/anamnesisCompanion.js';
-import { ptT } from './ui/trainerShell.js';
+import { renderAnamnesisCompanion, buildWorksheetText, getCoverageTopicState } from './ui/anamnesisCompanion.js?v=134';
+import { ptT } from './ui/trainerShell.js?v=134';
 import {
   buildAnonymizedPatientTrainerUpload,
   createPatientTrainerSessionRecord,
@@ -30,7 +30,7 @@ import {
   PATIENT_TRAINER_AUTO_RETRY_LIMIT,
   PATIENT_TRAINER_CLIENT_VERSION,
   PATIENT_TRAINER_LOG_ENDPOINT
-} from './config.js';
+} from './config.js?v=134';
 
 const TRAINER_CASES = PATIENT_CASES.filter((item) => item && item.id);
 
@@ -40,6 +40,7 @@ const els = {
   trainingScreen: document.getElementById('trainingScreen'),
   modeSelect: document.getElementById('modeSelect'),
   difficultySelect: document.getElementById('difficultySelect'),
+  interviewLanguageSelect: document.getElementById('interviewLanguageSelect'),
   randomCaseBtn: document.getElementById('randomCaseBtn'),
   startTrainingBtn: document.getElementById('startTrainingBtn'),
   setupPreview: document.getElementById('setupPreview'),
@@ -123,6 +124,7 @@ let engine;
 let activeCase = TRAINER_CASES[0] || null;
 let currentMode = 'practice';
 let currentDifficulty = 'intermediate';
+let currentInterviewLanguage = 'en';
 let stationStarted = false;
 let responsePending = false;
 let lastDetection = null;
@@ -256,6 +258,7 @@ async function startCase() {
   closeEcgViewer();
   currentMode = els.modeSelect?.value || currentMode;
   currentDifficulty = els.difficultySelect?.value || currentDifficulty;
+  currentInterviewLanguage = els.interviewLanguageSelect?.value || currentInterviewLanguage;
   stationStarted = true;
   responsePending = false;
   lastDetection = null;
@@ -271,7 +274,7 @@ async function startCase() {
   voiceInputController?.stop?.();
   els.setupScreen.hidden = true;
   els.trainingScreen.hidden = false;
-  engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty });
+  engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty, interviewLanguage: currentInterviewLanguage });
   currentSession = createPatientTrainerSessionRecord({
     caseId: activeCase?.id,
     caseName: getCaseDisplayName(activeCase),
@@ -280,6 +283,7 @@ async function startCase() {
     difficulty: currentDifficulty,
     clientVersion: PATIENT_TRAINER_CLIENT_VERSION
   });
+  currentSession.interviewLanguage = currentInterviewLanguage;
   els.chatLog.innerHTML = '<div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>';
   els.chatLog.classList.add('empty-chat');
   setQuestionPending(false);
@@ -340,10 +344,15 @@ function renderSetupPreview(randomChosen = false) {
   const selectedMode = els.modeSelect?.selectedOptions?.[0]?.textContent || 'Practice';
   const selectedDifficulty = els.difficultySelect?.selectedOptions?.[0]?.textContent || 'Intermediate';
   const modeHelp = currentMode === 'exam'
-    ? 'Exam mode hides coaching and interpretation support until the history is finished.'
+    ? 'Exam mode hides coaching, semantic labels and coverage until the history is finished.'
     : currentMode === 'teaching'
-      ? 'Teaching mode provides the fullest interview guidance.'
-      : 'Practice mode keeps broad history progress available without revealing the missing answers.';
+      ? 'Teaching mode shows the relevant curriculum, model questions and live coverage.'
+      : 'Practice mode shows section-level progress only and does not reveal the missing questions.';
+  const difficultyHelp = currentDifficulty === 'beginner'
+    ? 'Beginner patients volunteer a little more information and are more forgiving of broad questions.'
+    : currentDifficulty === 'advanced'
+      ? 'Advanced patients answer more narrowly and may need rapport or respectful framing before sensitive disclosures.'
+      : 'Intermediate difficulty uses realistic, moderately focused answers.';
   const experienceHelp = trainerExperience === 'full'
     ? (developerAccess ? '<strong>Developer preview:</strong> examination and the wider clinical encounter are enabled.' : '<strong>Under development:</strong> this mode is not available in the public trainer yet.')
     : '<strong>Anamnesis only:</strong> the station contains the patient interview, broad topic overview and an optional structured worksheet.';
@@ -351,7 +360,9 @@ function renderSetupPreview(randomChosen = false) {
     <div class="setup-preview-top"><strong>${randomChosen ? 'Random station selected' : escapeHtml(activeCase.title)}</strong><span>${escapeHtml(selectedDifficulty)} · ${escapeHtml(selectedMode)}</span></div>
     <p>${experienceHelp}</p>
     <p>${escapeHtml(modeHelp)}</p>
+    <p>${escapeHtml(difficultyHelp)}</p>
     <small>Patient identity and case facts stay hidden until they are obtained during the interview.</small>
+    <small>${escapeHtml(ptT('interview_language_note'))}</small>
   `;
 }
 function renderStationHeader() {
@@ -406,7 +417,7 @@ function addMessage(role, text, intent = '', feedbackLabel = '') {
   bubble.className = `message ${role}`;
   const showLabel = currentMode !== 'exam';
   const label = role === 'student' ? 'Student' : 'Patient';
-  const tag = showLabel && (feedbackLabel || intent) ? `<span>${escapeHtml(feedbackLabel || labelForIntent(intent))}</span>` : '';
+  const tag = currentMode === 'teaching' && (feedbackLabel || intent) ? `<span>${escapeHtml(feedbackLabel || labelForIntent(intent))}</span>` : '';
   bubble.innerHTML = `<div class="message-label">${label}${tag}</div><p>${escapeHtml(text)}</p>`;
   if (els.chatLog.classList.contains('empty-chat')) { els.chatLog.innerHTML = ''; els.chatLog.classList.remove('empty-chat'); }
   els.chatLog.appendChild(bubble);
@@ -824,7 +835,6 @@ function finishAnamnesisOnly() {
   if (!engine || trainerExperience !== 'anamnesis') return;
   const debrief = engine.getDebrief();
   const breakdown = debrief.scoreBreakdown || {};
-  const misses = (debrief.missedCaseCritical || []).map(labelForIntent);
   const communicationIssues = debrief.communication?.issues || [];
   const resolutionIssues = debrief.resolutionIssues || [];
   const worksheet = buildWorksheetText({ patientCase: activeCase, notes: anamnesisWorksheetNotes });
@@ -833,18 +843,31 @@ function finishAnamnesisOnly() {
     .filter((row) => row.id !== 'objective')
     .map((row) => `<div class="anamnesis-debrief-row"><span>${escapeHtml(row.title)}</span><strong>${row.asked}/${row.total}</strong><i><b style="width:${Math.max(0, Math.min(100, Number(row.percent || 0)))}%"></b></i></div>`)
     .join('');
+  const safetyMisses = (debrief.criticalSafetyMisses || []).map((id) => debrief.missedDetails?.find((item) => item.id === id) || { id, label: labelForIntent(id), examples: [] });
+  const importantMisses = (debrief.missedDetails || []).filter((item) => item.tier !== 'Recommended').slice(0, 14);
+  const recommendedMisses = (debrief.missedDetails || []).filter((item) => item.tier === 'Recommended').slice(0, 10);
+  const strengths = debrief.strengths || [];
+  const structureFeedback = debrief.structure?.feedback || [];
+
+  const renderMiss = (item) => `<li><strong>${escapeHtml(item.label || item.id)}</strong>${item.area ? ` <small>${escapeHtml(item.area)} · ${escapeHtml(item.tier || '')}</small>` : ''}${item.examples?.length ? `<div class="debrief-model-question">Try: ${item.examples.map((q) => `“${escapeHtml(q)}”`).join(' / ')}</div>` : ''}</li>`;
+
   els.anamnesisDebriefContent.innerHTML = `
-    <section class="anamnesis-score-hero"><div><span>History score</span><strong>${Number(debrief.score || 0)}%</strong></div><p>This score reflects what you attempted to ask, not what the language engine happened to recognise.</p></section>
-    <section class="anamnesis-score-grid">
+    <section class="anamnesis-score-hero"><div><span>History score</span><strong>${Number(debrief.score || 0)}%</strong></div><p>The score is based primarily on what you clinically attempted to ask. Simulator recognition failures are kept separate.</p></section>
+    <section class="anamnesis-score-grid anamnesis-score-grid-five">
       ${debriefMetric('Essential history', breakdown.essential)}
       ${debriefMetric('Case-critical history', breakdown.caseCritical)}
-      ${debriefMetric('Comprehensive breadth', breakdown.comprehensive)}
+      ${debriefMetric('Recommended breadth', breakdown.recommended ?? breakdown.comprehensive)}
       ${debriefMetric('Communication', breakdown.communication)}
+      ${debriefMetric('Interview structure', breakdown.structure)}
     </section>
+    ${strengths.length ? `<section class="anamnesis-debrief-section debrief-strengths"><h3>What you did well</h3><ul>${strengths.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>` : ''}
+    ${safetyMisses.length ? `<section class="anamnesis-debrief-section debrief-safety"><h3>Safety-critical omissions</h3><ul>${safetyMisses.map(renderMiss).join('')}</ul></section>` : `<section class="anamnesis-debrief-section debrief-strengths"><h3>Safety-critical history</h3><p>No safety-critical omissions detected.</p></section>`}
+    <section class="anamnesis-debrief-section"><h3>Important omissions</h3>${importantMisses.length ? `<ul class="debrief-miss-list">${importantMisses.map(renderMiss).join('')}</ul>` : '<p>No essential or case-critical omissions detected.</p>'}</section>
+    ${recommendedMisses.length ? `<details class="anamnesis-report-details"><summary>Recommended questions you could still have asked</summary><ul class="debrief-miss-list debrief-miss-list-inside">${recommendedMisses.map(renderMiss).join('')}</ul></details>` : ''}
     <section class="anamnesis-debrief-section"><h3>Section coverage</h3><div class="anamnesis-debrief-rows">${sectionRows}</div></section>
-    <section class="anamnesis-debrief-section"><h3>Important omissions</h3>${misses.length ? `<div class="anamnesis-chip-list">${misses.map((label) => `<span>${escapeHtml(label)}</span>`).join('')}</div>` : '<p>No case-critical omissions detected.</p>'}</section>
-    ${communicationIssues.length ? `<section class="anamnesis-debrief-section"><h3>Communication</h3><ul>${communicationIssues.slice(0,8).map((issue) => `<li>${escapeHtml(issue.question || '')}${issue.type ? ` <small>(${escapeHtml(String(issue.type).replaceAll('_',' '))})</small>` : ''}</li>`).join('')}</ul></section>` : ''}
-    ${resolutionIssues.length ? `<section class="anamnesis-debrief-section simulator-note"><h3>Simulator recognition</h3><p>${resolutionIssues.length} question${resolutionIssues.length===1?' was':'s were'} clinically attempted but not cleanly resolved by the simulator. These are kept separate from your omissions.</p></section>` : ''}
+    ${structureFeedback.length ? `<section class="anamnesis-debrief-section"><h3>Interview structure</h3><ul>${structureFeedback.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>` : ''}
+    ${communicationIssues.length ? `<section class="anamnesis-debrief-section"><h3>Communication</h3><ul>${communicationIssues.slice(0,10).map((issue) => `<li>${escapeHtml(issue.question || '')}${issue.message ? ` — ${escapeHtml(issue.message)}` : ''}</li>`).join('')}</ul></section>` : ''}
+    ${resolutionIssues.length ? `<section class="anamnesis-debrief-section simulator-note"><h3>Simulator recognition</h3><p>${resolutionIssues.length} question${resolutionIssues.length===1?' was':'s were'} clinically attempted but not cleanly resolved by the simulator. These are not counted as ordinary omissions.</p></section>` : ''}
     <details class="anamnesis-report-details"><summary>Structured history collected</summary><pre>${escapeHtml(engine.generateSummary())}</pre></details>
     ${worksheet ? `<details class="anamnesis-report-details"><summary>Your worksheet notes</summary><pre>${escapeHtml(worksheet)}</pre></details>` : ''}
     ${renderUploadConsentPanel(currentSession)}
@@ -1006,6 +1029,7 @@ function persistCurrentSession({ touch = true } = {}) {
     trainerType: trainerExperience === 'full' ? 'anamnesis_examination' : 'anamnesis',
     mode: currentMode,
     difficulty: currentDifficulty,
+    interviewLanguage: currentInterviewLanguage,
     lastActivityAt: touch && !currentSession.completed ? now : currentSession.lastActivityAt,
     durationSeconds: Math.max(0, Math.round((endMs - startMs) / 1000)),
     examinations: collectSessionExaminations(),
@@ -1082,6 +1106,7 @@ async function restorePatientTrainerSession(sessionId) {
   activeCase = patientCase;
   currentMode = ['practice', 'teaching', 'exam'].includes(saved.mode) ? saved.mode : 'practice';
   currentDifficulty = saved.difficulty || 'intermediate';
+  currentInterviewLanguage = saved.interviewLanguage || 'en';
   trainerExperience = saved.trainerType === 'anamnesis_examination' ? 'full' : 'anamnesis';
   currentSession = saved;
   stationStarted = true;
@@ -1095,12 +1120,13 @@ async function restorePatientTrainerSession(sessionId) {
   patientStateEngine = new PatientStateEngine(activeCase);
   patientStateEngine.restoreSnapshot?.(saved.runtimeState.patientState);
   setMonitorPatientStateSource(patientStateEngine);
-  engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty });
+  engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty, interviewLanguage: currentInterviewLanguage });
   engine.restoreState?.(saved.runtimeState.engineState || {});
 
   if (els.caseSelect) els.caseSelect.value = activeCase.id;
   if (els.modeSelect) els.modeSelect.value = currentMode;
   if (els.difficultySelect) els.difficultySelect.value = currentDifficulty;
+  if (els.interviewLanguageSelect) els.interviewLanguageSelect.value = currentInterviewLanguage;
   els.experienceCards.forEach((card) => card.classList.toggle('is-selected', card.dataset.trainerExperience === trainerExperience));
   if (els.startTrainingBtn) els.startTrainingBtn.textContent = trainerExperience === 'anamnesis' ? ptT('start_anamnesis') : 'Open developer encounter';
   voiceInputController?.stop?.();
