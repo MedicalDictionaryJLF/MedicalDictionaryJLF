@@ -1,0 +1,186 @@
+{
+  "validator": "Khronos glTF Validator",
+  "results": [
+    {
+      "patient": "Peter Novak",
+      "caseId": "chest_pain_acs_risk",
+      "file": "anamnesis-training/assets/3d/clinical/patients/peter_novak.glb",
+      "sha256": "afd57ff048957b8e7ddb8a55e2681a5745d3b5d164cdb9c9bd6312475d3d808a",
+      "bytes": 8202668,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Jana Kovacova",
+      "caseId": "abdominal_pain_cholecystitis",
+      "file": "anamnesis-training/assets/3d/clinical/patients/jana_kovacova.glb",
+      "sha256": "327ed22eabddaba86b8016b85d24981194779f8e62f61ff818924bced729e5f7",
+      "bytes": 8294108,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Milan Hronec",
+      "caseId": "progressive_dyspnea_edema",
+      "file": "anamnesis-training/assets/3d/clinical/patients/milan_hronec.glb",
+      "sha256": "492c07e379a12a32a2dbeced91a2f5edff783d170e39c1dd3e9edf44d1873765",
+      "bytes": 8814120,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Lucia Benkova",
+      "caseId": "fever_flank_dysuria",
+      "file": "anamnesis-training/assets/3d/clinical/patients/lucia_benkova.glb",
+      "sha256": "db3d2521d74cbcfc8e47ec6ceedc85386a113b5dda2fe13803ffe4fecf87e887",
+      "bytes": 9186420,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Karol Urban",
+      "caseId": "melena_dizziness_nsaid",
+      "file": "anamnesis-training/assets/3d/clinical/patients/karol_urban.glb",
+      "sha256": "5f20e3ee80d7d686a072fb6e82d0c5d6d43e5c79f5a98ec1e8238172dba739b5",
+      "bytes": 7728944,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Eva Sykorova",
+      "caseId": "exertional_syncope",
+      "file": "anamnesis-training/assets/3d/clinical/patients/eva_sykorova.glb",
+      "sha256": "edc916775e8e885516934db4091241fb2639f36bcc27e1910f1229d223302863",
+      "bytes": 8339944,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Zuzana Kralova",
+      "caseId": "weight_loss_bowel_change",
+      "file": "anamnesis-training/assets/3d/clinical/patients/zuzana_kralova.glb",
+      "sha256": "b2ac1b3795c28f98ecd222c364c53dd99641a5773d002ec11dc8e9282514a391",
+      "bytes": 7853136,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "patient": "Nina Molnarova",
+      "caseId": "recurrent_headache_migraine",
+      "file": "anamnesis-training/assets/3d/clinical/patients/nina_molnarova.glb",
+      "sha256": "7ee86ee3903f0ee63aa7eda1b7f10a4c1b28ac65dbc8dd1ce13f3a76b327a383",
+      "bytes": 8069112,
+      "skinJoints": 53,
+      "facialTargets": 27,
+      "animationClips": 15,
+      "errors": 0,
+      "warnings": 0,
+      "warningMessages": []
+    },
+    {
+      "asset": "acute.glb",
+      "kind": "environments",
+      "bytes": 750024,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "examination.glb",
+      "kind": "environments",
+      "bytes": 741840,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "internal.glb",
+      "kind": "environments",
+      "bytes": 723992,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "eva_sykorova_hospital.glb",
+      "kind": "scenes",
+      "bytes": 9064404,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "jana_kovacova_hospital.glb",
+      "kind": "scenes",
+      "bytes": 9044616,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "karol_urban_hospital.glb",
+      "kind": "scenes",
+      "bytes": 8479456,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "lucia_benkova_hospital.glb",
+      "kind": "scenes",
+      "bytes": 9936928,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "milan_hronec_hospital.glb",
+      "kind": "scenes",
+      "bytes": 9538580,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "nina_molnarova_hospital.glb",
+      "kind": "scenes",
+      "bytes": 8811432,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "peter_novak_hospital.glb",
+      "kind": "scenes",
+      "bytes": 8953176,
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "asset": "zuzana_kralova_hospital.glb",
+      "kind": "scenes",
+      "bytes": 8595456,
+      "errors": 0,
+      "warnings": 0
+    }
+  ]
+}

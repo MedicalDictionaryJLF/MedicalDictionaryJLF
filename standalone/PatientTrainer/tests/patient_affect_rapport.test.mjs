@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { PatientEngine } from '../src/patientEngine.js';
 import { peterNovak as PETER_NOVAK_CASE } from '../src/cases/peterNovak.js';
 import { derivePatientAffect } from '../src/interaction/patientAffect.js';
+import { Patient3DRenderer } from '../src/scene/patient3DRenderer.js';
 
 const engine = new PatientEngine(PETER_NOVAK_CASE);
 const baseline = engine.rapport;
@@ -30,15 +31,25 @@ const affect = derivePatientAffect({
 assert.equal(affect.emotion, 'anxious');
 assert.ok(affect.gazeEngagement > 0.7);
 
-const rendererSource = fs.readFileSync(new URL('../src/scene/patient3DRenderer.js', import.meta.url), 'utf8');
 const avatarSource = fs.readFileSync(new URL('../src/avatarAnimator.js', import.meta.url), 'utf8');
 const speechSource = fs.readFileSync(new URL('../src/speech.js', import.meta.url), 'utf8');
 const mainSource = fs.readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 const styles = fs.readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 
-assert.ok(rendererSource.includes('createFaceRig'), '3D renderer should contain procedural facial rig');
-assert.ok(rendererSource.includes('setSpeaking(active'), '3D renderer should expose speaking state');
-assert.ok(rendererSource.includes("this.viewMode = mode === 'examination' ? 'examination' : 'encounter'"));
+// Verify the preserved public speech and framing contract without a GPU context.
+const speechState = { speech: { active: false }, elapsed: 3, stopDemo() {} };
+Patient3DRenderer.prototype.setSpeaking.call(speechState, true, 'I have chest discomfort.');
+assert.equal(speechState.speech.active, true);
+assert.equal(speechState.speech.text, 'I have chest discomfort.');
+Patient3DRenderer.prototype.pulseSpeechBoundary.call(speechState, { charIndex: 7 });
+assert.equal(speechState.speech.index, 7);
+Patient3DRenderer.prototype.setSpeaking.call(speechState, false);
+assert.equal(speechState.speech.active, false);
+const framedViews = [];
+const frameState = { focus: view => framedViews.push(view) };
+Patient3DRenderer.prototype.setViewMode.call(frameState, 'examination');
+Patient3DRenderer.prototype.setViewMode.call(frameState, 'encounter');
+assert.deepEqual(framedViews, ['patient', 'face']);
 assert.ok(avatarSource.includes('setAvatarSpeaking'));
 assert.ok(avatarSource.includes('setAvatarViewMode'));
 assert.ok(speechSource.includes('utterance.onboundary'));

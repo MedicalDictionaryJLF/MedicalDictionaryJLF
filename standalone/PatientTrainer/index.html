@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Patient Trainer · Interactive Physical Examination Lab</title>
 <link href="./styles.css?v=116" rel="stylesheet"/>
+<link rel="stylesheet" href="./clinical-3d.css?v=clinical-3d-3">
 </head>
 <body>
 <div class="app-shell" id="app">
@@ -108,7 +109,7 @@
 <div class="encounter-overview" id="encounterOverview"></div>
 </section>
 </aside><section class="patient-focus-window">
-<div class="window-titlebar patient-focus-titlebar"><span>Live patient</span><span><span class="patient-focus-observe">Observe continuously</span><a class="patient-3d-credit" href="./assets/3d/ATTRIBUTION.txt" target="_blank" rel="noopener">3D credits</a></span></div>
+<div class="window-titlebar patient-focus-titlebar"><span>Live patient</span><span><span class="patient-focus-observe">Observe continuously</span><a class="patient-3d-credit" href="./assets/3d/clinical/ASSET_CREDITS.md" target="_blank" rel="noopener">3D credits</a></span></div>
 <div class="avatar-stage patient-bed-scene patient-focus-stage">
 <div aria-label="Animated patient avatar" class="avatar-mount" id="avatarMount"></div>
 <div class="avatar-fallback" id="avatarFallback">Pt</div>
@@ -248,11 +249,11 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    "three": "./assets/vendor/three/three.module.js",
+    "three/addons/": "./assets/vendor/three/addons/"
   }
 }
 </script>
-<script src="./src/main.js?v=132" type="module"></script>
+<script src="./src/main.js?v=clinical-3d-3" type="module"></script>
 </body>
 </html>

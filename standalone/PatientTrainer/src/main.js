@@ -4,7 +4,7 @@ import { PatientEngine } from './patientEngine.js';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, mountEmbeddedVitalsMonitor, stopEmbeddedVitalsMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode } from './avatarAnimator.js?v=132';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, getAvatarEcgPlacementCount } from './avatarAnimator.js?v=clinical-3d-3';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from './ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
@@ -12,7 +12,7 @@ import { renderModeLayout } from './ui/modeLayout.js';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
-import { buildEncounterReport, countCompletedNoteSections, createEncounterState, getEncounterProfile } from './clinicalEncounter.js';
+import { buildEncounterReport, countCompletedNoteSections, createEncounterState, getEncounterProfile, performExamination } from './clinicalEncounter.js';
 import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js';
 import { createEcgLeadPlacementState, renderEcgLeadPlacement } from './ui/ecgLeadPlacement.js';
 import { PatientStateEngine } from './patientState.js';
@@ -183,7 +183,7 @@ function init() {
   }));
   document.querySelectorAll('[data-objective-action]').forEach((button) => button.addEventListener('click', () => {
     if (button.dataset.objectiveAction === 'vitals') openInvestigationTool('monitor');
-    if (button.dataset.objectiveAction === 'ecg') openInvestigationTool('ecg');
+    if (button.dataset.objectiveAction === 'ecg') requestEcgAcquisition();
   }));
   document.querySelector('[data-close="vitals"]')?.addEventListener('click', closeVitalsMonitor);
   document.querySelector('[data-close="ecg"]')?.addEventListener('click', closeEcgViewer);
@@ -291,11 +291,11 @@ function renderStationHeader() {
   els.stationDifficultyBadge.textContent = `${currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1)} difficulty`;
   if (els.openEcgBtn) {
     const available = Boolean(activeCase.ecg?.available);
-    els.openEcgBtn.disabled = !available;
-    els.openEcgBtn.title = available ? (ecgPlacementState.completed ? 'View acquired 12-lead ECG' : 'Prepare 12-lead ECG') : 'ECG not available for this case';
-    els.openEcgBtn.setAttribute('aria-label', available ? (ecgPlacementState.completed ? 'View acquired ECG' : 'Prepare 12-lead ECG') : 'ECG not available for this case');
+    els.openEcgBtn.disabled = false;
+    els.openEcgBtn.title = available ? 'Place all 10 electrodes on the 3D patient before viewing the tracing' : 'Practice placing ECG electrodes; no case-specific tracing is supplied';
+    els.openEcgBtn.setAttribute('aria-label', 'Practice 12-lead ECG placement on the 3D patient');
   }
-  if (els.ecgAvailabilityText) els.ecgAvailabilityText.textContent = activeCase.ecg?.available ? (ecgPlacementState.completed ? 'ECG acquired · view tracing' : `${Object.keys(ecgPlacementState.placed || {}).length}/10 electrodes placed`) : 'No recording available';
+  if (els.ecgAvailabilityText) els.ecgAvailabilityText.textContent = `${getAvatarEcgPlacementCount()}/10 leads · ${activeCase.ecg?.available ? 'case tracing supplied' : 'no case tracing'}`;
   if (els.coachWindowTitle) els.coachWindowTitle.textContent = currentMode === 'exam' ? 'Exam station' : currentMode === 'teaching' ? 'Teaching coach' : 'Practice coach';
 }
 
@@ -361,7 +361,7 @@ async function handleQuestion(event) {
     if (els.voiceToggle.checked) {
       speak(reply, activeCase, {
         onStart: () => setAvatarSpeaking(true, reply),
-        onBoundary: () => pulseAvatarSpeechBoundary(),
+        onBoundary: (event) => pulseAvatarSpeechBoundary(event),
         onEnd: () => setAvatarSpeaking(false),
         onError: () => setAvatarSpeaking(false)
       });
@@ -730,8 +730,11 @@ function runSimulationAndShow() {
 }
 
 function requestEcgAcquisition() {
-  if (!stationStarted || !activeCase.ecg?.available) return;
-  openInvestigationTool('ecg');
+  if (!stationStarted) return;
+  if (getAvatarEcgPlacementCount() === 10 && activeCase.ecg?.available) { openEcgViewer(activeCase); return; }
+  activateWorkspace('examination');renderPhysicalExamPanel();
+  // The original photograph-based task remains a fallback for Peter when WebGL is unavailable.
+  if (!setAvatarExamTool('ecg') && activeCase.ecg?.available) openInvestigationTool('ecg');
 }
 
 function openInvestigationTool(tool) {
@@ -861,3 +864,27 @@ function activateTab(name) { document.querySelectorAll('.tab').forEach((tab) => 
 function labelForIntent(intent) { return INTENTS[intent]?.title || String(intent).replaceAll('_', ' '); }
 function escapeHtml(value) { return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
 init();
+
+// The 3D anatomy is shared with the eight-case studio; retain case-specific scoring here.
+els.avatarMount?.addEventListener('patient3d-examination', event => {
+  if (!stationStarted || !engine) return;
+  const detail=event.detail || {},label=`${detail.technique} · ${detail.siteLabel}`;
+  const result=detail.documented && detail.examinationId ? performExamination(activeCase,encounterState,detail.examinationId) : null;
+  activateWorkspace('examination');renderPhysicalExamPanel();
+  actionHistory.push({type:'physical-examination',examinationId:result?.ok?result.action.id:detail.siteId,hotspotId:detail.siteId,technique:detail.technique,label,at:new Date().toISOString()});
+  encounterState.notes.examination=mergeNote(encounterState.notes.examination,`${label}: ${detail.finding}`);
+  patientStateEngine?.recordExamination(detail.siteId,detail.finding);
+  const observed=document.createElement('div');observed.className='patient3d-observed-finding';
+  const strong=document.createElement('strong');strong.textContent=label;
+  const paragraph=document.createElement('p');paragraph.textContent=[detail.finding,detail.audioNote].filter(Boolean).join(' ');
+  observed.append(strong,paragraph);els.examinationPanel.prepend(observed);
+  renderActionHistoryPanel();updateEncounterToolLabels();
+});
+els.avatarMount?.addEventListener('patient3d-ecg-complete', event => {
+  if (!stationStarted || event.detail?.caseId!==activeCase.id) return;
+  if (activeCase.ecg?.available) patientStateEngine?.recordEcgAcquired();
+  else patientStateEngine?.connectEquipment('ecg12',true,'10 electrodes placed; no tracing supplied');
+  actionHistory.push({type:'objective-ecg-acquired',label:activeCase.ecg?.available?'12-lead ECG acquired after correct placement':'10 electrodes correctly placed; no case-specific tracing',at:new Date().toISOString()});
+  encounterState.notes.investigations=mergeNote(encounterState.notes.investigations,activeCase.ecg?.available?'12-lead ECG acquired after placing all 10 electrodes.':'Ten ECG electrodes placed; no case-specific tracing is supplied.');
+  renderPatientVisualState();renderStationHeader();renderActionHistoryPanel();updateEncounterToolLabels();
+});

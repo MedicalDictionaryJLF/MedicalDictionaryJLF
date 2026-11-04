@@ -1,0 +1,412 @@
+{
+  "material": "PatientEyeCorneaClear",
+  "policy": {
+    "alphaMode": "MASK",
+    "alphaCutoff": 0.34,
+    "alpha": 0,
+    "doubleSided": false
+  },
+  "files": [
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/eva_sykorova.glb",
+      "beforeSha256": "fd510332b09cbd142edc6f9ba0028cd7e6cd184b7f36a95997dd91df34b0465f",
+      "afterSha256": "edc916775e8e885516934db4091241fb2639f36bcc27e1910f1229d223302863",
+      "bytesBefore": 8339324,
+      "bytesAfter": 8339944,
+      "preserved": {
+        "geometry": "30149060f2ac1ef0746e5f2c3b05b9071171ef2dd4c82df5028292611d5d21fa",
+        "animations": "e926f936f5be59fc5da9772bc1e20b75d768664fcb1b5c60955a6c62dee7aa3d",
+        "skins": "360b5c86587ce0ff71f5432077bdc9410dca0943341bbe808fdc0005ec27643d",
+        "nodesAndScenes": "45f13c1a8a979cbda79e9aa9c697106249f812fa50ef00a2d3ef0b4b54a30111",
+        "albedos": "32c804fcdcf499ca996717f2024ef4e5309618c7fc2539a1dfbfb7724b5d478e"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/jana_kovacova.glb",
+      "beforeSha256": "9b86b390543a1aa767fe9e864d5fbc4a3e6c58b5ed40e6a02972fe6b8a53738f",
+      "afterSha256": "327ed22eabddaba86b8016b85d24981194779f8e62f61ff818924bced729e5f7",
+      "bytesBefore": 8293488,
+      "bytesAfter": 8294108,
+      "preserved": {
+        "geometry": "4de2c73a8304851890400c89fdc351602098eacc757a92fb60a5088ec73b5ba1",
+        "animations": "badabeb2f64233d1166e0ee4a8723c565142625509bbfd6be1b604f6bd343099",
+        "skins": "34bfd7a51dd7564e96ec24f92d7d0e64124b10507e3ee347b0185cd5c3b9dc04",
+        "nodesAndScenes": "8fae0323d77657b491fa6006c4364f99d47618fb48684ced4033ccb68f9784c8",
+        "albedos": "aba261fd1b79f1010d7b4e9ccfb0235cd14660065c67a7700de67687deadade6"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/karol_urban.glb",
+      "beforeSha256": "6a31d1e99b0cd813dc8563d966a4b181af0f5fe6017c1238ff58c3e489fad20a",
+      "afterSha256": "5f20e3ee80d7d686a072fb6e82d0c5d6d43e5c79f5a98ec1e8238172dba739b5",
+      "bytesBefore": 7728324,
+      "bytesAfter": 7728944,
+      "preserved": {
+        "geometry": "8632b36606dae0a882b505e6de650f7a197650e940bdf174900a16728eeebbb8",
+        "animations": "c69f0822b8358fdedbeb1ca4f5953a920ad7514ffa07301b9c56864c5778ba45",
+        "skins": "8d42f486ebba1dcddf52a17fb2ba12074ff5d5cb36456ca8a6bda02720929a49",
+        "nodesAndScenes": "82e538490cd70a08c5141de1f545a5427258f11fec5e5f520accb26fc806a7bd",
+        "albedos": "58d365d7265613fd06f6d2220b28eb35174e17a6ee79bbbdfed43803301646ab"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/lucia_benkova.glb",
+      "beforeSha256": "bed704d124794ce21ef79999798c4875c4a60c874599d5f7a5bf44c72394b3b9",
+      "afterSha256": "db3d2521d74cbcfc8e47ec6ceedc85386a113b5dda2fe13803ffe4fecf87e887",
+      "bytesBefore": 9185796,
+      "bytesAfter": 9186420,
+      "preserved": {
+        "geometry": "811f412c99d91147d2bb60fe899d57f81beeef8dd33cf651608d8bfd6a13c3f9",
+        "animations": "7c82d423f81cb3a1a842bb23e8e25557c35c79933a6ee38a2c37a64f79286077",
+        "skins": "19e870a5660a190000920365df8adf0490908c97c114541aa372edeb2ec5f34b",
+        "nodesAndScenes": "bf34e723487ca2614fde1f8e7657ce8917732f6e13bbde7d6caeee5ee8d39a83",
+        "albedos": "84028892c622b8d3c5a84f07bd7fd2b778ed343d208f82f8c490b42d32494b44"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/milan_hronec.glb",
+      "beforeSha256": "c46923390df0f2481b9186f2671fd3340689815c9b6232f18b4dc5271bad4508",
+      "afterSha256": "492c07e379a12a32a2dbeced91a2f5edff783d170e39c1dd3e9edf44d1873765",
+      "bytesBefore": 8813500,
+      "bytesAfter": 8814120,
+      "preserved": {
+        "geometry": "2536690742a1add93e9b8dd4064f4a84dd41b76331cf9b8d27788b3ee40d36ec",
+        "animations": "0ce2bc9312d47bced9194b38323733281763ae4a37d3fd57c31d7e916ccefde2",
+        "skins": "7fd2c9844c3b0209c4174d2f4ed3797fe725c5180f5430135504a8340918b24c",
+        "nodesAndScenes": "64eae5d68ed1169299c8faf94824f2b810aa9ce0331eea8b04e60fa1c983c225",
+        "albedos": "a09dda8f82db942361cf9a7d65794c26c3effac7297bce22aa05969e5a5863fb"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/nina_molnarova.glb",
+      "beforeSha256": "7ddf7b998b5055a1ff0af07e261d7b3b980b054fe93389a3bff5850d73c4266a",
+      "afterSha256": "7ee86ee3903f0ee63aa7eda1b7f10a4c1b28ac65dbc8dd1ce13f3a76b327a383",
+      "bytesBefore": 8068492,
+      "bytesAfter": 8069112,
+      "preserved": {
+        "geometry": "3cb6e0d49d9cd14d76130bb6cb6aceeeb9889cd41c5f9c777bf6cc8eae834c1f",
+        "animations": "644b1c0602a97fc9187305bd523bdc1b50a28074798c0a92c9745a2ce4cf87f5",
+        "skins": "9ddc116e3fdcc12afae0746dfc8893fd5e6e83e4ff4fa385d46d994b4746453e",
+        "nodesAndScenes": "4edcfff87fe2e497f8d693eac47a9cdceae33207f3064914c08d9858ea0cfb9f",
+        "albedos": "e41ef2e0a0ccf0dc39bb91f605320c56b4af119a56273fcdbcddc14039643af0"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/peter_novak.glb",
+      "beforeSha256": "496d2d308901a1d36aeab41e2fe95674b7eafebb08daf7d27bfc5ea8234597f7",
+      "afterSha256": "afd57ff048957b8e7ddb8a55e2681a5745d3b5d164cdb9c9bd6312475d3d808a",
+      "bytesBefore": 8202044,
+      "bytesAfter": 8202668,
+      "preserved": {
+        "geometry": "c107a4fb2bfd15e70d358625e9a4899eeb26d413e24c5457942c55dd5da0c8e4",
+        "animations": "346d03abfc836ee1a11ac1f2701a8269a7a3e70317d2b80450676e49bfe9e5ee",
+        "skins": "39a0f74e1c330de9ee73efb059aeb4d732d75e8069f14ebbc911cf5274e1a148",
+        "nodesAndScenes": "c9f0e62d89e0d52768d1e5e432d0f4023f3cd87fb6f5ab345b1cd00d83241104",
+        "albedos": "9e9f4602ea9111613d5a35266d9df252d124a245edca088cec5e7620b94b3dcc"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/zuzana_kralova.glb",
+      "beforeSha256": "1c126d9f4a77c0371cc07df47fdd35bd702c8ca8356e6da960233cb342708c04",
+      "afterSha256": "b2ac1b3795c28f98ecd222c364c53dd99641a5773d002ec11dc8e9282514a391",
+      "bytesBefore": 7852512,
+      "bytesAfter": 7853136,
+      "preserved": {
+        "geometry": "b41c77408fb98c734c226b10b50e7d6baf29b18d16310db5cfcfdf0e9eab8de6",
+        "animations": "b333491f88fe77a53090c63728542cd365f1e33639a0beea44891cfc3a3a3a84",
+        "skins": "4f95c028354f65ad59ad0e7daa7794fc0c5404472edb90a8d3a7eaa9b5fb8260",
+        "nodesAndScenes": "252915cb9e574e13b15d665853b58eb0468041c42674b46b9107a433888eb558",
+        "albedos": "7aacb2762c142859832cc14ebd1790b8a259c4fd482f73e34c4c97f372fb8c31"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/eva_sykorova_hospital.glb",
+      "beforeSha256": "393b5cf4286bac31372ee92729c039d7dad6033423756a4feaf970c3ea94bb04",
+      "afterSha256": "cd4b42abb65a8fca8b145c5545eab53eba7e902412f4e64f286c31745504cf0d",
+      "bytesBefore": 9063756,
+      "bytesAfter": 9064376,
+      "preserved": {
+        "geometry": "77817c50521c13550e32a2917add67e980eb82b9863e8eb94480c9235754a2be",
+        "animations": "e926f936f5be59fc5da9772bc1e20b75d768664fcb1b5c60955a6c62dee7aa3d",
+        "skins": "360b5c86587ce0ff71f5432077bdc9410dca0943341bbe808fdc0005ec27643d",
+        "nodesAndScenes": "4599f493a0f92406b6b975029d74a26e5663cd2dc831a6ebba9781f5483c2a88",
+        "albedos": "5c6034b1bc372c407dfe05cbd78c2b68be35f48ff7a1b88d67041d9c9e65d73a"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/jana_kovacova_hospital.glb",
+      "beforeSha256": "3889d81046e19107fd2c12facedcce7eaa687d34c2c4b2b8ec2762e6b20127f5",
+      "afterSha256": "bbd24d72bbba1d44a14be7610160f07a7cca6e92dcd78bb36c00f54e7ecefd2e",
+      "bytesBefore": 9043972,
+      "bytesAfter": 9044592,
+      "preserved": {
+        "geometry": "688baf021bf59e61669b120965096a83cc8aa55b0d816f51acd5afe3de479249",
+        "animations": "badabeb2f64233d1166e0ee4a8723c565142625509bbfd6be1b604f6bd343099",
+        "skins": "34bfd7a51dd7564e96ec24f92d7d0e64124b10507e3ee347b0185cd5c3b9dc04",
+        "nodesAndScenes": "cbc10a28ec7d95e3250129bf12f775fdd487b48759d47a00c741563720e0f5d6",
+        "albedos": "cc1259ee456549aca2c5148db075da6634b0ac5d81e5a2b9289ef268e11e57c2"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/karol_urban_hospital.glb",
+      "beforeSha256": "68008eea29998973e568fa6127c5eadf0f4dcc3ec23343020d2a4a105e19b8b8",
+      "afterSha256": "844b7865294f0314f9485dc91ca8b7f9278c73fb26ad5afca4a9b841fcd8a9fa",
+      "bytesBefore": 8478808,
+      "bytesAfter": 8479428,
+      "preserved": {
+        "geometry": "52743fa793a02af4e6d4a907b306615d64c2eae80c66143889e8901a10d87684",
+        "animations": "c69f0822b8358fdedbeb1ca4f5953a920ad7514ffa07301b9c56864c5778ba45",
+        "skins": "8d42f486ebba1dcddf52a17fb2ba12074ff5d5cb36456ca8a6bda02720929a49",
+        "nodesAndScenes": "51292c97d25ef60acc32a259335d0262295c71b9e85459ef13edeaf4ddbc5813",
+        "albedos": "16c2f2fe8cf01cc1ff5feaf74049ed393a1ffbbeca98aa6238e2c6203eb67861"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/lucia_benkova_hospital.glb",
+      "beforeSha256": "261f420add989ffbd71d124adf6c713f3189b6fdee59b0a5a5ec4be5c3f8b64d",
+      "afterSha256": "2ef6d6caea4ecc5a34aa09b397d1ec86986f5ffea1c971512a6c8828366877f4",
+      "bytesBefore": 9936280,
+      "bytesAfter": 9936904,
+      "preserved": {
+        "geometry": "19bc39688c6d2b5e9c7bb255cb4b3e8aed241281bc9a12cba783b6a71451d75e",
+        "animations": "7c82d423f81cb3a1a842bb23e8e25557c35c79933a6ee38a2c37a64f79286077",
+        "skins": "19e870a5660a190000920365df8adf0490908c97c114541aa372edeb2ec5f34b",
+        "nodesAndScenes": "1ce3f62c46f5488cdbcfe508a88f00efb84cec81d521686900874d6cb7797a34",
+        "albedos": "90db4cadd6f580cbb8121f43ed4aba1c167206d967fe35ab4d5b78908e1aad21"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/milan_hronec_hospital.glb",
+      "beforeSha256": "9babfd5367fc85ac251e33db37851fb916cb6cb55316164c147f10c7e60682d5",
+      "afterSha256": "9441ae08e9413cebcf83aa08ee13ba70cc27fceba47df7d78e11c566e20530bf",
+      "bytesBefore": 9537932,
+      "bytesAfter": 9538556,
+      "preserved": {
+        "geometry": "69c84c23adfa891e02952c922b85c2039b1af64c9283339d57600b904f9a1f23",
+        "animations": "0ce2bc9312d47bced9194b38323733281763ae4a37d3fd57c31d7e916ccefde2",
+        "skins": "7fd2c9844c3b0209c4174d2f4ed3797fe725c5180f5430135504a8340918b24c",
+        "nodesAndScenes": "08a0dd3cd27b95a4f9192f306c0530cb2170ad1b3400f1b9e7d21b6f300ec42e",
+        "albedos": "72918129ddfd0e38e8668a6406cd88a824bee18ca90facba8d382765e73b3b9a"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/nina_molnarova_hospital.glb",
+      "beforeSha256": "0b3b92fab296cb48815f6ce49002b1d7b2b6b148d039c566280ebe0d17104061",
+      "afterSha256": "e7d3f2945cad4f9578b18bf1d004406e833c442b69c7c13647f926b7118951e6",
+      "bytesBefore": 8810784,
+      "bytesAfter": 8811404,
+      "preserved": {
+        "geometry": "bca5bbc4773a9eb58f48b92c1bcfa0bf886a3b2416e0ae36752ca2e2874922c2",
+        "animations": "644b1c0602a97fc9187305bd523bdc1b50a28074798c0a92c9745a2ce4cf87f5",
+        "skins": "9ddc116e3fdcc12afae0746dfc8893fd5e6e83e4ff4fa385d46d994b4746453e",
+        "nodesAndScenes": "a67fe0bf86f0af8ffa3a255f208203334cf1c8d3a299b63c773c86150fa6f1a2",
+        "albedos": "c82f1ebddfede06a2c6d904d33f6a88b47b1fc09b5c3f87e9f6e13e57524fbaa"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/peter_novak_hospital.glb",
+      "beforeSha256": "492635d3ba7085cca000f1c5657de0aad14d1c9695f6bc51247b6634c51d91d7",
+      "afterSha256": "f3263925ea8d04a388c50f7602e2ae9b80cbee53b33faa2c7557522638344bb7",
+      "bytesBefore": 8952528,
+      "bytesAfter": 8953152,
+      "preserved": {
+        "geometry": "aff1a4d7c3fb3a5ac4576b5cd751cc9a7fc6134b3b08d8938228b24f9342a436",
+        "animations": "346d03abfc836ee1a11ac1f2701a8269a7a3e70317d2b80450676e49bfe9e5ee",
+        "skins": "39a0f74e1c330de9ee73efb059aeb4d732d75e8069f14ebbc911cf5274e1a148",
+        "nodesAndScenes": "c6fcd61bc885239be353570fca003b49bc783a84c6cb33f5e8932040aa024aa8",
+        "albedos": "ca3f59b11ca52f029271e76ac5d96e28abcc6c7744d252461f954ef13a471119"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/zuzana_kralova_hospital.glb",
+      "beforeSha256": "a7c70211769c8d4d44ceb23679fff077035a0f444aceb0c997647d2f67c0b682",
+      "afterSha256": "fc6706e611507c1cf36c409be5c6214cf3258883251e499cd3194d6045867317",
+      "bytesBefore": 8594808,
+      "bytesAfter": 8595428,
+      "preserved": {
+        "geometry": "ad12b07d912c79074628f1195a5055b025aa0d5f4c60510830dfba436e9a05e5",
+        "animations": "b333491f88fe77a53090c63728542cd365f1e33639a0beea44891cfc3a3a3a84",
+        "skins": "4f95c028354f65ad59ad0e7daa7794fc0c5404472edb90a8d3a7eaa9b5fb8260",
+        "nodesAndScenes": "0492e5220d78f9234613fd301e871d479eeeb45e05a42bda01742c3f4e680be6",
+        "albedos": "1f8188240721cb73c7879522762ecdc06599db912de15c0af3e7082890f5f8bb"
+      },
+      "semanticDataUnchanged": true,
+      "preservationDefinition": "Geometry hash preserves exact attribute and morph bytes plus oriented triangle multiset; only primitive/material grouping changes. All original albedo image bytes, rig and animations stay exact.",
+      "changes": [
+        {
+          "mesh": "high-poly",
+          "innerTriangles": 1060,
+          "clearShellTriangles": 980,
+          "mixedBoundaryTriangles": 0,
+          "sharedVertexAndMorphAccessors": true
+        }
+      ]
+    }
+  ],
+  "roomAssetsChanged": false
+}

@@ -1,0 +1,109 @@
+{
+  "method": "Actual Three.js GLTFLoader and Patient3DRenderer CPU evaluation; image decoding stubbed; no GPU render claim",
+  "results": [
+    {
+      "patient": "Peter Novak",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Jana Kovacova",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Milan Hronec",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Lucia Benkova",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Karol Urban",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Eva Sykorova",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Zuzana Kralova",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    },
+    {
+      "patient": "Nina Molnarova",
+      "solidMaterials": 7,
+      "cutoutMaterials": 4,
+      "bedspreadClearanceM": 0.032,
+      "restingTeethOccluded": {
+        "hidden": 30,
+        "total": 30
+      },
+      "postureSwitches": 14,
+      "portraitAndLandscapeFraming": "PASS",
+      "status": "PASS"
+    }
+  ]
+}

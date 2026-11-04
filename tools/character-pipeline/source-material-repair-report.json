@@ -1,0 +1,741 @@
+{
+  "sources": [
+    {
+      "file": "tools/character-pipeline/sources/eva_sykorova.blend",
+      "beforeSha256": "4b9eeb459d0101125267889889916b4f849c5221d77d36e23d8bc3bc97fa97b6",
+      "afterSha256": "e52f057e09634de1ea9fa112e20e9292945a64999e3549feab5036227bfd8c1e",
+      "preserved": {
+        "geometryAndMorphs": "c9a6c307e26ef021ce13a71316357407b5c24da98cbd0f2a276cad69de9aafd6",
+        "rigs": "435d097c040d8198aaf80052682ed2859c688dd59a011d6e4621ad844120b6cd",
+        "actions": "61b698ee5d9a8127dac8b6e25c4365271279eb96e90ceb59143939fcc4b2e749",
+        "packedImages": "87cf79bc6be4f3b615286484086d3e4d457d955537a758c72f04f6008f4782ce",
+        "objects": "6e0beb787676729357f0399c45fb348e9b5c7a2436fcc49c63566423aefa9848"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.short03",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_eva_sykorova",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_eva_sykorova"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/jana_kovacova.blend",
+      "beforeSha256": "f34984b111f0f929c7a6160432fdfdcd7b7d722c491b8c02100a5315dd990d81",
+      "afterSha256": "7b3acc4bfbaf6c1ae8bdb0f137514b127d6140254a743e0d524a5d7c98b81614",
+      "preserved": {
+        "geometryAndMorphs": "fcc6099806714f3658d3cf62a0527f2bab75b78c6c65f15ced5efdb22cf24138",
+        "rigs": "c418d5eeaeff604cc6ab19b8aa9ff403d0ad361c3d0fd1cb4c9fc6f847502e1a",
+        "actions": "04115844ea198f0631f808349ab927a622f6d9074601d84fdac2ec7014f23815",
+        "packedImages": "9b1063677ff3c10aa9202b030963b5b7b76c3cca772fa02cf1699c61bc7f16e4",
+        "objects": "e375a857aba0188a7db323ab9613370e63fd717b1dd8d580a443d7c1d6e0542d"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.bob01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_jana_kovacova",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_jana_kovacova"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/karol_urban.blend",
+      "beforeSha256": "2f9a9e60f50c8957148264546a7fbdd41bccdb6bc271a4bfb4b54b7e0992bdf4",
+      "afterSha256": "984d91f7a57901abc6f3a71f9f7d15381bcfebf7532d65cf6a3461dba94c9cb9",
+      "preserved": {
+        "geometryAndMorphs": "ced2b9e111b554b042317d88a633516f338373b562f790994d6c909231089d9f",
+        "rigs": "98ecec726fc35707dad8267307d4c318567878c74d84c88e10ed486bbe1a074c",
+        "actions": "c025ac11d3462977ae561cd82fbe98bfa1af0d7df67b90cb2b5e472018d810e5",
+        "packedImages": "95fc4146f7049cef9cbe228dd1bc21f250de4a26a0543114ac3284bcfed60566",
+        "objects": "e4c28e39dbc4cd78ef8adedc8d6cddafec658f64ae9443d1aa65ae0a3a971014"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.short04",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_karol_urban",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_karol_urban"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/lucia_benkova.blend",
+      "beforeSha256": "b802fc9aa7014166bb5a0fb7e980f1b25bb184978066556547060f5bd13eb5cb",
+      "afterSha256": "f6cdd406b80e11245e3230df670d1813175f9ce4fe1655ad669fe36b608ae729",
+      "preserved": {
+        "geometryAndMorphs": "4b4fc9a38596e35344eff5469ec895864cc16925d5331a2f7cf4171ab87437f1",
+        "rigs": "a1f0350350a183f77d014923a095004bcfec68122f76993081d896f3008ef19b",
+        "actions": "12876ab1c2bac7c67f7ea8d9c705aa613937d672e72196a8b204689c099e6266",
+        "packedImages": "95b0ec759fcd0be66c2ee32cf7487b45f1025670aedc88134e70482ce08cf86d",
+        "objects": "379f85e054f327546b18eda777fa0e8e192b9c6941cddde50e4467d56afade1a"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.ponytail01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_lucia_benkova",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_lucia_benkova"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/milan_hronec.blend",
+      "beforeSha256": "9a58a4fa278065cb40b6d3e3d11a7e694f61021538c98020526c86639676eef9",
+      "afterSha256": "717d1ae8c369798cde64055bffc943b1e51dbbe8a6319c749d236f40d5908593",
+      "preserved": {
+        "geometryAndMorphs": "014e9438ab9d346fa1b3f71c02326cf64b36a60b890509acb9ad8ba2f2f078ac",
+        "rigs": "af050dd260665bc77e28ae0f1c5e5264bfbf881c95814ecdfd05b20bedeabad8",
+        "actions": "dfa163d3e677847dba509f5cf5dba6066a13969cf4078e1d03d13c6cab883366",
+        "packedImages": "555d47a3648583a6d5a23f66deaf7cc028bc3d3046e7065ad97226ece2dabb87",
+        "objects": "e4c28e39dbc4cd78ef8adedc8d6cddafec658f64ae9443d1aa65ae0a3a971014"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.short01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_milan_hronec",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_milan_hronec"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/nina_molnarova.blend",
+      "beforeSha256": "42a7a441f17d37e3a3fff1406be3ea7456d4279eaa4e3e54f75c1fc86b8b9ac0",
+      "afterSha256": "9b1d709c3053aaa512046ce762b0096bfdf05b87d2a48e42d5ec4bcbf7d82b8a",
+      "preserved": {
+        "geometryAndMorphs": "bc4f05c10569f631654cfc873946dd8088d6f3098c73c3197637de68473ad342",
+        "rigs": "299904a7f9132a4aa71153d9547c7f50ba1b0843b0da88fa16211765459e7823",
+        "actions": "ee2f05804fea32d84c9ee0113c4ceb12accc7d4792b8979172223f7fc6a65c21",
+        "packedImages": "245e59ceea7aa9a19701969a267a287bd0be31cbdb89a835df0bc88770127655",
+        "objects": "67d25d23de8766b94c79e34e3222487bf1f212ce6261ca01e69b24a703a3b986"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.braid01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_nina_molnarova",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_nina_molnarova"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/peter_novak.blend",
+      "beforeSha256": "b336b0c117946beacd4243c2610a4e49c7d0a4cb2592b05be63cce7e490bacb9",
+      "afterSha256": "ae7ac1bcae8fe5771d2e29e963d55a84c61bc549ca482b7b9ed2019f69600f38",
+      "preserved": {
+        "geometryAndMorphs": "7b8d1dae96e887956f1c8f3d1e61d7607ffea492b9fed1e707a70bcfa6ad4264",
+        "rigs": "87ba7d29d4b8192ddee9eabf67b94c5da0783d189c825bf3bc0a60960e4d717f",
+        "actions": "486b0b1e12e3e285589e7c6acff733f061546147f6cde0d4f09b678bdcf951c4",
+        "packedImages": "3ee7afde8885f6a7c50572024de50b3a96e1e5e5e3160fbb73e09495a3e5825a",
+        "objects": "e4c28e39dbc4cd78ef8adedc8d6cddafec658f64ae9443d1aa65ae0a3a971014"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.short02",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_peter_novak",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_peter_novak"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    },
+    {
+      "file": "tools/character-pipeline/sources/zuzana_kralova.blend",
+      "beforeSha256": "d42874e7cde518a8908a5e40f3d5144f36b24890c7b5eb221841c0f762aac6fd",
+      "afterSha256": "357d765907c242f7664d5cedcd7b9353441fd9a9c92018e7218def09f3753376",
+      "preserved": {
+        "geometryAndMorphs": "380980815c3dfc16cdb1956837e8552469ceb94ef404ff39921df8b426d2ea12",
+        "rigs": "78ead2b839ac073893d37f5ef70f38739da587bca986c5e763eb855e655c411b",
+        "actions": "33dad1981d588d05c8fef2616c012dd8f6481c373bbd98e8672dea34cdfef631",
+        "packedImages": "35e92c8ce9005a74e2c1d18d6ca3efe6a4f8bb2b73525033a660e996255bdf9d",
+        "objects": "379f85e054f327546b18eda777fa0e8e192b9c6941cddde50e4467d56afade1a"
+      },
+      "semanticDataUnchanged": true,
+      "materials": [
+        {
+          "material": "PatientBody.bob02",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.34,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": []
+        },
+        {
+          "material": "Skin_zuzana_kralova",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": false,
+          "disconnectedBlackNormalImages": [
+            "SkinMicroNormal_zuzana_kralova"
+          ]
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "alphaCutoff": null,
+          "doubleSided": true,
+          "disconnectedBlackNormalImages": [
+            "WovenCottonNormal"
+          ]
+        }
+      ],
+      "savedFileReopenedAndVerified": true
+    }
+  ],
+  "roomSourcesChanged": false
+}

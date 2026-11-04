@@ -1,0 +1,4119 @@
+{
+  "schemaVersion": 1,
+  "scope": "Material repairs in 8 patient/8 combined GLBs and 8 patient sources; bedspread-only transform in 3 room/8 combined GLBs and 3 room sources",
+  "findings": [
+    "Opaque anatomy was incorrectly exported as BLEND/doubleSided, disabling depth writes in GLTFLoader.",
+    "Skin and cotton normals were pure black after color-space changes cleared generated pixels.",
+    "Legacy JPEG conversion removed eye atlas alpha, exposing the blue outer corneal surface."
+  ],
+  "repairs": [
+    "OPAQUE front-facing anatomy; MASK .34 two-sided hair/brows/lashes.",
+    "Black normal references removed, corresponding unused tangent/accessor/image payloads safely pruned.",
+    "Only 980 outer eye-shell triangles use PatientEyeCorneaClear MASK .34 alpha0; iris/sclera remain OPAQUE.",
+    "Eight sources and generator use the same policies; future normal color space precedes pixel assignment and eye alpha uses PNG.",
+    "Room bedspread node raised .035 m, giving .032029 m minimum mattress clearance; no geometry/binary changes."
+  ],
+  "files": [
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/eva_sykorova.glb",
+      "finalSha256": "edc916775e8e885516934db4091241fb2639f36bcc27e1910f1229d223302863",
+      "originalPublishedSha256": "2dd158be04d086f4e6d48f03181aca082bf412ec1c9a2ea39beebabc5e6e99d3",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_eva_sykorova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                237
+              ],
+              [
+                0,
+                225
+              ]
+            ],
+            "encodedSha256": "f8d3a6b7f657c4bded0e11ad4bfda7557fb567d24d5ae8879089b08a8e2dc4b0"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short03",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                26,
+                225
+              ],
+              [
+                26,
+                225
+              ],
+              [
+                26,
+                225
+              ]
+            ],
+            "encodedSha256": "35f25992af8b7a05625e081d2465b07c8b825497cf3045b8d8a0bf9e71be9810",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/jana_kovacova.glb",
+      "finalSha256": "327ed22eabddaba86b8016b85d24981194779f8e62f61ff818924bced729e5f7",
+      "originalPublishedSha256": "74b8eb5024d839f3d8d330e36019b3cee0438b04b153a69035a29b61e5aca80c",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_jana_kovacova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                227
+              ],
+              [
+                0,
+                218
+              ]
+            ],
+            "encodedSha256": "6a27fc547ac115f07c535e8fe3c547e61afe16d8de9ff5d1560a314e8b464f16"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.bob01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                253
+              ],
+              [
+                0,
+                246
+              ],
+              [
+                0,
+                250
+              ]
+            ],
+            "encodedSha256": "a6b86e8e3b65f04f6fa78835d7b78699107e36bd27018ceb56b63e4ffdb0f14a",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/karol_urban.glb",
+      "finalSha256": "5f20e3ee80d7d686a072fb6e82d0c5d6d43e5c79f5a98ec1e8238172dba739b5",
+      "originalPublishedSha256": "a5dfb5338de5cc84b2e48894592e0df5d12bf37eecea59d2c7f98c1ae74a7a8a",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_karol_urban",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "97be408a6113a02157fe690639d2370329e5210b83ce6a677188f58a997b8fbc"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short04",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                14,
+                175
+              ],
+              [
+                14,
+                160
+              ],
+              [
+                14,
+                155
+              ]
+            ],
+            "encodedSha256": "ea3b38fb4dd2ea165e922f4a51518b2d24e7d0a9896fe7138a414e62b16f58ad",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/lucia_benkova.glb",
+      "finalSha256": "db3d2521d74cbcfc8e47ec6ceedc85386a113b5dda2fe13803ffe4fecf87e887",
+      "originalPublishedSha256": "2e59d2c3b245266263d46ca10bd13f9a3e7591be2ce3a46af055d078c6a07ac9",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_lucia_benkova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                235
+              ],
+              [
+                0,
+                225
+              ]
+            ],
+            "encodedSha256": "9faa1b65200aeda5ecf6275f78b6c6ae72fce4c83f4f0775d976ce1df9232446"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.ponytail01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "c55d1ef36bd73932e5df45ee4d501d4fed43403bdb69faa9cc69831ecb237269",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/milan_hronec.glb",
+      "finalSha256": "492c07e379a12a32a2dbeced91a2f5edff783d170e39c1dd3e9edf44d1873765",
+      "originalPublishedSha256": "4273f57465665f0573964a2d9cf68ff3edd824813e5e3d567f6a865d3f3ff65d",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_milan_hronec",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "e0c4a466519a815e7547126be095161f8df78f6e380e6818fbc1a11ebf0173bd"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                22,
+                230
+              ],
+              [
+                22,
+                230
+              ],
+              [
+                22,
+                230
+              ]
+            ],
+            "encodedSha256": "475eb543b8c6d5e63519250e0659b0afdd75770c0a685f262d8c3b366ad877bc",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/nina_molnarova.glb",
+      "finalSha256": "7ee86ee3903f0ee63aa7eda1b7f10a4c1b28ac65dbc8dd1ce13f3a76b327a383",
+      "originalPublishedSha256": "85539b24a2c8775410ee96ebc78828fa55206abea837c47e206ef0d6ae49b821",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_nina_molnarova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                234
+              ],
+              [
+                0,
+                221
+              ]
+            ],
+            "encodedSha256": "cc092adce7ea82c9c3e37d326fd276817c7bfd47040bdab57a09d222634597f8"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.braid01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "97c9a0460de931a19715f062ec848da76f620ce50dc371c816861ce848246371",
+            "alphaExtrema": [
+              213,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/peter_novak.glb",
+      "finalSha256": "afd57ff048957b8e7ddb8a55e2681a5745d3b5d164cdb9c9bd6312475d3d808a",
+      "originalPublishedSha256": "6481d396a849d354ede0d6423a05a905a094515475a80debc506b443ec089127",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_peter_novak",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "52bdef835636e0f21880488103a029ec9fa334c540370a6686071ed4d868ac94"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short02",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                27,
+                245
+              ],
+              [
+                21,
+                245
+              ],
+              [
+                17,
+                245
+              ]
+            ],
+            "encodedSha256": "2aa63e5dc17b9e4a5eaae114323b91c36ec2b420e75639ec9d1795ec04a9016e",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/patients/zuzana_kralova.glb",
+      "finalSha256": "b2ac1b3795c28f98ecd222c364c53dd99641a5773d002ec11dc8e9282514a391",
+      "originalPublishedSha256": "119683c5456ec300cea9b0e172102092dabee03b5cb0e1847e5f0045333295a3",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_zuzana_kralova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                227
+              ],
+              [
+                0,
+                218
+              ]
+            ],
+            "encodedSha256": "6a27fc547ac115f07c535e8fe3c547e61afe16d8de9ff5d1560a314e8b464f16"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.bob02",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                11,
+                239
+              ],
+              [
+                11,
+                239
+              ],
+              [
+                11,
+                239
+              ]
+            ],
+            "encodedSha256": "0a737e0be977777f172703b54d53047a999164b696954469a31f967e0d359999",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ]
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/eva_sykorova_hospital.glb",
+      "finalSha256": "67346493db3deed71c859bc7b144106861886545b5a30664c7bc64bc9813f6a6",
+      "originalPublishedSha256": "10bcff3151a501f9f52eb9488e884c66a1e074f880f028d081626c22729c7130",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_eva_sykorova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                237
+              ],
+              [
+                0,
+                225
+              ]
+            ],
+            "encodedSha256": "f8d3a6b7f657c4bded0e11ad4bfda7557fb567d24d5ae8879089b08a8e2dc4b0"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short03",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                26,
+                225
+              ],
+              [
+                26,
+                225
+              ],
+              [
+                26,
+                225
+              ]
+            ],
+            "encodedSha256": "35f25992af8b7a05625e081d2465b07c8b825497cf3045b8d8a0bf9e71be9810",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "cd4b42abb65a8fca8b145c5545eab53eba7e902412f4e64f286c31745504cf0d",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/jana_kovacova_hospital.glb",
+      "finalSha256": "e06e2bd746975f3ba2c430a50305c98712f47c82067b56101ceec4356ce71aa3",
+      "originalPublishedSha256": "c8bab53c12387697b014abb3a873f2e6a7f4e0b9d85d5a2f133fc7ece8727f90",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_jana_kovacova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                227
+              ],
+              [
+                0,
+                218
+              ]
+            ],
+            "encodedSha256": "6a27fc547ac115f07c535e8fe3c547e61afe16d8de9ff5d1560a314e8b464f16"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.bob01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                253
+              ],
+              [
+                0,
+                246
+              ],
+              [
+                0,
+                250
+              ]
+            ],
+            "encodedSha256": "a6b86e8e3b65f04f6fa78835d7b78699107e36bd27018ceb56b63e4ffdb0f14a",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "bbd24d72bbba1d44a14be7610160f07a7cca6e92dcd78bb36c00f54e7ecefd2e",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/karol_urban_hospital.glb",
+      "finalSha256": "09fe4cc04e418a211d45929f7414a15acdcfbf022b0abc19ba93912556eef164",
+      "originalPublishedSha256": "0e806a2931a7e6059ab04c69a9935667370f42833010cbaafdc493aea81e2b8e",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_karol_urban",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "97be408a6113a02157fe690639d2370329e5210b83ce6a677188f58a997b8fbc"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short04",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                14,
+                175
+              ],
+              [
+                14,
+                160
+              ],
+              [
+                14,
+                155
+              ]
+            ],
+            "encodedSha256": "ea3b38fb4dd2ea165e922f4a51518b2d24e7d0a9896fe7138a414e62b16f58ad",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "844b7865294f0314f9485dc91ca8b7f9278c73fb26ad5afca4a9b841fcd8a9fa",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/lucia_benkova_hospital.glb",
+      "finalSha256": "45ebe4f320e8330274471c4f76883fb5ba106376ddf2c142d3b5344b3eac1bbb",
+      "originalPublishedSha256": "4916b3c42f785e475bbf26f85f79db9b2751f474702a3de51bb9d1a1a8305762",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_lucia_benkova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                235
+              ],
+              [
+                0,
+                225
+              ]
+            ],
+            "encodedSha256": "9faa1b65200aeda5ecf6275f78b6c6ae72fce4c83f4f0775d976ce1df9232446"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.ponytail01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "c55d1ef36bd73932e5df45ee4d501d4fed43403bdb69faa9cc69831ecb237269",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "2ef6d6caea4ecc5a34aa09b397d1ec86986f5ffea1c971512a6c8828366877f4",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/milan_hronec_hospital.glb",
+      "finalSha256": "d6b1f31ef7103464ed3b58a9a92b8daad95fb0863bff71e67b35a44f46ad1814",
+      "originalPublishedSha256": "c14675a2946dc2fa1689c57d9b5485b85cfc39b9aca9fd8f4907770fa9dcc9d8",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_milan_hronec",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "e0c4a466519a815e7547126be095161f8df78f6e380e6818fbc1a11ebf0173bd"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                22,
+                230
+              ],
+              [
+                22,
+                230
+              ],
+              [
+                22,
+                230
+              ]
+            ],
+            "encodedSha256": "475eb543b8c6d5e63519250e0659b0afdd75770c0a685f262d8c3b366ad877bc",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "9441ae08e9413cebcf83aa08ee13ba70cc27fceba47df7d78e11c566e20530bf",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/nina_molnarova_hospital.glb",
+      "finalSha256": "c1123237b098b69b49610b82986006a1494cd3b282c44962b542c96bb2f0ed8d",
+      "originalPublishedSha256": "a3b544bef25bf3d51cf783955efc60b21c864b9a8f1be804f14e74207eb603ff",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_nina_molnarova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                234
+              ],
+              [
+                0,
+                221
+              ]
+            ],
+            "encodedSha256": "cc092adce7ea82c9c3e37d326fd276817c7bfd47040bdab57a09d222634597f8"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.braid01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "97c9a0460de931a19715f062ec848da76f620ce50dc371c816861ce848246371",
+            "alphaExtrema": [
+              213,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "e7d3f2945cad4f9578b18bf1d004406e833c442b69c7c13647f926b7118951e6",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/peter_novak_hospital.glb",
+      "finalSha256": "a285afd6da982e59e79eea07be62259706dc2fc06f5b861569fa75606866a8ac",
+      "originalPublishedSha256": "76eaf1bba29fcf59cc02548c66ac3a88328aa03d61a31e07a34765aa94099b31",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_peter_novak",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "52bdef835636e0f21880488103a029ec9fa334c540370a6686071ed4d868ac94"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.short02",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                27,
+                245
+              ],
+              [
+                21,
+                245
+              ],
+              [
+                17,
+                245
+              ]
+            ],
+            "encodedSha256": "2aa63e5dc17b9e4a5eaae114323b91c36ec2b420e75639ec9d1795ec04a9016e",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "f3263925ea8d04a388c50f7602e2ae9b80cbee53b33faa2c7557522638344bb7",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/zuzana_kralova_hospital.glb",
+      "finalSha256": "e5e86950838a54cbc1ecc292611328562e903c4e4b2b4303cea9cc1d64cfdfdc",
+      "originalPublishedSha256": "3ed6f5ef672f79f686abfe9eddce255d812c659f00d5361ae38b50f7c489aa46",
+      "auditChainVerified": true,
+      "originalAlbedosUnchanged": true,
+      "invalidNormalReferencesRemaining": 0,
+      "triangleAndVertexDataUnchanged": true,
+      "materials": [
+        {
+          "material": "Skin_zuzana_kralova",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                227
+              ],
+              [
+                0,
+                218
+              ]
+            ],
+            "encodedSha256": "6a27fc547ac115f07c535e8fe3c547e61afe16d8de9ff5d1560a314e8b464f16"
+          }
+        },
+        {
+          "material": "PatientBody.eyebrow001",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "1b1f509b428528a42a4941b49ffd83924c96414b2f1d135879e175daa3d0e750",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.eyelashes01",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                0,
+                22
+              ],
+              [
+                0,
+                7
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "encodedSha256": "cefe3aa06869e88c908c342984c624ada1f74c918fd67226ecba28d99502a239",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "PatientBody.high-poly",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                195
+              ],
+              [
+                0,
+                201
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "d98337205e576fe78fa7ddf85894b0d3a150dbdfcf5382d64f218a1e6fa7c269"
+          }
+        },
+        {
+          "material": "PatientBody.shoes02",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                238
+              ],
+              [
+                0,
+                254
+              ],
+              [
+                0,
+                255
+              ]
+            ],
+            "encodedSha256": "7e77d84a31c09fd34ecb85ea71fc186a4244852f39eb457b647f57bc2d91cb8a"
+          }
+        },
+        {
+          "material": "PatientBody.teeth_base",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                224
+              ],
+              [
+                0,
+                218
+              ],
+              [
+                0,
+                220
+              ]
+            ],
+            "encodedSha256": "725ff5e3f693bd8d1d88ecd59abcd43d8b7938248921ade697d887f6941720a7"
+          }
+        },
+        {
+          "material": "PatientBody.tongue01",
+          "alphaMode": "OPAQUE",
+          "doubleSided": false,
+          "alphaCutoff": null,
+          "albedo": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGB",
+            "rgbExtrema": [
+              [
+                0,
+                255
+              ],
+              [
+                0,
+                209
+              ],
+              [
+                0,
+                198
+              ]
+            ],
+            "encodedSha256": "98b4621acbde99f6e327918b942746afc522da9f75dad2805cbfad5aee4e01cf"
+          }
+        },
+        {
+          "material": "PatientBody.bob02",
+          "alphaMode": "MASK",
+          "doubleSided": true,
+          "alphaCutoff": 0.34,
+          "albedo": {
+            "width": 1024,
+            "height": 1024,
+            "mode": "RGBA",
+            "rgbExtrema": [
+              [
+                11,
+                239
+              ],
+              [
+                11,
+                239
+              ],
+              [
+                11,
+                239
+              ]
+            ],
+            "encodedSha256": "0a737e0be977777f172703b54d53047a999164b696954469a31f967e0d359999",
+            "alphaExtrema": [
+              0,
+              255
+            ]
+          }
+        },
+        {
+          "material": "WardCottonTop",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "WardCottonTrousers",
+          "alphaMode": "OPAQUE",
+          "doubleSided": true,
+          "alphaCutoff": null
+        },
+        {
+          "material": "PatientEyeCorneaClear",
+          "alphaMode": "MASK",
+          "doubleSided": false,
+          "alphaCutoff": 0.34
+        }
+      ],
+      "materialCorneaStageSha256": "fc6706e611507c1cf36c409be5c6214cf3258883251e499cd3194d6045867317",
+      "beddingShiftMeters": 0.035,
+      "materialPolicyUnchangedByBedding": true
+    }
+  ],
+  "neutralNormalOrderCheck": {
+    "decodedRgbExtrema": [
+      [
+        128,
+        128
+      ],
+      [
+        128,
+        128
+      ],
+      [
+        255,
+        255
+      ]
+    ],
+    "passed": true
+  },
+  "sourceReports": [
+    "source-material-repair-report.json",
+    "source-cornea-repair-report.json"
+  ],
+  "conformanceReport": "asset-validation.json",
+  "evidenceLimit": "Cycles renders complement CPU/material checks; direct WebGL viewport pixels were unavailable in this environment.",
+  "beddingRepairReport": "bedding-repair-report.json",
+  "roomAndCombinedFinalHashes": [
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/acute.glb",
+      "sha256": "f68d5872b4c5e6f9ac543aab125bd4145d93b25edb9d13a4287582ba7012f266",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/examination.glb",
+      "sha256": "3ac96582a9b2e922bd91bb7a206ca8a8c2bfb0667922cfbe6fe97afb4d2561b1",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/internal.glb",
+      "sha256": "042470c1bee169ecea1a87a79ef52b50740a907f2e7d80dea14c05415580c634",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/eva_sykorova_hospital.glb",
+      "sha256": "67346493db3deed71c859bc7b144106861886545b5a30664c7bc64bc9813f6a6",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/jana_kovacova_hospital.glb",
+      "sha256": "e06e2bd746975f3ba2c430a50305c98712f47c82067b56101ceec4356ce71aa3",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/karol_urban_hospital.glb",
+      "sha256": "09fe4cc04e418a211d45929f7414a15acdcfbf022b0abc19ba93912556eef164",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/lucia_benkova_hospital.glb",
+      "sha256": "45ebe4f320e8330274471c4f76883fb5ba106376ddf2c142d3b5344b3eac1bbb",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/milan_hronec_hospital.glb",
+      "sha256": "d6b1f31ef7103464ed3b58a9a92b8daad95fb0863bff71e67b35a44f46ad1814",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/nina_molnarova_hospital.glb",
+      "sha256": "c1123237b098b69b49610b82986006a1494cd3b282c44962b542c96bb2f0ed8d",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/peter_novak_hospital.glb",
+      "sha256": "a285afd6da982e59e79eea07be62259706dc2fc06f5b861569fa75606866a8ac",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/zuzana_kralova_hospital.glb",
+      "sha256": "e5e86950838a54cbc1ecc292611328562e903c4e4b2b4303cea9cc1d64cfdfdc",
+      "minimumBedspreadClearanceMeters": 0.03202911823987964,
+      "binaryBytesUnchanged": true
+    }
+  ],
+  "patientGlbAndSourceHashesUnchangedByBedding": true
+}

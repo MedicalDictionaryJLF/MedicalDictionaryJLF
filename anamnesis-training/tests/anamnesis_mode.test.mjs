@@ -33,7 +33,7 @@ assert.match(html, /id="anamnesisCompanion"/, 'Anamnesis companion must exist');
 assert.match(html, /id="anamnesisCompanionContent"/, 'Anamnesis companion content host must exist');
 assert.match(html, /id="anamnesisCompanionToggle"/, 'Mobile companion toggle must exist');
 assert.match(html, /id="interviewLanguageSelect"/, 'Interview language must be explicit and independent from UI language');
-assert.match(html, /src="\.\/src\/main\.js\?v=134"/, 'v84 Trainer entry module must be cache-busted');
+assert.match(html, /src="\.\/src\/main\.js\?v=[a-zA-Z0-9._-]+"/, 'Trainer entry module must retain an explicit cache version');
 assert.match(main, /query\.get\('dev'\) === '1'/, 'Developer bypass must be explicit and query controlled');
 assert.match(main, /trainerExperience === 'anamnesis' \? 'interview' : requested/, 'Anamnesis mode must force interview-only workspace');
 assert.match(main, /Safety-critical omissions/, 'Anamnesis debrief must surface safety-critical omissions');

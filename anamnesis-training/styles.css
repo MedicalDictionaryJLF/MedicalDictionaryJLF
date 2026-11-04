@@ -1814,6 +1814,8 @@ body[data-patient-workspace="investigations"] .patient-rail { display:none !impo
 
 /* Visible speech state: intentionally subtle; the 3D mouth rig does the motion. */
 .patient-speaking .patient-3d-canvas { filter: saturate(1.015); }
+.patient3d-observed-finding{padding:12px 14px;margin:0 0 12px;border:1px solid #a9cbbc;border-radius:8px;background:#eef8f0;color:#244b3c;font-size:12px;line-height:1.55}
+.patient3d-observed-finding p{margin:5px 0 0}
 
 /* ==========================================================================
    Patient Trainer 3.0 · Medical Dictionary shell + focused anamnesis mode

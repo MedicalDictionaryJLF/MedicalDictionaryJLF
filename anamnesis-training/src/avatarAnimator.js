@@ -1,8 +1,8 @@
 let patient3DRendererModulePromise = null;
 
-async function loadPatient3DRenderer(timeoutMs = 2500) {
+async function loadPatient3DRenderer(timeoutMs = 12000) {
   if (!patient3DRendererModulePromise) {
-    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js')
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-3d-3')
       .catch((error) => {
         patient3DRendererModulePromise = null;
         throw error;
@@ -31,26 +31,38 @@ const state = {
   patientSnapshot: null,
   unsubscribePatientState: null,
   fallbackSvg: null,
-  fallbackReady: false
+  fallbackReady: false,
+  generation: 0
 };
 
-export async function initAvatarAnimator(activeCase) {
+export async function initAvatarAnimator(activeCase, options = {}) {
+  const generation = ++state.generation;
   state.mount = document.getElementById('avatarMount');
   if (!state.mount) return false;
   state.renderer3d?.dispose?.();
   state.renderer3d = null;
+  state.unsubscribePatientState?.();
+  state.unsubscribePatientState = null;
+  state.patientSnapshot = null;
   state.fallbackSvg = null;
   state.fallbackReady = false;
 
+  let renderer;
   try {
     const Patient3DRenderer = await loadPatient3DRenderer();
-    const renderer = new Patient3DRenderer(state.mount, { activeCase });
+    if (generation !== state.generation) return false;
+    renderer = new Patient3DRenderer(state.mount, { activeCase, ...options });
+    state.renderer3d = renderer;
     await renderer.init();
+    if (generation !== state.generation) { renderer.dispose(); return false; }
     state.renderer3d = renderer;
     if (state.patientSnapshot) renderer.setSnapshot(state.patientSnapshot);
     document.documentElement.classList.add('patient-3d-supported');
     return true;
   } catch (error) {
+    renderer?.dispose();
+    if (generation !== state.generation) return false;
+    state.renderer3d = null;
     console.warn('3D patient renderer unavailable; using 2D clinical fallback.', error);
     document.documentElement.classList.remove('patient-3d-supported');
     return loadSvgFallback();
@@ -79,14 +91,30 @@ export function reactAvatarToExamination(examinationId = '', finding = '') {
   if (!state.renderer3d && state.fallbackReady) applyFallbackReaction(`${examinationId} ${finding}`);
 }
 
+export function setAvatarExamTool(tool = 'off') {
+  return state.renderer3d?.setExaminationTool(tool) ?? false;
+}
+
+export function getAvatarEcgPlacementCount() {
+  return Object.keys(state.renderer3d?.placedLeads || {}).length;
+}
+
+export function getAvatarEcgPlacedLeads() {
+  return Object.keys(state.renderer3d?.placedLeads || {});
+}
+
+export function restoreAvatarEcgPlacedLeads(ids = []) {
+  state.renderer3d?.restorePlacedLeads(ids);
+}
+
 
 export function setAvatarSpeaking(active, text = '') {
   state.renderer3d?.setSpeaking(Boolean(active), text);
   state.mount?.classList.toggle('patient-speaking', Boolean(active));
 }
 
-export function pulseAvatarSpeechBoundary() {
-  state.renderer3d?.pulseSpeechBoundary?.();
+export function pulseAvatarSpeechBoundary(event = {}) {
+  state.renderer3d?.pulseSpeechBoundary?.(event);
 }
 
 export function setAvatarViewMode(mode = 'encounter') {
@@ -108,6 +136,11 @@ async function loadSvgFallback() {
     if (!response.ok) throw new Error(`Fallback avatar SVG not found (${response.status})`);
     const text = await response.text();
     state.mount.innerHTML = text;
+    state.mount.dataset.visualMode = '2d-fallback';
+    const notice = document.createElement('div');
+    notice.className = 'patient3d-fallback-notice';
+    notice.textContent = '3D unavailable in this browser · showing the existing 2D fallback';
+    state.mount.append(notice);
     const svg = state.mount.querySelector('svg');
     if (svg) {
       svg.id = 'patientAvatarSvg';

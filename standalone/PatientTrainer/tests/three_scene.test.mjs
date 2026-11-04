@@ -1,39 +1,30 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { PATIENT_CASES } from '../src/cases/index.js';
+import { getPatientAsset, resolveVisualState } from '../src/scene/patientAssets.js';
 
-const patientGltf = JSON.parse(fs.readFileSync(new URL('../assets/3d/patient/scene.gltf', import.meta.url), 'utf8'));
-const rendererSource = fs.readFileSync(new URL('../src/scene/patient3DRenderer.js', import.meta.url), 'utf8');
-const caseSource = fs.readFileSync(new URL('../src/cases/peterNovak.js', import.meta.url), 'utf8');
-const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const attribution = fs.readFileSync(new URL('../assets/3d/ATTRIBUTION.txt', import.meta.url), 'utf8');
-const texture = fs.readFileSync(new URL('../assets/3d/patient/textures/MikeAlger_Material_baseColor_age58_v2.jpeg', import.meta.url));
-
-assert.ok(patientGltf.skins?.length >= 1, 'patient asset must remain rigged');
-assert.ok(patientGltf.nodes?.some((node) => node.name === 'mixamorig_Hips_01'));
-assert.ok(patientGltf.nodes?.some((node) => node.name === 'mixamorig_RightArm_035'));
-assert.ok(rendererSource.includes("from 'three'"));
-assert.ok(rendererSource.includes("three/addons/loaders/GLTFLoader.js"));
-assert.ok(rendererSource.includes('applyPoseBlend'));
-assert.ok(rendererSource.includes('createBedsideMonitor'));
-assert.ok(rendererSource.includes('alignStandingPatientToFloor'), 'encounter patient must stand on the room floor');
-assert.ok(rendererSource.includes("visual?.position || 'standing'"), 'encounter renderer must default to standing posture');
-assert.ok(rendererSource.includes("const target = new THREE.Vector3(0, examination ? 0.92 : 1.40, 0.02)"), 'camera must switch between upper-body encounter and full-body examination framing');
-assert.ok(rendererSource.includes("const radius = (examination ? 3.25 : 1.72)"), 'examination view must widen to show the full body');
-assert.ok(rendererSource.includes('applyAgeAppearance'), 'patient appearance must respond to case age');
-assert.ok(rendererSource.includes("PATIENT_URL.searchParams.set('v', '20260916-age58-face-v2')"), 'patient GLTF request must be cache-versioned');
-assert.ok(patientGltf.images?.[0]?.uri?.includes('age58_v2'), 'GLTF must reference the new uncached age-58 texture filename');
-assert.ok(rendererSource.includes('y: -0.40 * strength'), 'left resting arm must be brought anterior to the torso');
-assert.ok(rendererSource.includes('y: 0.40 * strength'), 'right resting arm must be brought anterior to the torso');
-assert.ok(rendererSource.includes('depthTest: false'), 'procedural face rig must render visibly in front of the head mesh');
-assert.ok(rendererSource.includes('this.apparentAge'), 'renderer must read age from the active case');
-assert.ok(!rendererSource.includes('this.loader.loadAsync(BED_URL.href)'), 'main encounter must not load the bed scene');
-assert.ok(!rendererSource.includes('this.patient.rotation.x = -Math.PI / 2'), 'main encounter must not force the patient into a bed pose');
-assert.ok(caseSource.includes('"age": 58'));
-assert.ok(caseSource.includes('"dob": "14 March 1968"'));
-assert.ok(caseSource.includes('"position": "standing"'));
-assert.ok(texture.byteLength > 500_000, 'aged patient texture must be present');
-assert.ok(html.includes('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'));
-assert.ok(html.includes('3D credits'));
-assert.ok(attribution.includes('Mike Alger'));
-
-console.log('Three.js standing encounter / age appearance regression tests passed.');
+for (const patientCase of PATIENT_CASES) {
+  const asset = getPatientAsset(patientCase);
+  const bytes = fs.readFileSync(new URL(asset.characterUrl));
+  assert.equal(bytes.toString('utf8', 0, 4), 'glTF');
+  assert.equal(bytes.readUInt32LE(8), bytes.length);
+  const gltf = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)).toString());
+  assert.equal(gltf.skins[0].joints.length, 53);
+  assert.ok(gltf.nodes.some(node => node.extras?.caseId === patientCase.id));
+  const body = gltf.meshes.find(mesh => mesh.extras?.targetNames?.includes('eyeBlinkLeft'));
+  for (const key of ['eyeBlinkLeft', 'eyeBlinkRight', 'jawOpen', 'viseme_aa', 'viseme_E', 'viseme_O']) {
+    assert.ok(body.extras.targetNames.includes(key), `${asset.slug} facial shape ${key}`);
+  }
+  for (const clip of ['PositionStanding', 'PositionSeated', 'PositionReclined', 'RestArms', 'ChestPain', 'IdleBreathing', 'RespiratoryEffort', 'Blink', 'Talking']) {
+    assert.ok(gltf.animations.some(animation => animation.name === clip));
+  }
+  for (const channel of gltf.animations.find(animation => animation.name === 'IdleBreathing').channels) {
+    assert.equal(gltf.nodes[channel.target.node].name, 'spine_03', 'Breathing stays in its anatomical layer');
+  }
+  assert.ok(gltf.images.every(image => Number.isInteger(image.bufferView)), 'Embedded textures');
+  assert.equal(resolveVisualState(patientCase, null, 'resting').pain, 0);
+  const roomBytes = fs.readFileSync(new URL(asset.environmentUrl));
+  const room = JSON.parse(roomBytes.subarray(20, 20 + roomBytes.readUInt32LE(12)).toString());
+  for (const name of ['HospitalBed', 'ExamChair', 'MonitorScreen']) assert.ok(room.nodes.some(node => node.name === name));
+}
+console.log('Anatomical 3D patient, facial rig, animation-layer and room contracts: PASS');

@@ -1,0 +1,692 @@
+{
+  "shiftMeters": 0.035,
+  "scope": "3 room and 8 combined GLBs; metadata node translation only",
+  "patientAssetsChanged": false,
+  "files": [
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/acute.glb",
+      "beforeSha256": "64cb01cd94d679b3438e242709962b26d3ed6678b8e4723e1346f96ffaa31e1b",
+      "afterSha256": "f68d5872b4c5e6f9ac543aab125bd4145d93b25edb9d13a4287582ba7012f266",
+      "binarySha256": "bec89ebc1541c108aa759a87f53877fcccf5a8d0a2adb77eced24942880c1559",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/examination.glb",
+      "beforeSha256": "ec9f38b8241093b20bae820f183973beb995bc19dcafe65cf21211f2b0d73476",
+      "afterSha256": "3ac96582a9b2e922bd91bb7a206ca8a8c2bfb0667922cfbe6fe97afb4d2561b1",
+      "binarySha256": "cec0dfeaace1c443fb871947fc0af9e94873b3a2dec22e50ac9ea2710656bc2e",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/environments/internal.glb",
+      "beforeSha256": "4b39455d5fa3f72680d5183bc2449444e37e00bcba175f88fb0bf6bd30452c91",
+      "afterSha256": "042470c1bee169ecea1a87a79ef52b50740a907f2e7d80dea14c05415580c634",
+      "binarySha256": "9d6631a000ca74fafba7d0c22e5041adf82c3912ae7a4658b614fcbd0f9d8a2d",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/eva_sykorova_hospital.glb",
+      "beforeSha256": "cd4b42abb65a8fca8b145c5545eab53eba7e902412f4e64f286c31745504cf0d",
+      "afterSha256": "67346493db3deed71c859bc7b144106861886545b5a30664c7bc64bc9813f6a6",
+      "binarySha256": "a11816273b9a7d40a0f84c59046cd02d61ee1edfdac253342d1745b3770e559e",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/jana_kovacova_hospital.glb",
+      "beforeSha256": "bbd24d72bbba1d44a14be7610160f07a7cca6e92dcd78bb36c00f54e7ecefd2e",
+      "afterSha256": "e06e2bd746975f3ba2c430a50305c98712f47c82067b56101ceec4356ce71aa3",
+      "binarySha256": "c6f9b4f4c49f980f147c5424a6461049625a8dfb8b1fb6dcbcbbad997605c5ac",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/karol_urban_hospital.glb",
+      "beforeSha256": "844b7865294f0314f9485dc91ca8b7f9278c73fb26ad5afca4a9b841fcd8a9fa",
+      "afterSha256": "09fe4cc04e418a211d45929f7414a15acdcfbf022b0abc19ba93912556eef164",
+      "binarySha256": "2221c83138fcc3ab922821603ab79e44a29f25c7db6e55c55f0f97dba3eae3d9",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/lucia_benkova_hospital.glb",
+      "beforeSha256": "2ef6d6caea4ecc5a34aa09b397d1ec86986f5ffea1c971512a6c8828366877f4",
+      "afterSha256": "45ebe4f320e8330274471c4f76883fb5ba106376ddf2c142d3b5344b3eac1bbb",
+      "binarySha256": "809e5a1fbdca8d54906e448fc642515ca720ec2a09adb332a111c63b1a21d095",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/milan_hronec_hospital.glb",
+      "beforeSha256": "9441ae08e9413cebcf83aa08ee13ba70cc27fceba47df7d78e11c566e20530bf",
+      "afterSha256": "d6b1f31ef7103464ed3b58a9a92b8daad95fb0863bff71e67b35a44f46ad1814",
+      "binarySha256": "94d05a16bc714619d1b4bb6e4540c145431abf2748c4427b9b50fca76c919eb5",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/nina_molnarova_hospital.glb",
+      "beforeSha256": "e7d3f2945cad4f9578b18bf1d004406e833c442b69c7c13647f926b7118951e6",
+      "afterSha256": "c1123237b098b69b49610b82986006a1494cd3b282c44962b542c96bb2f0ed8d",
+      "binarySha256": "487a26d63c1545ad2ca46e5584d2a836e4e3aa9a993ae79a018328dfdf2a8fcb",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/peter_novak_hospital.glb",
+      "beforeSha256": "f3263925ea8d04a388c50f7602e2ae9b80cbee53b33faa2c7557522638344bb7",
+      "afterSha256": "a285afd6da982e59e79eea07be62259706dc2fc06f5b861569fa75606866a8ac",
+      "binarySha256": "6560fb8b3feb5d16c999c9c5ba48e93d1b33071d2657974563c35bcc9c53d5e9",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    },
+    {
+      "file": "anamnesis-training/assets/3d/clinical/scenes/zuzana_kralova_hospital.glb",
+      "beforeSha256": "fc6706e611507c1cf36c409be5c6214cf3258883251e499cd3194d6045867317",
+      "afterSha256": "e5e86950838a54cbc1ecc292611328562e903c4e4b2b4303cea9cc1d64cfdfdc",
+      "binarySha256": "f2745c01fcbe35c0ab17edc1056cba1d272c0cc24adecd2102e9b39965faf33e",
+      "binaryBytesUnchanged": true,
+      "onlyFoldedCoverTranslationChanged": true,
+      "translationBefore": [
+        0,
+        0,
+        0
+      ],
+      "translationAfter": [
+        0,
+        0.035,
+        0
+      ],
+      "coverBoundsBefore": {
+        "min": [
+          1.10999995470047,
+          0.7270291447639465,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7629784941673279,
+          0.4300000071525574
+        ]
+      },
+      "coverBoundsAfter": {
+        "min": [
+          1.10999995470047,
+          0.7620291447639466,
+          -0.9399999976158142
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7979784941673279,
+          0.4300000071525574
+        ]
+      },
+      "mattressBounds": {
+        "min": [
+          1.10999995470047,
+          0.5900000259280205,
+          -1.449999988079071
+        ],
+        "max": [
+          1.9899999499320984,
+          0.7300000265240669,
+          0.550000011920929
+        ]
+      },
+      "minimumClearanceMeters": 0.03202911823987964
+    }
+  ],
+  "sources": [
+    {
+      "file": "tools/character-pipeline/sources/room_acute.blend",
+      "beforeSha256": "7b0cd6292f09c7b17c0c74adf00c7b3b181fcb1d53653c5561b77b57ffd380a1",
+      "translationBefore": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "onlyObjectTransformChanged": "FoldedCover",
+      "geometryRigAnimationPackedImagesUnchanged": true,
+      "preserved": {
+        "geometryAndMorphs": "6aefaf671532e939b72b08d73b4e08ed75d53c13020d1043f38b3d179965c092",
+        "rigs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "actions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "packedImages": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "afterSha256": "4e13820f97b70f0a6814722c1a0e7539e0fa7e94253878b0d0611fa8c700d157",
+      "translationAfter": [
+        0.0,
+        0.0,
+        0.03500000014901161
+      ],
+      "savedFileReopenedAndVerified": true,
+      "verificationStartSha256": "4e13820f97b70f0a6814722c1a0e7539e0fa7e94253878b0d0611fa8c700d157",
+      "originalSourceReopenedAndCompared": true,
+      "originalHashProvenance": "git show 98588d02c83c1b5b0dd2552a39ced2e0c4c36b1b:tools/character-pipeline/sources/room_acute.blend"
+    },
+    {
+      "file": "tools/character-pipeline/sources/room_examination.blend",
+      "beforeSha256": "e90a3176cc99baf97971541a96efb600fcb90ce90d21e5eac4ba50ded842ea56",
+      "translationBefore": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "onlyObjectTransformChanged": "FoldedCover",
+      "geometryRigAnimationPackedImagesUnchanged": true,
+      "preserved": {
+        "geometryAndMorphs": "39ef539f94fb3a0a92873043516c1cbf734ff842d3bea4ed583c8b0a4c9716ff",
+        "rigs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "actions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "packedImages": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "afterSha256": "9b2823bc6aba232585f547faeb5dcb6ef888f1f36ea997b12bd734139fee342d",
+      "translationAfter": [
+        0.0,
+        0.0,
+        0.03500000014901161
+      ],
+      "savedFileReopenedAndVerified": true,
+      "originalHashProvenance": "git show 98588d02c83c1b5b0dd2552a39ced2e0c4c36b1b:tools/character-pipeline/sources/room_examination.blend"
+    },
+    {
+      "file": "tools/character-pipeline/sources/room_internal.blend",
+      "beforeSha256": "5a88239cf19b3e91e4eb4b2fcdc0c596b1fbea1784a326afd17062e60160c35a",
+      "translationBefore": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "onlyObjectTransformChanged": "FoldedCover",
+      "geometryRigAnimationPackedImagesUnchanged": true,
+      "preserved": {
+        "geometryAndMorphs": "fa4ed4353c636e8b1a2f41e0daf971d18a12d001782f1b05c8ed8fda08a637bc",
+        "rigs": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "actions": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "packedImages": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "afterSha256": "810f3cd9b40ad279d8484fb47ecb49ca99cfa54c08296e0de5e575faaf0e4614",
+      "translationAfter": [
+        0.0,
+        0.0,
+        0.03500000014901161
+      ],
+      "savedFileReopenedAndVerified": true,
+      "originalHashProvenance": "git show 98588d02c83c1b5b0dd2552a39ced2e0c4c36b1b:tools/character-pipeline/sources/room_internal.blend"
+    }
+  ],
+  "patientSourcesChanged": false
+}

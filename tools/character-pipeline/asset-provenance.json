@@ -1,0 +1,33 @@
+{
+  "mpfb_repository": "https://github.com/makehumancommunity/mpfb2",
+  "mpfb_commit": "6ff1eb358f6c1959ced77e79e6dd2406d9a71f49",
+  "blender_version": "4.5.3 LTS",
+  "makehuman_core_asset_license": "CC0 1.0 Universal",
+  "license_reference": "https://static.makehumancommunity.org/about/license.html",
+  "downloads": [
+    {
+      "filename": "blender-4.5.3-linux-x64.tar.xz",
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.3-linux-x64.tar.xz",
+      "sha256": "975c58fcb244273838534bba771e64ad87739216b0f9b39a888531a49a72d845",
+      "bytes": 377397328
+    },
+    {
+      "filename": "makehuman_system_assets.zip",
+      "url": "https://files.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+      "sha256": "b542127a8e25547c7c29c19f2d1d2adb9a664c80396ecd694095dbc8028a0107",
+      "bytes": 280737770
+    },
+    {
+      "filename": "faceunits01.zip",
+      "url": "https://files.makehumancommunity.org/functional/faceunits01.zip",
+      "sha256": "d113107bd7eb59f3af4df6fc0ec29bfcc593f496d0b336aec14f086a80ce7146",
+      "bytes": 257821
+    },
+    {
+      "filename": "visemes02.zip",
+      "url": "https://files.makehumancommunity.org/functional/visemes02.zip",
+      "sha256": "a69ab6fb95ddd5f56f70acc7e859f5f9c6ae613c527d577ea1571eff2183d29e",
+      "bytes": 130733
+    }
+  ]
+}

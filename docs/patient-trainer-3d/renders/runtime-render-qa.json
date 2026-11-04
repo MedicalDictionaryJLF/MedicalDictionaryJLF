@@ -1,0 +1,104 @@
+[
+  {
+    "patient": "jana_kovacova",
+    "posture": "reclined",
+    "view": "face",
+    "snapshot": "/workspace/scratch/72b3f719341a/validation/runtime-jana_kovacova-face.json",
+    "snapshotSha256": "ec9007f6f0cbfa6acd03ccb25212f32fddfe4e884ee115857c5c40295f8bb1da",
+    "patientGlbSha256": "327ed22eabddaba86b8016b85d24981194779f8e62f61ff818924bced729e5f7",
+    "roomGlb": "anamnesis-training/assets/3d/clinical/environments/acute.glb",
+    "roomGlbSha256": "f68d5872b4c5e6f9ac543aab125bd4145d93b25edb9d13a4287582ba7012f266",
+    "bedspreadMattressClearanceMeters": 0.032029151916503906,
+    "render": "/workspace/scratch/72b3f719341a/validation/asset-repair/runtime-rendered/runtime-jana_kovacova-face.png",
+    "renderSha256": "4fecbd4cd01e3ce5187aaad77e53b387128fab7ac585ade0da02a3af1f6fa911",
+    "camera": {
+      "position": [
+        0.13475449096800957,
+        2.0975036767424995,
+        -0.1828654934687844
+      ],
+      "target": [
+        -0.016715522215810727,
+        1.0245910833571057,
+        -0.6372755330202452
+      ],
+      "fov": 36,
+      "aspect": 1
+    },
+    "bedPosition": [
+      0,
+      0,
+      0
+    ],
+    "meshCount": 11,
+    "evidenceLimit": "Actual runtime world vertices and camera; corrected GLB albedo/materials; Cycles lighting and recomputed vertex normals, not a WebGL screenshot."
+  },
+  {
+    "patient": "jana_kovacova",
+    "posture": "reclined",
+    "view": "patient",
+    "snapshot": "/workspace/scratch/72b3f719341a/validation/runtime-jana_kovacova-patient.json",
+    "snapshotSha256": "120fc4d054488753802dfa6e0826f7b1aeaf3e2d4aa1f39e9dd8053c359ac0ce",
+    "patientGlbSha256": "327ed22eabddaba86b8016b85d24981194779f8e62f61ff818924bced729e5f7",
+    "roomGlb": "anamnesis-training/assets/3d/clinical/environments/acute.glb",
+    "roomGlbSha256": "f68d5872b4c5e6f9ac543aab125bd4145d93b25edb9d13a4287582ba7012f266",
+    "bedspreadMattressClearanceMeters": 0.032029151916503906,
+    "render": "/workspace/scratch/72b3f719341a/validation/asset-repair/runtime-rendered/runtime-jana_kovacova-patient.png",
+    "renderSha256": "67c76b5469d343e41753c717c226aec3c4f5994254d9808f9f56f8e0a1ab02c7",
+    "camera": {
+      "position": [
+        0.7173177765915738,
+        4.294572619211458,
+        2.882789705657724
+      ],
+      "target": [
+        -0.02769606127636243,
+        1.066179321783733,
+        0.026903327163968427
+      ],
+      "fov": 36,
+      "aspect": 0.5
+    },
+    "bedPosition": [
+      0,
+      0,
+      0
+    ],
+    "meshCount": 11,
+    "evidenceLimit": "Actual runtime world vertices and camera; corrected GLB albedo/materials; Cycles lighting and recomputed vertex normals, not a WebGL screenshot."
+  },
+  {
+    "patient": "peter_novak",
+    "posture": "standing",
+    "view": "patient",
+    "snapshot": "/workspace/scratch/72b3f719341a/validation/runtime-peter_novak-patient.json",
+    "snapshotSha256": "f7bb761793a0b56a37e1b117e9786e53b29aae7300ed1fd1aab0e8f56e13001c",
+    "patientGlbSha256": "afd57ff048957b8e7ddb8a55e2681a5745d3b5d164cdb9c9bd6312475d3d808a",
+    "roomGlb": "anamnesis-training/assets/3d/clinical/environments/acute.glb",
+    "roomGlbSha256": "f68d5872b4c5e6f9ac543aab125bd4145d93b25edb9d13a4287582ba7012f266",
+    "bedspreadMattressClearanceMeters": 0.032029151916503906,
+    "render": "/workspace/scratch/72b3f719341a/validation/asset-repair/runtime-rendered/runtime-peter_novak-patient.png",
+    "renderSha256": "f2dfed96dfe44f3052e726d0823e1ab1824826ee3829f2c56024132605fb8b28",
+    "camera": {
+      "position": [
+        1.3609411692003044,
+        1.7513710825717062,
+        3.940232243194596
+      ],
+      "target": [
+        -0.010141331091795602,
+        1.0462429395643404,
+        0.022853670931452904
+      ],
+      "fov": 36,
+      "aspect": 1.6
+    },
+    "bedPosition": [
+      1.55,
+      0,
+      -0.45
+    ],
+    "meshCount": 11,
+    "evidenceLimit": "Actual runtime world vertices and camera; corrected GLB albedo/materials; Cycles lighting and recomputed vertex normals, not a WebGL screenshot."
+  }
+]

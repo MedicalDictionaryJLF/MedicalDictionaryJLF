@@ -1,0 +1,169 @@
+[
+  {
+    "slug": "peter_novak",
+    "caseId": "chest_pain_acs_risk",
+    "name": "Peter Novak",
+    "age": 58,
+    "sex": "male",
+    "weight": 0.51,
+    "muscle": 0.44,
+    "hair": "short02",
+    "skin": "middleage_caucasian_male",
+    "color": [
+      0.34,
+      0.48,
+      0.52
+    ],
+    "details": {
+      "head/head-age-incr": 0.5,
+      "head/head-rectangular": 0.15,
+      "nose/nose-hump-incr": 0.12,
+      "chin/chin-width-incr": 0.13
+    }
+  },
+  {
+    "slug": "jana_kovacova",
+    "caseId": "abdominal_pain_cholecystitis",
+    "name": "Jana Kovacova",
+    "age": 43,
+    "sex": "female",
+    "weight": 0.53,
+    "muscle": 0.4,
+    "hair": "bob01",
+    "skin": "middleage_caucasian_female",
+    "color": [
+      0.42,
+      0.5,
+      0.57
+    ],
+    "details": {
+      "head/head-round": 0.13,
+      "nose/nose-width-decr": 0.1
+    }
+  },
+  {
+    "slug": "milan_hronec",
+    "caseId": "progressive_dyspnea_edema",
+    "name": "Milan Hronec",
+    "age": 72,
+    "sex": "male",
+    "weight": 0.54,
+    "muscle": 0.35,
+    "hair": "short01",
+    "skin": "old_caucasian_male",
+    "color": [
+      0.42,
+      0.48,
+      0.43
+    ],
+    "details": {
+      "head/head-scale-horiz-incr": 0.13,
+      "nose/nose-width-incr": 0.12,
+      "chin/chin-prominent-incr": 0.12
+    }
+  },
+  {
+    "slug": "lucia_benkova",
+    "caseId": "fever_flank_dysuria",
+    "name": "Lucia Benkova",
+    "age": 29,
+    "sex": "female",
+    "weight": 0.47,
+    "muscle": 0.43,
+    "hair": "ponytail01",
+    "skin": "young_caucasian_female",
+    "color": [
+      0.44,
+      0.52,
+      0.59
+    ],
+    "details": {
+      "head/head-oval": 0.15,
+      "chin/chin-width-decr": 0.12
+    }
+  },
+  {
+    "slug": "karol_urban",
+    "caseId": "melena_dizziness_nsaid",
+    "name": "Karol Urban",
+    "age": 64,
+    "sex": "male",
+    "weight": 0.5,
+    "muscle": 0.39,
+    "hair": "short04",
+    "skin": "middleage_caucasian_male",
+    "color": [
+      0.48,
+      0.46,
+      0.41
+    ],
+    "details": {
+      "head/head-square": 0.15,
+      "nose/nose-width-incr": 0.15,
+      "chin/chin-width-incr": 0.2
+    }
+  },
+  {
+    "slug": "eva_sykorova",
+    "caseId": "exertional_syncope",
+    "name": "Eva Sykorova",
+    "age": 76,
+    "sex": "female",
+    "weight": 0.46,
+    "muscle": 0.31,
+    "hair": "short03",
+    "skin": "old_caucasian_female",
+    "color": [
+      0.49,
+      0.45,
+      0.53
+    ],
+    "details": {
+      "head/head-scale-horiz-decr": 0.11,
+      "nose/nose-hump-incr": 0.1,
+      "chin/chin-width-decr": 0.1
+    }
+  },
+  {
+    "slug": "zuzana_kralova",
+    "caseId": "weight_loss_bowel_change",
+    "name": "Zuzana Kralova",
+    "age": 61,
+    "sex": "female",
+    "weight": 0.43,
+    "muscle": 0.36,
+    "hair": "bob02",
+    "skin": "middleage_caucasian_female",
+    "color": [
+      0.4,
+      0.5,
+      0.48
+    ],
+    "details": {
+      "head/head-oval": 0.12,
+      "cheek/l-cheek-volume-decr": 0.12,
+      "cheek/r-cheek-volume-decr": 0.12
+    }
+  },
+  {
+    "slug": "nina_molnarova",
+    "caseId": "recurrent_headache_migraine",
+    "name": "Nina Molnarova",
+    "age": 25,
+    "sex": "female",
+    "weight": 0.48,
+    "muscle": 0.43,
+    "hair": "braid01",
+    "skin": "young_caucasian_female2",
+    "color": [
+      0.43,
+      0.46,
+      0.59
+    ],
+    "details": {
+      "head/head-diamond": 0.12,
+      "nose/nose-width-decr": 0.13,
+      "chin/chin-width-decr": 0.1
+    }
+  }
+]

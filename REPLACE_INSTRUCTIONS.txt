@@ -1,0 +1,26 @@
+Medical Dictionary targeted replacement update
+
+Unzip this package directly into the root of your current MedicalDictionaryJLF project. Preserve folder structure, overwrite files when prompted. No other existing files should be deleted.
+
+This package includes ONLY added/modified files compared with the uploaded MedicalDictionaryJLF(5).rar and includes the Patient Trainer question wording fixes plus the latest orthopaedic SPTF/SPL entry.
+
+Note: SPTF clinical acronym is not yet defined beyond a general orthopedic SPL finding entry.
+
+Changed files:
+MODIFIED: index.html
+MODIFIED: anamnesis-training/index.html
+MODIFIED: data/app_language/app_translations.csv
+MODIFIED: data/anatomy/anatomy_structures_question_bank_generated_flat.csv
+MODIFIED: data/anatomy/anatomy_structures_question_bank_generated.json
+MODIFIED: assets/js/app.js
+MODIFIED: assets/css/app.css
+MODIFIED: anamnesis-training/src/config.js
+MODIFIED: anamnesis-training/src/simulationRunner.js
+MODIFIED: anamnesis-training/src/aiSupport.js
+MODIFIED: anamnesis-training/src/main.js
+MODIFIED: anamnesis-training/tests/anamnesis_mode.test.mjs
+MODIFIED: anamnesis-training/src/cases/additionalCases.js
+MODIFIED: anamnesis-training/src/ui/anamnesisCompanion.js
+MODIFIED: anamnesis-training/src/ui/modeLayout.js
+MODIFIED: anamnesis-training/src/ui/categoryModel.js
+MODIFIED: anamnesis-training/src/data/interviewSchema.js

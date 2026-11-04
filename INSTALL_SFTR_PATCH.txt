@@ -1,0 +1,13 @@
+SFTR ROM REPLACEMENT PATCH
+
+Copy these three files into the existing Medical Dictionary project, retaining their paths, and overwrite the existing files.
+
+Changes:
+- Revised the existing SFTR neutral-zero panel in SPL > Limbs with joint- and movement-specific rows.
+- Added the corresponding spine SFTR panel directly under SPL > Spine.
+- Each measurement has active and passive input fields and appropriate laterality.
+- Approximate adult reference ranges (teaching guidance only), three-number format checks, neutral deficit warning, and reference comparisons.
+- SFTR report labels include joint, movement, side, active/passive and reference range.
+- Existing Patient Trainer and non-SFTR content preserved.
+
+Clinical caution: reference ranges are approximate. Comparison does not establish a diagnosis; record pain, end-feel and measurement position in the notes.

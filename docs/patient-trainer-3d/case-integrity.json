@@ -1,0 +1,32 @@
+[
+  {
+    "file": "anamnesis-training/src/cases/README.md",
+    "sha256": "d28eaa00cc7b3fdb768c5584f9f49c33066f860afac1765033802f01cb58a729",
+    "unchanged": true
+  },
+  {
+    "file": "anamnesis-training/src/cases/additionalCases.js",
+    "sha256": "3dbc56ab6c3949d98217814aa278053323231ea6648c7ff5d451d13a829d7477",
+    "unchanged": true
+  },
+  {
+    "file": "anamnesis-training/src/cases/janaKovacova.js",
+    "sha256": "cfc43a9e4fc9d7556f11e810be0712fe0ec8a3648c185f0b1e42d91170598332",
+    "unchanged": true
+  },
+  {
+    "file": "anamnesis-training/src/cases/peterNovak.js",
+    "sha256": "798449c010dafd02c24820b3a98dc631b81906f87660dc37bada6e7e1ed8c641",
+    "unchanged": true
+  },
+  {
+    "file": "anamnesis-training/src/cases/caseFactory.js",
+    "sha256": "fa4735d40fc3949cfd95607e58ad9f203a7ccc0474fd50fc896d140dec253f68",
+    "unchanged": true
+  },
+  {
+    "file": "anamnesis-training/src/cases/index.js",
+    "sha256": "bc66d8aed2bb4cf77d3b94ab0bafec54426a8e7a200852a8282199b9d3c377d6",
+    "unchanged": true
+  }
+]

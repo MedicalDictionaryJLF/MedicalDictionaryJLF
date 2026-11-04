@@ -14,9 +14,17 @@
     "test:patient-trainer-anamnesis": "node scripts/patient-trainer-anamnesis-tests.mjs",
     "validate:anatomy-data": "node scripts/anatomy-data-validator.mjs",
     "test:anatomy": "npm run generate:anatomy-questions && npm run validate:anatomy-data && npm run test:anatomy-packages",
-    "generate:anatomy-questions": "node scripts/generate-anatomy-questions.mjs"
+    "generate:anatomy-questions": "node scripts/generate-anatomy-questions.mjs",
+    "test:patient-assets": "node scripts/validate-patient-assets.mjs",
+    "build:clinical-preview": "node scripts/build-clinical-preview.mjs",
+    "test:patient-rendering": "node scripts/patient-rendering-regression.mjs",
+    "test:patient-bedside": "node scripts/patient-bedside-regression.mjs"
   },
   "devDependencies": {
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "gltf-validator": "2.0.0-dev.3.10"
+  },
+  "dependencies": {
+    "three": "0.180.0"
   }
 }
