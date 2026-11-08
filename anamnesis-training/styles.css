@@ -1997,3 +1997,14 @@ body[data-theme="dark"] .coverage-topic-row.is-covered{background:#173325;color:
 .anamnesis-score-grid-five{grid-template-columns:repeat(5,1fr)}.debrief-safety{padding:11px!important;border:1px solid #e5a39a!important;border-radius:9px;background:#fff4f1}.debrief-safety h3{color:#9b3529}.debrief-strengths{padding:11px!important;border:1px solid #a8d8bf!important;border-radius:9px;background:#f2fbf6}.debrief-strengths h3{color:#236840}.debrief-miss-list{display:grid;gap:7px;margin:0;padding-left:18px}.debrief-miss-list li{padding-left:2px}.debrief-miss-list li>strong{color:var(--md-text)}.debrief-miss-list li>small{color:var(--md-muted)}.debrief-model-question{margin-top:3px;color:var(--md-muted);font-size:10px;font-style:italic;line-height:1.4}.debrief-miss-list-inside{padding:0 18px 12px 28px}
 body[data-theme="dark"] .debrief-safety{background:#3b2222;border-color:#73433e!important}body[data-theme="dark"] .debrief-safety h3{color:#f0aaa2}body[data-theme="dark"] .debrief-strengths{background:#173325;border-color:#315d43!important}body[data-theme="dark"] .debrief-strengths h3{color:#a9e1bc}
 @media(max-width:899px){.anamnesis-score-grid-five{grid-template-columns:1fr 1fr}.anamnesis-score-grid-five article:last-child{grid-column:1/-1}}
+
+/* Patient Trainer field-test contrast fix. */
+body.patient-trainer-page .anamnesis-debrief-card,
+body.patient-trainer-page .pt-record-card {
+  background: var(--md-panel) !important;
+  color: var(--md-text) !important;
+  border-color: var(--md-line);
+}
+body.patient-trainer-page .pt-upload-status.is-error { color: #a32c33; }
+body.patient-trainer-page[data-theme="dark"] .pt-upload-status.is-error { color: #ffb7b7; }
+body.patient-trainer-page .pt-download-session { margin-left: 8px; margin-top: 8px; max-width: 100%; }

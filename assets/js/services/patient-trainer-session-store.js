@@ -92,8 +92,8 @@ export function upsertPatientTrainerSession(session) {
   const index = all.findIndex((item) => item.sessionId === incoming.sessionId);
   if (index >= 0) all[index] = mergeSession(all[index], incoming);
   else all.push(incoming);
-  writeSessions(pruneSessions(all));
-  return getPatientTrainerSession(incoming.sessionId) || clone(incoming);
+  if (!writeSessions(pruneSessions(all))) return null;
+  return getPatientTrainerSession(incoming.sessionId);
 }
 
 export function updatePatientTrainerSession(sessionId, patch) {
