@@ -25,7 +25,7 @@ import {
   readPatientTrainerSessions,
   updatePatientTrainerSession,
   upsertPatientTrainerSession
-} from '../../assets/js/services/patient-trainer-session-store.js';
+} from '../../assets/js/services/patient-trainer-session-store.js?v=20261108-fieldfix';
 import {
   PATIENT_TRAINER_AUTO_RETRY_LIMIT,
   PATIENT_TRAINER_CLIENT_VERSION,
@@ -138,6 +138,7 @@ let trainerExperience = 'anamnesis';
 let anamnesisWorksheetNotes = {};
 let currentSession = null;
 let automaticRetryRunning = false;
+const uploadInFlight = new Set();
 const developerAccess = (() => {
   const query = new URLSearchParams(window.location.search);
   if (query.get('dev') === '1') sessionStorage.setItem('pt_dev_access', '1');
@@ -1206,13 +1207,14 @@ function renderUploadConsentPanel(session) {
   }
   const retry = Boolean(session.uploadRequested || session.lastUploadError);
   const status = session.lastUploadError
-    ? `<p class="pt-upload-status is-error">Session saved locally. Upload could not be completed.</p>`
+    ? `<p class="pt-upload-status is-error" role="alert">Session saved locally. Upload could not be completed. ${escapeHtml(session.lastUploadError || 'Please try again later.')}</p>`
     : '<p class="pt-upload-status">No session is uploaded until you choose to submit it.</p>';
   return `<section class="pt-upload-panel" data-pt-upload-panel="${escapeHtml(session.sessionId)}">
     <h3>Help improve Patient Trainer</h3>
-    <p>An anonymised session record may be submitted to help identify questions and topics that Patient Trainer does not yet recognise reliably. The improvement copy uses an internal anonymous user ID and does not include your account name, email, passwords, tokens, cookies, or unrelated Medical Dictionary data.</p>
+    <p>You may send a session log to help improve question recognition. It uses a random anonymous app ID and excludes account credentials, but the interview text you typed is included and could contain personal details. Do not include real patients’ identifying information. Nothing is sent until you choose Submit.</p>
     ${status}
-    <button type="button" class="start-training-btn pt-submit-session" data-submit-session="${escapeHtml(session.sessionId)}">${retry ? 'Retry upload' : 'Submit session'}</button>
+    <button type="button" class="start-training-btn pt-submit-session" data-submit-session="${escapeHtml(session.sessionId)}" ${uploadInFlight.has(session.sessionId) ? 'disabled' : ''}>${uploadInFlight.has(session.sessionId) ? 'Submitting…' : (retry ? 'Retry upload' : 'Submit session')}</button>
+    <button type="button" class="secondary pt-download-session" data-download-session="${escapeHtml(session.sessionId)}">Download log backup</button>
   </section>`;
 }
 
@@ -1222,12 +1224,31 @@ function bindUploadPanel(container, sessionId) {
     if (button.dataset.submitSession !== sessionId) return;
     button.addEventListener('click', () => submitSessionUpload(sessionId, { automatic: false }));
   });
+  container.querySelectorAll('[data-download-session]').forEach((button) => {
+    if (button.dataset.downloadSession !== sessionId) return;
+    button.addEventListener('click', () => {
+      const session = getPatientTrainerSession(sessionId);
+      if (!session) return;
+      const blob = new Blob([JSON.stringify(buildAnonymizedPatientTrainerUpload(session), null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'patient-trainer-' + session.sessionId + '.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+  });
 }
 
 async function submitSessionUpload(sessionId, { automatic = false } = {}) {
   let session = getPatientTrainerSession(sessionId);
   if (!session || !session.completed || session.uploaded) return;
   if (automatic && (!session.uploadRequested || session.automaticRetryCount >= PATIENT_TRAINER_AUTO_RETRY_LIMIT)) return;
+  if (uploadInFlight.has(sessionId)) return;
+  uploadInFlight.add(sessionId);
+  try {
 
   session = updatePatientTrainerSession(sessionId, {
     uploadRequested: true,
@@ -1252,7 +1273,9 @@ async function submitSessionUpload(sessionId, { automatic = false } = {}) {
     const response = await fetch(PATIENT_TRAINER_LOG_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(30000),
+      cache: 'no-store'
     });
     let body = null;
     try { body = await response.json(); } catch { throw new Error(`Upload returned a malformed response (${response.status}).`); }
@@ -1272,6 +1295,10 @@ async function submitSessionUpload(sessionId, { automatic = false } = {}) {
     renderSessionHistory();
   } catch (error) {
     recordUploadFailure(sessionId, error?.message || String(error));
+  }
+  } finally {
+    uploadInFlight.delete(sessionId);
+    refreshUploadPanels(sessionId);
   }
 }
 
