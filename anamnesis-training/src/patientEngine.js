@@ -912,7 +912,9 @@ export class PatientEngine {
     const allPositives = this.communicationEvents.flatMap((event) => (event.positives ?? []).map((item) => ({ ...item, turnNumber: event.turnNumber, question: event.question })));
     const uniquePositiveTypes = new Set(allPositives.map((item) => item.type));
     const penalty = allIssues.reduce((sum, issue) => sum + ({ checklist_shorthand: 6, too_technical: 8, overlong: 3, repeated_resolved_area: 2, sensitive_without_context: 3 }[issue.type] ?? 0), 0);
-    const score = Math.max(0, Math.min(100, 75 + Math.min(25, uniquePositiveTypes.size * 5) - Math.min(40, penalty)));
+    const score = this.communicationEvents.length
+      ? Math.max(0, Math.min(100, 75 + Math.min(25, uniquePositiveTypes.size * 5) - Math.min(40, penalty)))
+      : 0;
     return { score, issues: allIssues, positives: allPositives };
   }
 
@@ -929,11 +931,16 @@ export class PatientEngine {
     const backgroundTurn = Math.min(firstTurnForArea('past_medical_history'), firstTurnForArea('social_history'), firstTurnForArea('substance_use'));
     if (hpiTurn < backgroundTurn) score += 25; else feedback.push('Explore the current problem before moving deeply into background history.');
     const sensitiveTurn = Math.min(firstTurnForArea('substance_use'), firstTurnForArea('gynecological'));
-    if (!Number.isFinite(sensitiveTurn) || firstIntentTurn('chief_complaint') < sensitiveTurn) score += 15; else feedback.push('Avoid opening with sensitive history before establishing the clinical problem and rapport.');
+    if (Number.isFinite(sensitiveTurn) && firstIntentTurn('chief_complaint') < sensitiveTurn) score += 15;
+    else if (Number.isFinite(sensitiveTurn)) feedback.push('Avoid opening with sensitive history before establishing the clinical problem and rapport.');
     const closureTurn = firstTurnForArea('closure');
     if (Number.isFinite(closureTurn) && closureTurn >= Math.max(5, Math.ceil(this.turn * 0.55))) score += 15; else feedback.push('Close the interview explicitly: ask if anything was missed and address the patient’s concerns.');
-    const coherentCore = firstTurnForArea('medication') >= hpiTurn && firstTurnForArea('allergies_transfusions') >= hpiTurn;
-    if (coherentCore) score += 10; else feedback.push('Keep medication/allergy review after the presenting problem unless the situation requires otherwise.');
+    const medicationTurn = firstTurnForArea('medication');
+    const allergyTurn = firstTurnForArea('allergies_transfusions');
+    const coherentCore = Number.isFinite(hpiTurn) && Number.isFinite(medicationTurn) && Number.isFinite(allergyTurn)
+      && medicationTurn >= hpiTurn && allergyTurn >= hpiTurn;
+    if (coherentCore) score += 10;
+    else if ((Number.isFinite(medicationTurn) || Number.isFinite(allergyTurn)) && !Number.isFinite(hpiTurn)) feedback.push('Explore the presenting problem before a detailed medication/allergy review.');
     return { score: Math.min(100, score), feedback, firstTurnByArea: Object.fromEntries(QUESTION_AREAS.filter((area) => area.id !== 'objective').map((area) => [area.id, firstTurnForArea(area.id)])) };
   }
 

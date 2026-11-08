@@ -118,3 +118,33 @@ for (const id of ['chief_complaint','hpi_onset','ros_nausea','ros_syncope','medi
 }
 
 console.log(`Patient Trainer Anamnesis v84 regression: PASS (${PATIENT_CASES.length} cases, ${Object.keys(INTENTS).length} intents)`);
+
+// Debrief rendering must be case-aware, safe, and avoid double-listing clinical gaps.
+{
+  const { buildAnamnesisDebriefView, renderAnamnesisDebrief } = await import('../anamnesis-training/src/ui/anamnesisDebrief.js');
+  const untouched = new PatientEngine(peterNovak);
+  const emptyDebrief = untouched.getDebrief();
+  assert.equal(emptyDebrief.communication.score, 0, 'No-question communication score must not receive free points');
+  assert.equal(emptyDebrief.structure.score, 0, 'No-question structure score must not receive free points');
+  assert.equal(emptyDebrief.score, 0, 'An empty interview must score zero');
+  for (const patientCase of PATIENT_CASES) {
+    const engine = new PatientEngine(patientCase);
+    engine.ask('Hello, I am a medical student. What brought you to hospital today?');
+    const debrief = engine.getDebrief();
+    const priorities = engine.getDebriefPriorities();
+    const view = buildAnamnesisDebriefView(debrief, priorities);
+    const safety = new Set(view.safety.map((item) => item.id));
+    assert.equal(view.important.some((item) => safety.has(item.id)), false, `${patientCase.id}: safety items must not repeat in important gaps`);
+    assert.equal(view.recommended.some((item) => safety.has(item.id)), false, `${patientCase.id}: safety items must not repeat in recommended gaps`);
+    assert.equal(view.gradedTotal, priorities.essential.length + priorities.caseCritical.length + priorities.recommended.filter((id) => !priorities.essential.includes(id) && !priorities.caseCritical.includes(id)).length);
+    assert.equal(view.gradedAsked + new Set([...debrief.missedEssential, ...debrief.missedCaseCritical, ...debrief.missedRecommended]).size, view.gradedTotal);
+    assert.ok(view.coverage.every((row) => row.total > 0 && row.asked <= row.total), `${patientCase.id}: only case-graded topics are counted`);
+    assert.ok(!view.coverage.some((row) => row.missing.some((item) => priorities.notRelevant.includes(item.id))), `${patientCase.id}: irrelevant case topics are excluded`);
+    const markup = renderAnamnesisDebrief({ debrief, priorities, caseName: patientCase.title, summary: engine.generateSummary(), questionCount: engine.turn });
+    for (const anchor of ['overview', 'priorities', 'coverage', 'feedback', 'history', 'submit']) assert.ok(markup.includes(`id="pt-debrief-${anchor}"`), `${anchor} section missing`);
+  }
+  const unsafe = renderAnamnesisDebrief({ debrief: emptyDebrief, priorities: untouched.getDebriefPriorities(), caseName: '<img src=x onerror=alert(1)>', worksheet: '<script>alert(1)</script>', messages: [{ speaker: 'student', text: '<svg onload=alert(1)>' }] });
+  assert.ok(!unsafe.includes('<img src=x') && !unsafe.includes('<script>alert') && !unsafe.includes('<svg onload'), 'All user-authored content must be escaped');
+}
+
+console.log('Anamnesis debrief design/logic regression: PASS');
