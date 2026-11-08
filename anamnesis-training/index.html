@@ -7,7 +7,7 @@
 <title>Patient Trainer · Medical Dictionary</title>
 <link href="./styles.css?v=20261108-fieldfix" rel="stylesheet"/>
 <link href="./debrief.css?v=20261108-debrief" rel="stylesheet"/>
-<link rel="stylesheet" href="./clinical-3d.css?v=clinical-3d-3">
+<link rel="stylesheet" href="./clinical-3d.css?v=clinical-exam-4">
 </head>
 <body class="patient-trainer-page app-workspace-active">
 <header class="pt-shell-header">
@@ -63,14 +63,14 @@
 <div class="pt-setup-heading">
   <p class="eyebrow" data-pt-i18n="medical_education_simulator">Medical Education Simulator</p>
   <h1 data-pt-i18n="choose_training">Choose how you want to train</h1>
-  <p data-pt-i18n="choose_training_desc">Keep the current anamnesis trainer focused, or preview the larger clinical encounter that is still being built.</p>
+  <p data-pt-i18n="choose_training_desc">Choose focused history-taking or a full clinical encounter with 3D examination.</p>
 </div>
 <section class="pt-experience-picker" id="experiencePicker" aria-label="Patient Trainer mode">
   <button class="pt-experience-card is-selected" data-trainer-experience="anamnesis" type="button">
     <span class="pt-experience-icon">A</span><span><strong data-pt-i18n="anamnesis_only">Anamnesis only</strong><small data-pt-i18n="anamnesis_only_desc">Take a complete history from the patient. Interview, track covered topics, and keep a structured worksheet.</small></span><em data-pt-i18n="available">Available</em>
   </button>
-  <button class="pt-experience-card is-development" data-trainer-experience="full" type="button" aria-disabled="true">
-    <span class="pt-experience-icon">+</span><span><strong data-pt-i18n="anamnesis_exam">Anamnesis + examination</strong><small data-pt-i18n="anamnesis_exam_desc">Full encounter with examination, investigations, reasoning and handover.</small></span><em data-pt-i18n="under_development">Under development</em>
+  <button class="pt-experience-card " data-trainer-experience="full" type="button">
+    <span class="pt-experience-icon">+</span><span><strong data-pt-i18n="anamnesis_exam">Anamnesis + examination</strong><small data-pt-i18n="anamnesis_exam_desc">Full encounter with examination, investigations, reasoning and handover.</small></span><em data-pt-i18n="available">Available</em>
   </button>
 </section>
 <div class="pt-dev-access-note" id="developerAccessNote" hidden></div>
@@ -150,7 +150,6 @@
 <div class="window-titlebar patient-focus-titlebar"><span>Live patient</span><span><span class="patient-focus-observe">Observe continuously</span><a class="patient-3d-credit" href="./assets/3d/clinical/ASSET_CREDITS.md" target="_blank" rel="noopener">3D credits</a></span></div>
 <div class="avatar-stage patient-bed-scene patient-focus-stage">
 <div aria-label="Animated patient avatar" class="avatar-mount" id="avatarMount"></div>
-<div class="avatar-fallback" id="avatarFallback">Pt</div>
 <div aria-live="polite" class="patient-scene-status" id="patientSceneStatus"></div>
 </div>
 <div aria-live="polite" class="patient-equipment-status" id="patientEquipmentStatus"></div>
@@ -298,6 +297,6 @@
 }
 </script>
 <script src="./src/ui/trainerShell.js?v=131" type="module"></script>
-<script src="./src/main.js?v=20261108-fieldfix" type="module"></script>
+<script src="./src/main.js?v=clinical-exam-4" type="module"></script>
 </body>
 </html>

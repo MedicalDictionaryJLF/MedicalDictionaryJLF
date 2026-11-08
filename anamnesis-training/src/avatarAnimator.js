@@ -1,198 +1,139 @@
 let patient3DRendererModulePromise = null;
+const state = {
+  renderer3d: null, mount: null, patientSnapshot: null,
+  unsubscribePatientState: null, generation: 0, failedGeneration: null, ready: false,
+  activeCase: null, options: {}, placedLeads: [], viewMode: 'encounter'
+};
 
 async function loadPatient3DRenderer(timeoutMs = 12000) {
   if (!patient3DRendererModulePromise) {
-    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-3d-3')
-      .catch((error) => {
-        patient3DRendererModulePromise = null;
-        throw error;
-      });
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-exam-4')
+      .catch(error => { patient3DRendererModulePromise = null; throw error; });
   }
-
-  let timeoutId = null;
-  const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = window.setTimeout(() => reject(new Error('3D patient renderer timed out.')), timeoutMs);
-  });
-
+  let timer;
   try {
-    const module = await Promise.race([patient3DRendererModulePromise, timeoutPromise]);
-    if (typeof module?.Patient3DRenderer !== 'function') {
-      throw new Error('3D patient renderer module did not provide Patient3DRenderer.');
-    }
+    const module = await Promise.race([
+      patient3DRendererModulePromise,
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('3D module load timed out')), timeoutMs); })
+    ]);
+    if (typeof module?.Patient3DRenderer !== 'function') throw new Error('Invalid 3D renderer module');
     return module.Patient3DRenderer;
-  } finally {
-    if (timeoutId !== null) window.clearTimeout(timeoutId);
-  }
+  } finally { clearTimeout(timer); }
 }
 
-const state = {
-  renderer3d: null,
-  mount: null,
-  patientSnapshot: null,
-  unsubscribePatientState: null,
-  fallbackSvg: null,
-  fallbackReady: false,
-  generation: 0
-};
+function availability(ready, stage) {
+  state.ready = ready;
+  state.mount.dataset.loaded = String(ready);
+  state.mount.dataset.visualMode = ready ? '3d' : stage;
+  state.mount.dispatchEvent(new CustomEvent('patient3d-availability', {
+    bubbles: true, detail: { ready, stage, caseId: state.activeCase?.id }
+  }));
+}
 
-export async function initAvatarAnimator(activeCase, options = {}) {
-  const generation = ++state.generation;
-  state.mount = document.getElementById('avatarMount');
-  if (!state.mount) return false;
-  state.renderer3d?.dispose?.();
+function showFailure(error, renderer, generation) {
+  if (generation !== state.generation || generation === state.failedGeneration) return false;
+  state.failedGeneration = generation;
+  if (renderer?.placedLeads) state.placedLeads = Object.keys(renderer.placedLeads);
+  console.warn('Patient Trainer 3D environment unavailable', {
+    caseId: state.activeCase?.id,
+    asset: renderer?.asset,
+    diagnostics: renderer?.getDiagnostics?.(),
+    error
+  });
+  renderer?.dispose();
   state.renderer3d = null;
-  state.unsubscribePatientState?.();
-  state.unsubscribePatientState = null;
-  state.patientSnapshot = null;
-  state.fallbackSvg = null;
-  state.fallbackReady = false;
+  document.documentElement.classList.remove('patient-3d-supported');
+  state.mount.classList.remove('patient-speaking');
+  state.mount.replaceChildren();
+  const panel = document.createElement('div');
+  panel.className = 'patient3d-error';
+  panel.setAttribute('role', 'status');
+  panel.setAttribute('aria-live', 'polite');
+  const message = document.createElement('strong');
+  message.textContent = '3D environment cannot be loaded.';
+  const help = document.createElement('p');
+  help.textContent = 'Your interview and notes remain in this session. Examination interactions are unavailable until the 3D environment loads.';
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.className = 'secondary';
+  retry.textContent = 'Retry loading 3D environment';
+  retry.addEventListener('click', () => { void initializeCurrentEnvironment(); }, { once: true });
+  panel.append(message, help, retry);
+  state.mount.append(panel);
+  availability(false, 'unavailable');
+  return false;
+}
 
+async function initializeCurrentEnvironment() {
+  const generation = ++state.generation;
+  state.renderer3d?.dispose();
+  state.renderer3d = null;
+  state.mount.replaceChildren();
+  const loading = document.createElement('div');
+  loading.className = 'patient-3d-loading';
+  loading.setAttribute('role', 'status');
+  loading.textContent = 'Loading 3D environment…';
+  state.mount.append(loading);
+  availability(false, 'loading');
   let renderer;
   try {
     const Patient3DRenderer = await loadPatient3DRenderer();
     if (generation !== state.generation) return false;
-    renderer = new Patient3DRenderer(state.mount, { activeCase, ...options });
+    renderer = new Patient3DRenderer(state.mount, {
+      ...state.options, activeCase: state.activeCase,
+      onError: error => showFailure(error, renderer, generation)
+    });
     state.renderer3d = renderer;
-    await renderer.init();
+    const initialized = await renderer.init();
     if (generation !== state.generation) { renderer.dispose(); return false; }
-    state.renderer3d = renderer;
+    if (!initialized || renderer.disposed) return false;
+    renderer.restorePlacedLeads(state.placedLeads);
     if (state.patientSnapshot) renderer.setSnapshot(state.patientSnapshot);
+    renderer.setViewMode(state.viewMode);
     document.documentElement.classList.add('patient-3d-supported');
+    availability(true, 'ready');
     return true;
-  } catch (error) {
-    renderer?.dispose();
-    if (generation !== state.generation) return false;
-    state.renderer3d = null;
-    console.warn('3D patient renderer unavailable; using 2D clinical fallback.', error);
-    document.documentElement.classList.remove('patient-3d-supported');
-    return loadSvgFallback();
-  }
+  } catch (error) { return showFailure(error, renderer, generation); }
 }
 
-export function bindAvatarToPatientState(patientStateEngine) {
+export async function initAvatarAnimator(activeCase, options = {}) {
+  state.mount = document.getElementById('avatarMount');
+  if (!state.mount) return false;
   state.unsubscribePatientState?.();
   state.unsubscribePatientState = null;
-  if (!patientStateEngine?.subscribe) return;
-  state.unsubscribePatientState = patientStateEngine.subscribe((snapshot) => {
+  state.patientSnapshot = null;
+  state.activeCase = activeCase;
+  state.options = options;
+  state.placedLeads = [...(options.placedLeads || [])];
+  state.viewMode = options.viewMode || 'encounter';
+  return initializeCurrentEnvironment();
+}
+
+export function disposeAvatarAnimator() {
+  state.generation += 1;
+  state.ready = false;
+  state.renderer3d?.dispose();
+  state.renderer3d = null;
+  state.unsubscribePatientState?.();
+  state.unsubscribePatientState = null;
+}
+
+export function isAvatarEnvironmentReady() { return Boolean(state.ready && state.renderer3d?.loaded && !state.renderer3d.disposed && !state.renderer3d.failed); }
+export function bindAvatarToPatientState(engine) {
+  state.unsubscribePatientState?.();
+  state.unsubscribePatientState = engine?.subscribe?.(snapshot => {
     state.patientSnapshot = snapshot;
     state.renderer3d?.setSnapshot(snapshot);
-    applyFallbackSnapshot(snapshot);
-  });
+  }) || null;
 }
-
-export function reactAvatarToPatientReply(reply = '', result = {}) {
-  const text = `${reply} ${result.detectedIntent || ''} ${result.feedbackLabel || ''}`;
-  state.renderer3d?.reactToReply(text, result);
-  if (!state.renderer3d && state.fallbackReady) applyFallbackReaction(text);
-}
-
-export function reactAvatarToExamination(examinationId = '', finding = '') {
-  state.renderer3d?.reactToExamination(examinationId, finding);
-  if (!state.renderer3d && state.fallbackReady) applyFallbackReaction(`${examinationId} ${finding}`);
-}
-
-export function setAvatarExamTool(tool = 'off') {
-  return state.renderer3d?.setExaminationTool(tool) ?? false;
-}
-
-export function getAvatarEcgPlacementCount() {
-  return Object.keys(state.renderer3d?.placedLeads || {}).length;
-}
-
-export function getAvatarEcgPlacedLeads() {
-  return Object.keys(state.renderer3d?.placedLeads || {});
-}
-
-export function restoreAvatarEcgPlacedLeads(ids = []) {
-  state.renderer3d?.restorePlacedLeads(ids);
-}
-
-
-export function setAvatarSpeaking(active, text = '') {
-  state.renderer3d?.setSpeaking(Boolean(active), text);
-  state.mount?.classList.toggle('patient-speaking', Boolean(active));
-}
-
-export function pulseAvatarSpeechBoundary(event = {}) {
-  state.renderer3d?.pulseSpeechBoundary?.(event);
-}
-
-export function setAvatarViewMode(mode = 'encounter') {
-  state.renderer3d?.setViewMode(mode);
-  state.mount?.setAttribute('data-patient-view', mode);
-}
-
-export function setAvatarEmotion(emotion = 'neutral') {
-  state.renderer3d?.setEmotion(emotion);
-  if (!state.renderer3d && state.fallbackReady) {
-    state.mount?.classList.toggle('fallback-patient-distressed', emotion === 'pain' || emotion === 'worried');
-  }
-}
-
-async function loadSvgFallback() {
-  if (!state.mount) return false;
-  try {
-    const response = await fetch(new URL('../patient-avatar.svg', import.meta.url), { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`Fallback avatar SVG not found (${response.status})`);
-    const text = await response.text();
-    state.mount.innerHTML = text;
-    state.mount.dataset.visualMode = '2d-fallback';
-    const notice = document.createElement('div');
-    notice.className = 'patient3d-fallback-notice';
-    notice.textContent = '3D unavailable in this browser · showing the existing 2D fallback';
-    state.mount.append(notice);
-    const svg = state.mount.querySelector('svg');
-    if (svg) {
-      svg.id = 'patientAvatarSvg';
-      svg.classList.add('animated-patient-svg', 'patient-svg-fallback');
-    }
-    state.fallbackSvg = svg;
-    state.fallbackReady = Boolean(svg);
-    applyFallbackSnapshot(state.patientSnapshot || {});
-    return state.fallbackReady;
-  } catch (error) {
-    console.error('Patient visual fallback failed:', error);
-    state.mount.innerHTML = '<div class="avatar-fallback visible">Pt</div>';
-    return false;
-  }
-}
-
-function applyFallbackSnapshot(snapshot = {}) {
-  if (!state.fallbackSvg) return;
-  const visual = snapshot.visual || {};
-  const equipment = snapshot.equipment || {};
-  const setOpacity = (id, value) => {
-    const el = state.fallbackSvg.querySelector(`#${id}`);
-    if (el) el.style.opacity = String(value);
-  };
-  setOpacity('pallorOverlay', clamp(Number(visual.pallor || 0), 0, 1));
-  setOpacity('sweatOverlay', clamp(Number(visual.sweating || 0), 0, 1));
-  setOpacity('oxygenOverlay', equipment.oxygen ? 1 : 0);
-  setOpacity('telemetryOverlay', equipment.telemetry || equipment.monitor ? 1 : 0);
-  setOpacity('ecg12Overlay', equipment.ecg12 ? 1 : 0);
-  setOpacity('spo2Overlay', equipment.spo2Probe || equipment.monitor ? 1 : 0);
-  setOpacity('ivOverlay', equipment.ivAccess || equipment.infusion ? 1 : 0);
-  setOpacity('infusionOverlay', equipment.infusion ? 1 : 0);
-}
-
-function applyFallbackReaction(text = '') {
-  const lower = String(text).toLowerCase();
-  const rest = state.fallbackSvg?.querySelector('#restArmGroup');
-  const chest = state.fallbackSvg?.querySelector('#chestHandGroup');
-  const abdomen = state.fallbackSvg?.querySelector('#abdomenHandGroup');
-  const mode = /chest|pain|pressure|cardio|stern/.test(lower) ? 'chest' : /abdomen|stomach|nause/.test(lower) ? 'abdomen' : 'rest';
-  if (rest) rest.style.opacity = mode === 'rest' ? '1' : '0';
-  if (chest) chest.style.opacity = mode === 'chest' ? '1' : '0';
-  if (abdomen) abdomen.style.opacity = mode === 'abdomen' ? '1' : '0';
-  if (mode !== 'rest') {
-    window.setTimeout(() => {
-      if (rest) rest.style.opacity = '1';
-      if (chest) chest.style.opacity = '0';
-      if (abdomen) abdomen.style.opacity = '0';
-    }, 2600);
-  }
-}
-
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
-}
+export function reactAvatarToPatientReply(reply = '', result = {}) { state.renderer3d?.reactToReply(`${reply} ${result.detectedIntent || ''}`, result); }
+export function reactAvatarToExamination(id = '', finding = '') { state.renderer3d?.reactToExamination(id, finding); }
+export function setAvatarExamTool(tool = 'off') { return isAvatarEnvironmentReady() ? state.renderer3d.setExaminationTool(tool) : false; }
+export function lockAvatarExaminations() { state.options.completed = true; state.renderer3d?.setInteractionEnabled(false); }
+export function getAvatarEcgPlacedLeads() { return state.renderer3d ? Object.keys(state.renderer3d.placedLeads) : [...state.placedLeads]; }
+export function getAvatarEcgPlacementCount() { return getAvatarEcgPlacedLeads().length; }
+export function restoreAvatarEcgPlacedLeads(ids = []) { state.placedLeads = [...ids]; state.renderer3d?.restorePlacedLeads(ids); }
+export function setAvatarSpeaking(active, text = '') { state.renderer3d?.setSpeaking(Boolean(active), text); if (isAvatarEnvironmentReady()) state.mount?.classList.toggle('patient-speaking', Boolean(active)); }
+export function pulseAvatarSpeechBoundary(event = {}) { state.renderer3d?.pulseSpeechBoundary(event); }
+export function setAvatarViewMode(mode = 'encounter') { state.viewMode = mode; state.renderer3d?.setViewMode(mode); state.mount?.setAttribute('data-patient-view', mode); }
+export function setAvatarEmotion(emotion = 'neutral') { state.renderer3d?.setEmotion(emotion); }

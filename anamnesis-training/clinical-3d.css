@@ -19,3 +19,71 @@
 .patient3d-bedside-panel .patient3d-reset{font-size:10px;min-height:28px;padding:3px 7px;margin-top:4px}
 .patient-3d-active:has(.patient3d-bedside-panel:not([hidden])) .patient3d-message{max-height:3.1em;overflow:hidden}
 @media(max-width:650px){.patient3d-bedside-panel{left:8px;right:8px;bottom:45px;max-width:none;top:auto;max-height:31%}.patient3d-options{flex-wrap:wrap}.patient3d-options select{max-width:130px}}
+/* Explicit rendering failure: no avatar, image or simulated examination surface. */
+.patient3d-error{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:clamp(18px,5vw,42px);background:#f0f5f3;color:#183c34;text-align:center;overflow:auto;box-sizing:border-box;font:14px/1.55 system-ui,sans-serif}
+.patient3d-error strong{font-size:clamp(18px,2vw,24px);line-height:1.35;overflow-wrap:anywhere}
+.patient3d-error p{margin:0;max-width:38ch}
+.patient3d-error button{width:auto;max-width:100%;min-height:44px;white-space:normal;background:#236452;color:white;border:1px solid #236452;padding:10px 16px;border-radius:8px}
+.patient3d-error button:focus-visible{outline:3px solid #327eaf;outline-offset:3px}
+body[data-theme=dark] .patient3d-error{background:#152b29;color:#e4f2ed}
+body[data-theme=dark] .patient3d-error button{background:#91d6bd;color:#102d25;border-color:#91d6bd}
+.avatar-stage:has(.patient3d-error) .patient-scene-status{display:none}
+.patient3d-options [hidden],.patient3d-toolbar [hidden]{display:none!important}
+.patient3d-bedside-panel details{margin:5px;max-width:100%}
+.patient3d-bedside-panel summary{min-height:28px;cursor:pointer;color:#e1f4ec}
+.patient3d-audio{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:7px;border-top:1px solid #54796f;padding:7px 5px 0}
+.patient3d-audio span{flex-basis:100%;font-size:11px}
+.patient3d-audio label{display:flex;align-items:center;gap:6px}
+.patient3d-audio input{width:90px;margin:0;min-height:28px;accent-color:#91d6bd}
+.patient3d-audio button{width:auto;min-height:36px;border:1px solid #5b8d81}
+.patient3d-bedside-panel button[aria-pressed=true]{background:#83d6c2;color:#102d25}
+.clinical-exam-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.clinical-exam-tools button{width:auto;min-height:44px;flex:1 1 100px}
+.clinical-exam-tools button:disabled{opacity:.6;cursor:not-allowed}
+.clinical-findings-record .patient3d-observed-finding{margin:10px 0;padding:12px;border:1px solid var(--border,#c4d8cf);border-radius:9px;overflow-wrap:anywhere}
+.clinical-findings-record p{white-space:pre-wrap}
+.clinical-findings-record small{display:block;font-size:12px;color:inherit;opacity:.85}
+.exam-procedure-guide{padding:10px;border:1px solid var(--border,#c4d8cf);border-radius:8px;margin-bottom:10px}
+.encounter-report .report-section p{white-space:pre-wrap;overflow-wrap:anywhere}
+.encounter-report details{margin:12px 0}
+.encounter-report summary{cursor:pointer;min-height:34px}
+@media(max-width:650px){.patient3d-error{padding:20px;gap:12px}.patient3d-error p{font-size:13px}.patient3d-bedside-panel{bottom:48px;max-height:35%;padding-bottom:max(8px,env(safe-area-inset-bottom))}.patient3d-toolbar{font-size:11px}.patient3d-view-buttons{flex-wrap:wrap}.patient3d-toolbar button{padding:7px 8px}.patient3d-error button{font-size:13px}}
+/* Fit the encounter inside the existing application sidebar at intermediate widths. */
+body[data-trainer-experience=full] .workspace-window{min-width:0;container-type:inline-size}
+body[data-trainer-experience=full] .reasoning-grid{grid-template-columns:minmax(0,1fr)}
+body[data-trainer-experience=full] .reasoning-grid .clinical-subwindow{min-height:auto}
+body[data-trainer-experience=full] .patient-focus-stage .avatar-mount{position:relative;min-width:0}
+body[data-trainer-experience=full] .patient3d-error button.secondary{background:#236452;color:#fff;border-color:#236452}
+body[data-theme=dark][data-trainer-experience=full] .patient3d-error button.secondary{background:#91d6bd;color:#102d25;border-color:#91d6bd}
+@container (min-width:680px){body[data-trainer-experience=full] .reasoning-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}}
+@media(min-width:1081px){body[data-trainer-experience=full] .station-workspace-layout{grid-template-columns:minmax(164px,.48fr) minmax(300px,1fr) minmax(320px,1.16fr)}}
+@media(min-width:761px){body[data-trainer-experience=full][data-patient-workspace=examination] .station-workspace-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
+@media(max-width:1080px){body[data-trainer-experience=full][data-patient-workspace=investigations] .workspace-window{grid-column:1/-1}}
+@media(max-width:760px){
+  body[data-trainer-experience=full] .station-workspace-layout,body[data-trainer-experience=full][data-patient-workspace=examination] .station-workspace-layout{grid-template-columns:minmax(0,1fr)!important}
+  body[data-trainer-experience=full] .encounter-stepbar{max-width:100%;min-width:0}
+  body[data-trainer-experience=full] .patient-focus-window,body[data-trainer-experience=full][data-patient-workspace=examination] .patient-focus-window{min-height:0;max-height:none}
+  body[data-trainer-experience=full] .patient-focus-stage,body[data-trainer-experience=full][data-patient-workspace=examination] .patient-focus-stage{height:clamp(290px,47dvh,480px);min-height:0}
+  body[data-trainer-experience=full] .patient-focus-stage .avatar-mount{height:100%;min-height:0}
+  body[data-trainer-experience=full] .patient-rail{grid-row:auto}
+  body[data-trainer-experience=full][data-patient-workspace=examination] .workspace-window{min-height:0}
+}
+body[data-trainer-experience=full] .encounter-step{background:var(--md-subtle,#edf4ef);color:var(--md-text,#19382c)}
+body[data-trainer-experience=full] .encounter-step.active{background:#d9eee5;color:#154638;border-color:#a8d0c0}
+body[data-theme=dark][data-trainer-experience=full] .encounter-step.active{background:#28504a;color:#e5f6ef;border-color:#6f9b8e}
+body[data-trainer-experience=full] .encounter-step small{color:inherit;opacity:.8}
+.clinical-exam-progress{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--md-line,#d1dfd7);border-radius:9px;line-height:1.35;overflow-wrap:anywhere}
+.clinical-exam-progress span{font-size:.78em;color:var(--md-muted,#486457)}
+.clinical-exam-progress.performed{border-color:#8dbfb1}
+.patient-focus-stage:has(.patient3d-bedside-panel:not([hidden])) .patient-scene-status{display:none}
+@media(max-width:650px){
+  .patient3d-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+  .patient3d-toolbar .patient3d-view-buttons{flex-wrap:nowrap;justify-content:space-between;gap:2px;padding:3px}
+  .patient3d-toolbar .patient3d-view-buttons button{flex:0 1 auto;min-width:0;min-height:38px;padding:5px 7px}
+  .patient3d-toolbar .patient3d-options{display:flex;flex-wrap:nowrap;gap:4px;padding:3px}
+  .patient3d-toolbar .patient3d-options label{flex:1 1 0;min-width:0;padding:0;margin:0}
+  .patient3d-toolbar .patient3d-options select{min-width:0;max-width:100%;width:100%;margin:0;min-height:32px;padding:4px;box-sizing:border-box}
+}
+.patient3d-bedside-panel details.patient3d-audio{display:block;padding:0 0 0 4px;margin:4px 5px 0}
+.patient3d-audio-controls{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.patient3d-bedside-panel details.patient3d-audio summary{min-height:24px}

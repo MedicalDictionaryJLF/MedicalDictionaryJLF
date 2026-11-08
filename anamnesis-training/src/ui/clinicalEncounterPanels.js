@@ -1,45 +1,27 @@
+import { renderAnamnesisDebrief } from './anamnesisDebrief.js?v=20261108-debrief';
 import {
   addDifferential,
   countCompletedNoteSections,
   getExaminationActions,
   moveDifferential,
-  performExamination,
   removeDifferential,
   updateClinicalNotes
 } from '../clinicalEncounter.js';
 
-export function renderExaminationPanel({ container, patientCase, encounterState, mode, onPerformed }) {
+export function renderExaminationPanel({ container, patientCase, encounterState, mode, environmentReady, environmentStatus, onSelectTool }) {
   if (!container) return;
   const actions = getExaminationActions(patientCase, encounterState);
-  const groups = groupBy(actions, (item) => item.group);
+  const records = encounterState.examActions || [];
+  const disabled = !environmentReady || encounterState.completed;
   container.innerHTML = `
-    <p class="subtle-note">Choose what you actually want to examine. Findings remain hidden until the action is performed.${mode === 'exam' ? '' : ' Required actions are not highlighted, so the station still makes you think.'}</p>
-    <div class="exam-groups">
-      ${Object.entries(groups).map(([group, items]) => `
-        <section class="exam-group">
-          <h3>${escapeHtml(group)}</h3>
-          <div class="exam-action-list">
-            ${items.map((item) => `
-              <article class="exam-action ${item.performed ? 'performed' : ''}" data-required="${item.required ? 'true' : 'false'}">
-                <div>
-                  <strong>${escapeHtml(item.label)}</strong>
-                  <p>${item.performed ? escapeHtml(item.finding) : 'Finding hidden until examined.'}</p>
-                </div>
-                <button type="button" class="secondary" data-perform-exam="${escapeHtml(item.id)}">${item.performed ? 'Repeat' : 'Examine'}</button>
-              </article>
-            `).join('')}
-          </div>
-        </section>
-      `).join('')}
-    </div>
+    <p class="subtle-note">${environmentReady ? 'Choose a technique, then select an anatomical site on the 3D patient. Use the site menu in the patient view for keyboard access.' : environmentStatus === 'unavailable' ? '3D environment cannot be loaded. Examination interactions are unavailable. Retry in the patient viewing area.' : 'The examination controls become available when the 3D patient is ready.'}</p>
+    <div class="clinical-exam-tools" aria-label="Examination tools">${[['inspect','Inspection'],['palpate','Palpation'],['percuss','Percussion'],['auscultate','Stethoscope'],['ecg','ECG electrodes']].map(([id,label])=>`<button type="button" class="secondary" data-exam-tool="${id}" ${disabled?'disabled':''}>${label}</button>`).join('')}</div>
+    ${mode === 'teaching' ? `<details class="exam-procedure-guide"><summary>Examination technique guide</summary>${actions.map(action=>`<p><strong>${escapeHtml(action.label)}</strong>${action.required && action.assessed?' · required in this case':''}: ${action.steps.map(([technique,siteId])=>escapeHtml(`${technique} ${siteId.replaceAll('-',' ')}`)).join('; ')}.</p>`).join('')}</details>` : ''}
+    ${mode !== 'exam' ? `<div class="exam-groups">${actions.filter(action=>action.completedSteps.length).map(action=>`<article class="clinical-exam-progress ${action.performed?'performed':''}"><strong>${escapeHtml(action.label)}</strong><span>${action.completedSteps.length}/${action.steps.length} procedural steps${action.performed?' · procedure complete':''}</span></article>`).join('')}</div>` : ''}
+    <section class="clinical-findings-record" aria-live="polite"><h3>Acquired examination record</h3>${records.length ? records.slice().reverse().map(record=>`<article class="patient3d-observed-finding"><strong>${escapeHtml(record.technique)} · ${escapeHtml(record.siteLabel)}</strong><p>${escapeHtml(record.finding)}</p><small>${record.documented?'Authored case finding':'Technique performed · finding unavailable'}${record.repeated?' · repeated, no additional completion credit':''}${record.sound?' · synthesized educational sound':''}</small></article>`).join('') : '<p>No examinations performed yet.</p>'}</section>
+    <p class="subtle-note">ECG: ${encounterState.ecg.placedLeads.length}/10 electrodes placed${encounterState.ecg.completed?' · completed procedure recorded':''}. ${patientCase.ecg?.available?'A case-specific tracing becomes available after correct placement.':'No case-specific ECG recording is authored.'}</p>
   `;
-  container.querySelectorAll('[data-perform-exam]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const result = performExamination(patientCase, encounterState, button.dataset.performExam);
-      onPerformed?.(result);
-      renderExaminationPanel({ container, patientCase, encounterState, mode, onPerformed });
-    });
-  });
+  container.querySelectorAll('[data-exam-tool]').forEach(button=>button.addEventListener('click',()=>{if(!disabled)onSelectTool?.(button.dataset.examTool);}));
 }
 
 export function renderClinicalNotesPanel({ container, encounterState, onChange }) {
@@ -117,7 +99,7 @@ export function renderDifferentialPanel({ container, encounterState, onChange })
   }));
 }
 
-export function renderClosingForm({ container, encounterState, onSubmit, mode }) {
+export function renderClosingForm({ container, encounterState, onSubmit, onChange, mode }) {
   if (!container) return;
   const closing = encounterState.closing;
   container.innerHTML = `
@@ -152,6 +134,9 @@ export function renderClosingForm({ container, encounterState, onSubmit, mode })
       </div>
     </form>
   `;
+  container.querySelector('#closingForm')?.addEventListener('input', event => {
+    if (Object.hasOwn(encounterState.closing, event.target.name)) { encounterState.closing[event.target.name] = event.target.value; onChange?.(); }
+  });
   container.querySelector('#closingForm')?.addEventListener('submit', (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -178,10 +163,17 @@ export function renderEncounterReport({ container, report, onContribute }) {
         ${scoreTile('Clinical reasoning', report.clinicalReasoning.percent)}
         ${scoreTile('Closing / presentation', report.closing.percent)}
       </div>
-      ${renderInterviewDebrief(report.interviewDebrief, report.interviewBreakdown)}
+      ${report.interviewDebrief ? renderAnamnesisDebrief({ debrief: report.interviewDebrief, priorities: report.interviewPriorities || {}, questionCount: (report.completeRecord?.transcript || []).filter(item => item.speaker === 'student').length }) : renderInterviewDebrief(null, report.interviewBreakdown)}
       <section class="report-section">
         <h3>Physical examination</h3>
-        <p>${report.examination.missed.length ? `<strong>Missed required actions:</strong> ${escapeHtml(report.examination.missed.join(', '))}` : 'All required examination actions were performed.'}</p>
+        <p>${report.examination.limitation ? escapeHtml(report.examination.limitation) : report.examination.missed.length ? `<strong>Missed required actions:</strong> ${escapeHtml(report.examination.missed.join(', '))}` : 'All required examination actions were performed.'}</p>
+      </section>
+      <section class="report-section">
+        <h3>Examination procedures and ECG</h3>
+        <p>${(report.examination.record||[]).length} targeted actions; ${report.examination.unavailable||0} unavailable findings. Repeated sites do not increase completion credit.</p>
+        ${(report.examination.partial||[]).map(item=>`<p>${escapeHtml(item.label)}: ${item.completed}/${item.total} steps, incomplete.</p>`).join('')}
+        <p>ECG: ${report.examination.ecg?.placedLeads?.length||0}/10 electrodes currently placed; ${report.examination.ecg?.completed?'completed procedure recorded':'procedure incomplete'}. ${(report.examination.ecg?.attempts||[]).filter(item=>!item.correct).length} incorrect placements.</p>
+        ${(report.examination.record||[]).length?`<details><summary>Complete examination record</summary>${report.examination.record.map(item=>`<p><strong>${escapeHtml(item.technique)} · ${escapeHtml(item.siteLabel)}</strong> — ${escapeHtml(item.finding)} <small>${escapeHtml(item.at)} · ${escapeHtml(item.status)}${item.repeated?' · repeated':''}</small></p>`).join('')}</details>`:''}
       </section>
       <section class="report-section">
         <h3>Clinical reasoning</h3>
@@ -193,10 +185,22 @@ export function renderEncounterReport({ container, report, onContribute }) {
         <p>${escapeHtml(report.expectedDiagnosis)}</p>
       </section>
       <section class="report-section compact-report-grid">
-        <p><strong>Presentation:</strong> ${report.closing.summaryPercent}%</p>
-        <p><strong>Investigations:</strong> ${report.closing.investigationPercent}%</p>
-        <p><strong>Management / safety:</strong> ${report.closing.managementPercent}%</p>
+        <p><strong>Presentation:</strong> ${formatScore(report.closing.summaryPercent)}</p>
+        <p><strong>Investigations:</strong> ${formatScore(report.closing.investigationPercent)}</p>
+        <p><strong>Management / safety:</strong> ${formatScore(report.closing.managementPercent)}</p>
       </section>
+      <section class="report-section"><h3>Investigations and management record</h3>
+        ${Object.entries(report.investigations?.results||{}).map(([key,value])=>`<p><strong>${escapeHtml(key)}</strong>: ${escapeHtml(value)}</p>`).join('')||'<p>No laboratory findings obtained.</p>'}
+        <p>Case ECG: ${report.investigations?.acquiredEcg?'acquired':report.investigations?.availableEcg?'available but not acquired':'not authored'}.</p>
+        ${(report.management||[]).map(item=>`<p>${escapeHtml(item)}</p>`).join('')||'<p>No management actions recorded.</p>'}
+        ${report.investigations?.criteria?.length ? `<p>Case-supported investigations selected: ${formatScore(report.investigations.selectionPercent)}.</p><ul>${report.investigations.criteria.map(item=>`<li>${escapeHtml(item.label)}: ${item.obtained?'obtained':'not obtained'}</li>`).join('')}</ul>`:''}
+        ${typeof report.investigations?.interpretation==='boolean'?`<p>Authored ECG interpretation: ${report.investigations.interpretation?'recognised in handover':'not identified in handover'}.</p>`:''}
+        <p>Management is assessed using the case rubric and your documented decisions.</p>
+      </section>
+      ${(report.safetyOmissions||[]).length?`<section class="report-section"><h3>Safety priorities</h3><ul>${report.safetyOmissions.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul></section>`:''}
+      <section class="report-section"><h3>What was done correctly</h3>${(report.strengths||[]).map(item=>`<p>${escapeHtml(item)}</p>`).join('')||'<p>No completed clinical domains yet.</p>'}<h3>Next practice priorities</h3>${(report.recommendations||[]).map(item=>`<p>${escapeHtml(item)}</p>`).join('')||'<p>Review the case-specific history debrief and any incomplete procedures above.</p>'}</section>
+      ${report.completeRecord?`<section class="report-section"><h3>Clinical notes and handover</h3>${Object.entries(report.completeRecord.notes||{}).map(([key,value])=>`<p><strong>${escapeHtml(key)}</strong>: ${escapeHtml(value||'Not documented.')}</p>`).join('')}${Object.entries(report.completeRecord.closing||{}).map(([key,value])=>`<p><strong>${escapeHtml(key)}</strong>: ${escapeHtml(value)}</p>`).join('')}<details><summary>Interview transcript</summary>${(report.completeRecord.transcript||[]).map(item=>`<p><strong>${escapeHtml(item.speaker||item.role)}</strong>: ${escapeHtml(item.text)}</p>`).join('')||'<p>No interview questions recorded.</p>'}</details></section>`:''}
+      <p class="report-muted">Unassessed domains have no authored rubric or findings. They are excluded from the composite score; applicable weights are normalized.</p>
       <div class="report-actions">
         <button id="contributeEncounterBtn" type="button" class="secondary">Prepare anonymous contribution</button>
       </div>
@@ -250,8 +254,10 @@ function humanizeIntent(value) {
   return String(value ?? '').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function formatScore(value) { return Number.isFinite(value) ? `${Math.round(value)}%` : 'Unassessed'; }
+
 function scoreTile(label, value) {
-  return `<article class="encounter-score-tile"><strong>${Math.round(Number(value || 0))}%</strong><span>${escapeHtml(label)}</span></article>`;
+  return `<article class="encounter-score-tile"><strong>${formatScore(value)}</strong><span>${escapeHtml(label)}</span></article>`;
 }
 
 function groupBy(items, fn) {

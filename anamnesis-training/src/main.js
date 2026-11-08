@@ -5,7 +5,7 @@ import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debr
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, reactAvatarToExamination, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, getAvatarEcgPlacementCount, getAvatarEcgPlacedLeads, restoreAvatarEcgPlacedLeads } from './avatarAnimator.js?v=clinical-3d-3';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool,  isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=clinical-exam-4';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js?v=134';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
@@ -13,7 +13,7 @@ import { renderModeLayout } from './ui/modeLayout.js?v=134';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
-import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination } from './clinicalEncounter.js';
+import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js';
 import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js';
 import { PatientStateEngine } from './patientState.js';
 import { renderPatientStatePanel } from './ui/patientStatePanel.js';
@@ -91,7 +91,6 @@ const els = {
   closeMedicationBtn: document.getElementById('closeMedicationBtn'),
   medicationPanel: document.getElementById('medicationPanel'),
   avatarMount: document.getElementById('avatarMount'),
-  avatarFallback: document.getElementById('avatarFallback'),
   actionHistoryPanel: document.getElementById('actionHistoryPanel'),
   encounterOverview: document.getElementById('encounterOverview'),
   examNavCount: document.getElementById('examNavCount'),
@@ -139,12 +138,8 @@ let trainerExperience = 'anamnesis';
 let anamnesisWorksheetNotes = {};
 let currentSession = null;
 let automaticRetryRunning = false;
+let stationGeneration = 0;
 const uploadInFlight = new Set();
-const developerAccess = (() => {
-  const query = new URLSearchParams(window.location.search);
-  if (query.get('dev') === '1') sessionStorage.setItem('pt_dev_access', '1');
-  return query.get('dev') === '1' || sessionStorage.getItem('pt_dev_access') === '1';
-})();
 const aiDiagnostics = {
   enabled: false,
   apiBaseUrl: '',
@@ -211,7 +206,7 @@ function init() {
   els.coachBackdrop?.addEventListener('click', () => setCoachDrawerOpen(false));
   els.questionForm.addEventListener('submit', handleQuestion);
   els.finishBtn.addEventListener('click', finishCase);
-  els.openVitalsBtn?.addEventListener('click', () => { patientStateEngine?.connectEquipment('monitor', true, 'Bedside monitor opened'); recordObjectiveAction('vitals', 'Live vitals monitor connected and reviewed'); openVitalsMonitor(activeCase); renderPatientVisualState(); });
+  els.openVitalsBtn?.addEventListener('click', openCaseVitals);
   els.closeVitalsBtn?.addEventListener('click', closeVitalsMonitor);
   els.openEcgBtn?.addEventListener('click', openEcgPlacement);
   els.closeEcgBtn?.addEventListener('click', closeEcgViewer);
@@ -229,7 +224,7 @@ function init() {
     if (target === 'reasoning') { renderNotesPanel(); renderDifferentialBoard(); }
   }));
   document.querySelectorAll('[data-objective-action]').forEach((button) => button.addEventListener('click', () => {
-    if (button.dataset.objectiveAction === 'vitals') { patientStateEngine?.connectEquipment('monitor', true, 'Bedside monitor opened'); recordObjectiveAction('vitals', 'Live vitals monitor connected and reviewed'); openVitalsMonitor(activeCase); renderPatientVisualState(); }
+    if (button.dataset.objectiveAction === 'vitals') openCaseVitals();
     if (button.dataset.objectiveAction === 'ecg') openEcgPlacement();
   }));
   document.querySelector('[data-close="vitals"]')?.addEventListener('click', closeVitalsMonitor);
@@ -256,6 +251,8 @@ function init() {
 }
 
 async function startCase() {
+  const stationToken = ++stationGeneration;
+  disposeAvatarAnimator();
   closeVitalsMonitor();
   closeEcgViewer();
   currentMode = els.modeSelect?.value || currentMode;
@@ -296,9 +293,10 @@ async function startCase() {
   renderPatientMeta();
   renderTerminologyHint('');
   renderInterfacePanels();
-  await refreshAiHealthDiagnostics();
-  renderInterfacePanels();
-  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full' });
+  void refreshAiHealthDiagnostics().then(() => { if (stationStarted && stationToken === stationGeneration) renderInterfacePanels(); });
+  if (!stationStarted || stationToken !== stationGeneration) return;
+  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
+  if (!stationStarted || stationToken !== stationGeneration) return;
   bindAvatarToPatientState(patientStateEngine);
   setAvatarEmotion('neutral');
   setAvatarViewMode('encounter');
@@ -310,6 +308,8 @@ async function startCase() {
 
 function showSetupScreen() {
   persistCurrentSession();
+  stationGeneration += 1;
+  disposeAvatarAnimator();
   setCoachDrawerOpen(false);
   setCompanionOpen(false);
   closeModal(els.anamnesisDebriefModal);
@@ -356,7 +356,7 @@ function renderSetupPreview(randomChosen = false) {
       ? 'Advanced patients answer more narrowly and may need rapport or respectful framing before sensitive disclosures.'
       : 'Intermediate difficulty uses realistic, moderately focused answers.';
   const experienceHelp = trainerExperience === 'full'
-    ? (developerAccess ? '<strong>Developer preview:</strong> examination and the wider clinical encounter are enabled.' : '<strong>Under development:</strong> this mode is not available in the public trainer yet.')
+    ? '<strong>Anamnesis + examination:</strong> interview the patient, examine the 3D body, collect supported findings and submit your clinical assessment.'
     : '<strong>Anamnesis only:</strong> the station contains the patient interview, broad topic overview and an optional structured worksheet.';
   els.setupPreview.innerHTML = `
     <div class="setup-preview-top"><strong>${randomChosen ? 'Random station selected' : escapeHtml(activeCase.title)}</strong><span>${escapeHtml(selectedDifficulty)} · ${escapeHtml(selectedMode)}</span></div>
@@ -379,11 +379,11 @@ function renderStationHeader() {
   els.stationDifficultyBadge.textContent = `${currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1)} difficulty`;
   if (els.openEcgBtn) {
     const available = Boolean(activeCase.ecg?.available);
-    els.openEcgBtn.disabled = false;
+    els.openEcgBtn.disabled = !isAvatarEnvironmentReady() || encounterState.completed;
     els.openEcgBtn.title = available ? 'Place 10 electrodes on the patient before viewing the case ECG' : 'Practice placing 10 electrodes; no case-specific tracing is supplied';
     els.openEcgBtn.setAttribute('aria-label', 'Practice 12-lead ECG placement on the patient');
   }
-  if (els.ecgAvailabilityText) els.ecgAvailabilityText.textContent = `${getAvatarEcgPlacementCount()}/10 leads · ${activeCase.ecg?.available ? 'case tracing supplied' : 'no case tracing'}`;
+  if (els.ecgAvailabilityText) els.ecgAvailabilityText.textContent = `${encounterState.ecg.placedLeads.length}/10 electrodes · ${activeCase.ecg?.available ? 'case tracing supplied' : 'no case tracing'}`;
   if (els.coachWindowTitle) els.coachWindowTitle.textContent = currentMode === 'exam' ? 'Exam station' : currentMode === 'teaching' ? 'Teaching coach' : 'Practice coach';
 }
 
@@ -428,7 +428,8 @@ function addMessage(role, text, intent = '', feedbackLabel = '') {
 
 async function handleQuestion(event) {
   event.preventDefault();
-  if (responsePending) return;
+  if (responsePending || !stationStarted || !engine || currentSession?.completed) return;
+  const stationToken = stationGeneration;
   const question = els.questionInput.value.trim();
   if (!question) return;
   setQuestionPending(true);
@@ -438,10 +439,12 @@ async function handleQuestion(event) {
   showResponseLoading(els.chatLog);
   try {
     const prepared = await prepareQuestionWithAI(engine, question);
+    if (!stationStarted || stationToken !== stationGeneration) return;
     const result = engine.ask(question, prepared.detection);
     const reply = shouldUsePatientPhrasing(result)
       ? await phrasePatientReply(result.reply, prepared.event)
       : result.reply;
+    if (!stationStarted || stationToken !== stationGeneration) return;
     engine.replaceLastPatientReply(reply);
     updateAiDiagnosticsFromEvent(prepared.event);
     lastDetection = result.detection;
@@ -633,11 +636,13 @@ function showHint() {
   addMessage('patient', text, 'hint');
 }
 function finishCase() {
+  if (!stationStarted || responsePending || currentSession?.completed) return;
   if (trainerExperience === 'anamnesis') { finishAnamnesisOnly(); return; }
   renderClosingForm({
     container: els.closingPanel,
     encounterState,
     mode: currentMode,
+    onChange: () => persistCurrentSession(),
     onSubmit: submitEncounter
   });
   activateWorkspace('handover');
@@ -651,7 +656,13 @@ function submitEncounter(closingInput) {
     interviewScore: engine.getScore(),
     interviewBreakdown: engine.getScoreBreakdown(),
     interviewDebrief: engine.getDebrief(),
-    closingInput
+    interviewPriorities: activeCase.debriefPriorities,
+    closingInput,
+    investigations: orderedLabs,
+    management: administeredMedications,
+    actions: actionHistory,
+    environmentReady: isAvatarEnvironmentReady(),
+    transcript: currentSession?.messages || []
   });
   actionHistory.push({ type: 'encounter-submitted', at: new Date().toISOString(), score: report.encounterScore });
   renderEncounterReport({ container: els.closingPanel, report, onContribute: () => console.info('anamnesis-anonymous-contribution-ready', prepareAnonymousContribution(engine)) });
@@ -669,12 +680,16 @@ function submitEncounter(closingInput) {
 
 
 function lockEncounterControls() {
+  lockAvatarExaminations();
+  sync3dControls();
+  [els.clinicalNotesPanel, els.differentialPanel, els.labsPanel, els.medicationPanel].forEach(panel => { if (panel) panel.inert = true; });
   [els.openExamBtn, els.orderLabsBtn, els.administerMedicationBtn, els.openDifferentialBtn].forEach((button) => {
     if (button) button.disabled = true;
   });
 }
 
 function resetEncounterControls() {
+  [els.clinicalNotesPanel, els.differentialPanel, els.labsPanel, els.medicationPanel].forEach(panel => { if (panel) panel.inert = false; });
   [els.openExamBtn, els.orderLabsBtn, els.administerMedicationBtn, els.openDifferentialBtn, els.finishBtn].forEach((button) => {
     if (button) button.disabled = false;
   });
@@ -686,32 +701,35 @@ function resetEncounterControls() {
 
 function renderPhysicalExamPanel() {
   renderExaminationPanel({
-    container: els.examinationPanel,
-    patientCase: activeCase,
-    encounterState,
-    mode: currentMode,
-    onPerformed: (result) => {
-      if (!result?.ok) return;
-      actionHistory.push({ type: 'physical-examination', examinationId: result.action.id, label: result.action.label, at: new Date().toISOString() });
-      encounterState.notes.examination = mergeNote(encounterState.notes.examination, `${result.action.label}: ${result.finding}`);
-      patientStateEngine?.recordExamination(result.action.id, result.finding);
-      reactAvatarToExamination(result.action.id, result.finding);
-      renderPatientVisualState();
-      renderActionHistoryPanel();
-      updateEncounterToolLabels();
-      persistCurrentSession();
+    container: els.examinationPanel, patientCase: activeCase, encounterState,
+    mode: currentMode, environmentReady: isAvatarEnvironmentReady(), environmentStatus: els.avatarMount?.dataset.visualMode,
+    onSelectTool: tool => {
+      if (!encounterState.completed && setAvatarExamTool(tool)) els.avatarMount?.scrollIntoView({ block: 'center' });
     }
   });
 }
 
-function openEcgPlacement() {
-  if (!stationStarted || trainerExperience === 'anamnesis') return;
-  if (getAvatarEcgPlacementCount() === 10 && activeCase.ecg?.available) { openEcgViewer(activeCase); return; }
-  activateWorkspace('examination');
-  renderPhysicalExamPanel();
-  if (!setAvatarExamTool('ecg')) {
-    const hint=document.createElement('p');hint.className='subtle-note';hint.textContent='ECG placement on the 3D patient requires a WebGL 2 capable browser.';els.examinationPanel.prepend(hint);
+function sync3dControls() {
+  const enabled = stationStarted && trainerExperience === 'full' && isAvatarEnvironmentReady() && !encounterState.completed;
+  if (els.openEcgBtn) els.openEcgBtn.disabled = !enabled;
+  document.querySelectorAll('[data-objective-action="ecg"]').forEach(button => { button.disabled = !enabled; });
+  if (stationStarted && trainerExperience === 'full') renderPhysicalExamPanel();
+}
+
+function openCaseVitals() {
+  if (!stationStarted || trainerExperience !== 'full' || encounterState.completed) return;
+  if (Object.values(activeCase.vitals || {}).some(value => /\d/.test(String(value)))) {
+    patientStateEngine?.connectEquipment('monitor', true, 'Bedside monitor opened');
+    recordObjectiveAction('vitals', 'Documented vital signs reviewed');
+    renderPatientVisualState();
   }
+  openVitalsMonitor(activeCase);
+}
+
+function openEcgPlacement() {
+  if (!stationStarted || trainerExperience !== 'full' || encounterState.completed || !isAvatarEnvironmentReady()) return;
+  if (encounterState.ecg.placedLeads.length === 10 && activeCase.ecg?.available) { openEcgViewer(activeCase); return; }
+  activateWorkspace('examination');renderPhysicalExamPanel();setAvatarExamTool('ecg');
 }
 
 function renderNotesPanel() {
@@ -733,13 +751,14 @@ function renderDifferentialBoard() {
 function updateEncounterToolLabels() {
   const objectiveCount = actionHistory.filter((item) => item.type === 'objective-vitals' || item.type === 'objective-ecg').length;
   const testCount = Object.keys(orderedLabs).length + administeredMedications.length + objectiveCount;
-  if (els.examNavCount) els.examNavCount.textContent = String(encounterState.examined.length);
+  if (els.examNavCount) els.examNavCount.textContent = String(encounterState.examActions.length);
   if (els.testsNavCount) els.testsNavCount.textContent = String(testCount);
   if (els.reasoningNavCount) els.reasoningNavCount.textContent = String(encounterState.differentials.length);
   renderEncounterOverview();
 }
 function recordObjectiveAction(kind, label) {
-  if (!stationStarted || !engine) return;
+  if (!stationStarted || !engine || encounterState.completed) return;
+  if (actionHistory.some(item => item.type === `objective-${kind}`)) return;
   actionHistory.push({ type: `objective-${kind}`, label, at: new Date().toISOString() });
   renderActionHistoryPanel();
   updateEncounterToolLabels();
@@ -755,47 +774,28 @@ function setCoachDrawerOpen(open) {
 }
 
 function activateWorkspace(name) {
+  const previousWorkspace = document.body.dataset.patientWorkspace;
   const requested = String(name || 'interview');
   const target = trainerExperience === 'anamnesis' ? 'interview' : requested;
   if (target === 'examination' || target === 'investigations') setCoachDrawerOpen(false);
   document.querySelectorAll('[data-workspace-panel]').forEach((panel) => panel.classList.toggle('active', panel.dataset.workspacePanel === target));
   document.querySelectorAll('[data-workspace-target]').forEach((button) => button.classList.toggle('active', button.dataset.workspaceTarget === target));
   document.body.dataset.patientWorkspace = target;
-  setAvatarViewMode(target === 'examination' ? 'examination' : 'encounter');
+  if (previousWorkspace !== target) setAvatarViewMode(target === 'examination' ? 'examination' : 'encounter');
 }
 
 
 function configureDeveloperAccess() {
-  const fullCard = els.experienceCards.find((card) => card.dataset.trainerExperience === 'full');
-  if (!fullCard) return;
-  if (developerAccess) {
-    fullCard.classList.add('is-developer-unlocked');
-    fullCard.removeAttribute('aria-disabled');
-    if (els.developerAccessNote) {
-      els.developerAccessNote.hidden = false;
-      els.developerAccessNote.innerHTML = '<strong>Developer access enabled.</strong> The unfinished full encounter can be opened in this browser session.';
-    }
-  } else {
-    fullCard.classList.remove('is-developer-unlocked');
-    fullCard.setAttribute('aria-disabled', 'true');
-    if (els.developerAccessNote) els.developerAccessNote.hidden = true;
-  }
+  const fullCard = els.experienceCards.find(card => card.dataset.trainerExperience === 'full');
+  fullCard?.classList.remove('is-development');
+  fullCard?.removeAttribute('aria-disabled');
+  if (els.developerAccessNote) els.developerAccessNote.hidden = true;
 }
 
 function selectTrainerExperience(next) {
-  const requested = next === 'full' ? 'full' : 'anamnesis';
-  if (requested === 'full' && !developerAccess) {
-    if (els.developerAccessNote) {
-      els.developerAccessNote.hidden = false;
-      els.developerAccessNote.innerHTML = '<strong>Anamnesis + examination is under development.</strong> It is visible so the direction of the trainer is clear, but it is not enabled for normal users yet.';
-      window.setTimeout(() => { if (!developerAccess && els.developerAccessNote) els.developerAccessNote.hidden = true; }, 4200);
-    }
-    return;
-  }
-  trainerExperience = requested;
-  els.experienceCards.forEach((card) => card.classList.toggle('is-selected', card.dataset.trainerExperience === trainerExperience));
-  const startLabel = trainerExperience === 'anamnesis' ? ptT('start_anamnesis') : 'Open developer encounter';
-  if (els.startTrainingBtn) els.startTrainingBtn.textContent = startLabel;
+  trainerExperience = next === 'full' ? 'full' : 'anamnesis';
+  els.experienceCards.forEach(card => card.classList.toggle('is-selected', card.dataset.trainerExperience === trainerExperience));
+  if (els.startTrainingBtn) els.startTrainingBtn.textContent = trainerExperience === 'anamnesis' ? ptT('start_anamnesis') : 'Start clinical encounter';
   renderSetupPreview();
 }
 
@@ -981,7 +981,7 @@ function recordSessionRuntimeFallback(question, reply, error) {
 function collectSessionExaminations() {
   return (actionHistory || []).map((item) => ({
     type: String(item.type || ''),
-    id: String(item.examinationId || item.groupId || item.action || ''),
+    id: String(item.siteId || item.examinationId || item.groupId || item.action || ''),
     label: String(item.label || item.action || item.groupId || item.type || ''),
     timestamp: String(item.at || ''),
     resultKeys: Array.isArray(item.resultKeys) ? item.resultKeys.map(String) : undefined,
@@ -1003,7 +1003,7 @@ function persistCurrentSession({ touch = true } = {}) {
     actionHistory: cloneJson(actionHistory),
     encounterState: cloneJson(encounterState),
     patientState: patientStateEngine?.getSnapshot?.() || null,
-    ecgPlacedLeads: getAvatarEcgPlacedLeads(),
+    ecgPlacedLeads: [...encounterState.ecg.placedLeads],
     worksheetNotes: cloneJson(anamnesisWorksheetNotes),
     lastDetection: cloneJson(lastDetection),
     activeWorkspace: document.body.dataset.patientWorkspace || 'interview'
@@ -1080,6 +1080,8 @@ function renderSessionHistory() {
 }
 
 async function restorePatientTrainerSession(sessionId) {
+  const stationToken = ++stationGeneration;
+  disposeAvatarAnimator();
   const saved = getPatientTrainerSession(sessionId);
   if (!saved || saved.completed || !saved.runtimeState) return;
   const patientCase = TRAINER_CASES.find((item) => item.id === saved.caseId);
@@ -1104,6 +1106,8 @@ async function restorePatientTrainerSession(sessionId) {
   administeredMedications = cloneJson(saved.runtimeState.administeredMedications || []);
   actionHistory = cloneJson(saved.runtimeState.actionHistory || []);
   encounterState = mergeEncounterState(saved.runtimeState.encounterState);
+  encounterState.ecg.placedLeads = [...new Set(saved.runtimeState.ecgPlacedLeads || encounterState.ecg.placedLeads)].filter(id => /^(RA|LA|RL|LL|V[1-6])$/.test(id));
+  encounterState.ecg.completed ||= actionHistory.some(item => item.type === 'objective-ecg') && encounterState.ecg.placedLeads.length === 10;
   patientStateEngine = new PatientStateEngine(activeCase);
   patientStateEngine.restoreSnapshot?.(saved.runtimeState.patientState);
   setMonitorPatientStateSource(patientStateEngine);
@@ -1115,7 +1119,7 @@ async function restorePatientTrainerSession(sessionId) {
   if (els.difficultySelect) els.difficultySelect.value = currentDifficulty;
   if (els.interviewLanguageSelect) els.interviewLanguageSelect.value = currentInterviewLanguage;
   els.experienceCards.forEach((card) => card.classList.toggle('is-selected', card.dataset.trainerExperience === trainerExperience));
-  if (els.startTrainingBtn) els.startTrainingBtn.textContent = trainerExperience === 'anamnesis' ? ptT('start_anamnesis') : 'Open developer encounter';
+  if (els.startTrainingBtn) els.startTrainingBtn.textContent = trainerExperience === 'anamnesis' ? ptT('start_anamnesis') : 'Start clinical encounter';
   voiceInputController?.stop?.();
   els.setupScreen.hidden = true;
   els.trainingScreen.hidden = false;
@@ -1124,14 +1128,15 @@ async function restorePatientTrainerSession(sessionId) {
   resetEncounterControls();
   applyTrainerExperienceUI();
   activateWorkspace(saved.runtimeState.activeWorkspace || 'interview');
+  if (saved.runtimeState.activeWorkspace === 'handover') finishCase();
   renderStationHeader();
   renderPatientMeta();
   renderTerminologyHint('');
   renderInterfacePanels();
-  await refreshAiHealthDiagnostics();
-  renderInterfacePanels();
-  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full' });
-  restoreAvatarEcgPlacedLeads(saved.runtimeState.ecgPlacedLeads || []);
+  void refreshAiHealthDiagnostics().then(() => { if (stationStarted && stationToken === stationGeneration) renderInterfacePanels(); });
+  if (!stationStarted || stationToken !== stationGeneration) return;
+  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
+  if (!stationStarted || stationToken !== stationGeneration) return;
   bindAvatarToPatientState(patientStateEngine);
   setAvatarEmotion('neutral');
   setAvatarViewMode((saved.runtimeState.activeWorkspace || 'interview') === 'examination' ? 'examination' : 'encounter');
@@ -1171,6 +1176,12 @@ function viewPatientTrainerRecord(sessionId) {
     <section class="pt-record-transcript"><h3>Transcript</h3>${(session.messages || []).map((message) => `<article class="pt-record-message ${message.speaker === 'patient' ? 'patient' : 'student'}"><strong>${message.speaker === 'patient' ? 'Patient' : 'Student'}</strong><p>${escapeHtml(message.text || '')}</p></article>`).join('') || '<p>No transcript messages were recorded.</p>'}</section>
     ${renderUploadConsentPanel(session)}
   `;
+  if (session.finalRecord?.encounterReport) {
+    const reportContainer = document.createElement('div');
+    renderEncounterReport({ container: reportContainer, report: session.finalRecord.encounterReport });
+    reportContainer.querySelector('.report-actions')?.remove();
+    els.sessionRecordContent.prepend(reportContainer);
+  }
   bindUploadPanel(els.sessionRecordContent, session.sessionId);
   openModal(els.sessionRecordModal);
 }
@@ -1328,6 +1339,8 @@ function mergeEncounterState(saved) {
     ...cloneJson(source),
     examined: Array.isArray(source.examined) ? [...source.examined] : [],
     examFindings: { ...base.examFindings, ...(source.examFindings || {}) },
+    examActions: Array.isArray(source.examActions) ? cloneJson(source.examActions) : [],
+    ecg: { ...base.ecg, ...(source.ecg || {}), attempts: Array.isArray(source.ecg?.attempts) ? cloneJson(source.ecg.attempts) : [] },
     notes: { ...base.notes, ...(source.notes || {}) },
     differentials: Array.isArray(source.differentials) ? [...source.differentials] : [],
     closing: { ...base.closing, ...(source.closing || {}) }
@@ -1368,20 +1381,17 @@ function renderEncounterOverview() {
   const coverage = engine.getCoverage?.() || [];
   const required = coverage.filter((item) => item.required);
   const interviewPercent = required.length ? Math.round(required.reduce((sum, item) => sum + Number(item.percent || 0), 0) / required.length) : 0;
-  const examTotal = Math.max(1, getRequiredExamCount());
-  const examDone = Math.min(examTotal, encounterState.examined.length);
+  const examination = evaluateExamination(activeCase, encounterState);
+  const examTotal = examination.required.length;
+  const examDone = examination.completed.length;
   const noteSections = countCompletedNoteSections(encounterState);
   els.encounterOverview.innerHTML = `
-    ${overviewRow('Interview', `${interviewPercent}%`, interviewPercent)}
-    ${overviewRow('Examination', `${examDone}/${examTotal}`, Math.round((examDone / examTotal) * 100))}
+    ${overviewRow('Interview', currentMode === 'exam' ? `${(currentSession?.messages || []).filter(item=>item.speaker==='student').length} questions` : `${interviewPercent}%`, currentMode === 'exam' ? 0 : interviewPercent)}
+    ${overviewRow('Examination', currentMode === 'exam' ? `${encounterState.examActions.length} actions` : examTotal ? `${examDone}/${examTotal}` : 'Unassessed', currentMode === 'exam' || !examTotal ? 0 : Math.round((examDone / examTotal) * 100))}
     ${overviewRow('Tests / actions', String(Object.keys(orderedLabs).length + administeredMedications.length + actionHistory.filter((item) => item.type === 'objective-vitals' || item.type === 'objective-ecg').length), Math.min(100, (Object.keys(orderedLabs).length + administeredMedications.length + actionHistory.filter((item) => item.type === 'objective-vitals' || item.type === 'objective-ecg').length) * 12))}
     ${overviewRow('Differential', `${encounterState.differentials.length}/5`, encounterState.differentials.length * 20)}
     ${overviewRow('Notes', `${noteSections}/4`, noteSections * 25)}
   `;
-}
-
-function getRequiredExamCount() {
-  return document.querySelectorAll('#examinationPanel .exam-action[data-required="true"]').length || 3;
 }
 
 function overviewRow(label, value, percent) {
@@ -1475,27 +1485,38 @@ function labelForIntent(intent) { return INTENTS[intent]?.title || String(intent
 function escapeHtml(value) { return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
 init();
 
-// Model-anchored examination sites use documented case findings and existing scoring.
+// All examination inputs share this validated encounter path, including keyboard controls.
+els.avatarMount?.addEventListener('patient3d-availability', event => {
+  if (!stationStarted || event.detail?.caseId !== activeCase?.id) return;
+  sync3dControls();
+});
 els.avatarMount?.addEventListener('patient3d-examination', event => {
-  if (!stationStarted || !engine || trainerExperience === 'anamnesis') return;
-  activateWorkspace('examination');
-  const detail=event.detail || {};
-  const result=detail.documented && detail.examinationId ? performExamination(activeCase,encounterState,detail.examinationId) : null;
-  const label=`${detail.technique || 'Inspect'} · ${detail.siteLabel || 'Body site'}`;
-  actionHistory.push({type:'physical-examination',examinationId:result?.ok?result.action.id:detail.siteId,label,at:new Date().toISOString()});
-  encounterState.notes.examination=mergeNote(encounterState.notes.examination,`${label}: ${detail.finding}`);
-  patientStateEngine?.recordExamination(detail.siteId,detail.finding);
-  renderPhysicalExamPanel();
-  const observed=document.createElement('div');observed.className='patient3d-observed-finding';
-  const heading=document.createElement('strong');heading.textContent=label;
-  const finding=document.createElement('p');finding.textContent=[detail.finding || 'No case-specific finding documented.',detail.audioNote].filter(Boolean).join(' ');
-  observed.append(heading,finding);els.examinationPanel.prepend(observed);
+  if (!stationStarted || !engine || trainerExperience !== 'full' || encounterState.completed || !isAvatarEnvironmentReady()) return;
+  const detail = event.detail || {};
+  const result = performExamination(activeCase, encounterState, detail.examinationId, { ...detail, environmentReady: true });
+  if (!result.ok) return;
+  const record = result.record;
+  const label = `${record.technique} · ${record.siteLabel}`;
+  actionHistory.push({ ...record, type: 'physical-examination', examinationId: record.examinationId, label });
+  encounterState.notes.examination = mergeNote(encounterState.notes.examination, `${label}: ${record.finding}`);
+  if (record.documented) patientStateEngine?.recordExamination(record.siteId, record.finding, record.response?.kind || 'cooperative');
+  activateWorkspace('examination');renderPhysicalExamPanel();renderPatientVisualState();
   renderActionHistoryPanel();updateEncounterToolLabels();persistCurrentSession();
 });
+els.avatarMount?.addEventListener('patient3d-ecg-progress', event => {
+  if (!stationStarted || trainerExperience !== 'full' || encounterState.completed || !isAvatarEnvironmentReady()) return;
+  const result = recordEcgProgress(activeCase, encounterState, event.detail, true);
+  if (!result.ok) return;
+  if (event.detail.reset && patientStateEngine?.getSnapshot().equipment.ecg12) patientStateEngine.connectEquipment('ecg12', false, 'Electrodes removed');
+  if (!result.newlyCompleted && encounterState.ecg.placedLeads.length === 10 && !patientStateEngine?.getSnapshot().equipment.ecg12) patientStateEngine?.connectEquipment('ecg12', true, 'Electrodes reapplied');
+  if (result.newlyCompleted) {
+    if (activeCase.ecg?.available) patientStateEngine?.recordEcgAcquired();
+    else patientStateEngine?.connectEquipment('ecg12', true, '10 electrodes placed; no case-specific tracing authored');
+    if (!actionHistory.some(item => item.type === 'objective-ecg')) recordObjectiveAction('ecg', activeCase.ecg?.available ? '12-lead ECG acquired after all ten electrodes were correctly placed' : 'Ten electrodes correctly placed; no case-specific tracing authored');
+  }
+  renderPhysicalExamPanel();renderPatientVisualState();renderStationHeader();persistCurrentSession();
+});
 els.avatarMount?.addEventListener('patient3d-ecg-complete', event => {
-  if (!stationStarted || trainerExperience === 'anamnesis' || event.detail?.caseId!==activeCase.id) return;
-  if (activeCase.ecg?.available) patientStateEngine?.recordEcgAcquired();
-  else patientStateEngine?.connectEquipment('ecg12',true,'10 electrodes placed; no tracing supplied');
-  recordObjectiveAction('ecg',activeCase.ecg?.available?'12-lead ECG acquired after correct lead placement':'10 ECG electrodes correctly placed; no case-specific tracing supplied');
-  renderPatientVisualState();renderStationHeader();persistCurrentSession();
+  if (!stationStarted || !isAvatarEnvironmentReady() || encounterState.completed || event.detail?.caseId !== activeCase.id || !encounterState.ecg.completed || encounterState.ecg.placedLeads.length !== 10) return;
+  if (activeCase.ecg?.available) openEcgViewer(activeCase);
 });
