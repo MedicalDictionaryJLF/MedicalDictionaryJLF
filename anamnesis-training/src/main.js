@@ -1,6 +1,7 @@
 import { PATIENT_CASES } from './cases/index.js?v=134';
 import { INTENTS } from './data/interviewSchema.js?v=134';
 import { PatientEngine } from './patientEngine.js?v=134';
+import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
@@ -843,54 +844,27 @@ function applyTrainerExperienceUIStateOnly() {
 }
 
 function finishAnamnesisOnly() {
-  if (!engine || trainerExperience !== 'anamnesis') return;
+  if (!engine || trainerExperience !== 'anamnesis' || currentSession?.completed) return;
   const debrief = engine.getDebrief();
-  const breakdown = debrief.scoreBreakdown || {};
-  const communicationIssues = debrief.communication?.issues || [];
-  const resolutionIssues = debrief.resolutionIssues || [];
+  const summary = engine.generateSummary();
   const worksheet = buildWorksheetText({ patientCase: activeCase, notes: anamnesisWorksheetNotes });
-  completeCurrentSession({ debrief, summary: engine.generateSummary(), worksheet });
-  const sectionRows = (debrief.studentCoverage || [])
-    .filter((row) => row.id !== 'objective')
-    .map((row) => `<div class="anamnesis-debrief-row"><span>${escapeHtml(row.title)}</span><strong>${row.asked}/${row.total}</strong><i><b style="width:${Math.max(0, Math.min(100, Number(row.percent || 0)))}%"></b></i></div>`)
-    .join('');
-  const safetyMisses = (debrief.criticalSafetyMisses || []).map((id) => debrief.missedDetails?.find((item) => item.id === id) || { id, label: labelForIntent(id), examples: [] });
-  const importantMisses = (debrief.missedDetails || []).filter((item) => item.tier !== 'Recommended').slice(0, 14);
-  const recommendedMisses = (debrief.missedDetails || []).filter((item) => item.tier === 'Recommended').slice(0, 10);
-  const strengths = debrief.strengths || [];
-  const structureFeedback = debrief.structure?.feedback || [];
-
-  const renderMiss = (item) => `<li><strong>${escapeHtml(item.label || item.id)}</strong>${item.area ? ` <small>${escapeHtml(item.area)} · ${escapeHtml(item.tier || '')}</small>` : ''}${item.examples?.length ? `<div class="debrief-model-question">Try: ${item.examples.map((q) => `“${escapeHtml(q)}”`).join(' / ')}</div>` : ''}</li>`;
-
-  els.anamnesisDebriefContent.innerHTML = `
-    <section class="anamnesis-score-hero"><div><span>History score</span><strong>${Number(debrief.score || 0)}%</strong></div><p>The score is based primarily on what you clinically attempted to ask. Simulator recognition failures are kept separate.</p></section>
-    <section class="anamnesis-score-grid anamnesis-score-grid-five">
-      ${debriefMetric('Essential history', breakdown.essential)}
-      ${debriefMetric('Case-critical history', breakdown.caseCritical)}
-      ${debriefMetric('Recommended breadth', breakdown.recommended ?? breakdown.comprehensive)}
-      ${debriefMetric('Communication', breakdown.communication)}
-      ${debriefMetric('Interview structure', breakdown.structure)}
-    </section>
-    ${strengths.length ? `<section class="anamnesis-debrief-section debrief-strengths"><h3>What you did well</h3><ul>${strengths.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>` : ''}
-    ${safetyMisses.length ? `<section class="anamnesis-debrief-section debrief-safety"><h3>Safety-critical omissions</h3><ul>${safetyMisses.map(renderMiss).join('')}</ul></section>` : `<section class="anamnesis-debrief-section debrief-strengths"><h3>Safety-critical history</h3><p>No safety-critical omissions detected.</p></section>`}
-    <section class="anamnesis-debrief-section"><h3>Important omissions</h3>${importantMisses.length ? `<ul class="debrief-miss-list">${importantMisses.map(renderMiss).join('')}</ul>` : '<p>No essential or case-critical omissions detected.</p>'}</section>
-    ${recommendedMisses.length ? `<details class="anamnesis-report-details"><summary>Recommended questions you could still have asked</summary><ul class="debrief-miss-list debrief-miss-list-inside">${recommendedMisses.map(renderMiss).join('')}</ul></details>` : ''}
-    <section class="anamnesis-debrief-section"><h3>Section coverage</h3><div class="anamnesis-debrief-rows">${sectionRows}</div></section>
-    ${structureFeedback.length ? `<section class="anamnesis-debrief-section"><h3>Interview structure</h3><ul>${structureFeedback.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>` : ''}
-    ${communicationIssues.length ? `<section class="anamnesis-debrief-section"><h3>Communication</h3><ul>${communicationIssues.slice(0,10).map((issue) => `<li>${escapeHtml(issue.question || '')}${issue.message ? ` — ${escapeHtml(issue.message)}` : ''}</li>`).join('')}</ul></section>` : ''}
-    ${resolutionIssues.length ? `<section class="anamnesis-debrief-section simulator-note"><h3>Simulator recognition</h3><p>${resolutionIssues.length} question${resolutionIssues.length===1?' was':'s were'} clinically attempted but not cleanly resolved by the simulator. These are not counted as ordinary omissions.</p></section>` : ''}
-    <details class="anamnesis-report-details"><summary>Structured history collected</summary><pre>${escapeHtml(engine.generateSummary())}</pre></details>
-    ${worksheet ? `<details class="anamnesis-report-details"><summary>Your worksheet notes</summary><pre>${escapeHtml(worksheet)}</pre></details>` : ''}
-    ${renderUploadConsentPanel(currentSession)}
-  `;
+  completeCurrentSession({ debrief, summary, worksheet });
+  els.anamnesisDebriefContent.innerHTML = renderAnamnesisDebrief({
+    debrief,
+    priorities: engine.getDebriefPriorities(),
+    caseName: getCaseDisplayName(activeCase),
+    mode: currentMode,
+    questionCount: engine.turn,
+    summary,
+    worksheet,
+    messages: currentSession?.messages || [],
+    uploadHtml: renderUploadConsentPanel(currentSession)
+  });
   bindUploadPanel(els.anamnesisDebriefContent, currentSession?.sessionId);
   lockCompletedInterviewControls();
   openModal(els.anamnesisDebriefModal);
-}
-
-function debriefMetric(label, value) {
-  const safe = Math.max(0, Math.min(100, Number(value || 0)));
-  return `<article><span>${escapeHtml(label)}</span><strong>${safe}%</strong><i><b style="width:${safe}%"></b></i></article>`;
+  els.anamnesisDebriefContent.scrollTop = 0;
+  els.closeAnamnesisDebriefBtn?.focus();
 }
 
 function getCaseDisplayName(patientCase) {
@@ -1072,6 +1046,7 @@ function lockCompletedInterviewControls() {
   if (els.sendQuestionBtn) { els.sendQuestionBtn.disabled = true; els.sendQuestionBtn.textContent = 'Completed'; }
   if (els.questionInput) { els.questionInput.readOnly = true; els.questionInput.placeholder = 'This session has been completed.'; }
   if (els.finishAnamnesisBtn) els.finishAnamnesisBtn.disabled = true;
+  if (els.finishBtn) els.finishBtn.disabled = true;
 }
 
 function renderSessionHistory() {
