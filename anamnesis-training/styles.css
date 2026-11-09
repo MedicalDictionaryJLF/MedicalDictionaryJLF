@@ -1986,3 +1986,11 @@ body.patient-trainer-page .pt-download-session { margin-left: 8px; margin-top: 8
   max-height: min(40dvh, 22rem);
   overflow: auto;
 }
+
+/* Patient Trainer navigation and per-session history controls. */
+.pt-history-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0;flex-wrap:wrap}
+.pt-history-delete{padding:7px 10px!important;min-height:32px;border:1px solid var(--md-line)!important;background:var(--md-panel)!important;color:var(--md-text)!important;font-size:10px!important;font-weight:700;white-space:nowrap}
+.pt-history-delete:hover{border-color:#bd6262!important;background:color-mix(in srgb,#c93c3c 10%,var(--md-panel))!important;color:#a83232!important}
+body[data-theme="dark"] .pt-history-delete:hover{color:#ffbaba!important;border-color:#d77f7f!important}
+@media(max-width:760px){.pt-history-actions{grid-column:1/-1;width:100%;justify-content:stretch}.pt-history-actions>.pt-history-action{flex:1;min-width:0}.pt-history-delete{flex:0 0 auto}}
+@media(max-width:560px){body.patient-trainer-page .pt-shell-back{display:inline-flex!important;align-items:center;justify-content:center}}

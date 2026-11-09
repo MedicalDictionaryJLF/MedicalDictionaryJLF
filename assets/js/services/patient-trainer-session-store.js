@@ -96,6 +96,27 @@ export function upsertPatientTrainerSession(session) {
   return getPatientTrainerSession(incoming.sessionId);
 }
 
+// Delete only the currently active owner's local record. Uploaded Drive copies are unaffected.
+export function deletePatientTrainerSession(sessionId) {
+  const id = String(sessionId || '').trim();
+  if (!id) return false;
+  const ownerId = getPatientTrainerOwner().anonymousUserId;
+  const sessions = readAllPatientTrainerSessions();
+  const index = sessions.findIndex((session) => session.sessionId === id && String(session.anonymousUserId || '') === ownerId);
+  if (index < 0) return false;
+  sessions.splice(index, 1);
+  try {
+    // Unlike upsert(), deletion must never prune unrelated sessions on failure.
+    const store = storage();
+    if (!store) return false;
+    store.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    return true;
+  } catch (error) {
+    console.warn('Patient Trainer session could not be deleted from browser storage.', error);
+    return false;
+  }
+}
+
 export function updatePatientTrainerSession(sessionId, patch) {
   const existing = getPatientTrainerSession(sessionId);
   if (!existing) return null;
