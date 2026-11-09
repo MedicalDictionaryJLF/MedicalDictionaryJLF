@@ -208,7 +208,7 @@ try {
   assert.equal(await recordCount(page),5);
   await page.locator('[data-workspace-target="interview"]').click();
   assert.equal(await page.locator('#patientBedsideControls').isVisible(),false);
-  await ask(page, 'Please sit up.', /sit upright/);
+  await ask(page, 'can you sit on a chair?', /sit upright/);
   assert.equal(await position(page), 'seated');
   await ask(page, 'Please stand up.', /stand up/);
   assert.equal(await position(page), 'standing');

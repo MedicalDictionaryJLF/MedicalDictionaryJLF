@@ -1,6 +1,6 @@
 const REQUEST_PREFIX = /^(?:(?:could|can|would|will) you (?:be able to )?|are you able to |(?:i(?:'d| would) like you to|i need you to) )?(?:please )?/;
 const STAND = /^stand(?: up)?(?: (?:for me|please))?$/;
-const SIT = /^sit(?: (?:down|up|upright|back down))?(?: (?:on|in) the chair)?(?: (?:for me|please))?$/;
+const SIT = /^sit(?: (?:down|up|upright|back(?: down)?))?(?: (?:on|in) (?:(?:a|the|your|this|that) )?chair)?(?: (?:for me|please))?$/;
 const LIE = /^(?:lie|lay|lye)(?: down)?(?: flat)?(?: on your back)?(?: on (?:the )?(?:bed|exam(?:ination)? table|couch))?(?: (?:for me|please))?$/;
 const BEND_KNEES = /^(?:slightly )?(?:bend|flex) (?:both your |both |your )?knees(?: (?:slightly|a little|for me|please))*$/;
 

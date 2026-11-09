@@ -1,6 +1,6 @@
 import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { getPositionRequest } from './dialogue/positionRequests.js?v=position-phrasing-2';
+import { getPositionRequest } from './dialogue/positionRequests.js?v=position-phrasing-3';
 import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
