@@ -7,6 +7,10 @@ export function isDetailsUnlocked() {
 
 export function renderDetailsPanel({ container, currentMode, lastDetection, aiDiagnostics, engine, onExportDebug, onRunSimulation }) {
   if (!container) return;
+  if (currentMode === 'exam') {
+    container.innerHTML = '';
+    return;
+  }
   if (!isDetailsUnlocked()) {
     container.innerHTML = `
       <details class="details-lock">
@@ -45,6 +49,11 @@ export function renderDetailsPanel({ container, currentMode, lastDetection, aiDi
       <section class="technical-grid">
         <h3>Answer Quality / Intent Analysis</h3>
         ${renderDetection(lastDetection)}
+        <details class="raw-details">
+          <summary>Conversation Diagnostics</summary>
+          <p>AI rescue requests this session: ${escapeHtml(engine?.rescueState?.count ?? 0)}</p>
+          ${(engine?.debugTurns ?? []).map(renderConversationTurn).reverse().join('') || '<p>No questions recorded yet.</p>'}
+        </details>
       </section>
       <section class="technical-grid">
         <h3>AI Diagnostics</h3>
@@ -59,6 +68,18 @@ export function renderDetailsPanel({ container, currentMode, lastDetection, aiDi
   `;
   container.querySelector('#detailsExportDebugBtn')?.addEventListener('click', onExportDebug);
   container.querySelector('#detailsRunSimulationBtn')?.addEventListener('click', onRunSimulation);
+}
+
+function renderConversationTurn(turn) {
+  const { normalizedInput, interpretations, recognizedIntents, attemptedIntentIds,
+    answers, confidence, contextResolutionReason, matchKind, rescue, patientAnswer, fallbackReason } = turn;
+  const diagnostics = {
+    normalizedInput, interpretations, recognizedIntents, attemptedIntentIds, confidence, contextResolutionReason,
+    answers, resolution: rescue?.finalResolutionSource ?? matchKind, aiCalled: rescue?.aiAttempted ?? false,
+    aiRequestCount: rescue?.aiRequestCount ?? 0, fallbackReason, rescueError: rescue?.aiError, patientAnswer
+  };
+  return `<details class="raw-details"><summary>${escapeHtml(turn.turnNumber)}. ${escapeHtml(turn.studentInput)}</summary>
+    <pre style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(JSON.stringify(diagnostics, null, 2))}</pre></details>`;
 }
 
 function renderDetection(detection) {
@@ -87,9 +108,6 @@ function renderAiDiagnostics(aiDiagnostics = {}) {
     <p><strong>AI-selected intent:</strong> ${escapeHtml(aiDiagnostics.lastSelectedIntent || 'none')}</p>
     <p><strong>AI confidence:</strong> ${escapeHtml(aiDiagnostics.lastConfidence ?? 'unknown')}</p>
     <p><strong>AI enabled:</strong> ${escapeHtml(boolText(aiDiagnostics.enabled))}</p>
-    <p><strong>Backend reachable:</strong> ${escapeHtml(boolText(aiDiagnostics.backendReachable))}</p>
-    <p><strong>Gemini configured:</strong> ${escapeHtml(boolText(aiDiagnostics.geminiConfigured))}</p>
-    <p><strong>AI model:</strong> ${escapeHtml(aiDiagnostics.model || 'unknown')}</p>
     <p><strong>Last AI error:</strong> ${escapeHtml(aiDiagnostics.lastAIError || 'none')}</p>
   `;
 }

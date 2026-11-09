@@ -1,4 +1,4 @@
-import { createAnamnesisCase } from './caseFactory.js?v=134';
+import { createAnamnesisCase } from './caseFactory.js';
 
 export const milanHronec = createAnamnesisCase({
   id:'progressive_dyspnea_edema', title:'Progressive breathlessness', patientCard:'72-year-old man with worsening breathlessness and ankle swelling.',

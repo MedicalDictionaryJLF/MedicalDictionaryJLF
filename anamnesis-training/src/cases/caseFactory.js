@@ -50,6 +50,16 @@ const defaultCase = {
   expectedDiagnosisIdea:'Use the history to form an appropriate differential diagnosis.'
 };
 
+// The merged defaults still support existing scene/UI consumers. Dialogue
+// needs the original authored inputs to distinguish omission from a negative.
+const authoredInputs = new WeakMap();
+
+export function getAuthoredCase(patientCase) {
+  return authoredInputs.get(patientCase) ?? patientCase;
+}
+
 export function createAnamnesisCase(config = {}) {
-  return mergeDeep(defaultCase, config);
+  const patientCase = mergeDeep(defaultCase, config);
+  authoredInputs.set(patientCase, config);
+  return patientCase;
 }

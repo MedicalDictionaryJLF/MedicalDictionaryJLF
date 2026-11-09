@@ -41,11 +41,16 @@ async function openPage(options) {
   });
   const page = await context.newPage();
   const pageErrors = [];
+  const apiRequests = [];
+  page.on('request', request => {
+    const pathname = new URL(request.url()).pathname;
+    if (pathname.startsWith('/api/')) apiRequests.push(pathname);
+  });
   page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto(`${origin}/anamnesis-training/`);
+  await page.goto(`${origin}/anamnesis-training/?conversationDiagnostics=1`);
   // Attach a test observer to the real renderer for projected marker coordinates.
   await observeRenderer(page);
-  return { context, page, faults, pageErrors };
+  return { context, page, faults, pageErrors, apiRequests };
 }
 async function observeRenderer(page) {
   await page.evaluate(async () => {
@@ -61,6 +66,15 @@ async function start(page, id, mode = 'practice', experience = 'full') {
   await page.locator('#modeSelect').selectOption(mode);
   await page.locator('#startTrainingBtn').click();
 }
+async function ask(page, question, expected) {
+  const messages = page.locator('#chatLog .message.patient');
+  const before = await messages.count();
+  await page.locator('#questionInput').fill(question);
+  await page.locator('#sendQuestionBtn').click();
+  await messages.nth(before).waitFor();
+  assert.match(await messages.nth(before).innerText(), expected);
+}
+
 async function examination(page, technique, site) {
   await page.locator('[data-exam-tool="'+technique+'"]').click();
   await page.locator('.patient3d-bedside-panel summary').click();
@@ -120,6 +134,18 @@ try {
   await start(page,'chest_pain_acs_risk','practice','anamnesis');
   await sleepReady(page);
   const anamnesisLayout = await layout();
+  await ask(page, 'Where exactly is the pain, when did it start, and does it spread anywhere?', /breastbone.*2 hours.*left arm.*jaw/);
+  await ask(page, 'And your jaw?', /in my jaw/);
+  assert.deepEqual(desktop.apiRequests, []);
+  const details = page.locator('#anamnesisDiagnostics');
+  assert.equal(await details.getByText('Conversation Diagnostics').count(), 0);
+  await details.locator('summary').click();
+  await details.locator('#detailsPasswordInput').fill('1379');
+  await details.locator('button[type=submit]').click();
+  await details.getByText('Conversation Diagnostics', { exact: true }).click();
+  await details.getByText('2. And your jaw?', { exact: true }).click();
+  assert.match(await details.locator('pre:visible').innerText(), /radiation\.sites/);
+  assert.match(await details.locator('pre:visible').innerText(), /"aiCalled": false/);
   await start(page,'chest_pain_acs_risk');
   await sleepReady(page);
   assert.deepEqual(await layout(), anamnesisLayout, 'Anamnesis and full encounter patient cards must line up');
@@ -180,6 +206,10 @@ try {
   assert.equal(await recordCount(page),5);
   assert.equal(await page.locator('[data-note-key="history"]').inputValue(),'Software WebGL QA: preserve these clinical notes.');
   assert.equal(await page.locator('#chatLog .message').count(),2);
+  await page.locator('[data-workspace-target="interview"]').click();
+  await ask(page, 'When did it start?', /2 hours before/);
+  await page.locator('#openExamBtn').click();
+  assert.deepEqual(desktop.apiRequests, [], 'Ordinary interviews must run without API requests in both trainer modes');
   await page.locator('[data-exam-tool="ecg"]').click();
   for (const id of codes.slice(2)) {
     await page.locator(`[data-select-lead="${id}"]`).click();

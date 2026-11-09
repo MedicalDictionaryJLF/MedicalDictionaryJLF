@@ -11,6 +11,8 @@
     "test:ai-limit": "node scripts/ai-limit-tests.cjs",
     "test:patient-trainer-phase1": "node scripts/patient-trainer-phase1-tests.mjs",
     "test:patient-trainer-ui-v2": "node scripts/patient-trainer-ui-v2-tests.mjs",
+    "test:patient-trainer-conversation": "node scripts/patient-trainer-conversation-tests.mjs",
+    "validate:patient-conversation": "node scripts/validate-patient-conversation.mjs",
     "test:patient-trainer-anamnesis": "node scripts/patient-trainer-anamnesis-tests.mjs",
     "validate:anatomy-data": "node scripts/anatomy-data-validator.mjs",
     "test:anatomy": "npm run generate:anatomy-questions && npm run validate:anatomy-data && npm run test:anatomy-packages",

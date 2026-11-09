@@ -6,16 +6,21 @@ import { getChecklistItemsByCategory, getKnownFactsByCategory, getQuestionVarian
 import { showResponseLoading, removeResponseLoading } from '../anamnesis-training/src/ui/loadingIndicator.js';
 import { DETAILS_PASSWORD } from '../anamnesis-training/src/ui/detailsPanel.js';
 import { DEFAULT_RECOGNITION_LANGUAGE, initVoiceInput } from '../anamnesis-training/src/ui/voiceInput.js';
-import { getModeSectionIds, getModeSectionTitle, renderKnownSummary } from '../anamnesis-training/src/ui/modeLayout.js';
+import { renderModeLayout } from '../anamnesis-training/src/ui/modeLayout.js';
 import { labsForGroup } from '../anamnesis-training/src/ui/actionPanels.js';
 
 const patientCase = PATIENT_CASES[0];
 const engine = new PatientEngine(patientCase, { mode: 'teaching' });
 
-assert.deepEqual(getModeSectionIds('teaching'), ['checklist', 'questions', 'summary']);
-assert.deepEqual(getModeSectionIds('practice'), ['checklist', 'summary']);
-assert.deepEqual(getModeSectionIds('exam'), ['summary']);
-assert.equal(getModeSectionTitle('questions'), 'Predetermined Questions');
+const coverage = { innerHTML: '', hidden: false };
+renderModeLayout({ container: coverage, mode: 'teaching', engine, patientCase });
+assert.match(coverage.innerHTML, /Coverage overview/);
+assert.match(coverage.innerHTML, /Not yet covered/);
+renderModeLayout({ container: coverage, mode: 'practice', engine, patientCase });
+assert.match(coverage.innerHTML, /No topics covered yet/);
+renderModeLayout({ container: coverage, mode: 'exam', engine, patientCase });
+assert.equal(coverage.innerHTML, '');
+assert.equal(coverage.hidden, true);
 
 const checklist = getChecklistItemsByCategory(engine, patientCase);
 assert.ok(checklist.some((group) => group.title === 'Identification'));
@@ -23,7 +28,6 @@ assert.ok(checklist.flatMap((group) => group.items).some((item) => item.label ==
 
 const emptyFacts = getKnownFactsByCategory(engine, patientCase);
 assert.equal(emptyFacts.length, 0);
-assert.ok(!renderKnownSummary(engine, patientCase).includes('Peter Novak'));
 
 engine.ask('What is your name?');
 const knownFacts = getKnownFactsByCategory(engine, patientCase);

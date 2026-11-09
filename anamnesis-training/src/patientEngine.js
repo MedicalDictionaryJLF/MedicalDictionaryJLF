@@ -1,5 +1,8 @@
 import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=134';
-import { renderIntentAnswer } from './dialogue/responseTemplates.js';
+import { retrieveFacts } from './dialogue/clinicalFacts.js';
+import { realizeEnglish } from './dialogue/responseTemplates.js';
+import { analyzeQuestion, splitQuestions } from './dialogue/questionAnalysis.js';
+import { PRESENTING_SYMPTOMS } from './cases/conversationFacts.js';
 
 const MATCH_THRESHOLD = 0.24;
 const WEAK_MATCH_THRESHOLD = 0.16;
@@ -13,8 +16,6 @@ const INTRO_TERMS = ['my name is', 'i am a medical student', 'im a medical stude
 const PERMISSION_TERMS = ['may i', 'is it okay if', 'is it alright if', 'would it be okay', 'can i ask', 'do you mind if'];
 const PATIENT_CENTERED_TERMS = ['tell me more', 'what worries you most', 'how are you feeling', 'how does that make you feel', 'take your time'];
 const DISMISSIVE_TERMS = ['just answer', 'just tell me', 'get to the point', 'stop talking', 'doesnt matter', 'does not matter'];
-const YES_WORDS = ['yes', 'yeah', 'yep', 'correct', 'exactly', 'that', 'yes that'];
-const NO_WORDS = ['no', 'not that', 'no i mean'];
 
 const ATTEMPT_RULES = [
   ['identity_dob', /\b(date of birth|birth date|when were you born|born exactly|exact date.*birth|birthday)\b/],
@@ -69,7 +70,7 @@ const DIRECT_RULES = [
   [/\b(are you giving (me )?the history|history yourself|who is giving (me )?the history|who can give (me )?the history)\b/, ['history_source'], 'single_intent'],
   [/\b(when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
   [/\b(how did you get here|how did you arrive|how did you get to (the )?hospital|did you come by ambulance|did someone drive you|who brought you|were you brought by emergency services)\b/, ['administrative_arrival_method'], 'single_intent'],
-  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission))\b/, ['chief_complaint'], 'broad_open_history'],
+  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission)|^what was the reason$)\b/, ['chief_complaint'], 'broad_open_history'],
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],
   [/\b(what were you doing|doing when it started|activity at onset|circumstances at onset)\b/, ['hpi_activity_at_onset'], 'single_intent'],
@@ -226,6 +227,9 @@ export class PatientEngine {
       lastMeaningfulDomain: this.lastMeaningfulDomain,
       currentSymptom: this.currentSymptom,
       lastQuestionType: this.lastQuestionType,
+      lastRequestedAttribute: this.lastRequestedAttribute,
+      activeMedication: this.activeMedication,
+      rescueState: structuredCopy(this.rescueState),
       lastContextResolutionReason: this.lastContextResolutionReason,
       lastDetection: structuredCopy(this.lastDetection),
       pendingClarification: structuredCopy(this.pendingClarification),
@@ -249,8 +253,12 @@ export class PatientEngine {
     this.lastIntent = state.lastIntent || null;
     this.lastMeaningfulIntent = state.lastMeaningfulIntent || null;
     this.lastMeaningfulDomain = state.lastMeaningfulDomain || null;
-    this.currentSymptom = state.currentSymptom || null;
+    this.currentSymptom = !state.currentSymptom || state.currentSymptom.name ? state.currentSymptom ?? null :
+      this.symptomForIntent(this.lastMeaningfulIntent ?? '');
     this.lastQuestionType = state.lastQuestionType || null;
+    this.lastRequestedAttribute = state.lastRequestedAttribute || null;
+    this.activeMedication = state.activeMedication || null;
+    this.rescueState = structuredCopy(state.rescueState) ?? { count: 0, disabled: false, attempted: [], accepted: [] };
     this.lastContextResolutionReason = String(state.lastContextResolutionReason || '');
     this.lastDetection = structuredCopy(state.lastDetection || null);
     this.pendingClarification = structuredCopy(state.pendingClarification || null);
@@ -276,6 +284,9 @@ export class PatientEngine {
     this.lastMeaningfulDomain = null;
     this.currentSymptom = null;
     this.lastQuestionType = null;
+    this.lastRequestedAttribute = null;
+    this.activeMedication = null;
+    this.rescueState = { count: 0, disabled: false, attempted: [], accepted: [] };
     this.lastContextResolutionReason = '';
     this.lastDetection = null;
     this.pendingClarification = null;
@@ -290,34 +301,59 @@ export class PatientEngine {
   ask(question, detectionOverride = null) {
     this.turn += 1;
     let detection = detectionOverride || this.detect(question);
-    detection = this.applyDisclosurePolicy(question, detection);
+    const recognizedIntents = [...new Set((detection.answerIntents ?? []).map(item => item.id))];
+    const explicitClauses = detection.parts;
+    const parts = explicitClauses ?? (detection.answerIntents.length > 1
+      ? detection.answerIntents.map(candidate => ({ ...detection, primaryIntent: candidate, answerIntents: [candidate] }))
+      : [detection]);
+    const evaluatedParts = parts.map(part => this.applyDisclosurePolicy(question, part));
+    detection = evaluatedParts.length === 1 ? evaluatedParts[0] : { ...detection, parts: evaluatedParts };
     const rapportEvent = this.updateRapport(question, detection);
-    const attemptedIntentIds = this.inferAttemptedIntents(question, detection);
+    const attemptedIntentIds = explicitClauses
+      ? [...new Set(parts.flatMap(part => this.inferAttemptedIntents(part.normalized, part)))]
+      : this.inferAttemptedIntents(question, detection);
     const previouslyAttempted = new Set(this.attemptedIntents);
     const previouslyResolved = new Set(this.askedIntents);
-    attemptedIntentIds.forEach((intentId) => this.attemptedIntents.add(intentId));
-    const reply = this.composeReply(question, detection);
+    attemptedIntentIds.forEach(intentId => this.attemptedIntents.add(intentId));
+    const { reply, answers } = this.composeReply(detection);
+    const answeredIds = [...new Set(answers.filter(answer => answer.status === 'answered').map(answer => answer.intent))];
     const communicationAssessment = this.assessCommunication(question, detection, attemptedIntentIds, previouslyAttempted, previouslyResolved);
     const feedbackLabel = this.makeFeedbackLabel(detection, communicationAssessment);
 
     this.pushStudent(question, detection.primaryIntent?.id ?? 'unknown', feedbackLabel);
     this.pushPatient(reply, detection.primaryIntent?.id ?? 'unknown');
     this.lastDetection = detection;
-    if (detection.primaryIntent && detection.responseScope !== 'terminology_not_understood') {
-      for (const intent of detection.answerIntents ?? [detection.primaryIntent]) this.askedIntents.add(intent.id);
-      this.lastIntent = detection.primaryIntent.id;
-      this.lastMeaningfulIntent = detection.primaryIntent.id;
-      this.lastMeaningfulDomain = INTENTS[detection.primaryIntent.id]?.domain ?? null;
-      this.updateCurrentSymptom(detection.primaryIntent.id);
+    this.lastQuestionType = detection.questionType;
+    this.lastContextResolutionReason = detection.contextResolutionReason;
+    for (const id of answeredIds) this.askedIntents.add(id);
+    for (const part of evaluatedParts) {
+      if (part.analysis?.differentSymptom && part.responseScope === 'clarification') {
+        this.currentSymptom = null;
+        this.activeMedication = null;
+      }
+      if (!part.primaryIntent || part.responseScope === 'terminology_not_understood') continue;
+      const id = part.primaryIntent.id;
+      this.lastIntent = id;
+      this.lastMeaningfulIntent = id;
+      this.lastMeaningfulDomain = INTENTS[id]?.domain ?? null;
+      this.activeMedication = part.analysis?.target?.medication ?? null;
+      this.lastRequestedAttribute = part.analysis?.attribute ?? 'overview';
+      this.updateCurrentSymptom(id);
     }
-    const resolvedIds = new Set((detection.answerIntents ?? []).map((intent) => intent.id));
+    const unresolved = evaluatedParts.length === 1 && evaluatedParts.find(part => part.responseScope === 'clarification');
+    this.pendingClarification = unresolved ? {
+      question: unresolved.normalized, createdAtTurn: this.turn,
+      candidates: unresolved.candidates.slice(0, 5)
+    } : null;
     attemptedIntentIds.forEach((intentId) => {
       this.attemptEvents.push({
         turnNumber: this.turn,
         intentId,
         question,
-        resolved: resolvedIds.has(intentId) && detection.responseScope !== 'clarification' && detection.responseScope !== 'terminology_not_understood',
-        engineIntentIds: [...resolvedIds],
+        recognized: recognizedIntents.includes(intentId),
+        outcome: answers.find(answer => answer.intent === intentId)?.status ?? 'unresolved',
+        resolved: answeredIds.includes(intentId),
+        engineIntentIds: recognizedIntents,
         responseScope: detection.responseScope,
         matchKind: detection.kind,
         previouslyAttempted: previouslyAttempted.has(intentId),
@@ -326,12 +362,21 @@ export class PatientEngine {
     });
     this.communicationEvents.push({ turnNumber: this.turn, question, ...communicationAssessment });
     if (detection.terminologyEvent) this.terminologyEvents.push(detection.terminologyEvent);
-    this.debugTurns.push(this.makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds, communicationAssessment));
+    this.debugTurns.push({
+      ...this.makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds, communicationAssessment),
+      confidence: detection.confidence, recognizedIntents, answeredIds,
+      interpretations: evaluatedParts.map(part => ({
+        ...part.analysis, question: part.normalized, intent: part.primaryIntent?.id ?? null,
+        confidence: part.confidence,
+        contextUsed: part.contextUsed, contextReason: part.contextResolutionReason
+      })),
+      answers
+    });
 
-    return { reply, detectedIntent: detection.primaryIntent?.id ?? 'unknown', confidence: detection.confidence, detection, coverage: this.getCoverage(), rapport: this.rapport, rapportEvent, feedbackLabel, terminologySuggestion: detection.terminologyEvent?.suggestedPatientFriendlyQuestion ?? '' };
+    return { reply, answeredIds, recognizedIntents, detectedIntent: detection.primaryIntent?.id ?? 'unknown', confidence: detection.confidence, detection, coverage: this.getCoverage(), rapport: this.rapport, rapportEvent, feedbackLabel, terminologySuggestion: detection.terminologyEvent?.suggestedPatientFriendlyQuestion ?? '' };
   }
 
-  detectionForResolvedIntent(question, intentId, reason = 'AI helper resolved an existing deterministic intent.') {
+  detectionForResolvedIntent(question, intentId, reason, confidence, analysis) {
     const candidate = this.toCandidate(intentId, 5, ['ai-helper']);
     if (!candidate) return null;
     const normalized = normalize(question);
@@ -344,27 +389,87 @@ export class PatientEngine {
       primaryIntent: candidate,
       answerIntents: [candidate],
       candidates: [candidate],
-      confidence: 1,
-      contextUsed: true,
+      confidence,
+      analysis,
+      contextUsed: false,
       contextResolutionReason: reason
     });
   }
 
-  replaceLastPatientReply(reply) {
-    const last = this.transcript.at(-1);
-    if (last?.role === 'patient') last.text = reply;
+  conversationContext() {
+    return {
+      activeSymptom: this.currentSymptom,
+      activeMedication: this.activeMedication,
+      lastAttribute: this.lastRequestedAttribute,
+      lastIntent: this.lastMeaningfulIntent,
+      lastDomain: this.lastMeaningfulDomain
+    };
   }
 
   detect(question) {
+    const clauses = splitQuestions(question);
+    const context = this.conversationContext();
+    const parts = clauses.map(clause => {
+      const part = {
+        ...this.detectClause(clause, context),
+        questionType: this.classifyQuestionType(normalize(clause), clause)
+      };
+      const intent = part.primaryIntent?.id;
+      if (intent && part.responseScope !== 'terminology_not_understood') {
+        context.lastIntent = intent;
+        context.lastDomain = INTENTS[intent].domain;
+        context.lastAttribute = part.analysis?.attribute ?? 'overview';
+        context.activeSymptom = this.symptomForIntent(intent);
+        context.activeMedication = part.analysis?.target?.medication ?? null;
+      } else if (part.analysis?.differentSymptom) {
+        context.activeSymptom = null;
+        context.activeMedication = null;
+      }
+      return part;
+    });
+    if (parts.length === 1) return parts[0];
+    const resolved = parts.find(part => part.primaryIntent && part.responseScope !== 'terminology_not_understood');
+    const primary = resolved ?? parts[0];
+    return this.makeDetection({
+      ...primary,
+      normalized: normalize(question),
+      kind: 'compound',
+      responseScope: 'multi_intent_explicit',
+      answerIntents: [...new Map(parts.flatMap(part => part.answerIntents).map(intent => [intent.id, intent])).values()],
+      parts
+    });
+  }
+
+  detectClause(question, context) {
+    const normalized = normalize(question);
+    const analysis = analyzeQuestion(normalized, this.case, context);
+    const detection = this.detectLegacy(question, context);
+    if (detection.responseScope === 'terminology_not_understood') return { ...detection, analysis };
+    if (analysis.intent && INTENTS[analysis.intent]) {
+      const candidate = this.toCandidate(analysis.intent, 6, ['attribute-rule']);
+      return this.makeDetection({
+        ...detection, analysis, kind: 'direct', candidates: [candidate],
+        confidence: analysis.contextUsed ? 0.86 : 0.94,
+        responseScope: analysis.contextUsed ? 'contextual_followup' : 'single_intent',
+        primaryIntent: candidate, answerIntents: [candidate], contextUsed: analysis.contextUsed,
+        contextResolutionReason: analysis.contextUsed ? 'Question facet resolved against the active symptom or medication.' : ''
+      });
+    }
+    if ((analysis.unresolvedReference || analysis.differentSymptom || analysis.explicitOtherTopic) &&
+        detection.primaryIntent?.id.startsWith('hpi_')) {
+      return this.makeDetection({ ...detection, analysis, kind: 'uncertain',
+        responseScope: 'clarification', primaryIntent: null, answerIntents: [], confidence: 0 });
+    }
+    return { ...detection, analysis: { ...analysis, attribute: 'overview' } };
+  }
+
+  detectLegacy(question, context) {
     const normalized = normalize(question);
     const tokens = tokenize(normalized);
     const phrases = makeNgrams(tokens, 4);
     const questionType = this.classifyQuestionType(normalized, question);
-    this.lastQuestionType = questionType;
-    if (!normalized) return this.makeDetection({ kind: 'empty', responseScope: 'clarification', normalized, tokens, phrases, questionType });
 
-    const yesNoResolution = this.resolvePendingClarification(normalized);
-    if (yesNoResolution) return yesNoResolution;
+    if (!normalized) return this.makeDetection({ kind: 'empty', responseScope: 'clarification', normalized, tokens, phrases, questionType });
 
     const term = this.detectMedicalTerminology(tokens);
     if (term && !term.patientUnderstood) {
@@ -376,16 +481,17 @@ export class PatientEngine {
       return this.makeDetection({ kind: 'direct', responseScope: 'multi_intent_explicit', normalized, tokens, phrases, primaryIntent: explicit[0], answerIntents: explicit, candidates: explicit });
     }
 
-    const direct = this.detectDirectIntent(normalized, tokens);
+    const direct = this.detectDirectIntent(normalized, tokens, context);
     if (direct) {
       return this.makeDetection({ kind: 'direct', responseScope: direct.scope, normalized, tokens, phrases, primaryIntent: direct.candidates[0], answerIntents: direct.scope === 'broad_open_history' ? [direct.candidates[0]] : direct.candidates, candidates: direct.candidates, contextUsed: direct.contextUsed, contextResolutionReason: direct.contextResolutionReason });
     }
 
-    const candidates = Object.entries(INTENTS).map(([id, intent]) => this.scoreCandidate(id, intent, normalized, tokens, phrases)).sort((a, b) => b.score - a.score);
+    const needed = new Set(this.nextNeededIntents());
+    const candidates = Object.entries(INTENTS).map(([id, intent]) => this.scoreCandidate(id, intent, normalized, tokens, phrases, needed)).sort((a, b) => b.score - a.score);
     const suppressed = this.applySuppression(candidates, normalized, tokens);
     const usable = candidates.filter((c) => c.score > 0.18 && !suppressed.find((s) => s.intentId === c.id));
-    const top = usable[0] || candidates[0];
-    const second = usable[1] || candidates[1];
+    const top = usable[0];
+    const second = usable[1];
     const confidence = calculateConfidence(top?.score ?? 0, second?.score ?? 0, normalized.length);
     const difficulty = this.difficulty;
     const strongThreshold = difficulty === 'beginner' ? MATCH_THRESHOLD - 0.04 : difficulty === 'advanced' ? MATCH_THRESHOLD + 0.035 : MATCH_THRESHOLD;
@@ -469,18 +575,17 @@ export class PatientEngine {
   }
 
   makeDetection(data) {
-    return { kind: data.kind ?? 'matched', responseScope: data.responseScope ?? 'single_intent', primaryIntent: data.primaryIntent ?? null, bestIntent: data.primaryIntent ?? null, answerIntents: data.answerIntents ?? [], confidence: data.confidence ?? (data.primaryIntent ? 1 : 0), candidates: data.candidates ?? (data.primaryIntent ? [data.primaryIntent] : []), suppressedCandidates: data.suppressedCandidates ?? [], normalized: data.normalized ?? '', tokens: data.tokens ?? [], phrases: data.phrases ?? [], directMappingUsed: data.kind === 'direct', contextUsed: Boolean(data.contextUsed), terminologyEvent: data.terminologyEvent ?? null, questionType: data.questionType ?? this.lastQuestionType ?? 'question', contextResolutionReason: data.contextResolutionReason ?? this.lastContextResolutionReason ?? '' };
-  }
-
-  resolvePendingClarification(normalized) {
-    if (!this.pendingClarification) return null;
-    if (YES_WORDS.includes(normalized)) {
-      const candidate = this.toCandidate(this.pendingClarification.proposedIntent, 5, ['clarification-yes']);
-      this.pendingClarification = null;
-      return this.makeDetection({ kind: 'clarification_yes', responseScope: 'contextual_followup', normalized, tokens: tokenize(normalized), primaryIntent: candidate, answerIntents: [candidate], candidates: [candidate], contextUsed: true });
-    }
-    if (NO_WORDS.some((word) => normalized.startsWith(word))) this.pendingClarification = null;
-    return null;
+    return {
+      kind: data.kind ?? 'matched', responseScope: data.responseScope ?? 'single_intent',
+      primaryIntent: data.primaryIntent ?? null, bestIntent: data.primaryIntent ?? null,
+      answerIntents: data.answerIntents ?? [], confidence: data.confidence ?? (data.primaryIntent ? 1 : 0),
+      candidates: data.candidates ?? (data.primaryIntent ? [data.primaryIntent] : []),
+      suppressedCandidates: data.suppressedCandidates ?? [], normalized: data.normalized ?? '',
+      tokens: data.tokens ?? [], phrases: data.phrases ?? [], directMappingUsed: data.kind === 'direct',
+      contextUsed: Boolean(data.contextUsed), terminologyEvent: data.terminologyEvent ?? null,
+      questionType: data.questionType ?? 'question', contextResolutionReason: data.contextResolutionReason ?? '',
+      analysis: data.analysis ?? null, parts: data.parts
+    };
   }
 
   detectMedicalTerminology(tokens) {
@@ -493,11 +598,11 @@ export class PatientEngine {
     return null;
   }
 
-  detectDirectIntent(normalized, tokens) {
+  detectDirectIntent(normalized, tokens, context) {
     const statementMatch = this.resolveStatement(normalized);
     if (statementMatch) return statementMatch;
 
-    const contextMatch = this.resolveContextualFollowup(normalized);
+    const contextMatch = this.resolveContextualFollowup(normalized, context);
     if (contextMatch) return contextMatch;
 
     for (const [pattern, ids, scope] of DIRECT_RULES) {
@@ -517,14 +622,12 @@ export class PatientEngine {
   }
 
   contextCandidate(id, reason, score = 5) {
-    this.lastContextResolutionReason = reason;
     return { candidates: [this.toCandidate(id, score, ['context-followup'])], scope: 'contextual_followup', contextUsed: true, contextResolutionReason: reason };
   }
 
-  resolveContextualFollowup(normalized) {
-    this.lastContextResolutionReason = '';
-    const last = this.lastMeaningfulIntent || this.lastIntent;
-    const lastDomain = this.lastMeaningfulDomain;
+  resolveContextualFollowup(normalized, context) {
+    const last = context.lastIntent;
+    const lastDomain = context.lastDomain;
 
     if (/^(when exactly|exact date|when was that exactly|when was that)$/.test(normalized)) {
       if (last === 'identity_age' || last === 'identity_dob') return this.contextCandidate('identity_dob', 'Exact date requested after age/date of birth.');
@@ -539,16 +642,16 @@ export class PatientEngine {
       if (/\b(reaction|what happens)\b/.test(normalized)) return this.contextCandidate('allergy_reaction', 'Allergy reaction follow-up.');
     }
 
-    if (last === 'medication_regular' && /\b(what dose|dose|how often|frequency|why do you take it|why|indication)\b/.test(normalized)) {
-      if (/\b(dose)\b/.test(normalized)) return this.contextCandidate('medication_regular', 'Medication dose follow-up.');
-      if (/\b(how often|frequency)\b/.test(normalized)) return this.contextCandidate('medication_regular', 'Medication frequency follow-up.');
-      return this.contextCandidate('medication_regular', 'Medication indication follow-up.');
+    if (lastDomain === 'medication' && /\b(what dose|dose|how often|frequency|why do you take it|why|indication)\b/.test(normalized)) {
+      if (/\b(dose)\b/.test(normalized)) return this.contextCandidate('medication_dose', 'Medication dose follow-up.');
+      if (/\b(how often|frequency)\b/.test(normalized)) return this.contextCandidate('medication_frequency', 'Medication frequency follow-up.');
+      return this.contextCandidate('medication_indication', 'Medication indication follow-up.');
     }
 
     // Explicit consultation-closing language must not be swallowed by an active pain context.
     if (/\b(before (we|i) (finish|end)|anything else (you think )?i should know|anything else before we finish)\b/.test(normalized)) return null;
 
-    if (this.currentSymptom?.type === 'pain' && !this.isClearlyNonHpi(normalized)) {
+    if (context.activeSymptom && !this.isClearlyNonHpi(normalized)) {
       if (/\b(where do you feel it|where is it|where exactly is it|where exactly|where do you feel the pain)\b/.test(normalized)) return this.contextCandidate('hpi_site', 'Pronoun/location follow-up resolved to active pain symptom.');
       if (/\b(what is its character|what is the character|what type is it|what kind is it|what is it like|what does it feel like|how would you describe it|describe it)\b/.test(normalized)) return this.contextCandidate('hpi_character', 'Pronoun/character follow-up resolved to active pain symptom.');
       if (/\b(does it radiate|is it radiating|does it move|does it go anywhere|does it spread|does it travel|does it shoot|go to arm|go to jaw|go to back)\b/.test(normalized)) return this.contextCandidate('hpi_radiation', 'Pronoun/radiation follow-up resolved to active pain symptom.');
@@ -584,7 +687,7 @@ export class PatientEngine {
     return hits;
   }
 
-  scoreCandidate(id, intent, normalized, tokens, phrases) {
+  scoreCandidate(id, intent, normalized, tokens, phrases, needed) {
     let score = 0;
     const reasons = [];
     for (const keyword of intent.keywords ?? []) {
@@ -602,9 +705,8 @@ export class PatientEngine {
     if (id.startsWith('hpi_') && /\b(pain|symptom|problem|it)\b/.test(normalized)) score += 0.45;
     if (INTENTS[id]?.domain === 'objective' && this.hasObjectiveTrigger(normalized)) score += 0.8;
     if (INTENTS[id]?.domain === 'objective' && !this.hasObjectiveTrigger(normalized)) score -= 0.75;
-    if (this.askedIntents.has(id)) score -= 0.35;
     if (!/female/i.test(String(this.case.identity?.sex || '')) && id === 'gyn_history') score -= 2.5;
-    if (this.nextNeededIntents().includes(id)) score += 0.08;
+    if (needed.has(id)) score += 0.08;
 
     return this.toCandidate(id, Math.max(0, score * (1 + ((intent.priority ?? 4) / 100))), reasons);
   }
@@ -613,32 +715,14 @@ export class PatientEngine {
     return /\b(bp|blood pressure|heart rate|pulse|respiratory rate|oxygen saturation|spo2|temperature|vitals|monitor|ecg|lab|blood test|examination|exam|auscultation|palpation|wbc|crp|creatinine|potassium|glucose|tsh|murmur|wheezing|crackles|guarding|blumberg|murphy|mcburney|bowel sounds)\b/.test(normalized);
   }
 
+  symptomForIntent(intentId) {
+    if (intentId !== 'chief_complaint' && !intentId.startsWith('hpi_')) return null;
+    const symptom = this.case.presentingSymptom ?? PRESENTING_SYMPTOMS[this.case.id];
+    return symptom ? { name: symptom.name, bodyArea: symptom.region, lastPropertyIntent: intentId } : null;
+  }
+
   updateCurrentSymptom(intentId) {
-    if (intentId === 'chief_complaint' || intentId.startsWith('hpi_')) {
-      const complaint = [this.case.chiefComplaint, this.case.hpi?.site, this.case.patientCard].join(' ').toLowerCase();
-      if (/pain|pressure|chest|abdomen|stomach/.test(complaint)) {
-        const bodyArea = /chest|pressure/.test(complaint) ? 'chest' : /abdomen|stomach/.test(complaint) ? 'abdomen' : '';
-        if (!this.currentSymptom || this.currentSymptom.type !== 'pain') {
-          this.currentSymptom = {
-            type: 'pain',
-            bodyArea,
-            active: true,
-            rootSourceIntent: 'chief_complaint',
-            sourceIntent: 'chief_complaint',
-            lastPropertyIntent: intentId
-          };
-        } else {
-          this.currentSymptom = {
-            ...this.currentSymptom,
-            bodyArea: this.currentSymptom.bodyArea || bodyArea,
-            active: true,
-            rootSourceIntent: this.currentSymptom.rootSourceIntent || 'chief_complaint',
-            sourceIntent: this.currentSymptom.rootSourceIntent || this.currentSymptom.sourceIntent || 'chief_complaint',
-            lastPropertyIntent: intentId
-          };
-        }
-      }
-    }
+    this.currentSymptom = this.symptomForIntent(intentId);
   }
 
   classifyQuestionType(normalized, original = '') {
@@ -678,82 +762,76 @@ export class PatientEngine {
     return [candidates[0]];
   }
 
-  composeReply(question, detection) {
-    if (detection.kind === 'empty') return 'I did not catch a question. Could you ask me something specific?';
-    if (detection.responseScope === 'terminology_not_understood') return this.terminologyConfusionReply(detection);
-    if (detection.responseScope === 'guarded_withholding') return this.guardedReply();
-    if (detection.responseScope === 'clarification' || detection.kind === 'uncertain') return this.uncertainReply(question, detection);
-
-    if (detection.questionType === 'statement_assertion' && detection.primaryIntent?.id === 'identity_sex') {
-      return /^you (are|re)|^youre|^you seem/.test(detection.normalized) ? 'Yes.' : this.answerFor('identity_sex');
-    }
-
-    const parts = [];
-    for (const candidate of detection.answerIntents ?? []) {
-      const raw = this.answerFor(candidate.id);
-      if (raw) parts.push(raw);
-    }
-    if (!parts.length) return this.uncertainReply(question, detection);
-    const reply = this.mergeAnswers(parts, detection);
-    return this.applyPatientPersonality(reply, detection);
+  composeReply(detection) {
+    const answers = (detection.parts ?? [detection]).flatMap(part => this.answerClause(part));
+    const text = [...new Set(answers.map(answer => answer.text))].join(' ');
+    return { reply: this.applyPatientPersonality(text, detection), answers };
   }
 
-  terminologyConfusionReply(detection) {
-    const variants = ['I’m sorry, I don’t understand what that means.', 'I don’t understand that word.', 'I don’t understand that term.'];
-    return variants[this.turn % variants.length];
+  answerClause(detection) {
+    const { responseScope, primaryIntent, analysis } = detection;
+    const special = {
+      terminology_not_understood: () => ['clarification_required', 'I don’t understand that term. Could you describe what you mean?'],
+      guarded_withholding: () => ['withheld', this.guardedReply()],
+      clarification: () => ['clarification_required', analysis?.differentSymptom
+        ? 'Which symptom do you mean? Could you ask about one symptom at a time?'
+        : 'I am not sure what you mean. Could you ask that more directly?']
+    }[responseScope]?.();
+    if (special) return [{ intent: primaryIntent?.id, status: special[0], text: special[1], factsUsed: [], rules: [responseScope] }];
+
+    return detection.answerIntents.map(candidate => {
+      const attribute = candidate.id === analysis?.intent ? analysis.attribute : 'overview';
+      let facts = retrieveFacts(this.case, candidate.id, attribute, analysis?.target);
+      let realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+      if (!realized.length && attribute === 'overview' && facts.some(fact => fact.state === 'present' || fact.state === 'absent')) {
+        facts = retrieveFacts(this.case, candidate.id, 'authored-overview');
+        realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+      }
+      // One-facet narrative fields can answer their corresponding open request.
+      // A target-specific confirmation needs target-specific authored facts.
+      if (!realized.length && !analysis?.target &&
+          ['location', 'onset.time', 'onset.activity', 'character.qualities', 'radiation.sites', 'progression', 'relief', 'presence'].includes(attribute)) {
+        facts = retrieveFacts(this.case, candidate.id);
+        realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+      }
+      if (candidate.id === 'identity_sex' && detection.questionType === 'statement_assertion' && realized.length) {
+        const asserted = detection.normalized.match(/\b(male|female)$/)?.[1];
+        if (asserted) realized[0].text = `${asserted === this.case.identity.sex ? 'Yes' : 'No'}. ${realized[0].text}`;
+      }
+      return {
+        intent: candidate.id, attribute, target: analysis?.target ?? null,
+        status: realized.length ? 'answered' : 'recognized_unknown',
+        text: realized.length ? realized.map(item => item.text).join(' ') : 'I’m not sure about that.',
+        factsUsed: realized.length ? facts.map(({ id, state }) => ({ id, state })) : [],
+        rules: realized.length ? realized.map(item => item.rule) : ['unknown'],
+        reason: realized.length ? null : facts.map(fact =>
+          ['present', 'absent', 'authored_narrative'].includes(fact.state) ? 'could_not_realize_fact' : fact.state).join(', ')
+      };
+    });
   }
 
   answerFor(intentId) {
-    const intent = INTENTS[intentId];
-    if (!intent) return '';
-    return renderIntentAnswer(intentId, this.case, intent.answerKeys ?? []);
+    return retrieveFacts(this.case, intentId).map(fact => realizeEnglish(fact)?.text).filter(Boolean).join(' ');
   }
 
-  mergeAnswers(parts, detection) {
-    const unique = [...new Set(parts.map((part) => String(part).trim()).filter(Boolean))];
-    if (unique.length === 1) return unique[0];
-    if (detection.responseScope === 'multi_intent_explicit') return unique.join(' ');
-    return unique[0];
-  }
-
-  uncertainReply(question, detection) {
-    const lowTop = detection.candidates?.[0];
-    if (lowTop && lowTop.score > 0.9 && lowTop.id) {
-      this.pendingClarification = { proposedIntent: lowTop.id, createdAtTurn: this.turn };
-      return 'I am not sure what you mean. Could you ask that another way?';
-    }
-    return 'I am not sure what you mean. Could you ask that more directly?';
+  disclosedAnswerFor(intentId) {
+    const answers = this.debugTurns.flatMap(turn => turn.answers ?? [])
+      .filter(answer => answer.intent === intentId && answer.status === 'answered')
+      .map(answer => answer.text);
+    return answers.length ? [...new Set(answers)].join(' ') : this.answerFor(intentId);
   }
 
   applyPatientPersonality(reply, detection) {
-    let styled = String(reply || '').trim();
+    const id = detection.primaryIntent?.id;
     const p = this.case.personality ?? {};
-    const difficulty = this.difficulty;
-    const primaryId = detection.primaryIntent?.id;
-    const related = INTENTS[primaryId]?.relatedIntents || [];
-
-    if (related.length) {
-      const available = related.map((id) => this.answerFor(id)).filter(Boolean);
-      if (difficulty === 'advanced') {
-        styled = 'Could you ask me about one symptom at a time? I can answer more clearly that way.';
-      } else if (difficulty === 'intermediate' && available.length) {
-        styled = available[0];
-      } else if (difficulty === 'beginner' && available.length) {
-        styled = available.slice(0, 2).join(' ');
-      }
-    } else if (difficulty === 'advanced' && detection.responseScope === 'broad_open_history') {
-      const firstSentence = styled.split(/(?<=[.!?])\s+/)[0];
-      if (firstSentence) styled = firstSentence;
+    let styled = reply;
+    if (id === 'chief_complaint' && detection.responseScope === 'broad_open_history' && this.difficulty === 'beginner') {
+      const extra = ['hpi_site', 'hpi_onset'].slice(0, (p.talkativeness ?? 0.5) >= 0.55 ? 2 : 1)
+        .map(intent => this.answerFor(intent)).filter(Boolean);
+      styled = [styled, ...extra].join(' ');
     }
-
-    if (difficulty === 'beginner' && primaryId && !related.length && detection.responseScope === 'broad_open_history') {
-      const volunteerIds = ['hpi_site', 'hpi_onset'];
-      const extra = volunteerIds.map((id) => this.answerFor(id)).filter(Boolean).slice(0, (p.talkativeness ?? 0.5) >= 0.55 ? 2 : 1);
-      if (extra.length) styled = `${styled} ${extra.join(' ')}`.trim();
-    }
-
-    if ((p.anxiety ?? 0) > 0.72 && primaryId?.startsWith('hpi_') && this.turn < 5 && detection.responseScope !== 'terminology_not_understood') styled = `${styled} It really worries me.`;
-    if (this.rapport < 35) styled = `${styled} I am getting a bit stressed, please ask one thing at a time.`;
+    if ((p.anxiety ?? 0) > 0.72 && id?.startsWith('hpi_') && this.turn === 1) styled += ' It worries me.';
+    if (this.rapport < 35) styled += ' Could we go a little slower?';
     return styled;
   }
 
@@ -770,7 +848,14 @@ export class PatientEngine {
     if (detection.responseScope === 'guarded_withholding') issues.push({ type: 'sensitive_without_context', message: 'For sensitive topics, explain why you are asking and ask permission where appropriate.' });
 
     const verifying = /\b(just to (clarify|confirm)|to confirm|so you said|did i understand|is that right|correct me if)\b/.test(normalized);
-    const unnecessaryRepeats = attemptedIntentIds.filter((intentId) => previouslyAttempted.has(intentId) && previouslyResolved.has(intentId));
+    const unnecessaryRepeats = attemptedIntentIds.filter(intentId => {
+      if (!previouslyAttempted.has(intentId) || !previouslyResolved.has(intentId)) return false;
+      const clause = (detection.parts ?? [detection]).find(part => part.answerIntents.some(item => item.id === intentId));
+      const attribute = clause?.analysis?.intent === intentId ? clause.analysis.attribute : 'overview';
+      const target = JSON.stringify(clause?.analysis?.target ?? null);
+      return this.debugTurns.some(turn => turn.answers?.some(answer => answer.intent === intentId &&
+        answer.status === 'answered' && answer.attribute === attribute && JSON.stringify(answer.target ?? null) === target));
+    });
     if (unnecessaryRepeats.length && !verifying) issues.push({ type: 'repeated_resolved_area', message: 'This area had already been successfully covered.' });
     if (verifying && unnecessaryRepeats.length) positives.push({ type: 'verification', message: 'Appropriate clarification / verification.' });
     if (this.turn <= 3 && INTRO_TERMS.some((term) => normalized.includes(term))) positives.push({ type: 'introduction', message: 'Introduced self or greeted the patient.' });
@@ -975,7 +1060,7 @@ export class PatientEngine {
   getResolutionIssues() {
     const eventuallyResolved = this.askedIntents;
     return this.attemptEvents
-      .filter((event) => !event.resolved && event.responseScope !== 'guarded_withholding')
+      .filter(event => !event.resolved && event.responseScope !== 'guarded_withholding' && event.outcome !== 'withheld')
       .map((event) => ({
         ...event,
         label: INTENTS[event.intentId]?.title ?? event.intentId,
@@ -1036,7 +1121,7 @@ export class PatientEngine {
   }
 
   legacyGenerateSummary() {
-    const section = (title, intentIds) => [title, intentIds.filter((id) => this.askedIntents.has(id)).map((id) => this.answerFor(id)).filter(Boolean).join(' ') || '[Not asked / incomplete]'].join('\n');
+    const section = (title, intentIds) => [title, intentIds.filter((id) => this.askedIntents.has(id)).map((id) => this.disclosedAnswerFor(id)).filter(Boolean).join(' ') || '[Not asked / incomplete]'].join('\n');
     const gyn = /female/i.test(this.case.identity.sex) ? section('Gynecological History:', ['gyn_history']) : 'Gynecological History:\nNot applicable.';
     return ['Anamnesis Summary', '', `Patient: ${strip(this.case.identity.age)}, ${strip(this.case.identity.sex).toLowerCase()}, ${strip(this.case.identity.name)}, ${strip(this.case.identity.residence)}.`, '', section('Chief Complaint:', ['chief_complaint']), '', section('History Of Present Illness:', ['hpi_site', 'hpi_onset', 'hpi_activity_at_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_timing', 'hpi_exacerbating', 'hpi_relieving', 'hpi_severity', 'hpi_course']), '', section('Review Of Systems:', ['ros_general', 'ros_head_neck', 'ros_cardiovascular', 'ros_respiratory', 'ros_gastrointestinal', 'ros_genitourinary', 'ros_neurological', 'ros_musculoskeletal', 'ros_skin']), '', section('Past Medical History:', ['pmh_chronic_diseases', 'pmh_cardiovascular_disease', 'pmh_specialists', 'pmh_hospitalizations', 'pmh_operations', 'pmh_previous_exams']), '', section('Medication:', ['medication_regular', 'medication_nitroglycerin_previous', 'medication_otc_supplements', 'medication_adherence']), '', section('Allergies And Transfusions:', ['allergies', 'allergy_environment_food', 'allergy_pollen', 'allergy_reaction', 'transfusions']), '', gyn, '', section('Family History:', ['family_history']), '', section('Epidemiological History:', ['epidemiology']), '', section('Social And Functional History:', ['identity_occupation', 'social_living', 'daily_independence']), '', section('Substance Use:', ['substance_smoking', 'substance_alcohol', 'substance_caffeine', 'substance_drugs']), '', 'Terminology feedback:', ...(this.terminologyEvents.length ? this.terminologyEvents.map((e) => `- Used “${e.term}”; patient-friendly wording: ${e.suggestedPatientFriendlyQuestion}`) : ['None.']), '', 'Clinical Direction:', this.case.expectedDiagnosisIdea].join('\n');
   }
@@ -1047,7 +1132,7 @@ export class PatientEngine {
     for (const area of visibleAreas) {
       const facts = [...area.intents, ...(area.optionalIntents ?? [])]
         .filter((id) => this.askedIntents.has(id))
-        .map((id) => this.answerFor(id))
+        .map((id) => this.disclosedAnswerFor(id))
         .filter(Boolean);
       lines.push(`${area.title}:`);
       lines.push(facts.length ? [...new Set(facts)].join(' ') : '[Not asked / incomplete]');
