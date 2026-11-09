@@ -1,6 +1,7 @@
 import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { getPositionRequest } from './dialogue/positionRequests.js?v=position-phrasing-3';
+import { getPositionRequest } from './dialogue/positionRequests.js?v=positioning-catalog';
+import { POSITIONING_COMMANDS, POSITIONING_REPLIES } from './data/positioningCommands.js?v=1';
 import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
@@ -127,12 +128,6 @@ let engine;
 let activeCase = TRAINER_CASES[0] || null;
 let currentMode = 'practice';
 let patientPosition = 'seated';
-const POSITION_REPLIES = {
-  seated: 'Of course. I’ll sit upright.',
-  standing: 'Of course. I’ll stand up.',
-  reclined: 'Of course. I’ll lie on my back.',
-  abdominal: 'Of course. I’ll lie on my back with my knees slightly bent.'
-};
 let currentDifficulty = 'intermediate';
 let currentInterviewLanguage = 'en';
 let stationStarted = false;
@@ -512,11 +507,11 @@ async function handleQuestion(event) {
 }
 
 function answerPositionRequest(position) {
-  if (currentMode !== 'teaching') return 'Position requests are available in Teaching mode.';
-  if (position === 'needs-reclining') return 'Would you like me to lie down first?';
-  if (!applyAvatarPositionRequest(position)) return 'I can’t change position while the 3D view is unavailable.';
+  if (currentMode !== 'teaching') return POSITIONING_REPLIES.teachingOnly;
+  if (position === 'needs-reclining') return POSITIONING_REPLIES.needsReclining;
+  if (!applyAvatarPositionRequest(position)) return POSITIONING_REPLIES.viewUnavailable;
   patientPosition = position;
-  return POSITION_REPLIES[position];
+  return POSITIONING_COMMANDS[position].reply;
 }
 
 function setQuestionPending(pending) {
@@ -1100,7 +1095,7 @@ async function restorePatientTrainerSession(sessionId) {
   closeEcgViewer();
   activeCase = patientCase;
   currentMode = ['practice', 'teaching', 'exam'].includes(saved.mode) ? saved.mode : 'practice';
-  patientPosition = currentMode === 'teaching' && Object.hasOwn(POSITION_REPLIES, saved.runtimeState.patientPosition)
+  patientPosition = currentMode === 'teaching' && Object.hasOwn(POSITIONING_COMMANDS, saved.runtimeState.patientPosition)
     ? saved.runtimeState.patientPosition : 'seated';
   currentDifficulty = saved.difficulty || 'intermediate';
   currentInterviewLanguage = saved.interviewLanguage || 'en';
