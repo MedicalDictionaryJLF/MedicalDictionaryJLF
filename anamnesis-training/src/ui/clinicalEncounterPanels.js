@@ -166,7 +166,8 @@ export function renderEncounterReport({ container, report, onContribute }) {
       ${report.interviewDebrief ? renderAnamnesisDebrief({ debrief: report.interviewDebrief, priorities: report.interviewPriorities || {}, questionCount: (report.completeRecord?.transcript || []).filter(item => item.speaker === 'student').length }) : renderInterviewDebrief(null, report.interviewBreakdown)}
       <section class="report-section">
         <h3>Physical examination</h3>
-        <p>${report.examination.limitation ? escapeHtml(report.examination.limitation) : report.examination.missed.length ? `<strong>Missed required actions:</strong> ${escapeHtml(report.examination.missed.join(', '))}` : 'All required examination actions were performed.'}</p>
+        ${report.examination.limitation ? `<p>${escapeHtml(report.examination.limitation)}</p>` : ''}
+        ${report.examination.percent !== null ? `<p>${report.examination.missed.length ? `<strong>Missed required actions:</strong> ${escapeHtml(report.examination.missed.join(', '))}` : 'All required examination actions were performed.'}</p>` : ''}
       </section>
       <section class="report-section">
         <h3>Examination procedures and ECG</h3>

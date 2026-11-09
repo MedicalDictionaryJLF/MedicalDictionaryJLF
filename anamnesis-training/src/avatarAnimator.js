@@ -7,7 +7,7 @@ const state = {
 
 async function loadPatient3DRenderer(timeoutMs = 12000) {
   if (!patient3DRendererModulePromise) {
-    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-exam-5')
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=chat-positioning-1')
       .catch(error => { patient3DRendererModulePromise = null; throw error; });
   }
   let timer;
@@ -130,7 +130,12 @@ export function bindAvatarToPatientState(engine) {
 export function reactAvatarToPatientReply(reply = '', result = {}) { state.renderer3d?.reactToReply(`${reply} ${result.detectedIntent || ''}`, result); }
 export function reactAvatarToExamination(id = '', finding = '') { state.renderer3d?.reactToExamination(id, finding); }
 export function setAvatarExamTool(tool = 'off') { return isAvatarEnvironmentReady() ? state.renderer3d.setExaminationTool(tool) : false; }
-export function lockAvatarExaminations() { state.options.completed = true; state.renderer3d?.setInteractionEnabled(false); }
+export function applyAvatarPositionRequest(position) {
+  if (!isAvatarEnvironmentReady() || !state.renderer3d.applyPositionRequest(position)) return false;
+  state.options.patientPosition = position;
+  return true;
+}
+export function lockAvatarExaminations() { state.options.completed = true; if (state.renderer3d) { state.renderer3d.options.completed = true; state.renderer3d.setInteractionEnabled(false); } }
 export function getAvatarEcgPlacedLeads() { return state.renderer3d ? Object.keys(state.renderer3d.placedLeads) : [...state.placedLeads]; }
 export function getAvatarEcgPlacementCount() { return getAvatarEcgPlacedLeads().length; }
 export function restoreAvatarEcgPlacedLeads(ids = []) { state.placedLeads = [...ids]; state.renderer3d?.restorePlacedLeads(ids); }

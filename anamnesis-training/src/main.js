@@ -1,19 +1,20 @@
 import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
+import { getPositionRequest } from './dialogue/positionRequests.js';
 import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool,  isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=clinical-exam-5';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, applyAvatarPositionRequest, isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=chat-positioning-1';
 import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=conversation-1';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
 import { renderModeLayout } from './ui/modeLayout.js?v=134';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
-import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js';
-import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js';
+import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js?v=chat-positioning-1';
+import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js?v=chat-positioning-1';
 import { PatientStateEngine } from './patientState.js';
 import { renderPatientStatePanel } from './ui/patientStatePanel.js';
 import { renderAnamnesisCompanion, buildWorksheetText, getCoverageTopicState } from './ui/anamnesisCompanion.js?v=134';
@@ -125,6 +126,13 @@ const els = {
 let engine;
 let activeCase = TRAINER_CASES[0] || null;
 let currentMode = 'practice';
+let patientPosition = 'seated';
+const POSITION_REPLIES = {
+  seated: 'Of course. I’ll sit upright.',
+  standing: 'Of course. I’ll stand up.',
+  reclined: 'Of course. I’ll lie on my back.',
+  abdominal: 'Of course. I’ll lie on my back with my knees slightly bent.'
+};
 let currentDifficulty = 'intermediate';
 let currentInterviewLanguage = 'en';
 let stationStarted = false;
@@ -259,6 +267,7 @@ async function startCase() {
   closeVitalsMonitor();
   closeEcgViewer();
   currentMode = els.modeSelect?.value || currentMode;
+  patientPosition = 'seated';
   currentDifficulty = els.difficultySelect?.value || currentDifficulty;
   currentInterviewLanguage = els.interviewLanguageSelect?.value || currentInterviewLanguage;
   stationStarted = true;
@@ -298,7 +307,7 @@ async function startCase() {
   renderTerminologyHint('');
   renderInterfacePanels();
   if (!stationStarted || stationToken !== stationGeneration) return;
-  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
+  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, patientPosition, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
   if (!stationStarted || stationToken !== stationGeneration) return;
   bindAvatarToPatientState(patientStateEngine);
   setAvatarEmotion('neutral');
@@ -375,6 +384,7 @@ function renderSetupPreview(randomChosen = false) {
     <div class="setup-preview-top"><strong>${randomChosen ? 'Random station selected' : escapeHtml(activeCase.title)}</strong><span>${escapeHtml(selectedDifficulty)} · ${escapeHtml(selectedMode)}</span></div>
     <p>${experienceHelp}</p>
     <p>${escapeHtml(modeHelp)}</p>
+    ${els.modeSelect?.value === 'teaching' ? '<p>Ask the patient to change position in chat. For example, “Could you lie on your back and bend your knees slightly?”</p>' : ''}
     <p>${escapeHtml(difficultyHelp)}</p>
     <small>Patient identity and case facts stay hidden until they are obtained during the interview.</small>
     <small>${escapeHtml(ptT('interview_language_note'))}</small>
@@ -451,16 +461,24 @@ async function handleQuestion(event) {
   persistCurrentSession();
   showResponseLoading(els.chatLog);
   try {
-    const prepared = await prepareQuestionWithAI(engine, question, persistCurrentSession);
-    if (!stationStarted || stationToken !== stationGeneration) return;
-    const result = engine.ask(question, prepared.detection);
+    const positionRequest = currentMode === 'teaching' && getPositionRequest(question, patientPosition);
+    let result;
+    let aiEvent = null;
+    if (positionRequest) {
+      result = { reply: answerPositionRequest(positionRequest), detectedIntent: 'position_request', feedbackLabel: 'Positioning' };
+    } else {
+      const prepared = await prepareQuestionWithAI(engine, question, persistCurrentSession);
+      if (!stationStarted || stationToken !== stationGeneration) return;
+      result = engine.ask(question, prepared.detection);
+      aiEvent = prepared.event;
+      engine.debugTurns.at(-1).rescue = aiEvent;
+      updateAiDiagnosticsFromEvent(aiEvent);
+      lastDetection = result.detection;
+    }
     const reply = result.reply;
-    engine.debugTurns.at(-1).rescue = prepared.event;
-    updateAiDiagnosticsFromEvent(prepared.event);
-    lastDetection = result.detection;
     removeResponseLoading(els.chatLog);
     addMessage('patient', reply, result.detectedIntent, result.feedbackLabel);
-    finalizeSessionQuestion(question, reply, result, prepared.event);
+    finalizeSessionQuestion(question, reply, result, aiEvent);
     reactAvatarToPatientReply(reply, { ...result, studentInput: question });
     if (els.voiceToggle.checked) {
       speak(reply, activeCase, {
@@ -491,6 +509,13 @@ async function handleQuestion(event) {
     setQuestionPending(false);
     els.questionInput.focus();
   }
+}
+
+function answerPositionRequest(position) {
+  if (position === 'needs-reclining') return 'Would you like me to lie down first?';
+  if (!applyAvatarPositionRequest(position)) return 'I can’t change position while the 3D view is unavailable.';
+  patientPosition = position;
+  return POSITION_REPLIES[position];
 }
 
 function setQuestionPending(pending) {
@@ -616,6 +641,7 @@ function submitEncounter(closingInput) {
     management: administeredMedications,
     actions: actionHistory,
     environmentReady: isAvatarEnvironmentReady(),
+    allowAbdominalPosition: currentMode === 'teaching',
     transcript: currentSession?.messages || []
   });
   actionHistory.push({ type: 'encounter-submitted', at: new Date().toISOString(), score: report.encounterScore });
@@ -649,7 +675,9 @@ function resetEncounterControls() {
   });
   if (els.finishAnamnesisBtn) els.finishAnamnesisBtn.disabled = false;
   if (els.sendQuestionBtn) { els.sendQuestionBtn.disabled = false; els.sendQuestionBtn.textContent = 'Ask'; }
-  if (els.questionInput) { els.questionInput.readOnly = false; els.questionInput.placeholder = 'Ask the patient a free-text anamnesis question...'; }
+  if (els.questionInput) { els.questionInput.readOnly = false; els.questionInput.placeholder = currentMode === 'teaching'
+    ? 'Ask a question or request a position in chat…'
+    : 'Ask the patient a free-text anamnesis question...'; }
   if (els.closeClosingBtn) els.closeClosingBtn.textContent = 'Return to station';
 }
 
@@ -959,6 +987,7 @@ function persistCurrentSession({ touch = true } = {}) {
     encounterState: cloneJson(encounterState),
     patientState: patientStateEngine?.getSnapshot?.() || null,
     ecgPlacedLeads: [...encounterState.ecg.placedLeads],
+    patientPosition,
     worksheetNotes: cloneJson(anamnesisWorksheetNotes),
     lastDetection: cloneJson(lastDetection),
     activeWorkspace: document.body.dataset.patientWorkspace || 'interview'
@@ -1070,6 +1099,8 @@ async function restorePatientTrainerSession(sessionId) {
   closeEcgViewer();
   activeCase = patientCase;
   currentMode = ['practice', 'teaching', 'exam'].includes(saved.mode) ? saved.mode : 'practice';
+  patientPosition = currentMode === 'teaching' && Object.hasOwn(POSITION_REPLIES, saved.runtimeState.patientPosition)
+    ? saved.runtimeState.patientPosition : 'seated';
   currentDifficulty = saved.difficulty || 'intermediate';
   currentInterviewLanguage = saved.interviewLanguage || 'en';
   trainerExperience = saved.trainerType === 'anamnesis_examination' ? 'full' : 'anamnesis';
@@ -1111,7 +1142,7 @@ async function restorePatientTrainerSession(sessionId) {
   renderTerminologyHint('');
   renderInterfacePanels();
   if (!stationStarted || stationToken !== stationGeneration) return;
-  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
+  await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, patientPosition, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
   if (!stationStarted || stationToken !== stationGeneration) return;
   bindAvatarToPatientState(patientStateEngine);
   setAvatarEmotion('neutral');
@@ -1357,7 +1388,7 @@ function renderEncounterOverview() {
   const coverage = engine.getCoverage?.() || [];
   const required = coverage.filter((item) => item.required);
   const interviewPercent = required.length ? Math.round(required.reduce((sum, item) => sum + Number(item.percent || 0), 0) / required.length) : 0;
-  const examination = evaluateExamination(activeCase, encounterState);
+  const examination = evaluateExamination(activeCase, encounterState, { allowAbdominalPosition: currentMode === 'teaching' });
   const examTotal = examination.required.length;
   const examDone = examination.completed.length;
   const noteSections = countCompletedNoteSections(encounterState);
