@@ -54,7 +54,7 @@ export function getKnownFactsByCategory(engine, patientCase, orderedLabs = {}) {
         .map((intentId) => ({
           id: intentId,
           label: labelForIntent(intentId),
-          value: orderedLabFacts.get(intentId) || engine.answerFor(intentId)
+          value: orderedLabFacts.get(intentId) || engine.disclosedAnswerFor(intentId)
         }))
         .filter((fact) => fact.value);
       return { id: category.id, title: category.title, facts };

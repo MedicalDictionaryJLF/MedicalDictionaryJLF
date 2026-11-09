@@ -1,13 +1,12 @@
-import { PATIENT_CASES } from './cases/index.js?v=134';
+import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { PatientEngine } from './patientEngine.js?v=134';
+import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
 import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool,  isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=clinical-exam-5';
-import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js?v=134';
-import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
+import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=conversation-1';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
 import { renderModeLayout } from './ui/modeLayout.js?v=134';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
@@ -61,6 +60,7 @@ const els = {
   terminologyHint: document.getElementById('terminologyHint'),
   modePanel: document.getElementById('modePanel'),
   detailsPanel: document.getElementById('detailsPanel'),
+  anamnesisDiagnostics: document.getElementById('anamnesisDiagnostics'),
   finishBtn: document.getElementById('finishBtn'),
   voiceToggle: document.getElementById('voiceToggle'),
   openVitalsBtn: document.getElementById('openVitalsBtn'),
@@ -141,13 +141,7 @@ let automaticRetryRunning = false;
 let stationGeneration = 0;
 const uploadInFlight = new Set();
 const aiDiagnostics = {
-  enabled: false,
-  apiBaseUrl: '',
-  healthEndpoint: '',
-  backendReachable: null,
-  geminiConfigured: null,
-  model: '',
-  lastIntentRescueStatus: null,
+  enabled: isAIAvailable(),
   lastAIError: '',
   lastAttempted: null,
   lastSucceeded: null,
@@ -293,7 +287,6 @@ async function startCase() {
   renderPatientMeta();
   renderTerminologyHint('');
   renderInterfacePanels();
-  void refreshAiHealthDiagnostics().then(() => { if (stationStarted && stationToken === stationGeneration) renderInterfacePanels(); });
   if (!stationStarted || stationToken !== stationGeneration) return;
   await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
   if (!stationStarted || stationToken !== stationGeneration) return;
@@ -438,14 +431,11 @@ async function handleQuestion(event) {
   persistCurrentSession();
   showResponseLoading(els.chatLog);
   try {
-    const prepared = await prepareQuestionWithAI(engine, question);
+    const prepared = await prepareQuestionWithAI(engine, question, persistCurrentSession);
     if (!stationStarted || stationToken !== stationGeneration) return;
     const result = engine.ask(question, prepared.detection);
-    const reply = shouldUsePatientPhrasing(result)
-      ? await phrasePatientReply(result.reply, prepared.event)
-      : result.reply;
-    if (!stationStarted || stationToken !== stationGeneration) return;
-    engine.replaceLastPatientReply(reply);
+    const reply = result.reply;
+    engine.debugTurns.at(-1).rescue = prepared.event;
     updateAiDiagnosticsFromEvent(prepared.event);
     lastDetection = result.detection;
     removeResponseLoading(els.chatLog);
@@ -462,7 +452,6 @@ async function handleQuestion(event) {
     } else {
       setAvatarSpeaking(false);
     }
-    recordLearningEvent(prepared.event);
     els.questionInput.value = '';
     renderTerminologyHint(result.terminologySuggestion, result.detection?.terminologyEvent?.term);
     renderInterfacePanels();
@@ -519,6 +508,21 @@ function renderTerminologyHint(suggestion, term = '') {
 }
 
 function renderInterfacePanels() {
+  const anamnesis = trainerExperience === 'anamnesis';
+  const showAnamnesisDiagnostics = anamnesis && currentMode !== 'exam' &&
+    new URLSearchParams(window.location.search).get('conversationDiagnostics') === '1';
+  els.anamnesisDiagnostics.hidden = !showAnamnesisDiagnostics;
+  if (!anamnesis || showAnamnesisDiagnostics) {
+    renderDetailsPanel({
+      container: anamnesis ? els.anamnesisDiagnostics : els.detailsPanel,
+      currentMode,
+      lastDetection,
+      aiDiagnostics,
+      engine,
+      onExportDebug: exportDebugSession,
+      onRunSimulation: runSimulationAndShow
+    });
+  }
   if (trainerExperience === 'anamnesis') {
     renderAnamnesisCompanionPanel();
     renderPatientVisualState();
@@ -532,15 +536,6 @@ function renderInterfacePanels() {
     patientCase: activeCase,
     orderedLabs,
     onQuestionSelected: fillQuestionInput
-  });
-  renderDetailsPanel({
-    container: els.detailsPanel,
-    currentMode,
-    lastDetection,
-    aiDiagnostics,
-    engine,
-    onExportDebug: exportDebugSession,
-    onRunSimulation: runSimulationAndShow
   });
   renderPhysicalExamPanel();
   renderLabsOrderPanel();
@@ -557,74 +552,13 @@ function fillQuestionInput(question) {
   els.questionInput.focus();
 }
 
-function renderDebug(detection) {
-  if (!detection || currentMode === 'exam') {
-    els.engineDebug.innerHTML = currentMode === 'exam'
-      ? '<p>Debug hidden in Exam Mode.</p>'
-      : `${renderAiDiagnostics()}<p>Ask a free-text anamnesis question. The engine will score possible meanings here.</p>`;
-    return;
-  }
-  els.engineDebug.innerHTML = `${renderAiDiagnostics()}<p><strong>Scope:</strong> ${escapeHtml(detection.responseScope)}</p><p><strong>Best:</strong> ${escapeHtml(detection.primaryIntent ? labelForIntent(detection.primaryIntent.id) : 'uncertain')}</p><p><strong>Confidence:</strong> ${Math.round(detection.confidence * 100)}%</p>${detection.terminologyEvent ? `<p><strong>Terminology:</strong> ${escapeHtml(detection.terminologyEvent.term)} -> ${escapeHtml(detection.terminologyEvent.suggestedPatientFriendlyQuestion)}</p>` : ''}<ol>${detection.candidates.map((candidate) => `<li><span>${escapeHtml(labelForIntent(candidate.id))}</span><small>${candidate.score.toFixed(2)} - ${(candidate.reasons || []).slice(0, 2).join(', ') || 'context'}</small></li>`).join('')}</ol>`;
-  return;
-  if (!detection || currentMode === 'exam') { els.engineDebug.innerHTML = currentMode === 'exam' ? '<p>Debug hidden in Exam Mode.</p>' : '<p>Ask a free-text anamnesis question. The engine will score possible meanings here.</p>'; return; }
-  els.engineDebug.innerHTML = `<p><strong>Scope:</strong> ${escapeHtml(detection.responseScope)}</p><p><strong>Best:</strong> ${escapeHtml(detection.primaryIntent ? labelForIntent(detection.primaryIntent.id) : 'uncertain')}</p><p><strong>Confidence:</strong> ${Math.round(detection.confidence * 100)}%</p>${detection.terminologyEvent ? `<p><strong>Terminology:</strong> ${escapeHtml(detection.terminologyEvent.term)} → ${escapeHtml(detection.terminologyEvent.suggestedPatientFriendlyQuestion)}</p>` : ''}<ol>${detection.candidates.map((candidate) => `<li><span>${escapeHtml(labelForIntent(candidate.id))}</span><small>${candidate.score.toFixed(2)} · ${(candidate.reasons || []).slice(0, 2).join(', ') || 'context'}</small></li>`).join('')}</ol>`;
-}
-
-async function refreshAiHealthDiagnostics() {
-  aiDiagnostics.enabled = window.ANAMNESIS_AI_ENABLED !== false;
-  aiDiagnostics.apiBaseUrl = getApiBaseUrl() || '(relative)';
-  aiDiagnostics.healthEndpoint = buildApiUrl('/api/ai-health');
-  aiDiagnostics.backendReachable = null;
-  aiDiagnostics.geminiConfigured = null;
-  aiDiagnostics.model = '';
-  aiDiagnostics.lastAIError = '';
-
-  if (currentMode === 'exam') return;
-
-  try {
-    const health = await getAiHealth();
-    aiDiagnostics.backendReachable = true;
-    aiDiagnostics.geminiConfigured = Boolean(health.configured);
-    aiDiagnostics.model = health.model || '';
-  } catch (error) {
-    aiDiagnostics.backendReachable = false;
-    aiDiagnostics.lastAIError = error.message;
-  }
-}
-
 function updateAiDiagnosticsFromEvent(event) {
   if (!event) return;
   aiDiagnostics.lastAttempted = Boolean(event.aiAttempted || event.aiEndpoint || event.aiSelectedIntent);
   aiDiagnostics.lastSucceeded = Boolean(event.aiSucceeded || event.aiSelectedIntent);
   aiDiagnostics.lastSelectedIntent = event.aiSelectedIntent || '';
   aiDiagnostics.lastConfidence = event.aiConfidence ?? '';
-  if (event.aiEndpoint?.includes('/api/intent-rescue')) aiDiagnostics.lastIntentRescueStatus = event.aiHttpStatus;
-  if (event.aiError) aiDiagnostics.lastAIError = event.aiError;
-}
-
-function renderAiDiagnostics() {
-  if (currentMode === 'exam') return '';
-  const boolText = (value) => value === null ? 'unknown' : value ? 'yes' : 'no';
-  return `
-    <section class="ai-diagnostics">
-      <p><strong>AI enabled:</strong> ${escapeHtml(boolText(aiDiagnostics.enabled))}</p>
-      <p><strong>API base URL:</strong> ${escapeHtml(aiDiagnostics.apiBaseUrl || '(relative)')}</p>
-      <p><strong>Health endpoint:</strong> ${escapeHtml(aiDiagnostics.healthEndpoint)}</p>
-      <p><strong>Backend reachable:</strong> ${escapeHtml(boolText(aiDiagnostics.backendReachable))}</p>
-      <p><strong>Gemini configured:</strong> ${escapeHtml(boolText(aiDiagnostics.geminiConfigured))}</p>
-      <p><strong>AI model:</strong> ${escapeHtml(aiDiagnostics.model || 'unknown')}</p>
-      <p><strong>Last intent-rescue status:</strong> ${escapeHtml(aiDiagnostics.lastIntentRescueStatus ?? 'none')}</p>
-      <p><strong>Last AI error:</strong> ${escapeHtml(aiDiagnostics.lastAIError || 'none')}</p>
-    </section>
-  `;
-}
-
-function shouldUsePatientPhrasing(result) {
-  const scope = result?.detection?.responseScope;
-  return scope !== 'clarification' &&
-    scope !== 'terminology_not_understood' &&
-    Boolean(result?.reply?.trim()) &&
-    Boolean(result?.detection?.answerIntents?.length);
+  aiDiagnostics.lastAIError = event.aiError || '';
 }
 
 function showHint() {
@@ -885,16 +819,17 @@ function appendSessionStudentMessage(question) {
 function finalizeSessionQuestion(question, reply, result, aiEvent = null) {
   if (!currentSession) return;
   const detection = result?.detection || {};
-  const matchedIntentIds = (detection.answerIntents || []).map((item) => String(item?.id || '')).filter(Boolean);
+  const matchedIntentIds = result?.answeredIds ?? [];
   const detectedIntent = String(result?.detectedIntent || detection.primaryIntent?.id || 'unknown');
   const topCandidate = detection.candidates?.[0] || null;
   const confidence = Number.isFinite(Number(result?.confidence)) ? Number(result.confidence) : Number(detection.confidence || 0);
-  const fallbackUsed = Boolean(aiEvent?.fallbackUsed) || detection.responseScope === 'clarification' || detection.responseScope === 'terminology_not_understood' || detectedIntent === 'unknown' || confidence < 0.45;
+  const fallbackUsed = Boolean(aiEvent?.fallbackUsed) || detection.responseScope === 'clarification' || detection.responseScope === 'terminology_not_understood' || detectedIntent === 'unknown' || detection.parts?.some(part => part.responseScope === 'clarification');
   const diagnostics = {
     normalizedQuestion: String(detection.normalized || ''),
     detectedIntent,
     matchedIntent: String(detection.primaryIntent?.id || ''),
     matchedIntentIds,
+    recognizedIntentIds: result?.recognizedIntents ?? [],
     matchedQuestionAnswerId: matchedIntentIds[0] || String(detection.primaryIntent?.id || ''),
     confidence,
     matchScore: Number.isFinite(Number(topCandidate?.score)) ? Number(topCandidate.score) : confidence,
@@ -1133,7 +1068,6 @@ async function restorePatientTrainerSession(sessionId) {
   renderPatientMeta();
   renderTerminologyHint('');
   renderInterfacePanels();
-  void refreshAiHealthDiagnostics().then(() => { if (stationStarted && stationToken === stationGeneration) renderInterfacePanels(); });
   if (!stationStarted || stationToken !== stationGeneration) return;
   await initAvatarAnimator(activeCase, { allowInspection: trainerExperience === 'full', trainingMode: currentMode, placedLeads: encounterState.ecg.placedLeads, ecgCompleted: encounterState.ecg.completed, completed: encounterState.completed });
   if (!stationStarted || stationToken !== stationGeneration) return;
@@ -1433,7 +1367,7 @@ function getDebugExport() {
     actionHistory,
     encounterState,
     patientState: patientStateEngine?.getSnapshot?.() || null,
-    aiDiagnostics: { ...aiDiagnostics, apiBaseUrl: aiDiagnostics.apiBaseUrl ? '[configured]' : '' }
+    aiDiagnostics: { ...aiDiagnostics }
   };
 }
 function runSimulationAndShow() {

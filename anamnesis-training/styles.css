@@ -1980,3 +1980,9 @@ body.patient-trainer-page .pt-record-card {
 body.patient-trainer-page .pt-upload-status.is-error { color: #a32c33; }
 body.patient-trainer-page[data-theme="dark"] .pt-upload-status.is-error { color: #ffb7b7; }
 body.patient-trainer-page .pt-download-session { margin-left: 8px; margin-top: 8px; max-width: 100%; }
+
+#anamnesisDiagnostics:not([hidden]) {
+  flex-shrink: 0;
+  max-height: min(40dvh, 22rem);
+  overflow: auto;
+}

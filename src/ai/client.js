@@ -120,6 +120,7 @@ async function postJson(url, body, options = {}) {
   try {
     response = await fetch(url, {
       method: "POST",
+      signal: options.signal,
       headers: {
         "Content-Type": "application/json"
       },
@@ -168,10 +169,11 @@ async function getJson(url) {
   return parseJsonResponse(response, url);
 }
 
-export function resolveIntentWithAI(question, intents) {
+export function resolveIntentWithAI(question, intents, interpretation) {
   return postJson(
     buildApiUrl("/api/intent-rescue"),
-    { question, intents }
+    { question, intents, interpretation },
+    { signal: AbortSignal.timeout(7000) }
   );
 }
 

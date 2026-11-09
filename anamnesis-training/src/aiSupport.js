@@ -1,131 +1,108 @@
-import { buildApiUrl, resolveContextWithAI, resolveIntentWithAI, rewritePatientAnswer } from '../../src/ai/client.js';
+import { buildApiUrl, resolveIntentWithAI } from '../../src/ai/client.js';
 import { INTENTS } from './data/interviewSchema.js?v=134';
+import { normalize } from './patientEngine.js';
 
-const AI_CONFIDENCE_THRESHOLD = 0.45;
-const CONTEXTUAL_QUESTION = /\b(it|this|that|where exactly|when exactly|what type|what kind|what reaction)\b/i;
+const MAX_RESCUES = 2;
+const ACCEPT_CONFIDENCE = 0.9;
+const QUESTION_FORM = /^(?:what|when|where|how|why|who|do|does|did|is|are|was|were|have|has|can|could|tell|any)\b/;
+const commonWords = new Set('what when where how why who do does did is are was were have has can could tell any you your the and about with this that from please'.split(' '));
 
 export function isAIAvailable() {
-  if (window.ANAMNESIS_AI_ENABLED === false) return false;
+  if (typeof window === 'undefined' || window.ANAMNESIS_AI_ENABLED === false) return false;
   if (window.ANAMNESIS_AI_ENABLED === true) return true;
   return window.location.protocol === 'https:' && !['localhost', '127.0.0.1'].includes(window.location.hostname);
 }
 
-export async function prepareQuestionWithAI(engine, question) {
-  const deterministic = engine.detect(question);
+function questionKey(normalized) {
+  return normalized.replace(/^(?:i mean|what i mean is|let me rephrase)\s+/, '').replace(/\bplease\b/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function sharesSubject(a, b) {
+  const words = new Set(a.split(' ').filter(word => word.length > 2 && !commonWords.has(word)));
+  return b.split(' ').some(word => words.has(word));
+}
+
+function rescueOptions(engine, detection) {
+  const evidence = engine.inferAttemptedIntents(detection.normalized, detection);
+  const options = new Set(evidence);
+  for (const candidate of detection.candidates.slice(0, 4)) {
+    if (candidate.score >= 0.48 && candidate.reasons?.some(reason => /^(phrase|token|fuzzy):/.test(reason))) options.add(candidate.id);
+  }
+  return [...options].filter(id => Object.hasOwn(INTENTS, id) && INTENTS[id].domain !== 'objective' &&
+    (id !== 'allergy_reaction' || engine.lastMeaningfulDomain === 'allergy' ||
+      /\b(?:allerg\w*|reaction|expos\w*)\b/.test(detection.normalized)));
+}
+
+export async function prepareQuestionWithAI(engine, question, onRescueReserved = () => {}) {
+  const local = engine.detect(question);
+  const state = engine.rescueState;
   const event = {
-    studentQuestion: question,
-    deterministicIntentGuess: deterministic.primaryIntent?.id || null,
-    deterministicConfidence: deterministic.confidence || 0,
-    aiAvailable: isAIAvailable(),
-    aiAttempted: false,
-    aiSucceeded: false,
-    aiRescueUsed: false,
-    aiSelectedIntent: null,
-    aiConfidence: null,
-    aiEndpoint: null,
-    aiHttpStatus: null,
-    aiContentType: null,
-    aiError: null,
-    finalResolutionSource: resolutionSourceFor(deterministic),
-    resolvedIntent: deterministic.primaryIntent?.id || null,
-    fallbackUsed: deterministic.responseScope === 'clarification',
-    patientPhrasingUsed: false,
-    errors: []
+    deterministicIntentGuess: local.primaryIntent?.id ?? null,
+    deterministicConfidence: local.confidence,
+    aiAttempted: false, aiSucceeded: false, aiRescueUsed: false,
+    aiSelectedIntent: null, aiConfidence: null, aiEndpoint: null, aiError: null,
+    aiRequestCount: state.count,
+    finalResolutionSource: local.parts ? 'local-compound' : local.contextUsed ? 'local-context' :
+      local.directMappingUsed ? 'direct' : local.primaryIntent ? 'deterministic' : 'fallback',
+    fallbackUsed: local.responseScope === 'clarification' || local.responseScope === 'terminology_not_understood'
   };
+  const unchanged = { detection: local, event };
+  if (!isAIAvailable() || local.primaryIntent || local.parts || local.responseScope !== 'clarification' ||
+      local.analysis?.unresolvedReference || local.analysis?.differentSymptom) return unchanged;
 
-  if (!event.aiAvailable || deterministic.responseScope === 'terminology_not_understood') {
-    return { detection: deterministic, event };
-  }
+  const key = questionKey(local.normalized);
+  if (key.length < 12 || key.length > 240 || !QUESTION_FORM.test(key)) return unchanged;
+  const options = rescueOptions(engine, local);
+  const pending = engine.pendingClarification;
+  const earlier = pending && questionKey(pending.question);
+  const scope = /\b(?:it|that|this|they|them)\b/.test(key) ? engine.lastMeaningfulIntent ?? '' : '';
+  const cached = state.accepted.find(item => item.keys.includes(key) && item.scope === scope && options.includes(item.intent));
+  if (cached) return accept(cached.intent, cached.confidence, 'intent-rescue-cache');
 
-  let workingDetection = deterministic;
-  const needsDeterministicHelp = !deterministic?.primaryIntent || deterministic.confidence < AI_CONFIDENCE_THRESHOLD || deterministic.responseScope === 'clarification';
-  if (CONTEXTUAL_QUESTION.test(question) && needsDeterministicHelp) {
-    event.aiAttempted = true;
-    event.aiEndpoint = buildApiUrl('/api/context-resolve');
-    try {
-      const context = await resolveContextWithAI(question, recentConversation(engine), {
-        lastMeaningfulIntent: engine.lastMeaningfulIntent,
-        lastMeaningfulDomain: engine.lastMeaningfulDomain,
-        activeSymptom: engine.currentSymptom
-      }, intentOptions());
-      event.aiSucceeded = true;
-      event.aiSelectedIntent = context.intent || null;
-      event.aiConfidence = context.confidence ?? null;
-      event.aiHttpStatus = context._http?.status ?? null;
-      event.aiContentType = context._http?.contentType ?? null;
-      const resolvedIntent = validIntent(context.intent);
-      workingDetection = resolvedIntent
-        ? engine.detectionForResolvedIntent(question, resolvedIntent, 'Context resolver selected an existing deterministic intent.')
-        : engine.detect(context.resolvedQuestion || question);
-      if (resolvedIntent) {
-        event.aiRescueUsed = true;
-        event.finalResolutionSource = 'context-ai';
-      }
-    } catch (error) {
-      event.aiError = error.message;
-      event.aiHttpStatus = error.details?.status ?? null;
-      event.aiContentType = error.details?.contentType ?? null;
-      event.errors.push(`context-resolve: ${error.message}`);
-    }
-  }
+  if (!earlier || pending.createdAtTurn !== engine.turn || !sharesSubject(earlier, key) ||
+      !options.length || state.disabled || state.count >= MAX_RESCUES ||
+      state.attempted.includes(key) || state.attempted.includes(earlier)) return unchanged;
 
-  if (!workingDetection?.primaryIntent || workingDetection.confidence < AI_CONFIDENCE_THRESHOLD || workingDetection.responseScope === 'clarification') {
-    event.aiAttempted = true;
-    event.aiEndpoint = buildApiUrl('/api/intent-rescue');
-    try {
-      const rescue = await resolveIntentWithAI(question, intentOptions());
-      event.aiSucceeded = true;
-      event.aiSelectedIntent = rescue.intent || null;
-      event.aiConfidence = rescue.confidence ?? null;
-      event.aiHttpStatus = rescue._http?.status ?? null;
-      event.aiContentType = rescue._http?.contentType ?? null;
-      const resolvedIntent = validIntent(rescue.intent);
-      if (resolvedIntent) {
-        workingDetection = engine.detectionForResolvedIntent(question, resolvedIntent, 'Intent rescue selected an existing deterministic intent.');
-        event.aiRescueUsed = true;
-        event.finalResolutionSource = 'intent-rescue-ai';
-      }
-    } catch (error) {
-      event.aiError = error.message;
-      event.aiHttpStatus = error.details?.status ?? null;
-      event.aiContentType = error.details?.contentType ?? null;
-      event.errors.push(`intent-rescue: ${error.message}`);
-    }
-  }
-
-  event.resolvedIntent = workingDetection?.primaryIntent?.id || null;
-  event.fallbackUsed = workingDetection?.responseScope === 'clarification';
-  if (!event.aiRescueUsed) event.finalResolutionSource = resolutionSourceFor(workingDetection || deterministic);
-  return { detection: workingDetection || deterministic, event };
-}
-
-export async function phrasePatientReply(reply, event) {
-  if (!isAIAvailable() || window.ANAMNESIS_PATIENT_PHRASING_ENABLED === false) return reply;
+  state.attempted.push(...new Set([key, earlier]));
+  event.aiRequestCount = ++state.count;
+  event.aiAttempted = true;
+  event.aiEndpoint = buildApiUrl('/api/intent-rescue');
+  const attribute = 'overview';
+  const questionType = local.analysis?.type ?? 'open';
   try {
-    const response = await rewritePatientAnswer(reply, 'patient');
-    if (response.success && response.answer) {
-      event.patientPhrasingUsed = true;
-      return response.answer;
+    onRescueReserved();
+    const result = await resolveIntentWithAI(key,
+      options.map(id => ({ id, description: INTENTS[id].title })), { requestedAttribute: attribute, questionType });
+    event.aiSelectedIntent = options.includes(result.intent) ? result.intent : null;
+    event.aiConfidence = typeof result.confidence === 'number' ? result.confidence : null;
+    event.aiHttpStatus = result._http?.status ?? null;
+    if (result.success === true && options.includes(result.intent) &&
+        result.requestedAttribute === attribute && result.questionType === questionType &&
+        Number.isFinite(result.confidence) && result.confidence >= ACCEPT_CONFIDENCE && result.confidence <= 1) {
+      event.aiSucceeded = true;
+      state.accepted.push({ keys: [...new Set([key, earlier])], scope, intent: result.intent, confidence: result.confidence });
+      return accept(result.intent, result.confidence, 'intent-rescue-ai');
     }
+    event.aiError = 'Rescue suggestion did not pass local validation.';
   } catch (error) {
-    event.aiError = error.message;
+    state.disabled = true;
     event.aiHttpStatus = error.details?.status ?? null;
-    event.aiContentType = error.details?.contentType ?? null;
-    event.errors.push(`patient-phrasing: ${error.message}`);
+    event.aiError = 'Intent rescue unavailable for this session.';
   }
-  return reply;
-}
+  return unchanged;
 
-export function recordLearningEvent(event) {
-  const entry = { ...event, recordedAt: new Date().toISOString() };
-  console.info('anamnesis-learning-event', entry);
-  if (!isAIAvailable()) return;
-  fetch(buildApiUrl('/api/learning-events'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(entry),
-    keepalive: true
-  }).catch((error) => console.warn('Learning event upload failed:', error));
+  function accept(intent, confidence, source) {
+    const analysis = { ...local.analysis, intent, attribute: 'overview' };
+    event.aiSelectedIntent = intent;
+    event.aiConfidence = confidence;
+    event.finalResolutionSource = source;
+    event.aiRescueUsed = true;
+    event.fallbackUsed = false;
+    return {
+      detection: engine.detectionForResolvedIntent(question, intent, source, confidence, analysis),
+      event
+    };
+  }
 }
 
 export function prepareAnonymousContribution(engine) {
@@ -138,25 +115,4 @@ export function prepareAnonymousContribution(engine) {
     simulatorResolutionIssues: engine.getResolutionIssues?.() ?? [],
     debugIntentEvents: engine.debugTurns
   };
-}
-
-function recentConversation(engine) {
-  return engine.transcript.slice(-8).map(({ role, text }) => ({
-    role: role === 'patient' ? 'assistant' : 'user',
-    text
-  }));
-}
-
-function intentOptions() {
-  return Object.entries(INTENTS).map(([id, intent]) => ({ id, description: intent.title }));
-}
-
-function validIntent(intent) {
-  return typeof intent === 'string' && INTENTS[intent] ? intent : null;
-}
-
-function resolutionSourceFor(detection) {
-  if (!detection?.primaryIntent || detection.responseScope === 'clarification') return 'fallback';
-  if (detection.responseScope === 'terminology_not_understood') return 'fallback';
-  return detection.directMappingUsed ? 'direct' : 'deterministic';
 }
