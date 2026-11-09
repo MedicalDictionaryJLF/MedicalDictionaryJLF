@@ -24,8 +24,6 @@ for(const activeCase of PATIENT_CASES){
   renderer.camera=new THREE.PerspectiveCamera(36,1,.03,35);
   renderer.controls={target:new THREE.Vector3(),update(){renderer.camera.lookAt(this.target);renderer.camera.updateMatrixWorld(true);}};
   renderer.toolbar={querySelector(){return {};},querySelectorAll(){return [];}};
-  renderer.mixer=new THREE.AnimationMixer(renderer.patient);
-  for(const clip of character.animations)renderer.actions.set(clip.name,renderer.mixer.clipAction(clip));
   const materials=new Set(),meshes=[];
   renderer.patient.traverse(object=>{
     if(object.isBone)renderer.bones.set(object.name,object);
@@ -47,6 +45,7 @@ for(const activeCase of PATIENT_CASES){
     assert.equal(material.transparent,false);
   }
   for(const [property,name] of Object.entries({chair:'ExamChair',bed:'HospitalBed',cover:'FoldedCover'}))renderer[property]=environment.scene.getObjectByName(name);
+  renderer.prepareAnimations(character.animations);
   const bedding=Array.from(renderer.cover.geometry.attributes.position.array);
   environment.scene.updateMatrixWorld(true);
   const bedspreadBounds=new THREE.Box3().setFromObject(renderer.cover),mattressBounds=new THREE.Box3().setFromObject(environment.scene.getObjectByName('Mattress'));
@@ -96,6 +95,24 @@ for(const activeCase of PATIENT_CASES){
     }
   }
   assert.equal(JSON.stringify(snapshot),clinicalBefore,'Visual preview mutated clinical state');
+  renderer.setPosition('reclined');
+  const reclinedHead = position('head');
+  renderer.setPosition('abdominal');
+  renderer.updateAnimation(1 / 60);
+  assert.ok(position('head').distanceTo(reclinedHead) < .025, `${activeCase.id}: abdominal positioning displaced the head`);
+  assert.ok(renderer.bed.position.length() < 1e-6 && !renderer.chair.visible, `${activeCase.id}: abdominal palpation requires the bed`);
+  for (const side of ['l', 'r']) {
+    const hip = position(`thigh_${side}`), knee = position(`calf_${side}`), ankle = position(`foot_${side}`);
+    const bend = THREE.MathUtils.radToDeg(knee.clone().sub(hip).angleTo(ankle.clone().sub(knee)));
+    assert.ok(bend >= 25 && bend <= 29 && knee.y > ankle.y, `${activeCase.id}: knee is not slightly flexed`);
+  }
+  const shoes = meshes.find(mesh => mesh.material.name.includes('shoes'));
+  shoes.computeBoundingBox();
+  const heelHeight = shoes.boundingBox.clone().applyMatrix4(shoes.matrixWorld).min.y;
+  assert.ok(heelHeight > mattressBounds.max.y && Math.abs(heelHeight - bedspreadBounds.max.y) < .025, `${activeCase.id}: feet do not rest on the bed`);
+  renderer.focus('patient', true);checkFrame(bounds());
+  renderer.setPosition('standing');
+  assert.ok(position('head').y - position('pelvis').y > .45, `${activeCase.id}: standing did not restore after the examination pose`);
   rows.push({patient:activeCase.identity.name,solidMaterials:solids,cutoutMaterials:cutouts,bedspreadClearanceM:Number((bedspreadBounds.min.y-mattressBounds.max.y).toFixed(4)),restingTeethOccluded:{hidden:hiddenTeeth,total:toothSamples},postureSwitches:switches,portraitAndLandscapeFraming:'PASS',status:'PASS'});
   console.log(`${activeCase.identity.name}: material depth, ${switches} instant posture switches, portrait/landscape framing PASS`);
 }

@@ -1656,36 +1656,6 @@ body.coach-drawer-open .coach-drawer-backdrop {
 }
 body.coach-drawer-open { overflow-x: hidden; }
 
-/* Keep the live 3D patient present during physical examination. The renderer
-   switches to a full-body camera while the examination controls stay beside it. */
-body[data-patient-workspace="examination"] .patient-rail {
-  display: none !important;
-}
-body[data-patient-workspace="examination"] .station-workspace-layout {
-  grid-template-columns: minmax(430px, .88fr) minmax(560px, 1.12fr) !important;
-}
-body[data-patient-workspace="examination"] .patient-focus-window {
-  display: grid !important;
-  min-height: 76vh;
-}
-body[data-patient-workspace="examination"] .patient-focus-stage {
-  min-height: 640px;
-  height: calc(76vh - 82px);
-}
-body[data-patient-workspace="examination"] .workspace-window {
-  min-height: 76vh;
-}
-body[data-patient-workspace="investigations"] .patient-rail,
-body[data-patient-workspace="investigations"] .patient-focus-window {
-  display: none !important;
-}
-body[data-patient-workspace="investigations"] .station-workspace-layout {
-  grid-template-columns: minmax(0, 1fr) !important;
-}
-body[data-patient-workspace="investigations"] .workspace-window {
-  min-height: 0;
-}
-
 @media (min-width: 1800px) {
   .station-workspace-layout { grid-template-columns: 235px minmax(560px, .95fr) minmax(620px, 1.05fr); gap: 14px; }
   .patient-focus-stage { min-height: 680px; }
@@ -1807,8 +1777,6 @@ body[data-patient-workspace="investigations"] .workspace-window {
   background: #e7eff4;
 }
 .patient-svg-fallback { width: 100%; height: 100%; }
-/* Regression guard: keep investigation workspace free of duplicate patient rail. */
-body[data-patient-workspace="investigations"] .patient-rail { display:none !important; }
 /* Embedded investigation monitor canvas retained for ECG/monitor workspace. */
 .embedded-monitor-canvas { display:block; width:100%; min-height:520px; background:#000; }
 
@@ -1934,22 +1902,24 @@ body[data-theme="dark"] .pt-shell-nav-item.is-active{color:#b9efcb!important;}
 .station-panel-v2{border-radius:13px!important;}.station-heading h1{font-size:21px;color:var(--md-text)}.station-brief{color:var(--md-muted)!important}.badge{background:var(--md-brand-soft);color:var(--md-brand-deep)}.badge.subtle{background:var(--md-subtle);color:var(--md-muted)}
 .message.student{background:var(--md-brand)}.message.patient,.chat-log{background:var(--md-panel);border-color:var(--md-line)}.chat-log{background:color-mix(in srgb,var(--md-subtle) 45%,var(--md-panel));}.workspace-panel-header{border-color:var(--md-line)!important}.workspace-panel-header p{color:var(--md-muted)!important}.question-form button[type="submit"]{background:var(--md-brand)}.icon-button.mic-button{background:var(--md-subtle)!important;color:var(--md-text)!important;border:1px solid var(--md-line)!important;}
 
-/* Focused Anamnesis experience: interview, patient, overview. Nothing else. */
+/* Both training modes use the same patient and workspace columns. */
 body[data-trainer-experience="anamnesis"] .encounter-stepbar,
 body[data-trainer-experience="anamnesis"] .patient-rail,
 body[data-trainer-experience="anamnesis"] .coach-rail,
 body[data-trainer-experience="anamnesis"] .coach-toggle-button,
 body[data-trainer-experience="anamnesis"] .coach-drawer-backdrop{display:none!important;}
-body[data-trainer-experience="anamnesis"] .station-workspace-layout{
-  display:grid!important;grid-template-columns:minmax(240px,310px) minmax(460px,1fr) minmax(300px,370px)!important;gap:12px;align-items:start;
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .station-workspace-layout{
+  display:grid!important;grid-template-columns:minmax(240px,310px) minmax(0,1fr) minmax(300px,370px)!important;gap:12px;align-items:start;
 }
-body[data-trainer-experience="anamnesis"] .patient-focus-window{grid-column:1;grid-row:1;position:sticky;top:calc(var(--pt-shell-header-h) + 14px);min-height:0;height:auto;max-height:calc(100dvh - var(--pt-shell-header-h) - 28px);}
-body[data-trainer-experience="anamnesis"] .patient-focus-stage{height:min(52vh,520px);min-height:360px;}
-body[data-trainer-experience="anamnesis"] .patient-focus-stage .avatar-mount{min-height:350px;}
-body[data-trainer-experience="anamnesis"] .workspace-window{grid-column:2;grid-row:1;min-height:calc(100dvh - var(--pt-shell-header-h) - 102px);}
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-window{grid-column:1;grid-row:1;position:sticky;top:calc(var(--pt-shell-header-h) + 14px);min-height:0;height:auto;max-height:calc(100dvh - var(--pt-shell-header-h) - 28px);}
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-stage{height:min(52vh,520px);min-height:360px;}
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-stage .avatar-mount{min-height:350px;}
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .workspace-window{grid-column:2;grid-row:1;min-height:calc(100dvh - var(--pt-shell-header-h) - 102px);}
+body[data-trainer-experience="full"] .patient-rail{grid-column:3;grid-row:1;min-width:0;}
+body[data-trainer-experience="full"] .patient-focus-window{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;max-height:none;}
 body[data-trainer-experience="anamnesis"] .workspace-panel:not([data-workspace-panel="interview"]){display:none!important;}
 body[data-trainer-experience="anamnesis"] [data-workspace-panel="interview"]{display:grid!important;}
-body[data-trainer-experience="anamnesis"] .workspace-panel .chat-log{min-height:clamp(390px,54vh,650px);max-height:clamp(390px,54vh,650px);}
+body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .workspace-panel .chat-log{min-height:clamp(390px,54vh,650px);max-height:clamp(390px,54vh,650px);}
 body[data-trainer-experience="anamnesis"] .anamnesis-companion{grid-column:3;grid-row:1;display:flex;flex-direction:column;max-height:calc(100dvh - var(--pt-shell-header-h) - 28px);position:sticky;top:calc(var(--pt-shell-header-h) + 14px);border:1px solid var(--md-line);border-radius:13px;overflow:hidden;}
 body:not([data-trainer-experience="anamnesis"]) .anamnesis-companion,
 body:not([data-trainer-experience="anamnesis"]) .anamnesis-companion-mobile-toggle,
@@ -1963,7 +1933,8 @@ body:not([data-trainer-experience="anamnesis"]) .anamnesis-finish-button{display
 
 /* Responsive Patient Trainer shell and anamnesis companion. */
 @media(max-width:1250px){
-  body[data-trainer-experience="anamnesis"] .station-workspace-layout{grid-template-columns:minmax(230px,300px) minmax(430px,1fr)!important;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .station-workspace-layout{grid-template-columns:minmax(230px,300px) minmax(0,1fr)!important;}
+  body[data-trainer-experience="full"] .patient-rail{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,minmax(0,1fr));}
   body[data-trainer-experience="anamnesis"] .anamnesis-companion{position:fixed;z-index:106;top:calc(var(--pt-shell-header-h) + 10px);right:10px;bottom:10px;width:min(370px,calc(100vw - 20px));max-height:none;transform:translateX(calc(100% + 26px));opacity:0;pointer-events:none;transition:transform .2s ease,opacity .16s ease;}
   body.pt-companion-open[data-trainer-experience="anamnesis"] .anamnesis-companion{transform:translateX(0);opacity:1;pointer-events:auto;}
   .anamnesis-companion-close{display:grid}.anamnesis-companion-mobile-toggle{position:fixed;z-index:104;right:14px;bottom:16px;display:flex;align-items:center;gap:6px;padding:9px 12px!important;border-radius:999px!important;background:var(--md-brand)!important;color:#fff!important;font-size:10px;font-weight:800;box-shadow:0 7px 22px rgba(20,70,38,.2)!important}.anamnesis-companion-backdrop{position:fixed;z-index:105;inset:0;display:block;border:0!important;border-radius:0!important;padding:0!important;background:rgba(7,16,11,.32)!important;opacity:0;visibility:hidden;pointer-events:none}.pt-companion-open .anamnesis-companion-backdrop{opacity:1;visibility:visible;pointer-events:auto;}
@@ -1971,12 +1942,13 @@ body:not([data-trainer-experience="anamnesis"]) .anamnesis-finish-button{display
 @media(max-width:899px){
   :root{--pt-shell-sidebar-w:286px;}
   .pt-shell-header{left:0;padding:0 10px}.pt-shell-brand-lockup{display:none}.pt-shell-search{min-width:40px;width:40px;padding:0;justify-content:center}.pt-shell-search span:nth-child(2),.pt-shell-search kbd{display:none}.pt-shell-sidebar{width:min(286px,86vw);z-index:122;transform:translateX(-104%);transition:transform .18s ease;box-shadow:20px 0 50px rgba(0,0,0,.18)}.pt-sidebar-open .pt-shell-sidebar{transform:translateX(0)}.pt-shell-scrim{z-index:121;display:block}.pt-sidebar-open .pt-shell-scrim{opacity:1;visibility:visible;pointer-events:auto}.pt-shell-main{margin-left:0}.pt-shell-main>.app-shell{width:min(100% - 18px,1540px);padding-top:9px}.pt-settings-drawer{z-index:131}.pt-settings-scrim{z-index:130}.pt-setup-shell{margin-top:12px}.pt-experience-picker{grid-template-columns:1fr}.setup-grid{grid-template-columns:1fr 1fr}.setup-field-wide{grid-column:1/-1}
-  body[data-trainer-experience="anamnesis"] .station-workspace-layout{grid-template-columns:1fr!important;gap:9px;}
-  body[data-trainer-experience="anamnesis"] .patient-focus-window{grid-column:1;grid-row:1;position:static;max-height:none;}
-  body[data-trainer-experience="anamnesis"] .patient-focus-stage{height:42vh;min-height:290px;}
-  body[data-trainer-experience="anamnesis"] .patient-focus-stage .avatar-mount{min-height:280px;}
-  body[data-trainer-experience="anamnesis"] .workspace-window{grid-column:1;grid-row:2;min-height:auto;}
-  body[data-trainer-experience="anamnesis"] .workspace-panel .chat-log{min-height:44vh;max-height:54vh;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .station-workspace-layout{grid-template-columns:1fr!important;gap:9px;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-window{grid-column:1;grid-row:1;position:static;max-height:none;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-stage{height:42vh;min-height:290px;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .patient-focus-stage .avatar-mount{min-height:280px;}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .workspace-window{grid-column:1;grid-row:2;min-height:auto;}
+  body[data-trainer-experience="full"] .patient-rail{grid-column:1;grid-row:3;grid-template-columns:minmax(0,1fr);}
+  body:is([data-trainer-experience="anamnesis"],[data-trainer-experience="full"]) .workspace-panel .chat-log{min-height:44vh;max-height:54vh;}
   .station-panel-v2{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}.station-actions{justify-content:flex-start!important;flex-wrap:wrap}.station-heading h1{font-size:18px}.station-brief{font-size:10.5px!important}.anamnesis-score-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:560px){

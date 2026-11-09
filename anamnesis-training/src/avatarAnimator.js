@@ -7,7 +7,7 @@ const state = {
 
 async function loadPatient3DRenderer(timeoutMs = 12000) {
   if (!patient3DRendererModulePromise) {
-    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-exam-4')
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=clinical-exam-5')
       .catch(error => { patient3DRendererModulePromise = null; throw error; });
   }
   let timer;
@@ -81,6 +81,7 @@ async function initializeCurrentEnvironment() {
     if (generation !== state.generation) return false;
     renderer = new Patient3DRenderer(state.mount, {
       ...state.options, activeCase: state.activeCase,
+      bedsideControls: document.getElementById('patientBedsideControls'),
       onError: error => showFailure(error, renderer, generation)
     });
     state.renderer3d = renderer;

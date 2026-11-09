@@ -5,7 +5,7 @@ import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debr
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool,  isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=clinical-exam-4';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool,  isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=clinical-exam-5';
 import { phrasePatientReply, prepareAnonymousContribution, prepareQuestionWithAI, recordLearningEvent } from './aiSupport.js?v=134';
 import { buildApiUrl, getAiHealth, getApiBaseUrl } from '../../src/ai/client.js';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';

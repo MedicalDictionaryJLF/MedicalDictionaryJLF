@@ -49,14 +49,14 @@ async function openPage(options) {
 }
 async function observeRenderer(page) {
   await page.evaluate(async () => {
-    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=clinical-exam-4');
+    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=clinical-exam-5');
     const setup = Patient3DRenderer.prototype.createInspectionPoints;
     Patient3DRenderer.prototype.createInspectionPoints = function(...args) { setup.apply(this, args); window.examTestRenderer = this; };
   });
 }
-async function start(page, id, mode = 'practice') {
+async function start(page, id, mode = 'practice', experience = 'full') {
   if (await page.locator('#restartBtn').isVisible()) await page.locator('#restartBtn').click();
-  await page.locator('[data-trainer-experience="full"]').click();
+  await page.locator(`button[data-trainer-experience="${experience}"]`).click();
   await page.locator('#caseSelect').selectOption(id);
   await page.locator('#modeSelect').selectOption(mode);
   await page.locator('#startTrainingBtn').click();
@@ -79,7 +79,8 @@ async function canvasClick(page, site, touch = false, electrode = false) {
     const r = window.examTestRenderer, marker = (electrode?r.leadPoints:r.inspectionPoints).find(item => (electrode?item.userData.leadId:item.userData.siteId)===id);
     const p = marker.getWorldPosition(marker.position.clone()).project(r.camera), box = r.canvas.getBoundingClientRect();
     const x = box.left + (p.x+1)*box.width/2, y = box.top + (1-p.y)*box.height/2;
-    const hit=document.elementFromPoint(x,y);return { x, y, visible: marker.visible, unobstructed: hit===r.canvas, obscurer:hit?.className, box:box.toJSON() };
+    const hit = document.elementFromPoint(x,y);
+    return { x, y, visible: marker.visible, unobstructed: hit === r.canvas, obscurer: hit === r.canvas ? null : hit?.outerHTML.slice(0, 140), box: box.toJSON() };
   },{id:site,electrode});
   assert.ok(point.visible && point.unobstructed, `The ${site} marker is hidden by the layout: ${JSON.stringify(point)}`);
   if (touch) await page.touchscreen.tap(point.x,point.y); else await page.mouse.click(point.x,point.y);
@@ -88,6 +89,7 @@ async function verifyFailure(page) {
   await errorReady(page);
   assert.equal(await page.locator('#avatarMount strong').textContent(),'3D environment cannot be loaded.');
   assert.equal(await page.locator('#avatarMount canvas, #avatarMount img, #avatarMount svg, #avatarFallback').count(),0);
+  assert.equal(await page.locator('#patientBedsideControls .patient3d-bedside-panel').count(),0);
   assert.equal(await page.locator('#openEcgBtn').isEnabled(),false);
   const buttons = await page.locator('[data-exam-tool]').all();
   for (const button of buttons) assert.equal(await button.isEnabled(),false);
@@ -111,8 +113,16 @@ try {
   if (process.env.PT_BROWSER_SCOPE !== 'mobile') {
   const desktop = await openPage({viewport:{width:1450,height:1000}});
   const { page, faults } = desktop;
+  const layout = () => page.evaluate(() => ['.patient-focus-window', '.workspace-window'].map(selector => {
+    const { x, width } = document.querySelector(selector).getBoundingClientRect();
+    return [Math.round(x), Math.round(width)];
+  }));
+  await start(page,'chest_pain_acs_risk','practice','anamnesis');
+  await sleepReady(page);
+  const anamnesisLayout = await layout();
   await start(page,'chest_pain_acs_risk');
   await sleepReady(page);
+  assert.deepEqual(await layout(), anamnesisLayout, 'Anamnesis and full encounter patient cards must line up');
   console.log('WebGL renderer:',await page.evaluate(()=>{const gl=window.examTestRenderer.renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);}));
   await page.locator('#questionInput').fill('What is your main problem?');
   await page.locator('#sendQuestionBtn').click();
@@ -120,6 +130,7 @@ try {
   await page.locator('[data-workspace-target="reasoning"]').click();
   await page.locator('[data-note-key="history"]').fill('Software WebGL QA: preserve these clinical notes.');
   await page.locator('#openExamBtn').click();
+  assert.deepEqual(await layout(), anamnesisLayout, 'Opening the examination must not move the patient card');
   await page.locator('[data-exam-tool="inspect"]').click();
   await canvasClick(page,'general');
   assert.match(await page.locator('.clinical-findings-record').innerText(),/clammy/i);
@@ -132,16 +143,31 @@ try {
   assert.match(await page.locator('.clinical-findings-record').innerText(),/finding unavailable/);
   await examination(page,'palpate','radial-right');
   assert.equal(await recordCount(page),4);
+  await page.locator('[data-exam-tool="palpate"]').click();
+  await canvasClick(page, 'abdomen-ruq');
+  assert.equal(await page.locator('[data-position]').inputValue(), 'abdominal');
+  assert.match(await page.locator('.patient3d-message').innerText(), /supine with knees slightly flexed/i);
+  assert.equal(await recordCount(page),4, 'Moving to the bed must not record an examination');
+  await screenshot(page,'clinical-exam-abdominal-position.jpg');
+  await canvasClick(page, 'abdomen-ruq');
+  assert.equal(await recordCount(page),5);
+  await page.locator('[data-workspace-target="interview"]').click();
+  assert.equal(await page.locator('#patientBedsideControls').isVisible(),false);
+  await page.locator('#openExamBtn').click();
+  await page.locator('[data-position]').selectOption('seated');
   await page.evaluate(()=>window.scrollTo(0,0));
   await screenshot(page,'clinical-exam-desktop.jpg');
   await page.locator('[data-exam-tool="ecg"]').click();
+  assert.equal(await page.locator('#patientBedsideControls .patient3d-bedside-panel').isVisible(),true);
+  assert.deepEqual(await layout(), anamnesisLayout, 'The electrode tray must fit the patient column');
+  await screenshot(page,'clinical-exam-ecg-targets.jpg');
   await lead(page,'RA','LA');
   assert.match(await page.locator('.patient3d-bedside-panel strong').innerText(),/0\/10/);
   await lead(page,'RA');await lead(page,'LA');
   assert.match(await page.locator('.patient3d-bedside-panel strong').innerText(),/2\/10/);
   await page.evaluate(()=>window.examTestRenderer.renderer.getContext().getExtension('WEBGL_lose_context').loseContext());
   await verifyFailure(page);
-  assert.equal(await recordCount(page),4);
+  assert.equal(await recordCount(page),5);
   await screenshot(page,'clinical-exam-failure-desktop.jpg');
   await page.getByRole('button',{name:'Retry loading 3D environment'}).click();
   await sleepReady(page);
@@ -151,13 +177,13 @@ try {
   await page.reload();await observeRenderer(page);
   await page.getByRole('button',{name:'Continue session'}).first().click();
   await sleepReady(page);
-  assert.equal(await recordCount(page),4);
+  assert.equal(await recordCount(page),5);
   assert.equal(await page.locator('[data-note-key="history"]').inputValue(),'Software WebGL QA: preserve these clinical notes.');
   assert.equal(await page.locator('#chatLog .message').count(),2);
   await page.locator('[data-exam-tool="ecg"]').click();
-  for(const id of codes.slice(2)) {
-    if(id==='V2'){await page.locator('[data-select-lead="V2"]').click();await canvasClick(page,'V2',false,true);}
-    else await lead(page,id);
+  for (const id of codes.slice(2)) {
+    await page.locator(`[data-select-lead="${id}"]`).click();
+    await canvasClick(page, id, false, true);
   }
   await page.locator('#ecgViewerModal.visible').waitFor();
   await page.waitForFunction(()=>{const image=document.querySelector('#ecgRecordingImage');return image.complete&&image.naturalWidth>0;});
@@ -169,7 +195,7 @@ try {
   await page.getByRole('button',{name:'View record'}).first().click();
   assert.match(await page.locator('#patientTrainerRecordContent').innerText(),/Clinical encounter score/);
   assert.equal(desktop.pageErrors.length,0,desktop.pageErrors.join('\n'));
-  console.log('Desktop: real canvas raycast, four modalities, ECG wrong/correct, context loss, retry, reload, handover and stored report PASS');
+  console.log('Desktop: shared layout, four examination techniques, abdominal positioning, ECG raycast, failure/retry, session restore and stored report PASS');
   await browser.close();
   if (process.env.PT_BROWSER_SCOPE === 'desktop') process.exit(0);
   browser = await launchBrowser();
@@ -187,6 +213,9 @@ try {
     assert.equal(await recordCount(mobile.page),1,`${patient.id}: tap on general appearance did not record a finding`);
     await mobile.page.locator('[data-position]').selectOption('reclined');
     await examination(mobile.page,'palpate','abdomen-ruq');
+    assert.equal(await mobile.page.locator('[data-position]').inputValue(), 'abdominal');
+    assert.equal(await recordCount(mobile.page),1, `${patient.id}: positioning recorded a palpation`);
+    await canvasClick(mobile.page,'abdomen-ruq',true);
     assert.equal(await recordCount(mobile.page),2,`${patient.id}: RUQ palpation did not record`);
     await mobile.page.locator('[data-focus="back"]').click();
     await examination(mobile.page,'percuss','flank-right');
@@ -202,7 +231,11 @@ try {
       await screenshot(mobile.page,'clinical-exam-mobile.jpg');
     }
     await mobile.page.locator('[data-exam-tool="ecg"]').click();
-    for(const id of codes) await lead(mobile.page,id);
+    for(const id of codes.slice(0,4)) await lead(mobile.page,id);
+    for(const id of codes.slice(4)) {
+      await mobile.page.locator(`[data-select-lead="${id}"]`).click();
+      await canvasClick(mobile.page,id,true,true);
+    }
     if(patient.ecg.available) await mobile.page.locator('#closeEcgBtn').click();
     else assert.equal(await mobile.page.locator('#ecgViewerModal.visible').count(),0);
     assert.match(await mobile.page.locator('.patient3d-bedside-panel strong').innerText(),/10\/10/);
