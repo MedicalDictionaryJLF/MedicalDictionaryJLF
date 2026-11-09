@@ -3,11 +3,14 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { derivePatientAffect } from '../interaction/patientAffect.js';
 import { getPatientAsset, resolveVisualState, reportedVital } from './patientAssets.js?v=clinical-3d-3';
-import { EXAM_SITES, ECG_LEADS, getBedsideFinding, attemptLeadPlacement } from './bedsideInteractions.js';
+import { EXAM_SITES, ECG_LEADS, getBedsideFinding, attemptLeadPlacement } from './bedsideInteractions.js?v=clinical-exam-5';
+import { createLandmarkResolver } from './patientLandmarks.js';
+import { buildAbdominalPosition } from './abdominalPosition.js';
 import { playBedsideAudio, stopBedsideAudio, setBedsideVolume, closeBedsideAudio } from './bedsideAudio.js';
 
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,Number.isFinite(n)?n:min));
 const smooth=(v,target,dt,rate=5)=>THREE.MathUtils.lerp(v,target,1-Math.exp(-dt*rate));
+const isSupine = position => position === 'reclined' || position === 'abdominal';
 const VISEMES=['viseme_aa','viseme_E','viseme_O','viseme_PP','viseme_FF','viseme_SS'];
 const FACE_KEYS=['eyeBlinkLeft','eyeBlinkRight','eyeSquintLeft','eyeSquintRight','browDownLeft','browDownRight','browInnerUp','mouthPressLeft','mouthPressRight','mouthFrownLeft','mouthFrownRight','jawOpen','mouthPucker',...VISEMES,'eyeLookDownLeft','eyeLookDownRight','eyeLookUpLeft','eyeLookUpRight','eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight'];
 
@@ -37,10 +40,9 @@ export class Patient3DRenderer {
       ]).finally(()=>clearTimeout(timeout));
       if (this.disposed) {this.disposeObject(character.scene);this.disposeObject(room.scene);return false;}
       this.patient=character.scene;this.environment=room.scene;this.patient.name=`Patient_${this.asset.slug}`;
-      this.scene.add(this.environment,this.patient);this.prepareAssets(character);this.createInspectionPoints();
-      if(this.inspectionPoints.length!==EXAM_SITES.length||this.leadPoints.length!==ECG_LEADS.length)throw new Error('Patient skeleton does not support all anatomical targets');
-      this.mixer=new THREE.AnimationMixer(this.patient);
-      for (const clip of character.animations) this.actions.set(clip.name,this.mixer.clipAction(clip));
+      this.scene.add(this.environment,this.patient);this.prepareAssets(character);
+      if (this.options.allowInspection !== false) this.createInspectionPoints();
+      this.prepareAnimations(character.animations);
       const missing=['PositionStanding','PositionSeated','PositionReclined','IdleBreathing','RespiratoryEffort','RestArms','ChestPain','Blink','Talking','PainExpression'].filter(n=>!this.actions.has(n));
       if (missing.length) throw new Error(`Character animation clips missing: ${missing.join(', ')}`);
       this.setSlot('breath','IdleBreathing',0);this.setSlot('arms','RestArms',0);this.updateState(true);
@@ -87,6 +89,7 @@ export class Patient3DRenderer {
     toolbar.innerHTML=`<div class="patient3d-view-buttons"><button type="button" data-focus="face" title="Frame the face">Face</button><button type="button" data-focus="patient">Patient</button><button type="button" data-focus="back">Back</button><button type="button" data-focus="room">Room</button><button type="button" data-inspect aria-pressed="false">Examine</button><button type="button" data-expand aria-label="Expand patient view">⛶</button></div><div class="patient3d-options"><label data-animation-control><span>Animation</span><select data-animation-mode aria-label="Clinical animation mode"><option value="case">Follow case</option><option value="resting">Resting preview</option><option value="symptomatic">Symptom preview</option></select></label><label><span>Position</span><select data-position aria-label="Patient position"><option value="case">Follow case</option><option value="standing">Standing</option><option value="seated">Seated</option><option value="reclined">Reclined</option></select></label><label data-exam-control hidden><span>Technique</span><select data-exam-technique aria-label="Examination technique"><option value="inspect">Inspect</option><option value="auscultate">Auscultate</option><option value="palpate">Palpate</option><option value="percuss">Percuss</option><option value="ecg">ECG leads</option></select></label></div>`;
     this.toolbar=toolbar;this.container.append(toolbar);this.message=document.createElement('div');this.message.className='patient3d-message';this.message.setAttribute('aria-live','polite');this.container.append(this.message);
     if(this.options.allowInspection===false)toolbar.querySelector('[data-inspect]').hidden=true;
+    else toolbar.querySelector('[data-position]').add(new Option('Supine · knees flexed', 'abdominal'));
     if(this.options.trainingMode==='exam')toolbar.querySelector('[data-animation-control]').hidden=true;
     toolbar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.focus)this.focus(b.dataset.focus);if(b.hasAttribute('data-inspect'))this.toggleInspection();if(b.hasAttribute('data-expand'))this.toggleExpanded();},{signal:this.abort.signal});
     toolbar.querySelector('[data-animation-mode]').addEventListener('change',e=>this.setClinicalMode(e.target.value),{signal:this.abort.signal});
@@ -142,6 +145,15 @@ export class Patient3DRenderer {
     this.createWearableEquipment();this.animationNames=character.animations.map(c=>c.name);
   }
 
+  prepareAnimations(clips) {
+    const reclined = clips.find(clip => clip.name === 'PositionReclined');
+    if (reclined && this.options.allowInspection !== false) {
+      clips = [...clips, buildAbdominalPosition(this.patient, this.bones, reclined, this.cover)];
+    }
+    this.mixer = new THREE.AnimationMixer(this.patient);
+    for (const clip of clips) this.actions.set(clip.name, this.mixer.clipAction(clip));
+  }
+
   preparePatientMaterial(material) {
     if(material.name==='PatientEyeCorneaClear'){
       // The atlas's lost corneal alpha must not turn a clear outer shell into
@@ -167,17 +179,26 @@ export class Patient3DRenderer {
   }
 
   createInspectionPoints() {
-    this.inspectionPoints=[];this.leadPoints=[];
-    const marker=(bone,offset,color,radius)=>{const point=new THREE.Mesh(new THREE.SphereGeometry(radius,12,8),new THREE.MeshBasicMaterial({color,depthTest:false,transparent:true,opacity:.9}));point.renderOrder=20;point.position.set(...offset);point.visible=false;bone.add(point);return point;};
-    for(const site of EXAM_SITES){const bone=this.bones.get(site.bone);if(!bone)continue;const point=marker(bone,site.offset,0x53e4cc,.029);point.userData={siteId:site.id,label:site.label};this.inspectionPoints.push(point);}
-    for(const lead of ECG_LEADS){
-      const bone=this.bones.get(lead.bone),joint=this.bones.get(lead.distalJoint);
-      if(!bone||(lead.distalJoint&&!joint))continue;
-      const point=marker(bone,lead.offset,new THREE.Color(lead.color),.027);
-      if(joint)point.position.addScaledVector(bone.worldToLocal(joint.getWorldPosition(new THREE.Vector3())),.84);
-      point.userData={leadId:lead.id,label:lead.hint};this.leadPoints.push(point);
-    }
-    this.inspectionList=document.createElement('div');this.inspectionList.className='patient3d-inspection-list patient3d-bedside-panel';this.inspectionList.hidden=true;this.container.append(this.inspectionList);
+    const resolve = createLandmarkResolver(this.patient, this.bones);
+    const marker = (definition, key, label, color, radius) => {
+      const anchor = resolve(definition.anchor);
+      if (!anchor?.bone) throw new Error(`Anatomical surface not found for ${definition.id}`);
+      const geometry = new THREE.SphereGeometry(radius, 12, 8);
+      const material = new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: .9, toneMapped: false });
+      const point = new THREE.Mesh(geometry, material);
+      point.renderOrder = 20;
+      point.position.copy(anchor.offset);
+      point.visible = false;
+      point.userData = { [key]: definition.id, label, normal: definition.anchor.surface ? anchor.normal : null };
+      anchor.bone.add(point);
+      return point;
+    };
+    this.inspectionPoints = EXAM_SITES.map(site => marker(site, 'siteId', site.label, 0x53e4cc, site.id === 'general' ? .023 : .016));
+    this.leadPoints = ECG_LEADS.map(lead => marker(lead, 'leadId', lead.hint, lead.color, .013));
+    this.inspectionList = document.createElement('div');
+    this.inspectionList.className = 'patient3d-inspection-list patient3d-bedside-panel';
+    this.inspectionList.hidden = true;
+    this.placeBedsideControls();
     this.inspectionList.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;
       if(button.dataset.examSite){const site=EXAM_SITES.find(item=>item.id===button.dataset.examSite);if(site?.view==='back')this.focus('back');this.examineSite(button.dataset.examSite,'accessible');}
       if(button.dataset.selectLead){this.selectedLead=button.dataset.selectLead;this.renderBedsidePanel();this.status(`${this.selectedLead}: choose the anatomical position`);}
@@ -187,6 +208,13 @@ export class Patient3DRenderer {
       if(button.hasAttribute('data-audio-stop'))stopBedsideAudio();
     },{signal:this.abort.signal});
     this.inspectionList.addEventListener('input',event=>{if(event.target.matches('[data-audio-volume]')){this.volume=Number(event.target.value);setBedsideVolume(this.volume);}},{signal:this.abort.signal});
+  }
+
+  placeBedsideControls() {
+    if (!this.inspectionList) return;
+    const dock = this.expanded ? null : this.options.bedsideControls;
+    this.inspectionList.classList?.toggle('patient3d-bedside-docked', Boolean(dock));
+    (dock || this.container).append(this.inspectionList);
   }
 
   canExamine(){return this.loaded&&!this.disposed&&!this.failed&&this.interactionEnabled;}
@@ -206,14 +234,12 @@ export class Patient3DRenderer {
   updateMarkerVisibility(){
     if(!this.patient||!this.camera)return;
     this.patient.updateMatrixWorld(true);
-    const v2=this.leadPoints?.find(p=>p.userData.leadId==='V2'),v4=this.leadPoints?.find(p=>p.userData.leadId==='V4'),v3=this.leadPoints?.find(p=>p.userData.leadId==='V3');
-    if(v2&&v3&&v4){const middle=v2.getWorldPosition(new THREE.Vector3()).lerp(v4.getWorldPosition(new THREE.Vector3()),.5);v3.position.copy(v3.parent.worldToLocal(middle));}
     for(const point of [...(this.inspectionPoints||[]),...(this.leadPoints||[])]){
       const site=EXAM_SITES.find(s=>s.id===point.userData.siteId);
       let visible=this.canExamine()&&(site?this.examTool!=='ecg'&&site.techniques.includes(this.examTool):this.examTool==='ecg');
-      if(visible&&site?.view==='back'&&this.actualPosition==='reclined')visible=false;
-      if(visible&&point.parent.name.startsWith('spine')){
-        const normal=new THREE.Vector3(0,0,site?.view==='back'?-1:1).transformDirection(point.parent.matrixWorld);
+      if(visible&&site?.view==='back'&&isSupine(this.actualPosition))visible=false;
+      if(visible&&point.userData.normal){
+        const normal=point.userData.normal.clone().transformDirection(point.parent.matrixWorld);
         const towardCamera=this.camera.position.clone().sub(point.getWorldPosition(new THREE.Vector3())).normalize();
         visible=normal.dot(towardCamera)>.05;
       }
@@ -235,6 +261,11 @@ export class Patient3DRenderer {
   examineSite(id,input='3d'){
     if(!this.canExamine())return {ok:false,reason:'3D environment unavailable or attempt completed.'};
     const result=getBedsideFinding(this.activeCase,id,this.examTool);if(!result)return {ok:false,reason:'This technique is not valid at the selected site.'};
+    if (this.examTool === 'palpate' && result.examinationId === 'abdomen' && this.actualPosition !== 'abdominal') {
+      this.setPosition('abdominal');
+      this.status('Patient supine with knees slightly flexed. Select the abdominal site again to palpate.');
+      return { ok: false, repositioned: true };
+    }
     result.audioNote=result.sound?.label||(['auscultate','percuss'].includes(this.examTool)?'No sound is authored for this technique and site.':'');
     result.position=this.actualPosition;result.input=input;
     this.selectedSite=id;this.lastExamination=result;
@@ -264,8 +295,11 @@ export class Patient3DRenderer {
     const position=this.positionOverride || this.visual.position || this.asset.preferredPosition,changed=position!==this.actualPosition;this.actualPosition=position;
     // Move pose and furniture together. Interpolating a standing body through
     // an already-positioned mattress causes visible body/bed intersections.
-    this.setSlot('posture',position==='standing'?'PositionStanding':position==='reclined'?'PositionReclined':'PositionSeated',0);
-    if(this.chair)this.chair.visible=position==='seated';if(this.bed)this.bed.position.set(position==='reclined'?0:1.55,0,position==='reclined'?0:-.45);
+    const clip = { standing: 'PositionStanding', seated: 'PositionSeated', reclined: 'PositionReclined', abdominal: 'PositionAbdominal' }[position];
+    this.setSlot('posture',clip,0);
+    if(this.chair)this.chair.visible=position==='seated';
+    if(this.bed)this.bed.position.set(isSupine(position)?0:1.55,0,isSupine(position)?0:-.45);
+    if(changed&&position==='abdominal')this.setSlot('arms','RestArms',0);
     // The existing flat bedspread stays on the mattress below the clothed
     // patient. It is not raised through the abdomen, shoulders or neck.
     if(changed||immediate){this.mixer.update(0);this.patient?.updateMatrixWorld(true);}
@@ -275,11 +309,23 @@ export class Patient3DRenderer {
 
   setSlot(slot,name,fade=.6){if(this.slots.get(slot)===name)return;const a=this.actions.get(name);if(!a)return;const previous=this.actions.get(this.slots.get(slot));if(fade)previous?.fadeOut(fade);else previous?.stop();if(slot==='posture')for(const [key,action] of this.actions)if(key.startsWith('Position')&&key!==name)action.stop();a.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();if(fade)a.fadeIn(fade);this.slots.set(slot,name);}
   setClinicalMode(mode='case'){this.stopDemo();this.mode=['case','resting','symptomatic'].includes(mode)?mode:'case';this.toolbar.querySelector('[data-animation-mode]').value=this.mode;this.updateState();this.status(this.mode==='case'?'Following the clinical case':this.mode==='resting'?'Resting animation preview · case unchanged':'Documented symptom preview · case unchanged');}
-  setPosition(position='case'){this.stopDemo();this.positionOverride=['standing','seated','reclined'].includes(position)?position:null;this.toolbar.querySelector('[data-position]').value=this.positionOverride || 'case';this.updateState(true);this.focus('patient');if(this.positionOverride)this.status('Position preview · clinical state unchanged');}
-  setViewMode(mode='encounter'){this.focus(mode==='examination'?'patient':'face');}
+  setPosition(position='case'){
+    this.stopDemo();
+    const supported = ['standing', 'seated', 'reclined'].includes(position) || (position === 'abdominal' && this.actions.has('PositionAbdominal'));
+    this.positionOverride = supported ? position : null;
+    this.toolbar.querySelector('[data-position]').value = this.positionOverride || 'case';
+    this.updateState(true);
+    this.focus('patient');
+    this.updateMarkerVisibility();
+    if(this.positionOverride)this.status(position === 'abdominal' ? 'Abdominal examination position. The patient is supine with knees slightly flexed.' : 'Position preview · clinical state unchanged');
+  }
+  setViewMode(mode='encounter'){
+    if (mode !== 'examination' && this.examTool !== 'off') this.setExaminationTool('off');
+    this.focus(mode === 'examination' ? 'patient' : 'face');
+  }
   focus(mode='face',immediate=false){
     if(!this.camera||!this.controls)return;this.focusMode=mode;this.patient?.updateMatrixWorld(true);
-    const reclined=this.actualPosition==='reclined';
+    const reclined=isSupine(this.actualPosition);
     if(mode==='back'&&reclined){this.setPosition('seated');return this.focus('back',immediate);}
     if(mode==='room'){
       this.controls.target.set(.1,.9,-.3);this.camera.position.copy(this.controls.target).add(new THREE.Vector3(3.7,2.2,4.7));
@@ -293,7 +339,9 @@ export class Patient3DRenderer {
       }else{
         bounds=new THREE.Box3();this.patient?.traverse(object=>{if(!object.isSkinnedMesh)return;object.skeleton.update();object.computeBoundingBox();bounds.union(object.boundingBox.clone().applyMatrix4(object.matrixWorld));});
         if(bounds.isEmpty())bounds.setFromCenterAndSize(new THREE.Vector3(0,.85,0),new THREE.Vector3(.7,1.7,.5));
-        direction=mode==='back'?(reclined?new THREE.Vector3(.3,2.6,-2.3):new THREE.Vector3(-.35,.18,-1)):(reclined?new THREE.Vector3(.6,2.6,2.3):new THREE.Vector3(.35,.18,1));
+        if (mode === 'back') direction = new THREE.Vector3(-.35, .18, -1);
+        else if (this.actualPosition === 'abdominal' && this.examTool === 'palpate') direction = new THREE.Vector3(-1.25, 2.4, 1.45);
+        else direction = reclined ? new THREE.Vector3(.85, 2.6, 2.1) : new THREE.Vector3(.42, .18, 1);
       }
       this.frameBounds(bounds,direction);
     }
@@ -304,14 +352,28 @@ export class Patient3DRenderer {
     direction.normalize();const right=new THREE.Vector3().crossVectors(this.camera.up,direction).normalize(),up=new THREE.Vector3().crossVectors(direction,right).normalize(),target=bounds.getCenter(new THREE.Vector3()),corners=[];
     let low=Infinity,high=-Infinity;
     for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){const corner=new THREE.Vector3(x,y,z);corners.push(corner);const projection=corner.clone().sub(target).dot(up);low=Math.min(low,projection);high=Math.max(high,projection);}
-    // Leave room above the model for the visible overlay controls.
-    target.addScaledVector(up,(high-low)*.1);const tangent=Math.tan(THREE.MathUtils.degToRad(this.camera.fov/2));let distance=.5;
-    for(const corner of corners){const delta=corner.sub(target),depth=delta.dot(direction);distance=Math.max(distance,depth+Math.abs(delta.dot(up))/tangent,depth+Math.abs(delta.dot(right))/(tangent*Math.max(.2,this.camera.aspect)));}
+    // Keep the examination targets below the toolbar, including when it wraps.
+    let topInset = 0;
+    if (this.inspectionEnabled && this.canvas && this.toolbar) {
+      const view = this.canvas.getBoundingClientRect();
+      topInset = clamp((this.toolbar.getBoundingClientRect().bottom - view.top + 8) / view.height, 0, .4);
+    }
+    const targetBias = Math.max(.1, topInset / (2 * (1 - topInset)));
+    target.addScaledVector(up, (high - low) * targetBias);
+    const tangent = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    let distance = .5;
+    for (const corner of corners) {
+      const delta = corner.sub(target), depth = delta.dot(direction);
+      const vertical = delta.dot(up);
+      const verticalFit = vertical > 0 ? vertical / (1 - 2 * topInset) : -vertical;
+      const horizontalFit = Math.abs(delta.dot(right)) / Math.max(.2, this.camera.aspect);
+      distance = Math.max(distance, depth + Math.max(verticalFit, horizontalFit) / tangent);
+    }
     this.controls.target.copy(target);this.camera.position.copy(target).addScaledVector(direction,distance*1.2);
   }
   setQuality(quality='balanced'){this.quality=quality;if(!this.renderer)return;this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,quality==='mobile'?1:quality==='high'?2:1.5));this.renderer.shadowMap.enabled=quality!=='mobile';this.resize();}
   resize(){if(!this.renderer||!this.camera)return;const w=Math.max(1,this.container.clientWidth),h=Math.max(1,this.container.clientHeight),changed=Math.abs(this.camera.aspect-w/h)>.005;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();if(changed&&this.loaded)this.focus(this.focusMode,true);}
-  toggleExpanded(){this.expanded=!this.expanded;this.container.classList.toggle('patient3d-expanded',this.expanded);this.toolbar.querySelector('[data-expand]').setAttribute('aria-label',this.expanded?'Restore patient view':'Expand patient view');this.resize();}
+  toggleExpanded(){this.expanded=!this.expanded;this.container.classList.toggle('patient3d-expanded',this.expanded);this.toolbar.querySelector('[data-expand]').setAttribute('aria-label',this.expanded?'Restore patient view':'Expand patient view');this.placeBedsideControls();this.resize();}
   setSpeaking(active,text=''){this.stopDemo();this.speech.active=Boolean(active);if(active)this.speech={active:true,text,index:0,boundary:this.elapsed};}
   pulseSpeechBoundary(e={}){if(Number.isFinite(e.charIndex))this.speech.index=e.charIndex;this.speech.boundary=this.elapsed;}
   reactToReply(text='',result={}){this.affect=derivePatientAffect({reply:text,studentInput:result.studentInput || '',rapport:result.rapport ?? 70,snapshot:this.snapshot,casePersonality:this.activeCase.personality});}
@@ -343,7 +405,14 @@ export class Patient3DRenderer {
   updateAnimation(dt) {
     const s=this.visual || resolveVisualState(this.activeCase,this.snapshot,this.mode);
     this.values.pain=smooth(this.values.pain,s.pain,dt);this.values.breath=smooth(this.values.breath,s.breathing,dt);this.values.sweat=smooth(this.values.sweat,s.sweating,dt);this.values.pallor=smooth(this.values.pallor,s.pallor,dt);
-    if(!this.demoClip){this.setSlot('breath',this.values.breath>.3?'RespiratoryEffort':'IdleBreathing',.8);this.setSlot('arms',this.examinationReaction?.until>this.elapsed?this.examinationReaction.gesture:(this.values.pain>.3&&s.gesture!=='RestArms'?s.gesture:'RestArms'),.25);if(s.fatigue>.1)this.setSlot('head','Fatigue',.8);this.actions.get('Fatigue')?.setEffectiveWeight(s.fatigue || 0);}
+    if (!this.demoClip) {
+      this.setSlot('breath',this.values.breath>.3?'RespiratoryEffort':'IdleBreathing',.8);
+      const restingArms = this.actualPosition === 'abdominal' || this.values.pain <= .3;
+      const gesture = this.examinationReaction?.until > this.elapsed ? this.examinationReaction.gesture : restingArms ? 'RestArms' : s.gesture;
+      this.setSlot('arms', gesture, .25);
+      if(s.fatigue>.1)this.setSlot('head','Fatigue',.8);
+      this.actions.get('Fatigue')?.setEffectiveWeight(s.fatigue || 0);
+    }
     this.mixer.update(dt);this.applyFace(dt);
     for(const m of this.skinMaterials){m.roughness=THREE.MathUtils.lerp(m.userData.baseRoughness,.34,this.values.sweat);m.color.copy(m.userData.baseColor).lerp(new THREE.Color('#e7d9c6'),this.values.pallor*.12);}
     if(this.asset.posturalDizziness&&this.actualPosition==='standing'&&this.mode!=='resting'){const root=this.bones.get('Root');if(root)root.rotation.z+=Math.sin(this.elapsed*1.1)*.006;}
@@ -356,5 +425,5 @@ export class Patient3DRenderer {
   getDiagnostics(){return {release:'clinical-3d-3',caseId:this.activeCase.id,character:this.asset.slug,room:this.asset.room,loaded:this.loaded,animations:this.animationNames || [],skinnedMeshes:this.patient?this.collect(this.patient,o=>o.isSkinnedMesh).length:0,facialMeshes:this.morphMeshes.length,bones:this.bones.size,examSites:this.inspectionPoints?.length||0,ecgTargets:this.leadPoints?.length||0,ecgPlaced:Object.keys(this.placedLeads).length,position:this.actualPosition,frames:this.frames,triangles:this.renderer?.info.render.triangles || 0,quality:this.quality,speaking:this.speech.active,previewMode:this.mode,drawCalls:this.renderer?.info.render.calls || 0};}
   collect(root,predicate){const values=[];root.traverse(o=>{if(predicate(o))values.push(o);});return values;}
   disposeObject(root){const geometry=new Set(),materials=new Set(),textures=new Set();root?.traverse(o=>{if(o.geometry)geometry.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}o.skeleton?.dispose?.();});for(const item of [...geometry,...materials,...textures])item.dispose();}
-  dispose(){if(this.disposed)return;this.disposed=true;this.running=false;cancelAnimationFrame(this.raf);this.abort.abort();closeBedsideAudio();this.resizeObserver?.disconnect();this.intersectionObserver?.disconnect();this.controls?.dispose();this.mixer?.stopAllAction();if(this.patient)this.mixer?.uncacheRoot(this.patient);this.disposeObject(this.scene);this.renderer?.dispose();if(this.renderer&&!this.renderer.getContext().isContextLost())this.renderer.forceContextLoss();this.container?.classList.remove('patient-3d-active','patient3d-expanded');}
+  dispose(){if(this.disposed)return;this.disposed=true;this.running=false;cancelAnimationFrame(this.raf);this.abort.abort();closeBedsideAudio();this.resizeObserver?.disconnect();this.intersectionObserver?.disconnect();this.controls?.dispose();this.mixer?.stopAllAction();if(this.patient)this.mixer?.uncacheRoot(this.patient);this.inspectionList?.remove();this.disposeObject(this.scene);this.renderer?.dispose();if(this.renderer&&!this.renderer.getContext().isContextLost())this.renderer.forceContextLoss();this.container?.classList.remove('patient-3d-active','patient3d-expanded');}
 }

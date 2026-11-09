@@ -56,18 +56,6 @@ body[data-trainer-experience=full] .patient-focus-stage .avatar-mount{position:r
 body[data-trainer-experience=full] .patient3d-error button.secondary{background:#236452;color:#fff;border-color:#236452}
 body[data-theme=dark][data-trainer-experience=full] .patient3d-error button.secondary{background:#91d6bd;color:#102d25;border-color:#91d6bd}
 @container (min-width:680px){body[data-trainer-experience=full] .reasoning-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}}
-@media(min-width:1081px){body[data-trainer-experience=full] .station-workspace-layout{grid-template-columns:minmax(164px,.48fr) minmax(300px,1fr) minmax(320px,1.16fr)}}
-@media(min-width:761px){body[data-trainer-experience=full][data-patient-workspace=examination] .station-workspace-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
-@media(max-width:1080px){body[data-trainer-experience=full][data-patient-workspace=investigations] .workspace-window{grid-column:1/-1}}
-@media(max-width:760px){
-  body[data-trainer-experience=full] .station-workspace-layout,body[data-trainer-experience=full][data-patient-workspace=examination] .station-workspace-layout{grid-template-columns:minmax(0,1fr)!important}
-  body[data-trainer-experience=full] .encounter-stepbar{max-width:100%;min-width:0}
-  body[data-trainer-experience=full] .patient-focus-window,body[data-trainer-experience=full][data-patient-workspace=examination] .patient-focus-window{min-height:0;max-height:none}
-  body[data-trainer-experience=full] .patient-focus-stage,body[data-trainer-experience=full][data-patient-workspace=examination] .patient-focus-stage{height:clamp(290px,47dvh,480px);min-height:0}
-  body[data-trainer-experience=full] .patient-focus-stage .avatar-mount{height:100%;min-height:0}
-  body[data-trainer-experience=full] .patient-rail{grid-row:auto}
-  body[data-trainer-experience=full][data-patient-workspace=examination] .workspace-window{min-height:0}
-}
 body[data-trainer-experience=full] .encounter-step{background:var(--md-subtle,#edf4ef);color:var(--md-text,#19382c)}
 body[data-trainer-experience=full] .encounter-step.active{background:#d9eee5;color:#154638;border-color:#a8d0c0}
 body[data-theme=dark][data-trainer-experience=full] .encounter-step.active{background:#28504a;color:#e5f6ef;border-color:#6f9b8e}
@@ -75,8 +63,9 @@ body[data-trainer-experience=full] .encounter-step small{color:inherit;opacity:.
 .clinical-exam-progress{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--md-line,#d1dfd7);border-radius:9px;line-height:1.35;overflow-wrap:anywhere}
 .clinical-exam-progress span{font-size:.78em;color:var(--md-muted,#486457)}
 .clinical-exam-progress.performed{border-color:#8dbfb1}
-.patient-focus-stage:has(.patient3d-bedside-panel:not([hidden])) .patient-scene-status{display:none}
-@media(max-width:650px){
+.patient-focus-window:has(.patient3d-bedside-panel:not([hidden])) .patient-scene-status{display:none}
+.patient-3d-active{container-type:inline-size}
+@container (max-width:430px){
   .patient3d-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
   .patient3d-toolbar .patient3d-view-buttons{flex-wrap:nowrap;justify-content:space-between;gap:2px;padding:3px}
   .patient3d-toolbar .patient3d-view-buttons button{flex:0 1 auto;min-width:0;min-height:38px;padding:5px 7px}
@@ -87,3 +76,21 @@ body[data-trainer-experience=full] .encounter-step small{color:inherit;opacity:.
 .patient3d-bedside-panel details.patient3d-audio{display:block;padding:0 0 0 4px;margin:4px 5px 0}
 .patient3d-audio-controls{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
 .patient3d-bedside-panel details.patient3d-audio summary{min-height:24px}
+
+/* Place the site picker and electrode tray below the patient view. */
+.patient-bedside-controls{min-width:0}
+.patient-bedside-controls:not(:has(.patient3d-bedside-panel:not([hidden]))){display:none}
+.patient3d-bedside-panel.patient3d-bedside-docked{
+  position:static;max-height:none;max-width:none;padding:8px 10px;
+  border:0;border-radius:0;border-top:1px solid var(--md-line);
+  background:var(--md-subtle);color:var(--md-text);
+}
+.patient3d-bedside-docked .patient3d-panel-help,.patient3d-bedside-docked summary{color:var(--md-muted)}
+.patient3d-bedside-docked .patient3d-lead-tray{flex-wrap:wrap}
+.patient3d-bedside-panel.patient3d-bedside-docked button{
+  background:var(--md-panel);color:var(--md-text);border-color:var(--md-line);
+}
+.patient3d-bedside-panel.patient3d-bedside-docked button[aria-pressed=true]{
+  background:var(--md-brand-soft);color:var(--md-brand-deep);
+}
+.patient3d-bedside-docked .patient3d-reset{width:auto;margin-left:4px}

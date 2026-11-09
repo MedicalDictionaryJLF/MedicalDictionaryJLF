@@ -1,49 +1,57 @@
 import { resolveExaminationFinding } from '../cases/examinationFindings.js';
 
-// Landmarks are attached to the same named skeleton in all eight characters.
-// Patient left/right follows anatomy, not the viewer's mirrored screen position.
-const site = (id, label, bone, offset, techniques, findingKey, view = 'front') =>
-  Object.freeze({ id, label, bone, offset, techniques, findingKey, view });
+// Torso coordinates are measured from the collarbones toward the pelvis and
+// across the shoulder half-width. Positive lateral values are patient left.
+const torso = (lateral, down, surface = 'front') => ({ lateral, down, surface });
+const segment = (bone, distalJoint, along, radialSide) => ({ bone, distalJoint, along, radialSide });
+const site = (id, label, anchor, techniques, findingKey) =>
+  Object.freeze({ id, label, anchor, techniques, findingKey, view: anchor.surface === 'back' ? 'back' : 'front' });
+
+const secondInterspace = .14;
+const fourthInterspace = .31;
+const fifthInterspace = .40;
+const midclavicular = .61;
+const parasternal = .22;
 
 export const EXAM_SITES = Object.freeze([
-  site('general', 'General appearance', 'head', [0, .08, .12], ['inspect'], 'general'),
-  site('chest', 'Chest appearance and respiratory effort', 'spine_03', [0, .05, .17], ['inspect'], 'lungs'),
-  site('heart-aortic', 'Aortic area', 'spine_03', [-.055, .02, .16], ['auscultate'], 'heart'),
-  site('heart-pulmonic', 'Pulmonic area', 'spine_03', [.055, .02, .16], ['auscultate'], 'heart'),
-  site('heart-tricuspid', 'Tricuspid area · left lower sternal border', 'spine_02', [.04, -.015, .19], ['auscultate'], 'heart'),
-  site('heart-mitral', 'Mitral area', 'spine_02', [.11, -.015, .18], ['auscultate'], 'heart'),
-  site('lung-front-right', 'Right anterior lung', 'spine_03', [-.14, -.02, .14], ['auscultate', 'percuss'], 'lungs'),
-  site('lung-front-left', 'Left anterior lung', 'spine_03', [.14, -.02, .14], ['auscultate', 'percuss'], 'lungs'),
-  site('lung-back-right', 'Right posterior lung', 'spine_03', [-.13, -.03, -.14], ['auscultate', 'percuss'], 'lungs', 'back'),
-  site('lung-back-left', 'Left posterior lung', 'spine_03', [.13, -.03, -.14], ['auscultate', 'percuss'], 'lungs', 'back'),
-  site('chest-wall', 'Anterior chest wall', 'spine_02', [0, .01, .19], ['palpate'], 'chestWall'),
-  site('abdomen-ruq', 'Right upper abdomen', 'spine_01', [-.10, -.03, .18], ['inspect', 'palpate', 'percuss', 'auscultate'], 'abdomen'),
-  site('abdomen-luq', 'Left upper abdomen', 'spine_01', [.10, -.03, .18], ['inspect', 'palpate', 'percuss', 'auscultate'], 'abdomen'),
-  site('abdomen-rlq', 'Right lower abdomen', 'spine_01', [-.10, -.15, .16], ['palpate', 'percuss', 'auscultate'], 'abdomen'),
-  site('abdomen-llq', 'Left lower abdomen', 'spine_01', [.10, -.15, .16], ['palpate', 'percuss', 'auscultate'], 'abdomen'),
-  site('murphy-ruq', 'Murphy manoeuvre · RUQ palpation with inspiration', 'spine_01', [-.10, .015, .18], ['palpate'], 'abdomen'),
-  site('perfusion-right', 'Right hand · warmth and capillary refill', 'hand_r', [0, .08, .04], ['palpate'], 'perfusion'),
-  site('perfusion-left', 'Left hand · warmth and capillary refill', 'hand_l', [0, .08, .04], ['palpate'], 'perfusion'),
-  site('radial-right', 'Right radial pulse', 'hand_r', [0, .025, .035], ['palpate'], 'pulses'),
-  site('radial-left', 'Left radial pulse', 'hand_l', [0, .025, .035], ['palpate'], 'pulses'),
-  site('leg-right', 'Right lower leg', 'calf_r', [0, .13, .045], ['inspect', 'palpate'], 'legs'),
-  site('leg-left', 'Left lower leg', 'calf_l', [0, .13, .045], ['inspect', 'palpate'], 'legs'),
-  site('flank-right', 'Right renal angle', 'spine_01', [-.13, -.04, -.13], ['percuss'], 'abdomen', 'back'),
-  site('flank-left', 'Left renal angle', 'spine_01', [.13, -.04, -.13], ['percuss'], 'abdomen', 'back')
+  site('general', 'General appearance', { bone: 'head', offset: [0, .08, .12] }, ['inspect'], 'general'),
+  site('chest', 'Chest appearance and respiratory effort', torso(0, .27), ['inspect'], 'lungs'),
+  site('heart-aortic', 'Aortic area', torso(-parasternal, secondInterspace), ['auscultate'], 'heart'),
+  site('heart-pulmonic', 'Pulmonic area', torso(parasternal, secondInterspace), ['auscultate'], 'heart'),
+  site('heart-tricuspid', 'Tricuspid area · left lower sternal border', torso(parasternal, .43), ['auscultate'], 'heart'),
+  site('heart-mitral', 'Mitral area', torso(midclavicular, fifthInterspace), ['auscultate'], 'heart'),
+  site('lung-front-right', 'Right anterior lung', torso(-.68, .22), ['auscultate', 'percuss'], 'lungs'),
+  site('lung-front-left', 'Left anterior lung', torso(.68, .22), ['auscultate', 'percuss'], 'lungs'),
+  site('lung-back-right', 'Right posterior lung', torso(-.59, .40, 'back'), ['auscultate', 'percuss'], 'lungs'),
+  site('lung-back-left', 'Left posterior lung', torso(.59, .40, 'back'), ['auscultate', 'percuss'], 'lungs'),
+  site('chest-wall', 'Anterior chest wall', torso(0, .31), ['palpate'], 'chestWall'),
+  site('abdomen-ruq', 'Right upper abdomen', torso(-.49, .63), ['inspect', 'palpate', 'percuss', 'auscultate'], 'abdomen'),
+  site('abdomen-luq', 'Left upper abdomen', torso(.49, .63), ['inspect', 'palpate', 'percuss', 'auscultate'], 'abdomen'),
+  site('abdomen-rlq', 'Right lower abdomen', torso(-.47, .88), ['palpate', 'percuss', 'auscultate'], 'abdomen'),
+  site('abdomen-llq', 'Left lower abdomen', torso(.47, .88), ['palpate', 'percuss', 'auscultate'], 'abdomen'),
+  site('murphy-ruq', 'Murphy manoeuvre · RUQ palpation with inspiration', torso(-.58, .51), ['palpate'], 'abdomen'),
+  site('perfusion-right', 'Right hand · warmth and capillary refill', { bone: 'hand_r', offset: [0, .08, .04] }, ['palpate'], 'perfusion'),
+  site('perfusion-left', 'Left hand · warmth and capillary refill', { bone: 'hand_l', offset: [0, .08, .04] }, ['palpate'], 'perfusion'),
+  site('radial-right', 'Right radial pulse', segment('lowerarm_r', 'hand_r', .96, 'r'), ['palpate'], 'pulses'),
+  site('radial-left', 'Left radial pulse', segment('lowerarm_l', 'hand_l', .96, 'l'), ['palpate'], 'pulses'),
+  site('leg-right', 'Right lower leg', segment('calf_r', 'foot_r', .46), ['inspect', 'palpate'], 'legs'),
+  site('leg-left', 'Left lower leg', segment('calf_l', 'foot_l', .46), ['inspect', 'palpate'], 'legs'),
+  site('flank-right', 'Right renal angle', torso(-.60, .69, 'back'), ['percuss'], 'abdomen'),
+  site('flank-left', 'Left renal angle', torso(.60, .69, 'back'), ['percuss'], 'abdomen')
 ]);
 
-const lead = (id, label, bone, offset, color, hint, distalJoint) => Object.freeze({ id, label, bone, offset, color, hint, distalJoint });
+const lead = (id, label, anchor, color, hint) => Object.freeze({ id, label, anchor, color, hint });
 export const ECG_LEADS = Object.freeze([
-  lead('RA', 'Right arm', 'lowerarm_r', [0, 0, .035], '#d94343', 'Right distal forearm, above the wrist', 'hand_r'),
-  lead('LA', 'Left arm', 'lowerarm_l', [0, 0, .035], '#e4c72d', 'Left distal forearm, above the wrist', 'hand_l'),
-  lead('RL', 'Right leg', 'calf_r', [0, 0, .035], '#343d48', 'Right lower leg, above the ankle', 'foot_r'),
-  lead('LL', 'Left leg', 'calf_l', [0, 0, .035], '#48ae66', 'Left lower leg, above the ankle', 'foot_l'),
-  lead('V1', 'V1', 'spine_03', [-.038, -.075, .174], '#df8842', '4th intercostal space, right sternal border'),
-  lead('V2', 'V2', 'spine_03', [.038, -.075, .174], '#e4c72d', '4th intercostal space, left sternal border'),
-  lead('V3', 'V3', 'spine_02', [.085, .006, .184], '#48ae66', 'Between V2 and V4'),
-  lead('V4', 'V4', 'spine_02', [.125, -.035, .178], '#80533e', '5th intercostal space, left midclavicular line'),
-  lead('V5', 'V5', 'spine_02', [.18, -.035, .145], '#343d48', 'Level with V4, left anterior axillary line'),
-  lead('V6', 'V6', 'spine_02', [.22, -.035, .105], '#7750b1', 'Level with V4, left midaxillary line')
+  lead('RA', 'Right arm', segment('lowerarm_r', 'hand_r', .84), '#d94343', 'Right distal forearm, above the wrist'),
+  lead('LA', 'Left arm', segment('lowerarm_l', 'hand_l', .84), '#e4c72d', 'Left distal forearm, above the wrist'),
+  lead('RL', 'Right leg', segment('calf_r', 'foot_r', .84), '#343d48', 'Right lower leg, above the ankle'),
+  lead('LL', 'Left leg', segment('calf_l', 'foot_l', .84), '#48ae66', 'Left lower leg, above the ankle'),
+  lead('V1', 'V1', torso(-parasternal, fourthInterspace), '#df8842', '4th intercostal space, right sternal border'),
+  lead('V2', 'V2', torso(parasternal, fourthInterspace), '#e4c72d', '4th intercostal space, left sternal border'),
+  lead('V3', 'V3', torso((parasternal + midclavicular) / 2, (fourthInterspace + fifthInterspace) / 2), '#48ae66', 'Between V2 and V4'),
+  lead('V4', 'V4', torso(midclavicular, fifthInterspace), '#80533e', '5th intercostal space, left midclavicular line'),
+  lead('V5', 'V5', torso(0, fifthInterspace, 'anterior-axillary'), '#343d48', 'Level with V4, left anterior axillary line'),
+  lead('V6', 'V6', torso(0, fifthInterspace, 'midaxillary'), '#7750b1', 'Level with V4, left midaxillary line')
 ]);
 
 const EXAMINATION_ID = Object.freeze({ general:'general', perfusion:'perfusion', heart:'cardiovascular', lungs:'respiratory', abdomen:'abdomen', chestWall:'chestWall', pulses:'pulses', legs:'legs' });

@@ -31,9 +31,8 @@ for(const patientCase of PATIENT_CASES){
   renderer.camera=new THREE.PerspectiveCamera(36,1,.03,35);
   renderer.controls={target:new THREE.Vector3(),update(){renderer.camera.lookAt(this.target);renderer.camera.updateMatrixWorld(true);}};
   renderer.toolbar={querySelector:()=>({setAttribute(){},hidden:false,value:''}),querySelectorAll:()=>[]};
-  renderer.mixer=new THREE.AnimationMixer(renderer.patient);
-  for(const clip of loaded.animations)renderer.actions.set(clip.name,renderer.mixer.clipAction(clip));
   renderer.createInspectionPoints();
+  renderer.prepareAnimations(loaded.animations);
   assert.equal(renderer.setExaminationTool('inspect'),false,'No tools before renderer ready');
   renderer.loaded=true;
   assert.equal(renderer.inspectionPoints.length,EXAM_SITES.length,`${patientCase.id}: examination landmark missing`);
@@ -49,6 +48,22 @@ for(const patientCase of PATIENT_CASES){
     }
   }
   renderer.setPosition('standing');
+  const markerPosition = (points, key, id) => points.find(point => point.userData[key] === id).getWorldPosition(new THREE.Vector3());
+  const [v1, v2, v3, v4, v5, v6] = [1, 2, 3, 4, 5, 6].map(index => markerPosition(renderer.leadPoints, 'leadId', `V${index}`));
+  assert.ok(v1.x < 0 && v2.x > 0 && Math.abs(v1.y - v2.y) < .006, 'V1/V2 must straddle the sternum at the same level');
+  assert.ok(v2.y > v4.y + .03 && Math.abs(v3.y - (v2.y + v4.y) / 2) < .007, 'V3 must bridge the fourth and fifth interspaces');
+  assert.ok(v2.x < v3.x && v3.x < v4.x && v4.x < v5.x && v5.x < v6.x, 'V2–V6 must progress toward patient left');
+  assert.ok(Math.abs(v4.y - v5.y) < .003 && Math.abs(v4.y - v6.y) < .003, 'V4–V6 must share a transverse level');
+  assert.ok(v4.distanceTo(v5) > .025 && v5.distanceTo(v6) > .018, 'Lateral chest electrodes must be individually selectable');
+  for (const [code, joint] of [['RL', 'foot_r'], ['LL', 'foot_l']]) {
+    const ankle = renderer.bones.get(joint).getWorldPosition(new THREE.Vector3());
+    const leg = markerPosition(renderer.leadPoints, 'leadId', code);
+    assert.ok(leg.y > ankle.y + .03 && leg.distanceTo(ankle) < .13, `${code} must be above the ankle`);
+  }
+  const sitePosition = id => markerPosition(renderer.inspectionPoints, 'siteId', id);
+  assert.ok(sitePosition('heart-aortic').y > v1.y + .06, 'Aortic area must be above the precordial ECG landmarks');
+  assert.ok(sitePosition('heart-mitral').y > sitePosition('abdomen-luq').y + .06, 'Mitral area must be on the chest');
+  assert.ok(sitePosition('abdomen-ruq').y > sitePosition('abdomen-rlq').y + .07, 'Upper and lower abdominal quadrants must be separate');
   renderer.setExaminationTool('auscultate');renderer.focus('patient');renderer.updateMarkerVisibility();
   assert.ok(renderer.inspectionPoints.find(p=>p.userData.siteId==='lung-front-right').visible,'Anterior landmark visible from front');
   assert.equal(renderer.inspectionPoints.find(p=>p.userData.siteId==='lung-back-right').visible,false,'Posterior landmark cannot be clicked through the body');
@@ -57,6 +72,12 @@ for(const patientCase of PATIENT_CASES){
   assert.equal(renderer.inspectionPoints.find(p=>p.userData.siteId==='lung-front-right').visible,false);
   for(const technique of ['inspect','auscultate','palpate','percuss']){
     renderer.setExaminationTool(technique);
+    if (technique === 'palpate') {
+      const before = events.length;
+      assert.equal(renderer.examineSite('abdomen-ruq').repositioned, true);
+      assert.equal(renderer.actualPosition, 'abdominal');
+      assert.equal(events.length, before, 'Repositioning must not record a palpation');
+    }
     const point=EXAM_SITES.find(item=>item.techniques.includes(technique));
     renderer.examineSite(point.id);
     for (const site of EXAM_SITES.filter(item=>item.techniques.includes(technique)).slice(1)) renderer.examineSite(site.id,'accessible');
@@ -83,6 +104,7 @@ for(const patientCase of PATIENT_CASES){
   assert.equal(state.ecg.completed,true);
   assert.equal(state.ecg.attempts.filter(item=>!item.correct).length,1);
   assert.equal(state.ecg.placedLeads.length,10);
+  assert.equal(state.examActions.find(item => item.siteId === 'abdomen-ruq' && item.technique === 'palpate').position, 'abdominal');
   const resumed=JSON.parse(JSON.stringify(state));
   assert.deepEqual(evaluateExamination(patientCase,resumed),evaluateExamination(patientCase,state));
   renderer.restorePlacedLeads(resumed.ecg.placedLeads);
