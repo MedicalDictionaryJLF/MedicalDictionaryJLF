@@ -21,11 +21,12 @@ import { ptT } from './ui/trainerShell.js?v=134';
 import {
   buildAnonymizedPatientTrainerUpload,
   createPatientTrainerSessionRecord,
+  deletePatientTrainerSession,
   getPatientTrainerSession,
   readPatientTrainerSessions,
   updatePatientTrainerSession,
   upsertPatientTrainerSession
-} from '../../assets/js/services/patient-trainer-session-store.js?v=20261108-fieldfix';
+} from '../../assets/js/services/patient-trainer-session-store.js?v=20261109-history-nav';
 import {
   PATIENT_TRAINER_AUTO_RETRY_LIMIT,
   PATIENT_TRAINER_CLIENT_VERSION,
@@ -37,6 +38,7 @@ const TRAINER_CASES = PATIENT_CASES.filter((item) => item && item.id);
 const els = {
   caseSelect: document.getElementById('caseSelect'),
   setupScreen: document.getElementById('setupScreen'),
+  ptBackLink: document.getElementById('ptBackLink'),
   trainingScreen: document.getElementById('trainingScreen'),
   modeSelect: document.getElementById('modeSelect'),
   difficultySelect: document.getElementById('difficultySelect'),
@@ -195,6 +197,13 @@ function init() {
   els.difficultySelect?.addEventListener('change', () => { currentDifficulty = els.difficultySelect.value; renderSetupPreview(); if (stationStarted) { renderStationHeader(); persistCurrentSession(); } });
   els.startTrainingBtn?.addEventListener('click', startCase);
   els.restartBtn.addEventListener('click', showSetupScreen);
+  els.ptBackLink?.addEventListener('click', (event) => {
+    // Within an attempt, return to Patient Trainer without navigating to /main/.
+    // The normal link remains available from the case-selection screen.
+    if (!stationStarted || els.trainingScreen.hidden) return;
+    event.preventDefault();
+    showSetupScreen();
+  });
   els.coachToggleBtn?.addEventListener('click', () => setCoachDrawerOpen(!els.coachRail?.classList.contains('open')));
   els.coachCloseBtn?.addEventListener('click', () => setCoachDrawerOpen(false));
   els.coachBackdrop?.addEventListener('click', () => setCoachDrawerOpen(false));
@@ -267,6 +276,7 @@ async function startCase() {
   voiceInputController?.stop?.();
   els.setupScreen.hidden = true;
   els.trainingScreen.hidden = false;
+  updatePatientTrainerBackLink();
   engine = new PatientEngine(activeCase, { mode: currentMode, difficulty: currentDifficulty, interviewLanguage: currentInterviewLanguage });
   currentSession = createPatientTrainerSessionRecord({
     caseId: activeCase?.id,
@@ -299,6 +309,15 @@ async function startCase() {
   els.questionInput.focus();
 }
 
+function updatePatientTrainerBackLink() {
+  if (!els.ptBackLink) return;
+  const description = stationStarted && !els.trainingScreen.hidden
+    ? 'Back to Patient Trainer menu'
+    : 'Back to Medical Dictionary';
+  els.ptBackLink.setAttribute('aria-label', description);
+  els.ptBackLink.setAttribute('title', description);
+}
+
 function showSetupScreen() {
   persistCurrentSession();
   stationGeneration += 1;
@@ -321,6 +340,7 @@ function showSetupScreen() {
   voiceInputController?.stop?.();
   els.trainingScreen.hidden = true;
   els.setupScreen.hidden = false;
+  updatePatientTrainerBackLink();
   currentSession = null;
   renderSetupPreview();
   renderSessionHistory();
@@ -1002,13 +1022,34 @@ function renderSessionHistory() {
       <div class="pt-history-date"><strong>${escapeHtml(when.date)}</strong><span>${escapeHtml(when.time)}</span></div>
       <div class="pt-history-main"><strong>${escapeHtml(session.caseName || session.caseId || 'Patient case')}</strong><span>${escapeHtml(mode)} · ${escapeHtml(type)}</span></div>
       <span class="pt-history-status">${escapeHtml(status)}</span>
-      <button type="button" class="secondary pt-history-action" data-session-action="${session.completed ? 'view' : 'continue'}" data-session-id="${escapeHtml(session.sessionId)}">${action}</button>
+      <div class="pt-history-actions">
+        <button type="button" class="secondary pt-history-action" data-session-action="${session.completed ? 'view' : 'continue'}" data-session-id="${escapeHtml(session.sessionId)}">${action}</button>
+        <button type="button" class="secondary pt-history-delete" data-session-action="delete" data-session-id="${escapeHtml(session.sessionId)}" aria-label="Delete ${escapeHtml(session.caseName || session.caseId || 'patient')} session" title="Delete this session">Delete</button>
+      </div>
     </article>`;
   }).join('');
   els.sessionHistoryList.querySelectorAll('[data-session-action]').forEach((button) => {
     button.addEventListener('click', () => {
       const sessionId = button.dataset.sessionId || '';
-      if (button.dataset.sessionAction === 'continue') restorePatientTrainerSession(sessionId);
+      if (button.dataset.sessionAction === 'delete') {
+        const session = getPatientTrainerSession(sessionId);
+        if (!session) {
+          renderSessionHistory();
+          return;
+        }
+        const label = session.caseName || session.caseId || 'Patient Trainer';
+        const confirmation = [
+          `Delete the saved session for "${label}"?`,
+          'This permanently removes its local history and cannot be undone.',
+          'Any copy already uploaded to Google Drive will remain there.'
+        ].join('\n\n');
+        if (!window.confirm(confirmation)) return;
+        if (!deletePatientTrainerSession(sessionId)) {
+          showHistoryMessage('Could not delete this session from local storage.');
+          return;
+        }
+        renderSessionHistory();
+      } else if (button.dataset.sessionAction === 'continue') restorePatientTrainerSession(sessionId);
       else viewPatientTrainerRecord(sessionId);
     });
   });
@@ -1058,6 +1099,7 @@ async function restorePatientTrainerSession(sessionId) {
   voiceInputController?.stop?.();
   els.setupScreen.hidden = true;
   els.trainingScreen.hidden = false;
+  updatePatientTrainerBackLink();
   renderStoredChat(saved.messages || []);
   setQuestionPending(false);
   resetEncounterControls();
