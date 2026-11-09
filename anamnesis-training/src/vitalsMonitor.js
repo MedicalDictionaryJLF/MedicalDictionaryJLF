@@ -4,7 +4,7 @@ let currentRuntime = null;
 let patientStateSource = null;
 let unsubscribePatientState = null;
 
-const GENERIC_ECG_PATHS = [new URL('../ECGs/peter_novak_ecg.png', import.meta.url).href];
+// No generic ECG or measured-vital fallback is permitted.
 
 
 export function setMonitorPatientStateSource(source) {
@@ -27,6 +27,22 @@ export function openVitalsMonitor(patientCase) {
   if (!modal || !canvas) return;
 
   stopVitalsMonitor();
+  canvas.hidden = false;
+  const unavailable = !Object.values(patientCase?.vitals || {}).some(value => /\d/.test(String(value)));
+  const unavailablePanel = document.getElementById('vitalsUnavailable');
+  unavailablePanel?.remove();
+  if (unavailable) {
+    canvas.hidden = true;
+    const message = document.createElement('p');
+    message.id = 'vitalsUnavailable';
+    message.className = 'subtle-note';
+    message.textContent = 'No current measured vital signs are authored for this case. No normal values or patient waveforms have been inferred.';
+    canvas.parentElement.append(message);
+    modal.classList.add('visible');modal.setAttribute('aria-hidden','false');
+    const values = document.getElementById('vitalsValues');if(values)values.replaceChildren();
+    const note = document.getElementById('vitalsClinicalNote');if(note)note.textContent='';
+    return;
+  }
   const baseline = currentPatientVitals(patientCase);
   currentRuntime = makeRuntime(baseline, patientCase);
   if (title) title.textContent = `Live vitals monitor`;
@@ -75,9 +91,8 @@ export function openEcgViewer(patientCase) {
   const label = patientCase?.ecg?.label || 'ECG recording';
   if (title) title.textContent = label;
 
-  const sources = [];
-  if (patientCase?.ecg?.imagePath) sources.push(patientCase.ecg.imagePath);
-  sources.push(...GENERIC_ECG_PATHS.filter((item) => !sources.includes(item)));
+  if (!patientCase?.ecg?.available || !patientCase.ecg.imagePath) return false;
+  const sources = [patientCase.ecg.imagePath];
   let index = 0;
   fallback.hidden = true;
   img.hidden = false;

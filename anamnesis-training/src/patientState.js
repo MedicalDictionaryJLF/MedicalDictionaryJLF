@@ -87,13 +87,13 @@ export class PatientStateEngine {
     return this.connectEquipment('ecg12', true, '12-lead ECG acquired');
   }
 
-  recordExamination(examinationId, finding = '') {
+  recordExamination(examinationId, finding = '', authoredReaction = null) {
     const lower = String(finding || '').toLowerCase();
-    const reaction = /tender|pain|painful|guarding|distress|uncomfortable/.test(lower)
+    const reaction = authoredReaction || (/tender|pain|painful|guarding|distress|uncomfortable/.test(lower)
       ? 'discomfort'
       : /short of breath|dyspno|tachypno/.test(lower)
         ? 'breathlessness'
-        : 'cooperative';
+        : 'cooperative');
     this.state.lastEvent = {
       type: 'examination',
       examinationId,

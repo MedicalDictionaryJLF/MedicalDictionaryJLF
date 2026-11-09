@@ -1,3 +1,4 @@
+import { isAuthoredClinicalValue } from '../cases/examinationFindings.js';
 const LAB_LABELS = {
   hsTroponinT: 'High-sensitivity troponin T',
   wbc: 'WBC',
@@ -57,7 +58,7 @@ export function closeModal(modal) {
 export function renderLabsPanel({ container, patientCase, orderedLabs, onOrder }) {
   if (!container) return;
   const availableGroups = LAB_GROUPS
-    .map((group) => ({ ...group, labs: group.labs.filter((key) => patientCase.labs?.[key]) }))
+    .map((group) => ({ ...group, labs: group.labs.filter((key) => isAuthoredClinicalValue(patientCase.labs?.[key])) }))
     .filter((group) => group.labs.length > 0);
   container.innerHTML = `
     <div class="order-list laboratory-order-list">
@@ -72,9 +73,9 @@ export function renderLabsPanel({ container, patientCase, orderedLabs, onOrder }
 export function renderMedicationPanel({ container, patientCase, administeredActions, onAdminister, mode = 'practice' }) {
   if (!container) return;
   const actions = MEDICATION_ACTIONS[patientCase.id] ?? [{ label: 'Document proposed management action', category: 'Management' }];
-  if (mode === 'exam') {
+  if (mode === 'exam' || !MEDICATION_ACTIONS[patientCase.id]) {
     container.innerHTML = `
-      <p class="subtle-note management-disclaimer">Exam mode does not reveal suggested actions. Record what you would actually do. Case-defined physiological and visual effects are simulated when an action has a response model.</p>
+      <p class="subtle-note management-disclaimer">Record what you would actually do. A physiological response is shown only when the case provides a response model.</p>
       <form id="examManagementForm" class="exam-management-form">
         <input id="examManagementInput" type="text" autocomplete="off" placeholder="e.g. monitoring, medication, escalation, procedure..." />
         <button type="submit">Record action</button>
@@ -129,7 +130,7 @@ function renderLabGroup(group, patientCase, orderedLabs) {
 export function labsForGroup(groupId, patientCase) {
   const group = LAB_GROUPS.find((item) => item.id === groupId);
   if (!group) return {};
-  return Object.fromEntries(group.labs.filter((key) => patientCase.labs?.[key]).map((key) => [key, patientCase.labs[key]]));
+  return Object.fromEntries(group.labs.filter((key) => isAuthoredClinicalValue(patientCase.labs?.[key])).map((key) => [key, patientCase.labs[key]]));
 }
 
 function escapeHtml(value) {
