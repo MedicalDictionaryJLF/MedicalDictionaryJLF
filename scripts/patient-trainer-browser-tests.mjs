@@ -85,7 +85,7 @@ async function verifyFixedPosition(page, mode) {
   assert.equal(await position(page), 'seated');
   assert.deepEqual(await page.locator('.patient3d-toolbar button').allTextContents(), ['Face', 'Patient', 'Room']);
   await page.locator('[data-focus="room"]').click();
-  await ask(page, 'Please stand up.', /./);
+  await ask(page, 'Please stand up.', /available in Teaching mode/);
   assert.equal(await position(page), 'seated');
 }
 
@@ -192,6 +192,10 @@ try {
   assert.equal(await position(page), 'seated');
   assert.match(await page.locator('.patient3d-message').innerText(), /ask the patient in chat/i);
   await page.locator('[data-workspace-target="interview"]').click();
+  await ask(page, 'Hello, would you be able to lie down for me?', /lie on my back/);
+  assert.equal(await position(page), 'reclined');
+  await ask(page, 'Hello, can you lye down on the bed for me?', /lie on my back/);
+  assert.equal(await position(page), 'reclined');
   await ask(page, 'Could you lie on your back and bend your knees slightly?', /knees slightly bent/);
   assert.equal(await position(page), 'abdominal');
   await page.locator('[data-focus="back"]').click();
@@ -234,7 +238,7 @@ try {
   await sleepReady(page);
   assert.equal(await recordCount(page),5);
   assert.equal(await page.locator('[data-note-key="history"]').inputValue(),'Software WebGL QA: preserve these clinical notes.');
-  assert.equal(await page.locator('#chatLog .message').count(),8);
+  assert.equal(await page.locator('#chatLog .message').count(),12);
   assert.equal(await position(page), 'standing', 'Resuming a saved Teaching session must restore the pose');
   await page.locator('[data-workspace-target="interview"]').click();
   await ask(page, 'When did it start?', /2 hours before/);
