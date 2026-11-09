@@ -10,6 +10,7 @@ import { playBedsideAudio, stopBedsideAudio, setBedsideVolume, closeBedsideAudio
 
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,Number.isFinite(n)?n:min));
 const smooth=(v,target,dt,rate=5)=>THREE.MathUtils.lerp(v,target,1-Math.exp(-dt*rate));
+const TRAINER_POSITIONS = { seated: 'PositionSeated', standing: 'PositionStanding', reclined: 'PositionReclined', abdominal: 'PositionAbdominal' };
 const isSupine = position => position === 'reclined' || position === 'abdominal';
 const VISEMES=['viseme_aa','viseme_E','viseme_O','viseme_PP','viseme_FF','viseme_SS'];
 const FACE_KEYS=['eyeBlinkLeft','eyeBlinkRight','eyeSquintLeft','eyeSquintRight','browDownLeft','browDownRight','browInnerUp','mouthPressLeft','mouthPressRight','mouthFrownLeft','mouthFrownRight','jawOpen','mouthPucker',...VISEMES,'eyeLookDownLeft','eyeLookDownRight','eyeLookUpLeft','eyeLookUpRight','eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight'];
@@ -18,6 +19,8 @@ const FACE_KEYS=['eyeBlinkLeft','eyeBlinkRight','eyeSquintLeft','eyeSquintRight'
 export class Patient3DRenderer {
   constructor(container,options={}) {
     Object.assign(this,{container,options,activeCase:options.activeCase,snapshot:null,loader:new GLTFLoader(),clock:new THREE.Clock(),actions:new Map(),slots:new Map(),morphMeshes:[],bones:new Map(),skinMaterials:[],mode:'case',positionOverride:null,speech:{active:false,text:'',index:0,boundary:0},affect:{},values:{pain:0,breath:0,sweat:0,pallor:0},elapsed:0,loaded:false,disposed:false,running:false,inView:true,inspectionEnabled:false,examTool:'off',selectedLead:null,placedLeads:{},abort:new AbortController(),demoClip:null,focusMode:'face',frames:0});
+    this.inTrainer = Boolean(options.trainingMode);
+    this.positionOverride = options.trainingMode === 'teaching' && Object.hasOwn(TRAINER_POSITIONS, options.patientPosition) ? options.patientPosition : null;
     this.asset=getPatientAsset(this.activeCase);
     this.interactionEnabled=options.allowInspection!==false&&!options.completed;
     this.ecgCompletionEmitted=Boolean(options.ecgCompleted);
@@ -46,7 +49,7 @@ export class Patient3DRenderer {
       const missing=['PositionStanding','PositionSeated','PositionReclined','IdleBreathing','RespiratoryEffort','RestArms','ChestPain','Blink','Talking','PainExpression'].filter(n=>!this.actions.has(n));
       if (missing.length) throw new Error(`Character animation clips missing: ${missing.join(', ')}`);
       this.setSlot('breath','IdleBreathing',0);this.setSlot('arms','RestArms',0);this.updateState(true);
-      this.mixer.update(0);this.resize();this.focus(this.options.initialView || 'face',true);
+      this.mixer.update(0);this.resize();this.focus(this.options.initialView || (this.inTrainer ? 'patient' : 'face'),true);
       this.loadingElement.remove();this.loaded=true;this.running=true;this.clock.start();
       this.container.dataset.patient=this.asset.slug;this.container.dataset.loaded='true';this.container.dataset.visualMode='3d';this.container.dataset.release='clinical-3d-3';
       this.status('3D patient ready');this.renderLoop();
@@ -88,13 +91,29 @@ export class Patient3DRenderer {
     const toolbar=document.createElement('div');toolbar.className='patient3d-toolbar';toolbar.setAttribute('aria-label','3D patient controls');
     toolbar.innerHTML=`<div class="patient3d-view-buttons"><button type="button" data-focus="face" title="Frame the face">Face</button><button type="button" data-focus="patient">Patient</button><button type="button" data-focus="back">Back</button><button type="button" data-focus="room">Room</button><button type="button" data-inspect aria-pressed="false">Examine</button><button type="button" data-expand aria-label="Expand patient view">⛶</button></div><div class="patient3d-options"><label data-animation-control><span>Animation</span><select data-animation-mode aria-label="Clinical animation mode"><option value="case">Follow case</option><option value="resting">Resting preview</option><option value="symptomatic">Symptom preview</option></select></label><label><span>Position</span><select data-position aria-label="Patient position"><option value="case">Follow case</option><option value="standing">Standing</option><option value="seated">Seated</option><option value="reclined">Reclined</option></select></label><label data-exam-control hidden><span>Technique</span><select data-exam-technique aria-label="Examination technique"><option value="inspect">Inspect</option><option value="auscultate">Auscultate</option><option value="palpate">Palpate</option><option value="percuss">Percuss</option><option value="ecg">ECG leads</option></select></label></div>`;
     this.toolbar=toolbar;this.container.append(toolbar);this.message=document.createElement('div');this.message.className='patient3d-message';this.message.setAttribute('aria-live','polite');this.container.append(this.message);
-    if(this.options.allowInspection===false)toolbar.querySelector('[data-inspect]').hidden=true;
-    else toolbar.querySelector('[data-position]').add(new Option('Supine · knees flexed', 'abdominal'));
-    if(this.options.trainingMode==='exam')toolbar.querySelector('[data-animation-control]').hidden=true;
-    toolbar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.focus)this.focus(b.dataset.focus);if(b.hasAttribute('data-inspect'))this.toggleInspection();if(b.hasAttribute('data-expand'))this.toggleExpanded();},{signal:this.abort.signal});
-    toolbar.querySelector('[data-animation-mode]').addEventListener('change',e=>this.setClinicalMode(e.target.value),{signal:this.abort.signal});
-    toolbar.querySelector('[data-position]').addEventListener('change',e=>this.setPosition(e.target.value),{signal:this.abort.signal});
-    toolbar.querySelector('[data-exam-technique]').addEventListener('change',e=>this.setExaminationTool(e.target.value),{signal:this.abort.signal});
+    if (this.inTrainer) {
+      toolbar.querySelector('[data-position]').parentElement.remove();
+      toolbar.querySelector('[data-animation-control]').remove();
+      if (this.options.trainingMode !== 'teaching') {
+        toolbar.querySelector('[data-focus="back"]').remove();
+        toolbar.querySelector('[data-expand]').remove();
+        toolbar.querySelector('[data-inspect]').remove();
+        toolbar.querySelector('.patient3d-options').remove();
+      }
+    }
+    const positionControl = toolbar.querySelector('[data-position]');
+    if (this.options.allowInspection === false) toolbar.querySelector('[data-inspect]')?.remove();
+    else positionControl?.add(new Option('Supine · knees flexed', 'abdominal'));
+    toolbar.addEventListener('click', e => {
+      const button = e.target.closest('button');
+      if (!button) return;
+      if (button.dataset.focus) this.focus(button.dataset.focus);
+      if (button.hasAttribute('data-inspect')) this.toggleInspection();
+      if (button.hasAttribute('data-expand')) this.toggleExpanded();
+    }, { signal: this.abort.signal });
+    toolbar.querySelector('[data-animation-mode]')?.addEventListener('change', e => this.setClinicalMode(e.target.value), { signal: this.abort.signal });
+    positionControl?.addEventListener('change', e => this.setPosition(e.target.value), { signal: this.abort.signal });
+    toolbar.querySelector('[data-exam-technique]')?.addEventListener('change', e => this.setExaminationTool(e.target.value), { signal: this.abort.signal });
     this.canvas.addEventListener('pointerdown',e=>{
       this.activePointers.add(e.pointerId);
       if(this.activePointers.size!==1||e.button!==0){this.pointerDown=null;return;}
@@ -147,7 +166,7 @@ export class Patient3DRenderer {
 
   prepareAnimations(clips) {
     const reclined = clips.find(clip => clip.name === 'PositionReclined');
-    if (reclined && this.options.allowInspection !== false) {
+    if (reclined && (this.options.trainingMode === 'teaching' || !this.inTrainer && this.options.allowInspection !== false)) {
       clips = [...clips, buildAbdominalPosition(this.patient, this.bones, reclined, this.cover)];
     }
     this.mixer = new THREE.AnimationMixer(this.patient);
@@ -218,7 +237,7 @@ export class Patient3DRenderer {
   }
 
   canExamine(){return this.loaded&&!this.disposed&&!this.failed&&this.interactionEnabled;}
-  setInteractionEnabled(enabled){this.interactionEnabled=Boolean(enabled)&&this.options.allowInspection!==false;if(!enabled)this.setExaminationTool('off');if(this.toolbar)this.toolbar.querySelector('[data-inspect]').disabled=!this.interactionEnabled;}
+  setInteractionEnabled(enabled){this.interactionEnabled=Boolean(enabled)&&this.options.allowInspection!==false;if(!enabled)this.setExaminationTool('off');const button=this.toolbar?.querySelector('[data-inspect]');if(button)button.disabled=!this.interactionEnabled;}
   inspect(id){return this.examineSite(id);}
   toggleInspection(enabled=this.examTool==='off'){return this.setExaminationTool(enabled?'inspect':'off');}
   setExaminationTool(tool='off'){
@@ -226,8 +245,12 @@ export class Patient3DRenderer {
     stopBedsideAudio();
     this.selectedSite=null;this.lastExamination=null;
     this.examTool=['inspect','auscultate','palpate','percuss','ecg'].includes(tool)?tool:'off';this.inspectionEnabled=this.examTool!=='off';
-    this.toolbar?.querySelector('[data-inspect]').setAttribute('aria-pressed',String(this.inspectionEnabled));
-    if(this.toolbar){this.toolbar.querySelector('[data-exam-control]').hidden=!this.inspectionEnabled;if(this.inspectionEnabled)this.toolbar.querySelector('[data-exam-technique]').value=this.examTool;}
+    this.toolbar?.querySelector('[data-inspect]')?.setAttribute('aria-pressed',String(this.inspectionEnabled));
+    const examControl = this.toolbar?.querySelector('[data-exam-control]');
+    if (examControl) {
+      examControl.hidden = !this.inspectionEnabled;
+      if (this.inspectionEnabled) this.toolbar.querySelector('[data-exam-technique]').value = this.examTool;
+    }
     this.updateMarkerVisibility();this.renderBedsidePanel();if(this.inspectionEnabled)this.focus('patient');
     return true;
   }
@@ -262,9 +285,21 @@ export class Patient3DRenderer {
     if(!this.canExamine())return {ok:false,reason:'3D environment unavailable or attempt completed.'};
     const result=getBedsideFinding(this.activeCase,id,this.examTool);if(!result)return {ok:false,reason:'This technique is not valid at the selected site.'};
     if (this.examTool === 'palpate' && result.examinationId === 'abdomen' && this.actualPosition !== 'abdominal') {
+      if (this.inTrainer) {
+        const reason = this.options.trainingMode === 'teaching'
+          ? 'Ask the patient in chat to lie on their back and bend their knees slightly before palpating.'
+          : 'Abdominal palpation requires a position change, which is available in Teaching mode.';
+        this.status(reason);
+        return { ok: false, reason };
+      }
       this.setPosition('abdominal');
       this.status('Patient supine with knees slightly flexed. Select the abdominal site again to palpate.');
       return { ok: false, repositioned: true };
+    }
+    if (this.inTrainer && isSupine(this.actualPosition) && EXAM_SITES.find(site => site.id === id)?.view === 'back') {
+      const reason = 'Ask the patient in chat to sit up before examining their back.';
+      this.status(reason);
+      return { ok: false, reason };
     }
     result.audioNote=result.sound?.label||(['auscultate','percuss'].includes(this.examTool)?'No sound is authored for this technique and site.':'');
     result.position=this.actualPosition;result.input=input;
@@ -292,14 +327,14 @@ export class Patient3DRenderer {
 
   updateState(immediate=false) {
     this.visual=resolveVisualState(this.activeCase,this.snapshot,this.mode);if(!this.mixer)return;
-    const position=this.positionOverride || this.visual.position || this.asset.preferredPosition,changed=position!==this.actualPosition;this.actualPosition=position;
+    const position=this.positionOverride || (this.inTrainer ? 'seated' : this.visual.position || this.asset.preferredPosition),changed=position!==this.actualPosition;this.actualPosition=position;
     // Move pose and furniture together. Interpolating a standing body through
     // an already-positioned mattress causes visible body/bed intersections.
-    const clip = { standing: 'PositionStanding', seated: 'PositionSeated', reclined: 'PositionReclined', abdominal: 'PositionAbdominal' }[position];
+    const clip = TRAINER_POSITIONS[position];
     this.setSlot('posture',clip,0);
     if(this.chair)this.chair.visible=position==='seated';
     if(this.bed)this.bed.position.set(isSupine(position)?0:1.55,0,isSupine(position)?0:-.45);
-    if(changed&&position==='abdominal')this.setSlot('arms','RestArms',0);
+    if(changed&&(this.inTrainer||position==='abdominal'))this.setSlot('arms','RestArms',0);
     // The existing flat bedspread stays on the mattress below the clothed
     // patient. It is not raised through the abdomen, shoulders or neck.
     if(changed||immediate){this.mixer.update(0);this.patient?.updateMatrixWorld(true);}
@@ -309,7 +344,19 @@ export class Patient3DRenderer {
 
   setSlot(slot,name,fade=.6){if(this.slots.get(slot)===name)return;const a=this.actions.get(name);if(!a)return;const previous=this.actions.get(this.slots.get(slot));if(fade)previous?.fadeOut(fade);else previous?.stop();if(slot==='posture')for(const [key,action] of this.actions)if(key.startsWith('Position')&&key!==name)action.stop();a.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();if(fade)a.fadeIn(fade);this.slots.set(slot,name);}
   setClinicalMode(mode='case'){this.stopDemo();this.mode=['case','resting','symptomatic'].includes(mode)?mode:'case';this.toolbar.querySelector('[data-animation-mode]').value=this.mode;this.updateState();this.status(this.mode==='case'?'Following the clinical case':this.mode==='resting'?'Resting animation preview · case unchanged':'Documented symptom preview · case unchanged');}
+  applyPositionRequest(position) {
+    if (this.options.trainingMode !== 'teaching' || this.options.completed || !this.loaded ||
+        this.failed || this.disposed || !Object.hasOwn(TRAINER_POSITIONS, position) ||
+        !this.actions.has(TRAINER_POSITIONS[position])) return false;
+    this.positionOverride = position;
+    this.updateState(true);
+    this.focus('patient');
+    this.updateMarkerVisibility();
+    return true;
+  }
+
   setPosition(position='case'){
+    if (this.inTrainer) return;
     this.stopDemo();
     const supported = ['standing', 'seated', 'reclined'].includes(position) || (position === 'abdominal' && this.actions.has('PositionAbdominal'));
     this.positionOverride = supported ? position : null;
@@ -321,12 +368,12 @@ export class Patient3DRenderer {
   }
   setViewMode(mode='encounter'){
     if (mode !== 'examination' && this.examTool !== 'off') this.setExaminationTool('off');
-    this.focus(mode === 'examination' ? 'patient' : 'face');
+    this.focus(mode === 'examination' || this.inTrainer ? 'patient' : 'face');
   }
   focus(mode='face',immediate=false){
     if(!this.camera||!this.controls)return;this.focusMode=mode;this.patient?.updateMatrixWorld(true);
     const reclined=isSupine(this.actualPosition);
-    if(mode==='back'&&reclined){this.setPosition('seated');return this.focus('back',immediate);}
+    if(!this.inTrainer&&mode==='back'&&reclined){this.setPosition('seated');return this.focus('back',immediate);}
     if(mode==='room'){
       this.controls.target.set(.1,.9,-.3);this.camera.position.copy(this.controls.target).add(new THREE.Vector3(3.7,2.2,4.7));
     }else{
@@ -407,7 +454,7 @@ export class Patient3DRenderer {
     this.values.pain=smooth(this.values.pain,s.pain,dt);this.values.breath=smooth(this.values.breath,s.breathing,dt);this.values.sweat=smooth(this.values.sweat,s.sweating,dt);this.values.pallor=smooth(this.values.pallor,s.pallor,dt);
     if (!this.demoClip) {
       this.setSlot('breath',this.values.breath>.3?'RespiratoryEffort':'IdleBreathing',.8);
-      const restingArms = this.actualPosition === 'abdominal' || this.values.pain <= .3;
+      const restingArms = this.inTrainer || this.actualPosition === 'abdominal' || this.values.pain <= .3;
       const gesture = this.examinationReaction?.until > this.elapsed ? this.examinationReaction.gesture : restingArms ? 'RestArms' : s.gesture;
       this.setSlot('arms', gesture, .25);
       if(s.fatigue>.1)this.setSlot('head','Fatigue',.8);

@@ -54,7 +54,7 @@ async function openPage(options) {
 }
 async function observeRenderer(page) {
   await page.evaluate(async () => {
-    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=clinical-exam-5');
+    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=chat-positioning-1');
     const setup = Patient3DRenderer.prototype.createInspectionPoints;
     Patient3DRenderer.prototype.createInspectionPoints = function(...args) { setup.apply(this, args); window.examTestRenderer = this; };
   });
@@ -73,6 +73,20 @@ async function ask(page, question, expected) {
   await page.locator('#sendQuestionBtn').click();
   await messages.nth(before).waitFor();
   assert.match(await messages.nth(before).innerText(), expected);
+}
+
+async function position(page) {
+  return page.evaluate(() => window.examTestRenderer.getDiagnostics().position);
+}
+
+async function verifyFixedPosition(page, mode) {
+  await start(page, 'chest_pain_acs_risk', mode);
+  await sleepReady(page);
+  assert.equal(await position(page), 'seated');
+  assert.deepEqual(await page.locator('.patient3d-toolbar button').allTextContents(), ['Face', 'Patient', 'Room']);
+  await page.locator('[data-focus="room"]').click();
+  await ask(page, 'Please stand up.', /./);
+  assert.equal(await position(page), 'seated');
 }
 
 async function examination(page, technique, site) {
@@ -146,8 +160,12 @@ try {
   await details.getByText('2. And your jaw?', { exact: true }).click();
   assert.match(await details.locator('pre:visible').innerText(), /radiation\.sites/);
   assert.match(await details.locator('pre:visible').innerText(), /"aiCalled": false/);
-  await start(page,'chest_pain_acs_risk');
+  await verifyFixedPosition(page, 'practice');
+  await verifyFixedPosition(page, 'exam');
+  await start(page,'chest_pain_acs_risk','teaching');
   await sleepReady(page);
+  assert.equal(await position(page), 'seated');
+  assert.equal(await page.locator('[data-position]').count(), 0);
   assert.deepEqual(await layout(), anamnesisLayout, 'Anamnesis and full encounter patient cards must line up');
   console.log('WebGL renderer:',await page.evaluate(()=>{const gl=window.examTestRenderer.renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);}));
   await page.locator('#questionInput').fill('What is your main problem?');
@@ -171,16 +189,26 @@ try {
   assert.equal(await recordCount(page),4);
   await page.locator('[data-exam-tool="palpate"]').click();
   await canvasClick(page, 'abdomen-ruq');
-  assert.equal(await page.locator('[data-position]').inputValue(), 'abdominal');
-  assert.match(await page.locator('.patient3d-message').innerText(), /supine with knees slightly flexed/i);
+  assert.equal(await position(page), 'seated');
+  assert.match(await page.locator('.patient3d-message').innerText(), /ask the patient in chat/i);
+  await page.locator('[data-workspace-target="interview"]').click();
+  await ask(page, 'Could you lie on your back and bend your knees slightly?', /knees slightly bent/);
+  assert.equal(await position(page), 'abdominal');
+  await page.locator('[data-focus="back"]').click();
+  assert.equal(await position(page), 'abdominal', 'A camera preset must not change the patient pose');
+  await page.locator('#openExamBtn').click();
+  await page.locator('[data-exam-tool="palpate"]').click();
   assert.equal(await recordCount(page),4, 'Moving to the bed must not record an examination');
   await screenshot(page,'clinical-exam-abdominal-position.jpg');
   await canvasClick(page, 'abdomen-ruq');
   assert.equal(await recordCount(page),5);
   await page.locator('[data-workspace-target="interview"]').click();
   assert.equal(await page.locator('#patientBedsideControls').isVisible(),false);
+  await ask(page, 'Please sit up.', /sit upright/);
+  assert.equal(await position(page), 'seated');
+  await ask(page, 'Please stand up.', /stand up/);
+  assert.equal(await position(page), 'standing');
   await page.locator('#openExamBtn').click();
-  await page.locator('[data-position]').selectOption('seated');
   await page.evaluate(()=>window.scrollTo(0,0));
   await screenshot(page,'clinical-exam-desktop.jpg');
   await page.locator('[data-exam-tool="ecg"]').click();
@@ -197,6 +225,7 @@ try {
   await screenshot(page,'clinical-exam-failure-desktop.jpg');
   await page.getByRole('button',{name:'Retry loading 3D environment'}).click();
   await sleepReady(page);
+  assert.equal(await position(page), 'standing', '3D retry must restore the pose');
   await page.locator('[data-exam-tool="ecg"]').click();
   assert.match(await page.locator('.patient3d-bedside-panel strong').innerText(),/2\/10/);
   // Restore an unfinished session after a full page load.
@@ -205,7 +234,8 @@ try {
   await sleepReady(page);
   assert.equal(await recordCount(page),5);
   assert.equal(await page.locator('[data-note-key="history"]').inputValue(),'Software WebGL QA: preserve these clinical notes.');
-  assert.equal(await page.locator('#chatLog .message').count(),2);
+  assert.equal(await page.locator('#chatLog .message').count(),8);
+  assert.equal(await position(page), 'standing', 'Resuming a saved Teaching session must restore the pose');
   await page.locator('[data-workspace-target="interview"]').click();
   await ask(page, 'When did it start?', /2 hours before/);
   await page.locator('#openExamBtn').click();
@@ -233,20 +263,29 @@ try {
 
   const mobile = await openPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});
   for (const patient of PATIENT_CASES.filter(item=>!process.env.PT_CASE_FILTER||item.id===process.env.PT_CASE_FILTER)) {
-    await start(mobile.page,patient.id,patient.id==='abdominal_pain_cholecystitis'?'exam':'practice');
+    await start(mobile.page,patient.id,'teaching');
     await sleepReady(mobile.page);
     assert.equal(await mobile.page.locator('#avatarMount').getAttribute('data-patient'),PATIENT_ASSETS[patient.id].slug);
+    assert.equal(await position(mobile.page), 'seated');
+    await ask(mobile.page, 'Please stand up.', /stand up/);
+    assert.equal(await position(mobile.page), 'standing');
     await mobile.page.locator('#openExamBtn').click();
-    await mobile.page.locator('[data-position]').selectOption('standing');
     await mobile.page.locator('[data-exam-tool="inspect"]').click();
     await canvasClick(mobile.page,'general',true);
     assert.equal(await recordCount(mobile.page),1,`${patient.id}: tap on general appearance did not record a finding`);
-    await mobile.page.locator('[data-position]').selectOption('reclined');
-    await examination(mobile.page,'palpate','abdomen-ruq');
-    assert.equal(await mobile.page.locator('[data-position]').inputValue(), 'abdominal');
+    await mobile.page.locator('[data-workspace-target="interview"]').click();
+    await ask(mobile.page, 'Please lie down on the bed.', /lie on my back/);
+    assert.equal(await position(mobile.page), 'reclined');
+    await ask(mobile.page, 'Bend your knees a little, please.', /knees slightly bent/);
+    assert.equal(await position(mobile.page), 'abdominal');
+    await mobile.page.locator('#openExamBtn').click();
+    await mobile.page.locator('[data-exam-tool="palpate"]').click();
     assert.equal(await recordCount(mobile.page),1, `${patient.id}: positioning recorded a palpation`);
     await canvasClick(mobile.page,'abdomen-ruq',true);
     assert.equal(await recordCount(mobile.page),2,`${patient.id}: RUQ palpation did not record`);
+    await mobile.page.locator('[data-workspace-target="interview"]').click();
+    await ask(mobile.page, 'Please sit down.', /sit upright/);
+    await mobile.page.locator('#openExamBtn').click();
     await mobile.page.locator('[data-focus="back"]').click();
     await examination(mobile.page,'percuss','flank-right');
     assert.equal(await recordCount(mobile.page),3,`${patient.id}: renal-angle percussion did not record`);
@@ -255,7 +294,6 @@ try {
     assert.equal(await mobile.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'Mobile page overflows');
     if(patient.id==='abdominal_pain_cholecystitis') {
       assert.match(await mobile.page.locator('.clinical-findings-record').innerText(),/Right upper quadrant tenderness/);
-      assert.equal(await mobile.page.locator('.exam-procedure-guide').count(),0,'Exam mode reveals no case rubric');
       await mobile.page.locator('[data-focus="patient"]').click();
       await mobile.page.locator('#avatarMount').scrollIntoViewIfNeeded();
       await screenshot(mobile.page,'clinical-exam-mobile.jpg');
