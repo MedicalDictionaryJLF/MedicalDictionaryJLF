@@ -1,6 +1,6 @@
 import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { getPositionRequest } from './dialogue/positionRequests.js';
+import { getPositionRequest } from './dialogue/positionRequests.js?v=position-phrasing-2';
 import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
@@ -461,7 +461,7 @@ async function handleQuestion(event) {
   persistCurrentSession();
   showResponseLoading(els.chatLog);
   try {
-    const positionRequest = currentMode === 'teaching' && getPositionRequest(question, patientPosition);
+    const positionRequest = getPositionRequest(question, patientPosition);
     let result;
     let aiEvent = null;
     if (positionRequest) {
@@ -512,6 +512,7 @@ async function handleQuestion(event) {
 }
 
 function answerPositionRequest(position) {
+  if (currentMode !== 'teaching') return 'Position requests are available in Teaching mode.';
   if (position === 'needs-reclining') return 'Would you like me to lie down first?';
   if (!applyAvatarPositionRequest(position)) return 'I can’t change position while the 3D view is unavailable.';
   patientPosition = position;
