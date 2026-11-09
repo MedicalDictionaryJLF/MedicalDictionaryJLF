@@ -210,7 +210,7 @@ try {
   assert.equal(await page.locator('#patientBedsideControls').isVisible(),false);
   await ask(page, 'can you sit on a chair?', /sit upright/);
   assert.equal(await position(page), 'seated');
-  await ask(page, 'Please stand up.', /stand up/);
+  await ask(page, 'Could you get to your feet, please?', /stand up/);
   assert.equal(await position(page), 'standing');
   await page.locator('#openExamBtn').click();
   await page.evaluate(()=>window.scrollTo(0,0));
@@ -288,7 +288,7 @@ try {
     await canvasClick(mobile.page,'abdomen-ruq',true);
     assert.equal(await recordCount(mobile.page),2,`${patient.id}: RUQ palpation did not record`);
     await mobile.page.locator('[data-workspace-target="interview"]').click();
-    await ask(mobile.page, 'Please sit down.', /sit upright/);
+    await ask(mobile.page, 'Could you take a seat?', /sit upright/);
     await mobile.page.locator('#openExamBtn').click();
     await mobile.page.locator('[data-focus="back"]').click();
     await examination(mobile.page,'percuss','flank-right');
