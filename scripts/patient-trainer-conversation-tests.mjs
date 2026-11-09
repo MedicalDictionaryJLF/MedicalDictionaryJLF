@@ -9,6 +9,22 @@ import { prepareQuestionWithAI } from '../anamnesis-training/src/aiSupport.js';
 import { validateConversationCase } from '../anamnesis-training/src/dialogue/clinicalFacts.js';
 import { attributesByIntent } from '../anamnesis-training/src/dialogue/questionAnalysis.js';
 import { runSimulationTests } from '../anamnesis-training/src/simulationRunner.js';
+import { POSITIONING_COMMANDS } from '../anamnesis-training/src/data/positioningCommands.js';
+import { getPositionRequest } from '../anamnesis-training/src/dialogue/positionRequests.js';
+
+test('the positioning catalog pairs command examples with poses and patient replies', () => {
+  const poses = Object.entries(POSITIONING_COMMANDS);
+  assert.deepEqual(poses.map(([pose]) => pose), ['seated', 'standing', 'reclined', 'abdominal']);
+  assert.equal(new Set(poses.map(([, command]) => command.intent)).size, poses.length);
+  for (const [pose, command] of poses) {
+    assert.ok(command.reply);
+    for (const phrase of command.commands) {
+      assert.equal(getPositionRequest(phrase, 'reclined'), pose, phrase);
+    }
+  }
+  assert.equal(getPositionRequest('Could you bend your knees a little?', 'seated'), 'needs-reclining');
+  assert.equal(getPositionRequest('Does sitting on a chair make it worse?', 'seated'), null);
+});
 
 const [peter, jana, milan, lucia, karol, eva, zuzana, nina] = PATIENT_CASES;
 const make = (patient = peter, difficulty = 'intermediate') => new PatientEngine(patient, { difficulty });
