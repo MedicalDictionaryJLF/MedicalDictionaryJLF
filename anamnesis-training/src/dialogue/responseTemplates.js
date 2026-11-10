@@ -1,5 +1,5 @@
 // English realization. Other languages can use the same fact and question records.
-import { FACT_STATE } from './clinicalFacts.js';
+import { FACT_STATE } from './clinicalFacts.js?v=pilot-4';
 
 const finish = text => text ? text[0].toUpperCase() + text.slice(1).replace(/[.]+$/, '') + '.' : '';
 const list = (items, conjunction = 'and') => items.length < 2 ? items.join('') :
@@ -101,6 +101,9 @@ export function realizeEnglish(fact, question = {}) {
   const { state, value, intent, attribute } = fact;
   if ([FACT_STATE.UNKNOWN, FACT_STATE.NOT_AUTHORED, FACT_STATE.NOT_ASKED].includes(state)) return null;
   if (state === FACT_STATE.NOT_APPLICABLE) return { text: 'That does not apply to me.', rule: 'not_applicable' };
+  if ([FACT_STATE.PRESENT, FACT_STATE.ABSENT].includes(state) && typeof value?.text === 'string' && value.text.trim()) {
+    return { text: value.text.trim(), rule: 'authored_text' };
+  }
   if (state === FACT_STATE.NARRATIVE) {
     const pattern = identityRules[intent];
     const text = pattern ? finish(pattern(value)) :

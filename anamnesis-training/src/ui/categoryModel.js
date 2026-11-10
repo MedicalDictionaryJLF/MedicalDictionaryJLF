@@ -1,4 +1,5 @@
-import { QUESTION_AREAS, INTENTS } from '../data/interviewSchema.js?v=134';
+import { answeredTurns } from './transcriptEvidence.js';
+import { QUESTION_AREAS, INTENTS } from '../data/interviewSchema.js?v=pilot-9';
 
 const LAB_LABELS = {
   wbc: 'White blood cell count',
@@ -12,44 +13,55 @@ const LAB_LABELS = {
 export const ANAMNESIS_CATEGORIES = QUESTION_AREAS;
 
 export function getVisibleCategories(patientCase) {
-  return ANAMNESIS_CATEGORIES.filter((category) => category.id !== 'gynecological' || /female/i.test(patientCase.identity?.sex ?? ''));
+  return ANAMNESIS_CATEGORIES.filter((category) => category.id !== 'gynecological' || /female/i.test(patientCase?.identity?.sex ?? ''));
 }
 
 export function getCategoryForIntent(intentId) {
-  return ANAMNESIS_CATEGORIES.find((category) => category.intents.includes(intentId)) ?? null;
+  return ANAMNESIS_CATEGORIES.find((category) => topicIds(category).includes(intentId)) ?? null;
 }
 
-export function getChecklistItemsByCategory(engine, patientCase) {
-  const coverageById = new Map(engine.getCoverage().map((area) => [area.id, area]));
-  return getVisibleCategories(patientCase).map((category) => {
-    const coverage = coverageById.get(category.id);
-    const items = category.intents.map((intentId) => {
-      const applicable = Boolean(INTENTS[intentId]);
-      const complete = engine.isIntentSatisfied?.(intentId, engine.askedIntents) ?? engine.askedIntents.has(intentId);
-      const attempted = engine.isIntentSatisfied?.(intentId, engine.attemptedIntents ?? new Set()) ?? engine.attemptedIntents?.has(intentId);
+function topicIds(category) {
+  return [...new Set([...category.intents, ...(category.optionalIntents ?? []), ...(category.overviewIntents ?? [])])];
+}
+
+export function getChecklistItemsByCategory(engine, patientCase, { includeObjective = true } = {}) {
+  const excluded = new Set(patientCase?.debriefPriorities?.notRelevant ?? []);
+  const resolved = engine?.askedIntents ?? new Set();
+  const turns = answeredTurns(engine);
+  return getVisibleCategories(patientCase)
+    .filter(category => includeObjective || category.id !== 'objective')
+    .map(category => {
+      const core = category.intents.filter(id => !excluded.has(id));
+      const items = topicIds(category).filter(id => INTENTS[id] && !excluded.has(id)).map(id => {
+        const complete = resolved.has(id);
+        const attempted = engine?.attemptedIntents?.has(id);
+        return {
+          id,
+          label: labelForIntent(id),
+          optional: !core.includes(id),
+          turn: turns.get(id),
+          satisfied: engine?.isIntentSatisfied?.(id, resolved) ?? complete,
+          status: complete ? 'complete' : attempted ? 'attempted' : 'notAsked'
+        };
+      });
+      const asked = items.filter(item => !item.optional && item.satisfied).length;
       return {
-        id: intentId,
-        label: labelForIntent(intentId),
-        status: applicable ? (complete ? 'complete' : attempted ? 'attempted' : 'notAsked') : 'notApplicable'
+        id: category.id,
+        title: category.title,
+        required: category.required,
+        asked,
+        total: core.length,
+        percent: core.length ? Math.round(asked / core.length * 100) : 0,
+        items
       };
     });
-    return {
-      id: category.id,
-      title: category.title,
-      required: category.required,
-      asked: coverage?.asked ?? items.filter((item) => item.status === 'complete').length,
-      total: coverage?.total ?? items.length,
-      percent: coverage?.percent ?? 0,
-      items
-    };
-  });
 }
 
 export function getKnownFactsByCategory(engine, patientCase, orderedLabs = {}) {
   const orderedLabFacts = new Map(Object.entries(orderedLabs).map(([key, value]) => [`lab_${key}`, value]));
   return getVisibleCategories(patientCase)
     .map((category) => {
-      const facts = [...category.intents, ...(category.optionalIntents ?? [])]
+      const facts = topicIds(category)
         .filter((intentId) => engine.askedIntents.has(intentId) || orderedLabFacts.has(intentId))
         .map((intentId) => ({
           id: intentId,

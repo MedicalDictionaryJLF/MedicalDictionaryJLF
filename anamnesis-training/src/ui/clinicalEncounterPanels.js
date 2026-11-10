@@ -1,4 +1,4 @@
-import { renderAnamnesisDebrief } from './anamnesisDebrief.js?v=20261108-debrief';
+import { renderAnamnesisDebrief } from './anamnesisDebrief.js?v=pilot-9';
 import {
   addDifferential,
   countCompletedNoteSections,
@@ -163,7 +163,7 @@ export function renderEncounterReport({ container, report, onContribute }) {
         ${scoreTile('Clinical reasoning', report.clinicalReasoning.percent)}
         ${scoreTile('Closing / presentation', report.closing.percent)}
       </div>
-      ${report.interviewDebrief ? renderAnamnesisDebrief({ debrief: report.interviewDebrief, priorities: report.interviewPriorities || {}, questionCount: (report.completeRecord?.transcript || []).filter(item => item.speaker === 'student').length }) : renderInterviewDebrief(null, report.interviewBreakdown)}
+      ${report.interviewDebrief ? renderAnamnesisDebrief({ debrief: report.interviewDebrief, priorities: report.interviewPriorities || {}, messages: report.completeRecord?.transcript || [], questionCount: (report.completeRecord?.transcript || []).filter(item => item.speaker === 'student').length }) : renderInterviewDebrief(null, report.interviewBreakdown)}
       <section class="report-section">
         <h3>Physical examination</h3>
         ${report.examination.limitation ? `<p>${escapeHtml(report.examination.limitation)}</p>` : ''}
