@@ -54,7 +54,7 @@ async function openPage(options) {
 }
 async function observeRenderer(page) {
   await page.evaluate(async () => {
-    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=positioning-all-modes');
+    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=bed-contact');
     const setup = Patient3DRenderer.prototype.createInspectionPoints;
     Patient3DRenderer.prototype.createInspectionPoints = function(...args) { setup.apply(this, args); window.examTestRenderer = this; };
   });
