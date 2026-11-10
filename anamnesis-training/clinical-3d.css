@@ -94,3 +94,5 @@ body[data-trainer-experience=full] .encounter-step small{color:inherit;opacity:.
   background:var(--md-brand-soft);color:var(--md-brand-deep);
 }
 .patient3d-bedside-docked .patient3d-reset{width:auto;margin-left:4px}
+
+.patient3d-toolbar .patient3d-position-buttons{flex-wrap:wrap;justify-content:flex-start}

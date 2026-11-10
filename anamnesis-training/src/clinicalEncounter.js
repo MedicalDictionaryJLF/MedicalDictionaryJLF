@@ -172,17 +172,9 @@ export function moveDifferential(encounterState, index, direction) {
   [encounterState.differentials[index], encounterState.differentials[next]] = [encounterState.differentials[next], encounterState.differentials[index]];
 }
 
-export function evaluateExamination(patientCase, encounterState, { allowAbdominalPosition = true } = {}) {
+export function evaluateExamination(patientCase, encounterState) {
   const actions = getExaminationActions(patientCase, encounterState);
-  const requiredActions = actions.filter(item => item.required && item.assessed);
-  const required = requiredActions.filter(item => allowAbdominalPosition || item.id !== 'abdomen' || item.performed);
-  const limitations = [];
-  if (!required.length && required.length === requiredActions.length) {
-    limitations.push('Current physical findings are not authored for this case. Procedural attempts are recorded; this domain is excluded from the score.');
-  }
-  if (required.length !== requiredActions.length) {
-    limitations.push('Abdominal palpation was excluded from scoring because positioning is available in Teaching mode.');
-  }
+  const required = actions.filter(item => item.required && item.assessed);
   const completed = required.filter(item => item.performed);
   return {
     percent: required.length ? Math.round((completed.length / required.length) * 100) : null,
@@ -194,7 +186,7 @@ export function evaluateExamination(patientCase, encounterState, { allowAbdomina
     record: (encounterState.examActions || []).map(item => ({ ...item })),
     unavailable: (encounterState.examActions || []).filter(item => !item.documented).length,
     ecg: JSON.parse(JSON.stringify(encounterState.ecg)),
-    limitation: limitations.join(' ')
+    limitation: required.length ? '' : 'Current physical findings are not authored for this case. Procedural attempts are recorded; this domain is excluded from the score.'
   };
 }
 
@@ -253,9 +245,9 @@ function assessInvestigations(patientCase, encounterState, results, actions, clo
   return { criteria, selectionPercent, interpretation };
 }
 
-export function buildEncounterReport({ patientCase, encounterState, interviewScore, interviewBreakdown = null, interviewDebrief = null, interviewPriorities = {}, closingInput, investigations = {}, management = [], actions = [], transcript = [], environmentReady = true, allowAbdominalPosition = true }) {
+export function buildEncounterReport({ patientCase, encounterState, interviewScore, interviewBreakdown = null, interviewDebrief = null, interviewPriorities = {}, closingInput, investigations = {}, management = [], actions = [], transcript = [], environmentReady = true }) {
   encounterState.closing = { ...encounterState.closing, ...closingInput };
-  const examination = evaluateExamination(patientCase, encounterState, { allowAbdominalPosition });
+  const examination = evaluateExamination(patientCase, encounterState);
   if (!environmentReady && examination.assessed && examination.missed.length) {
     examination.percent = null;
     examination.limitation = 'The 3D environment was unavailable at submission. Acquired findings are preserved; incomplete examinations are unassessed.';

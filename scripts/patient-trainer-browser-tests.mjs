@@ -54,7 +54,7 @@ async function openPage(options) {
 }
 async function observeRenderer(page) {
   await page.evaluate(async () => {
-    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=chat-positioning-1');
+    const { Patient3DRenderer } = await import('/anamnesis-training/src/scene/patient3DRenderer.js?v=positioning-all-modes');
     const setup = Patient3DRenderer.prototype.createInspectionPoints;
     Patient3DRenderer.prototype.createInspectionPoints = function(...args) { setup.apply(this, args); window.examTestRenderer = this; };
   });
@@ -79,13 +79,23 @@ async function position(page) {
   return page.evaluate(() => window.examTestRenderer.getDiagnostics().position);
 }
 
-async function verifyFixedPosition(page, mode) {
+async function verifyChatPositioning(page, mode) {
   await start(page, 'chest_pain_acs_risk', mode);
   await sleepReady(page);
   assert.equal(await position(page), 'seated');
   assert.deepEqual(await page.locator('.patient3d-toolbar button').allTextContents(), ['Face', 'Patient', 'Room']);
   await page.locator('[data-focus="room"]').click();
-  await ask(page, 'Please stand up.', /available in Teaching mode/);
+  await ask(page, 'Please stand up.', /stand up/);
+  assert.equal(await position(page), 'standing');
+  await ask(page, 'Could you lie down on the bed?', /lie on my back/);
+  assert.equal(await position(page), 'reclined');
+  await ask(page, 'Could you bend your knees a little?', /knees slightly bent/);
+  assert.equal(await position(page), 'abdominal');
+  await page.locator('#openExamBtn').click();
+  await examination(page, 'palpate', 'abdomen-ruq');
+  assert.equal(await recordCount(page), 1);
+  await page.locator('[data-workspace-target="interview"]').click();
+  await ask(page, 'Can you sit on a chair?', /sit upright/);
   assert.equal(await position(page), 'seated');
 }
 
@@ -160,12 +170,19 @@ try {
   await details.getByText('2. And your jaw?', { exact: true }).click();
   assert.match(await details.locator('pre:visible').innerText(), /radiation\.sites/);
   assert.match(await details.locator('pre:visible').innerText(), /"aiCalled": false/);
-  await verifyFixedPosition(page, 'practice');
-  await verifyFixedPosition(page, 'exam');
+  await verifyChatPositioning(page, 'practice');
+  await verifyChatPositioning(page, 'exam');
   await start(page,'chest_pain_acs_risk','teaching');
   await sleepReady(page);
   assert.equal(await position(page), 'seated');
-  assert.equal(await page.locator('[data-position]').count(), 0);
+  const positionButtons = page.getByRole('group', { name: 'Patient position' });
+  assert.deepEqual(await positionButtons.getByRole('button').allTextContents(), ['Sit', 'Stand', 'Lie flat', 'Lie with knees bent']);
+  for (const [label, pose] of [['Stand', 'standing'], ['Lie flat', 'reclined'], ['Lie with knees bent', 'abdominal'], ['Sit', 'seated']]) {
+    const button = positionButtons.getByRole('button', { name: label, exact: true });
+    await button.click();
+    assert.equal(await position(page), pose);
+    assert.equal(await button.getAttribute('aria-pressed'), 'true');
+  }
   assert.deepEqual(await layout(), anamnesisLayout, 'Anamnesis and full encounter patient cards must line up');
   console.log('WebGL renderer:',await page.evaluate(()=>{const gl=window.examTestRenderer.renderer.getContext();return gl.getParameter(gl.getExtension('WEBGL_debug_renderer_info').UNMASKED_RENDERER_WEBGL);}));
   await page.locator('#questionInput').fill('What is your main problem?');
@@ -253,13 +270,14 @@ try {
   await page.waitForFunction(()=>{const image=document.querySelector('#ecgRecordingImage');return image.complete&&image.naturalWidth>0;});
   await page.locator('#closeEcgBtn').click();
   await handover(page);
+  assert.equal(await positionButtons.getByRole('button', { name: 'Sit', exact: true }).isDisabled(), true);
   assert.match(await page.locator('#closingPanel').innerText(),/1 incorrect placements/);
   assert.match(await page.locator('#closingPanel').innerText(),/Case ECG: acquired/);
   await page.locator('#restartBtn').click();
   await page.getByRole('button',{name:'View record'}).first().click();
   assert.match(await page.locator('#patientTrainerRecordContent').innerText(),/Clinical encounter score/);
   assert.equal(desktop.pageErrors.length,0,desktop.pageErrors.join('\n'));
-  console.log('Desktop: shared layout, four examination techniques, abdominal positioning, ECG raycast, failure/retry, session restore and stored report PASS');
+  console.log('Desktop: positioning chat in all modes, Teaching buttons, examination, ECG, failure/retry, session restore and stored report PASS');
   await browser.close();
   if (process.env.PT_BROWSER_SCOPE === 'desktop') process.exit(0);
   browser = await launchBrowser();
