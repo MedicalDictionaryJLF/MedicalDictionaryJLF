@@ -1,4 +1,4 @@
-import { POSITIONING_COMMANDS } from '../data/positioningCommands.js?v=1';
+import { POSITIONING_COMMANDS } from '../data/positioningCommands.js?v=2';
 
 const REQUEST_PREFIX = /^(?:(?:could|can|would|will) you (?:be able to )?|are you able to |(?:i(?:'d| would) like you to|i need you to) )?(?:please )?/;
 const posePatterns = Object.fromEntries(Object.entries(POSITIONING_COMMANDS)

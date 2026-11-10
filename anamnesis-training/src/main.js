@@ -1,20 +1,20 @@
 import { PATIENT_CASES } from './cases/index.js?v=conversation-1';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { getPositionRequest } from './dialogue/positionRequests.js?v=positioning-catalog';
-import { POSITIONING_COMMANDS, POSITIONING_REPLIES } from './data/positioningCommands.js?v=1';
+import { getPositionRequest } from './dialogue/positionRequests.js?v=positioning-all-modes';
+import { POSITIONING_COMMANDS, POSITIONING_REPLIES } from './data/positioningCommands.js?v=2';
 import { PatientEngine } from './patientEngine.js?v=conversation-1';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=20261108-debrief';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
-import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, applyAvatarPositionRequest, isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=chat-positioning-1';
+import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, applyAvatarPositionRequest, isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=positioning-all-modes';
 import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=conversation-1';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
 import { renderModeLayout } from './ui/modeLayout.js?v=134';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
-import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js?v=chat-positioning-1';
+import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js?v=positioning-all-modes';
 import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js?v=chat-positioning-1';
 import { PatientStateEngine } from './patientState.js';
 import { renderPatientStatePanel } from './ui/patientStatePanel.js';
@@ -379,7 +379,7 @@ function renderSetupPreview(randomChosen = false) {
     <div class="setup-preview-top"><strong>${randomChosen ? 'Random station selected' : escapeHtml(activeCase.title)}</strong><span>${escapeHtml(selectedDifficulty)} · ${escapeHtml(selectedMode)}</span></div>
     <p>${experienceHelp}</p>
     <p>${escapeHtml(modeHelp)}</p>
-    ${els.modeSelect?.value === 'teaching' ? '<p>Ask the patient to change position in chat. For example, “Could you lie on your back and bend your knees slightly?”</p>' : ''}
+    <p>Ask the patient to change position in chat.${els.modeSelect?.value === 'teaching' ? ' You can also use the positioning buttons in the 3D view.' : ''}</p>
     <p>${escapeHtml(difficultyHelp)}</p>
     <small>Patient identity and case facts stay hidden until they are obtained during the interview.</small>
     <small>${escapeHtml(ptT('interview_language_note'))}</small>
@@ -507,11 +507,15 @@ async function handleQuestion(event) {
 }
 
 function answerPositionRequest(position) {
-  if (currentMode !== 'teaching') return POSITIONING_REPLIES.teachingOnly;
   if (position === 'needs-reclining') return POSITIONING_REPLIES.needsReclining;
-  if (!applyAvatarPositionRequest(position)) return POSITIONING_REPLIES.viewUnavailable;
-  patientPosition = position;
+  if (!changePatientPosition(position)) return POSITIONING_REPLIES.viewUnavailable;
   return POSITIONING_COMMANDS[position].reply;
+}
+
+function changePatientPosition(position) {
+  if (!applyAvatarPositionRequest(position)) return false;
+  patientPosition = position;
+  return true;
 }
 
 function setQuestionPending(pending) {
@@ -637,7 +641,6 @@ function submitEncounter(closingInput) {
     management: administeredMedications,
     actions: actionHistory,
     environmentReady: isAvatarEnvironmentReady(),
-    allowAbdominalPosition: currentMode === 'teaching',
     transcript: currentSession?.messages || []
   });
   actionHistory.push({ type: 'encounter-submitted', at: new Date().toISOString(), score: report.encounterScore });
@@ -671,9 +674,7 @@ function resetEncounterControls() {
   });
   if (els.finishAnamnesisBtn) els.finishAnamnesisBtn.disabled = false;
   if (els.sendQuestionBtn) { els.sendQuestionBtn.disabled = false; els.sendQuestionBtn.textContent = 'Ask'; }
-  if (els.questionInput) { els.questionInput.readOnly = false; els.questionInput.placeholder = currentMode === 'teaching'
-    ? 'Ask a question or request a position in chat…'
-    : 'Ask the patient a free-text anamnesis question...'; }
+  if (els.questionInput) { els.questionInput.readOnly = false; els.questionInput.placeholder = 'Ask a question or request a position in chat…'; }
   if (els.closeClosingBtn) els.closeClosingBtn.textContent = 'Return to station';
 }
 
@@ -1022,6 +1023,7 @@ function completeCurrentSession(finalRecord = {}) {
 }
 
 function lockCompletedInterviewControls() {
+  lockAvatarExaminations();
   responsePending = true;
   if (els.sendQuestionBtn) { els.sendQuestionBtn.disabled = true; els.sendQuestionBtn.textContent = 'Completed'; }
   if (els.questionInput) { els.questionInput.readOnly = true; els.questionInput.placeholder = 'This session has been completed.'; }
@@ -1095,7 +1097,7 @@ async function restorePatientTrainerSession(sessionId) {
   closeEcgViewer();
   activeCase = patientCase;
   currentMode = ['practice', 'teaching', 'exam'].includes(saved.mode) ? saved.mode : 'practice';
-  patientPosition = currentMode === 'teaching' && Object.hasOwn(POSITIONING_COMMANDS, saved.runtimeState.patientPosition)
+  patientPosition = Object.hasOwn(POSITIONING_COMMANDS, saved.runtimeState.patientPosition)
     ? saved.runtimeState.patientPosition : 'seated';
   currentDifficulty = saved.difficulty || 'intermediate';
   currentInterviewLanguage = saved.interviewLanguage || 'en';
@@ -1384,7 +1386,7 @@ function renderEncounterOverview() {
   const coverage = engine.getCoverage?.() || [];
   const required = coverage.filter((item) => item.required);
   const interviewPercent = required.length ? Math.round(required.reduce((sum, item) => sum + Number(item.percent || 0), 0) / required.length) : 0;
-  const examination = evaluateExamination(activeCase, encounterState, { allowAbdominalPosition: currentMode === 'teaching' });
+  const examination = evaluateExamination(activeCase, encounterState);
   const examTotal = examination.required.length;
   const examDone = examination.completed.length;
   const noteSections = countCompletedNoteSections(encounterState);
@@ -1487,6 +1489,11 @@ function activateTab(name) { document.querySelectorAll('.tab').forEach((tab) => 
 function labelForIntent(intent) { return INTENTS[intent]?.title || String(intent).replaceAll('_', ' '); }
 function escapeHtml(value) { return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); }
 init();
+
+els.avatarMount?.addEventListener('patient3d-position-control', event => {
+  if (!stationStarted || currentMode !== 'teaching' || currentSession?.completed || responsePending) return;
+  if (changePatientPosition(event.detail?.position)) persistCurrentSession();
+});
 
 // All examination inputs share this validated encounter path, including keyboard controls.
 els.avatarMount?.addEventListener('patient3d-availability', event => {

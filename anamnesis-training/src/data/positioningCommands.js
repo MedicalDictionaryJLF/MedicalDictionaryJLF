@@ -30,6 +30,5 @@ export const POSITIONING_COMMANDS = {
 
 export const POSITIONING_REPLIES = {
   needsReclining: 'Would you like me to lie down first?',
-  teachingOnly: 'Position requests are available in Teaching mode.',
   viewUnavailable: 'I can’t change position while the 3D view is unavailable.'
 };

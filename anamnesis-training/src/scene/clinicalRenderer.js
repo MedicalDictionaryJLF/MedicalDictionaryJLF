@@ -20,7 +20,7 @@ export class Patient3DRenderer {
   constructor(container,options={}) {
     Object.assign(this,{container,options,activeCase:options.activeCase,snapshot:null,loader:new GLTFLoader(),clock:new THREE.Clock(),actions:new Map(),slots:new Map(),morphMeshes:[],bones:new Map(),skinMaterials:[],mode:'case',positionOverride:null,speech:{active:false,text:'',index:0,boundary:0},affect:{},values:{pain:0,breath:0,sweat:0,pallor:0},elapsed:0,loaded:false,disposed:false,running:false,inView:true,inspectionEnabled:false,examTool:'off',selectedLead:null,placedLeads:{},abort:new AbortController(),demoClip:null,focusMode:'face',frames:0});
     this.inTrainer = Boolean(options.trainingMode);
-    this.positionOverride = options.trainingMode === 'teaching' && Object.hasOwn(TRAINER_POSITIONS, options.patientPosition) ? options.patientPosition : null;
+    this.positionOverride = this.inTrainer && Object.hasOwn(TRAINER_POSITIONS, options.patientPosition) ? options.patientPosition : null;
     this.asset=getPatientAsset(this.activeCase);
     this.interactionEnabled=options.allowInspection!==false&&!options.completed;
     this.ecgCompletionEmitted=Boolean(options.ecgCompleted);
@@ -101,6 +101,18 @@ export class Patient3DRenderer {
         toolbar.querySelector('.patient3d-options').remove();
       }
     }
+    if (this.options.trainingMode === 'teaching') {
+      const positions = document.createElement('div');
+      positions.className = 'patient3d-view-buttons patient3d-position-buttons';
+      positions.setAttribute('role', 'group');
+      positions.setAttribute('aria-label', 'Patient position');
+      positions.innerHTML = `
+        <button type="button" data-position-button="seated">Sit</button>
+        <button type="button" data-position-button="standing">Stand</button>
+        <button type="button" data-position-button="reclined">Lie flat</button>
+        <button type="button" data-position-button="abdominal">Lie with knees bent</button>`;
+      toolbar.append(positions);
+    }
     const positionControl = toolbar.querySelector('[data-position]');
     if (this.options.allowInspection === false) toolbar.querySelector('[data-inspect]')?.remove();
     else positionControl?.add(new Option('Supine · knees flexed', 'abdominal'));
@@ -108,6 +120,11 @@ export class Patient3DRenderer {
       const button = e.target.closest('button');
       if (!button) return;
       if (button.dataset.focus) this.focus(button.dataset.focus);
+      if (button.dataset.positionButton && this.options.trainingMode === 'teaching') {
+        this.container.dispatchEvent(new CustomEvent('patient3d-position-control', {
+          bubbles: true, detail: { position: button.dataset.positionButton }
+        }));
+      }
       if (button.hasAttribute('data-inspect')) this.toggleInspection();
       if (button.hasAttribute('data-expand')) this.toggleExpanded();
     }, { signal: this.abort.signal });
@@ -166,7 +183,7 @@ export class Patient3DRenderer {
 
   prepareAnimations(clips) {
     const reclined = clips.find(clip => clip.name === 'PositionReclined');
-    if (reclined && (this.options.trainingMode === 'teaching' || !this.inTrainer && this.options.allowInspection !== false)) {
+    if (reclined && (this.inTrainer || this.options.allowInspection !== false)) {
       clips = [...clips, buildAbdominalPosition(this.patient, this.bones, reclined, this.cover)];
     }
     this.mixer = new THREE.AnimationMixer(this.patient);
@@ -237,7 +254,7 @@ export class Patient3DRenderer {
   }
 
   canExamine(){return this.loaded&&!this.disposed&&!this.failed&&this.interactionEnabled;}
-  setInteractionEnabled(enabled){this.interactionEnabled=Boolean(enabled)&&this.options.allowInspection!==false;if(!enabled)this.setExaminationTool('off');const button=this.toolbar?.querySelector('[data-inspect]');if(button)button.disabled=!this.interactionEnabled;}
+  setInteractionEnabled(enabled){this.interactionEnabled=Boolean(enabled)&&this.options.allowInspection!==false;if(!enabled)this.setExaminationTool('off');this.syncPositionButtons();const button=this.toolbar?.querySelector('[data-inspect]');if(button)button.disabled=!this.interactionEnabled;}
   inspect(id){return this.examineSite(id);}
   toggleInspection(enabled=this.examTool==='off'){return this.setExaminationTool(enabled?'inspect':'off');}
   setExaminationTool(tool='off'){
@@ -286,9 +303,9 @@ export class Patient3DRenderer {
     const result=getBedsideFinding(this.activeCase,id,this.examTool);if(!result)return {ok:false,reason:'This technique is not valid at the selected site.'};
     if (this.examTool === 'palpate' && result.examinationId === 'abdomen' && this.actualPosition !== 'abdominal') {
       if (this.inTrainer) {
-        const reason = this.options.trainingMode === 'teaching'
-          ? 'Ask the patient in chat to lie on their back and bend their knees slightly before palpating.'
-          : 'Abdominal palpation requires a position change, which is available in Teaching mode.';
+        const reason = this.options.trainingMode === 'exam'
+          ? 'The patient is not positioned for abdominal palpation.'
+          : 'Ask the patient in chat to lie on their back and bend their knees slightly before palpating.';
         this.status(reason);
         return { ok: false, reason };
       }
@@ -331,6 +348,7 @@ export class Patient3DRenderer {
     // Move pose and furniture together. Interpolating a standing body through
     // an already-positioned mattress causes visible body/bed intersections.
     const clip = TRAINER_POSITIONS[position];
+    if (changed || immediate) this.syncPositionButtons();
     this.setSlot('posture',clip,0);
     if(this.chair)this.chair.visible=position==='seated';
     if(this.bed)this.bed.position.set(isSupine(position)?0:1.55,0,isSupine(position)?0:-.45);
@@ -344,8 +362,15 @@ export class Patient3DRenderer {
 
   setSlot(slot,name,fade=.6){if(this.slots.get(slot)===name)return;const a=this.actions.get(name);if(!a)return;const previous=this.actions.get(this.slots.get(slot));if(fade)previous?.fadeOut(fade);else previous?.stop();if(slot==='posture')for(const [key,action] of this.actions)if(key.startsWith('Position')&&key!==name)action.stop();a.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();if(fade)a.fadeIn(fade);this.slots.set(slot,name);}
   setClinicalMode(mode='case'){this.stopDemo();this.mode=['case','resting','symptomatic'].includes(mode)?mode:'case';this.toolbar.querySelector('[data-animation-mode]').value=this.mode;this.updateState();this.status(this.mode==='case'?'Following the clinical case':this.mode==='resting'?'Resting animation preview · case unchanged':'Documented symptom preview · case unchanged');}
+  syncPositionButtons() {
+    this.toolbar?.querySelectorAll('[data-position-button]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.positionButton === this.actualPosition));
+      button.disabled = Boolean(this.options.completed);
+    });
+  }
+
   applyPositionRequest(position) {
-    if (this.options.trainingMode !== 'teaching' || this.options.completed || !this.loaded ||
+    if (!this.inTrainer || this.options.completed || !this.loaded ||
         this.failed || this.disposed || !Object.hasOwn(TRAINER_POSITIONS, position) ||
         !this.actions.has(TRAINER_POSITIONS[position])) return false;
     this.positionOverride = position;
