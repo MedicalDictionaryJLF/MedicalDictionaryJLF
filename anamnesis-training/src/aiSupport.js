@@ -1,7 +1,7 @@
 import { buildApiUrl, resolveIntentWithAI } from '../../src/ai/client.js';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { medicationSubject, sleepQuestion } from './dialogue/questionAnalysis.js?v=pilot-1';
-import { normalize } from './patientEngine.js?v=pilot-1';
+import { medicationSubject, sleepQuestion } from './dialogue/questionAnalysis.js?v=pilot-2';
+import { normalize } from './patientEngine.js?v=pilot-2';
 
 const MAX_RESCUES = 2;
 const ACCEPT_CONFIDENCE = 0.9;

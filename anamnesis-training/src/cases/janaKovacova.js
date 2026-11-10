@@ -114,6 +114,7 @@ export const janaKovacova = {
     "obstetric": "I have been pregnant twice and have two children, both vaginal deliveries. No miscarriages."
   },
   "familyHistory": "My mother had gallbladder surgery. Father has hypertension.",
+  "familyOverviewTopics": ["family_inherited", "family_cardiovascular"],
   "familyDetails": {
     "cardiovascular": "My father has high blood pressure. No premature heart attacks or strokes that I know of.",
     "diabetes": "No diabetes in my close family that I know of.",

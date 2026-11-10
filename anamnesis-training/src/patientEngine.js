@@ -1,7 +1,7 @@
 import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=134';
-import { retrieveFacts } from './dialogue/clinicalFacts.js';
-import { realizeEnglish } from './dialogue/responseTemplates.js';
-import { analyzeQuestion, medicationSubject, sleepQuestion, splitQuestions } from './dialogue/questionAnalysis.js?v=pilot-1';
+import { retrieveFacts } from './dialogue/clinicalFacts.js?v=pilot-2';
+import { realizeEnglish } from './dialogue/responseTemplates.js?v=pilot-2';
+import { analyzeQuestion, medicationSubject, sleepQuestion, splitQuestions } from './dialogue/questionAnalysis.js?v=pilot-2';
 import { PRESENTING_SYMPTOMS } from './cases/conversationFacts.js';
 
 const MATCH_THRESHOLD = 0.24;
@@ -73,6 +73,11 @@ const DIRECT_RULES = [
   [/\b(when were you admit(?:ted|ed|tet|id)|when did you get admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
   [/\b(how did you get here|how did you arrive|how did you come here|how did you (?:get|come) to (the )?hospital|did you come by ambulance|did someone drive you|who brought you|were you brought by emergency services)\b/, ['administrative_arrival_method'], 'single_intent'],
   [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission)|what is your (?:current complaint|medical problem|problem)|do you have any pain|what is bothering you today|what happend to you|^what was the reason$)\b/, ['chief_complaint'], 'broad_open_history'],
+  [/\b(heart attack in family|family heart disease|stroke in family|family history of (?:heart disease|heart attacks?|stroke|hypertension|high blood pressure)|premature heart|sudden cardiac)\b/, ['family_cardiovascular'], 'single_intent'],
+  [/\b(diabetes in family|family diabetes|family history of diabetes)\b/, ['family_diabetes'], 'single_intent'],
+  [/\b(cancer in family|family cancer|family history of cancer)\b/, ['family_cancer'], 'single_intent'],
+  [/\b(genetic disease|inherited disease|runs in (the )?family|sudden unexplained death)\b/, ['family_inherited'], 'single_intent'],
+  [FAMILY_OVERVIEW, ['family_history'], 'single_intent'],
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],
   [/\b(what were you doing|doing when it started|activity at onset|circumstances at onset)\b/, ['hpi_activity_at_onset'], 'single_intent'],
@@ -162,11 +167,6 @@ const DIRECT_RULES = [
   [/\b(supplements|vitamins|herbal|herbs)\b/, ['medication_supplements'], 'single_intent'],
   [/\b(forget|adherence|take them regularly|took today|miss doses|missed dose)\b/, ['medication_adherence'], 'single_intent'],
 
-  [/\b(heart attack in family|family heart disease|stroke in family|premature heart|sudden cardiac)\b/, ['family_cardiovascular'], 'single_intent'],
-  [/\b(diabetes in family|family diabetes)\b/, ['family_diabetes'], 'single_intent'],
-  [/\b(cancer in family|family cancer)\b/, ['family_cancer'], 'single_intent'],
-  [/\b(genetic disease|inherited disease|runs in (the )?family|sudden unexplained death)\b/, ['family_inherited'], 'single_intent'],
-  [FAMILY_OVERVIEW, ['family_history'], 'single_intent'],
 
   [/\b(travel|abroad|recent trip)\b/, ['epi_travel'], 'single_intent'],
   [/\b(sick contact|infectious contact|anyone ill|contact with infection)\b/, ['epi_contacts'], 'single_intent'],
@@ -560,13 +560,20 @@ export class PatientEngine {
 
   inferAttemptedIntents(question, detection) {
     const normalized = normalize(question);
+    const detectedIds = [...new Set((detection?.answerIntents ?? []).map(intent => intent.id).filter(id => INTENTS[id]))];
+    // A scoped facet or explicit family/medication question is stronger
+    // evidence than words it happens to share with other rubric items.
+    if (detectedIds.length && (detection.analysis?.intent ||
+        detectedIds.every(id => INTENTS[id].domain === 'family') ||
+        (medicationSubject.test(normalized) && detectedIds.every(id => INTENTS[id].domain === 'medication')))) {
+      return detectedIds;
+    }
     const explicitAttempts = ATTEMPT_RULES
       .filter(([, pattern]) => pattern.test(normalized))
       .map(([intentId]) => intentId)
       .filter((intentId, index, list) => INTENTS[intentId] && list.indexOf(intentId) === index);
 
     if (explicitAttempts.length) {
-      const detectedIds = [...new Set((detection?.answerIntents ?? []).map((intent) => intent.id).filter((intentId) => INTENTS[intentId]))];
       const legacyOverview = new Set(['family_history','epidemiology','social_living','daily_independence','gyn_history','ros_general','ros_head_neck','ros_cardiovascular','ros_respiratory','ros_gastrointestinal','ros_genitourinary','ros_neurological','ros_musculoskeletal','ros_skin']);
       if (detectedIds.length && explicitAttempts.every((intentId) => legacyOverview.has(intentId) || !detectedIds.includes(intentId))) return detectedIds.slice(0, 3);
       const hpiAttempts = explicitAttempts.filter((intentId) => intentId.startsWith('hpi_'));
@@ -578,7 +585,7 @@ export class PatientEngine {
       return [detection.primaryIntent.id];
     }
 
-    return [...new Set((detection?.answerIntents ?? []).map((intent) => intent.id).filter((intentId) => INTENTS[intentId]))];
+    return detectedIds;
   }
 
   makeDetection(data) {
@@ -795,29 +802,34 @@ export class PatientEngine {
     return detection.answerIntents.map(candidate => {
       const attribute = candidate.id === analysis?.intent ? analysis.attribute : 'overview';
       let facts = retrieveFacts(this.case, candidate.id, attribute, analysis?.target);
-      let realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+      const realizeFacts = (records) => records.flatMap(fact => {
+        const response = realizeEnglish(fact, analysis);
+        return response ? [{ ...response, fact }] : [];
+      });
+      let realized = realizeFacts(facts);
       if (!realized.length && attribute === 'overview' && facts.some(fact => fact.state === 'present' || fact.state === 'absent')) {
         facts = retrieveFacts(this.case, candidate.id, 'authored-overview');
-        realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+        realized = realizeFacts(facts);
       }
       // One-facet narrative fields can answer their corresponding open request.
       // A target-specific confirmation needs target-specific authored facts.
       if (!realized.length && !analysis?.target &&
           ['location', 'onset.time', 'onset.activity', 'character.qualities', 'radiation.sites', 'progression', 'relief', 'presence'].includes(attribute)) {
         facts = retrieveFacts(this.case, candidate.id);
-        realized = facts.map(fact => realizeEnglish(fact, analysis)).filter(Boolean);
+        realized = realizeFacts(facts);
       }
       if (candidate.id === 'identity_sex' && detection.questionType === 'statement_assertion' && realized.length) {
         const asserted = detection.normalized.match(/\b(male|female)$/)?.[1];
         if (asserted) realized[0].text = `${asserted === this.case.identity.sex ? 'Yes' : 'No'}. ${realized[0].text}`;
       }
+      const creditedIntentIds = [...new Set(realized.map(item => item.fact.intent))]
+        .filter(intent => intent !== candidate.id && FAMILY_OVERVIEW.test(detection.normalized));
       return {
         intent: candidate.id, attribute, target: analysis?.target ?? null,
-        ...(realized.length && candidate.id === 'family_history' && FAMILY_OVERVIEW.test(detection.normalized) &&
-          this.case.familyOverviewTopics?.length ? { creditedIntentIds: this.case.familyOverviewTopics } : {}),
+        ...(creditedIntentIds.length ? { creditedIntentIds } : {}),
         status: realized.length ? 'answered' : 'recognized_unknown',
-        text: realized.length ? realized.map(item => item.text).join(' ') : 'I’m not sure about that.',
-        factsUsed: realized.length ? facts.map(({ id, state }) => ({ id, state })) : [],
+        text: realized.length ? [...new Set(realized.map(item => item.text))].join(' ') : 'I’m not sure about that.',
+        factsUsed: realized.map(({ text, fact: { id, state, intent, provenance } }) => ({ id, state, intent, text, paths: provenance.paths })),
         rules: realized.length ? realized.map(item => item.rule) : ['unknown'],
         reason: realized.length ? null : facts.map(fact =>
           ['present', 'absent', 'authored_narrative'].includes(fact.state) ? 'could_not_realize_fact' : fact.state).join(', ')
@@ -840,7 +852,8 @@ export class PatientEngine {
   disclosedAnswerFor(intentId) {
     const answers = this.debugTurns.flatMap(turn => turn.answers ?? [])
       .filter(answer => (answer.intent === intentId || answer.creditedIntentIds?.includes(intentId)) && answer.status === 'answered')
-      .map(answer => answer.text);
+      .flatMap(answer => answer.intent === intentId ? [answer.text] :
+        answer.factsUsed.filter(fact => fact.intent === intentId).map(fact => fact.text));
     return answers.length ? [...new Set(answers)].join(' ') : this.answerFor(intentId);
   }
 

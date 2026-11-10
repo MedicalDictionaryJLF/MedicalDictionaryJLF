@@ -256,6 +256,9 @@ test('family history credits only elicited topics and records the exchange in th
   const engine = make();
   engine.ask('Do you have any other diseases?');
   assert.equal(engine.askedIntents.has('family_cardiovascular'), false);
+  const specific = make().ask('Is there a family history of diabetes?');
+  assert.deepEqual(specific.answeredIds, ['family_diabetes']);
+  assert.doesNotMatch(specific.reply, /heart attack/);
   const question = 'Any family history of conditions we should be aware of?';
   const result = engine.ask(question);
   assert.deepEqual(result.answeredIds, ['family_history', 'family_cardiovascular', 'family_diabetes']);
@@ -271,4 +274,57 @@ test('family history credits only elicited topics and records the exchange in th
   assert.equal(migraine.getDebrief().evidenceByIntent.allergies.reason, 'not_authored');
   assert.equal(migraine.getDebrief().missedEssential.includes('allergies'), false);
   assert.equal(migraine.askedIntents.has('allergies'), false);
+});
+
+test('shared authored answers, evidence and grading work for every case in all modes', () => {
+  const expectedFamilyTopics = [
+    ['family_cardiovascular', 'family_diabetes'],
+    ['family_inherited', 'family_cardiovascular'],
+    ['family_cardiovascular'],
+    [],
+    [],
+    ['family_cardiovascular'],
+    ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'],
+    ['family_inherited']
+  ];
+  for (const [index, patient] of PATIENT_CASES.entries()) {
+    for (const mode of ['teaching', 'practice', 'exam']) {
+      const engine = new PatientEngine(patient, { mode });
+      const label = `${patient.id} (${mode})`;
+      const intake = engine.ask('What is your current complaint?');
+      assert.equal(intake.detectedIntent, 'chief_complaint', label);
+      assert.ok(intake.answeredIds.includes('chief_complaint'), label);
+      const dosing = engine.ask('How often do you take your medications?');
+      assert.equal(dosing.detectedIntent, 'medication_frequency', label);
+      assert.ok(!engine.attemptedIntents.has('hpi_timing'), label);
+      engine.ask('Any family history of conditions we should be aware of?');
+      const family = engine.debugTurns.at(-1).answers[0];
+      assert.deepEqual(family.creditedIntentIds ?? [], expectedFamilyTopics[index], label);
+      assert.deepEqual(family.factsUsed.map(fact => fact.intent), expectedFamilyTopics[index], label);
+      assert.ok(family.factsUsed.every(fact => fact.paths.length), label);
+      engine.ask('Do you have any allergies?');
+      const evidence = engine.getDebrief().evidenceByIntent.allergies;
+      assert.equal(evidence.resolved, index < 2, label);
+      assert.equal(evidence.reason, index < 2 ? null : 'not_authored', label);
+      assert.ok(!engine.getDebrief().missedEssential.includes('allergies'), label);
+    }
+  }
+});
+
+test('structured text and uncertainty share the same answer path as legacy case fields', () => {
+  const patient = createAnamnesisCase({
+    id: 'raw-answer-test',
+    identity: { sex: 'female' },
+    allergies: 'I am allergic to penicillin.',
+    conversationFacts: {
+      allergies: { overview: { state: 'unknown' } },
+      ros_dyspnea: { overview: { state: 'absent', text: 'I have not felt short of breath.' } }
+    }
+  });
+  const engine = make(patient);
+  const allergy = engine.ask('Do you have any allergies?');
+  assert.doesNotMatch(allergy.reply, /penicillin/);
+  assert.equal(engine.getDebrief().evidenceByIntent.allergies.reason, 'unknown');
+  assert.equal(engine.ask('Do you have trouble breathing?').reply, 'I have not felt short of breath.');
+  assert.equal(engine.debugTurns.at(-1).answers[0].factsUsed[0].state, 'absent');
 });
