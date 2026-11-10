@@ -7,7 +7,7 @@ const state = {
 
 async function loadPatient3DRenderer(timeoutMs = 12000) {
   if (!patient3DRendererModulePromise) {
-    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=positioning-all-modes')
+    patient3DRendererModulePromise = import('./scene/patient3DRenderer.js?v=bed-contact')
       .catch(error => { patient3DRendererModulePromise = null; throw error; });
   }
   let timer;

@@ -49,7 +49,7 @@ for(const activeCase of PATIENT_CASES){
   const bedding=Array.from(renderer.cover.geometry.attributes.position.array);
   environment.scene.updateMatrixWorld(true);
   const bedspreadBounds=new THREE.Box3().setFromObject(renderer.cover),mattressBounds=new THREE.Box3().setFromObject(environment.scene.getObjectByName('Mattress'));
-  assert.ok(bedspreadBounds.min.y>mattressBounds.max.y+.01,`${activeCase.id}: mattress intersects the bedspread`);
+  assert.ok(Math.abs(bedspreadBounds.min.y - mattressBounds.max.y) < .005, `${activeCase.id}: the bedspread does not touch the mattress`);
   const state=new PatientStateEngine(activeCase),snapshot=state.getSnapshot(),clinicalBefore=JSON.stringify(snapshot);
   renderer.snapshot=snapshot;renderer.setSlot('arms','RestArms',0);renderer.setSlot('breath','IdleBreathing',0);renderer.updateState(true);
   const position=name=>renderer.bones.get(name).getWorldPosition(new THREE.Vector3());
@@ -97,6 +97,30 @@ for(const activeCase of PATIENT_CASES){
   assert.equal(JSON.stringify(snapshot),clinicalBefore,'Visual preview mutated clinical state');
   renderer.setPosition('reclined');
   const reclinedHead = position('head');
+  const shoes = meshes.find(mesh => mesh.material.name.includes('shoes'));
+  const checkBedContact = pose => {
+    const pelvis = position('pelvis');
+    const sample = new THREE.Vector3();
+    let torsoBottom = Infinity;
+    for (const mesh of meshes) {
+      if (mesh === shoes) continue;
+      mesh.skeleton.update();
+      for (let i = 0; i < mesh.geometry.attributes.position.count; i++) {
+        mesh.getVertexPosition(i, sample).applyMatrix4(mesh.matrixWorld);
+        if (Math.abs(sample.x) < .15 && sample.z > reclinedHead.z + .18 && sample.z < pelvis.z + .1) {
+          torsoBottom = Math.min(torsoBottom, sample.y);
+        }
+      }
+    }
+    shoes.skeleton.update();
+    shoes.computeBoundingBox();
+    const footBottom = shoes.boundingBox.clone().applyMatrix4(shoes.matrixWorld).min.y;
+    for (const [bodyPart, height] of [['torso', torsoBottom], ['feet', footBottom]]) {
+      assert.ok(Math.abs(height - bedspreadBounds.max.y) < .025,
+        `${activeCase.id}: ${pose} ${bodyPart} misses the bed (${height.toFixed(3)} m)`);
+    }
+  };
+  checkBedContact('reclined');
   renderer.setPosition('abdominal');
   renderer.updateAnimation(1 / 60);
   assert.ok(position('head').distanceTo(reclinedHead) < .025, `${activeCase.id}: abdominal positioning displaced the head`);
@@ -104,12 +128,9 @@ for(const activeCase of PATIENT_CASES){
   for (const side of ['l', 'r']) {
     const hip = position(`thigh_${side}`), knee = position(`calf_${side}`), ankle = position(`foot_${side}`);
     const bend = THREE.MathUtils.radToDeg(knee.clone().sub(hip).angleTo(ankle.clone().sub(knee)));
-    assert.ok(bend >= 25 && bend <= 29 && knee.y > ankle.y, `${activeCase.id}: knee is not slightly flexed`);
+    assert.ok(bend >= 58 && bend <= 62 && knee.y > ankle.y, `${activeCase.id}: knee does not match the reviewed flexion`);
   }
-  const shoes = meshes.find(mesh => mesh.material.name.includes('shoes'));
-  shoes.computeBoundingBox();
-  const heelHeight = shoes.boundingBox.clone().applyMatrix4(shoes.matrixWorld).min.y;
-  assert.ok(heelHeight > mattressBounds.max.y && Math.abs(heelHeight - bedspreadBounds.max.y) < .025, `${activeCase.id}: feet do not rest on the bed`);
+  checkBedContact('abdominal');
   renderer.focus('patient', true);checkFrame(bounds());
   renderer.setPosition('standing');
   assert.ok(position('head').y - position('pelvis').y > .45, `${activeCase.id}: standing did not restore after the examination pose`);

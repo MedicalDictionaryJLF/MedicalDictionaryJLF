@@ -5,7 +5,7 @@ import { derivePatientAffect } from '../interaction/patientAffect.js';
 import { getPatientAsset, resolveVisualState, reportedVital } from './patientAssets.js?v=clinical-3d-3';
 import { EXAM_SITES, ECG_LEADS, getBedsideFinding, attemptLeadPlacement } from './bedsideInteractions.js?v=clinical-exam-5';
 import { createLandmarkResolver } from './patientLandmarks.js';
-import { buildAbdominalPosition } from './abdominalPosition.js';
+import { buildBedPositions } from './abdominalPosition.js?v=bed-contact';
 import { playBedsideAudio, stopBedsideAudio, setBedsideVolume, closeBedsideAudio } from './bedsideAudio.js';
 
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,Number.isFinite(n)?n:min));
@@ -183,8 +183,11 @@ export class Patient3DRenderer {
 
   prepareAnimations(clips) {
     const reclined = clips.find(clip => clip.name === 'PositionReclined');
-    if (reclined && (this.inTrainer || this.options.allowInspection !== false)) {
-      clips = [...clips, buildAbdominalPosition(this.patient, this.bones, reclined, this.cover)];
+    if (reclined) {
+      const includeBentPose = this.inTrainer || this.options.allowInspection !== false;
+      clips = clips.flatMap(clip => clip === reclined
+        ? buildBedPositions(this.patient, this.bones, reclined, this.bed, includeBentPose)
+        : [clip]);
     }
     this.mixer = new THREE.AnimationMixer(this.patient);
     for (const clip of clips) this.actions.set(clip.name, this.mixer.clipAction(clip));
