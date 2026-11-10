@@ -1,5 +1,5 @@
 // English realization. Other languages can use the same fact and question records.
-import { FACT_STATE } from './clinicalFacts.js?v=pilot-2';
+import { FACT_STATE } from './clinicalFacts.js?v=pilot-4';
 
 const finish = text => text ? text[0].toUpperCase() + text.slice(1).replace(/[.]+$/, '') + '.' : '';
 const list = (items, conjunction = 'and') => items.length < 2 ? items.join('') :

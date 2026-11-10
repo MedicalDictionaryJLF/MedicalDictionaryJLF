@@ -9,6 +9,7 @@ export const peterNovak = {
     "task": "Assess a patient with ongoing chest discomfort. Take a focused history, identify immediately important risks and red flags, perform a targeted examination, choose investigations, form a differential, and hand over your plan."
   },
   "openingLine": "I have this heavy pressure in my chest and it really scared me.",
+  "intake": {"birthplace": "I was born in Martin.", "siblings": "I have a sister.", "diet": "I eat regular meals, usually at home.", "sleep": "I usually sleep well. I was worried after the chest pressure started.", "contactPerson": "My wife.", "maritalStatus": "I am married.", "children": "I have two adult children.", "height": "I am about 178 centimetres tall.", "weight": "I weigh about 89 kilograms."},
   "historySource": "I can give you the history myself.",
   "ecg": {
     "available": true,
@@ -38,6 +39,7 @@ export const peterNovak = {
   },
   "chiefComplaint": "I came because of pressure-like chest pain. I was frightened enough to come in.",
   "hpi": {
+    "previousEpisodes": "I have had milder chest pressure with exertion before. Today was worse.",
     "site": "It is mainly in the middle of my chest, behind the breastbone.",
     "onset": "It started about two hours before I came to hospital.",
     "activityAtOnset": "I was walking from the parking lot toward work when it started.",

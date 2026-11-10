@@ -1,4 +1,4 @@
-import { INTENTS } from '../data/interviewSchema.js?v=134';
+import { INTENTS } from '../data/interviewSchema.js?v=pilot-9';
 import { getAuthoredCase } from '../cases/caseFactory.js';
 import { CONVERSATION_FACTS, MEDICATION_DETAILS } from '../cases/conversationFacts.js';
 

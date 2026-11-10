@@ -4,7 +4,8 @@ import { PATIENT_CASES } from '../anamnesis-training/src/cases/index.js';
 import { createAnamnesisCase } from '../anamnesis-training/src/cases/caseFactory.js';
 import { MEDICATION_DETAILS, CONVERSATION_FACTS } from '../anamnesis-training/src/cases/conversationFacts.js';
 import { INTENTS } from '../anamnesis-training/src/data/interviewSchema.js';
-import { PatientEngine } from '../anamnesis-training/src/patientEngine.js';
+import { QUESTION_VARIANTS, QUESTION_FOLLOWUPS } from '../anamnesis-training/src/data/questionVariants.js';
+import { PatientEngine, normalize } from '../anamnesis-training/src/patientEngine.js';
 import { prepareQuestionWithAI } from '../anamnesis-training/src/aiSupport.js';
 import { validateConversationCase } from '../anamnesis-training/src/dialogue/clinicalFacts.js';
 import { attributesByIntent } from '../anamnesis-training/src/dialogue/questionAnalysis.js';
@@ -36,8 +37,8 @@ const onsetQuestions = [
   'Can you tell me when it started?'
 ];
 
-test('the existing 141 intents and all simulations remain active', () => {
-  assert.equal(Object.keys(INTENTS).length, 141);
+test('the interview curriculum and all simulations remain active', () => {
+  assert.equal(Object.keys(INTENTS).length, 155);
   const result = runSimulationTests();
   assert.equal(result.failed, 0, JSON.stringify(result.results.filter(turn => !turn.passed)));
 });
@@ -194,7 +195,7 @@ test('network interception proves zero routine requests and constrains exception
     }
     assert.equal(requests.length, 0);
     const engine = make();
-    assert.match((await send(engine, 'Do you have a rashh?')).reply, /ask that/);
+    assert.match((await send(engine, 'Do you have a rashh?')).reply, /name the symptom or topic/);
     assert.equal(requests.length, 0);
     const accepted = await send(engine, 'Have you noticed a rashh?');
     assert.equal(accepted.event.finalResolutionSource, 'intent-rescue-ai');
@@ -206,6 +207,7 @@ test('network interception proves zero routine requests and constrains exception
     assert.ok(!('transcript' in requests[0].data || 'patient' in requests[0].data));
 
     behavior = 'invalid';
+    while (engine.turn < 20) engine.ask('Okay.');
     await send(engine, 'Do you have a rassh?');
     const invalid = await send(engine, 'Have you noticed a rassh?');
     assert.equal(invalid.event.aiRescueUsed, false);
@@ -240,7 +242,7 @@ test('pilot wording preserves the subject of the current question and answers bo
     assert.match(engine.ask('When did it start?').reply, /2 hours before/);
     assert.match(engine.ask('How often do you take your medications?').reply, /ramipril once each morning/i);
     assert.match(engine.ask('Do you use some blood pressure medication?').reply, /ramipril/i);
-    assert.equal(engine.ask('Can zou sleep well at night?').answeredIds.length, 0);
+    assert.deepEqual(engine.ask('Can zou sleep well at night?').answeredIds, ['intake_sleep']);
     assert.match(engine.ask('Do you have any problems with breathing?').reply, /short of breath/i);
     assert.match(engine.ask('How did you come to the hospital?').reply, /wife drove/i);
     const migraine = make(nina, difficulty);
@@ -271,9 +273,9 @@ test('family history credits only elicited topics and records the exchange in th
 
   const migraine = make(nina);
   migraine.ask('Do you have any allergies?');
-  assert.equal(migraine.getDebrief().evidenceByIntent.allergies.reason, 'not_authored');
+  assert.equal(migraine.getDebrief().evidenceByIntent.allergies.resolved, true);
   assert.equal(migraine.getDebrief().missedEssential.includes('allergies'), false);
-  assert.equal(migraine.askedIntents.has('allergies'), false);
+  assert.equal(migraine.askedIntents.has('allergies'), true);
 });
 
 test('shared authored answers, evidence and grading work for every case in all modes', () => {
@@ -281,8 +283,8 @@ test('shared authored answers, evidence and grading work for every case in all m
     ['family_cardiovascular', 'family_diabetes'],
     ['family_inherited', 'family_cardiovascular'],
     ['family_cardiovascular'],
-    [],
-    [],
+    ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'],
+    ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'],
     ['family_cardiovascular'],
     ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'],
     ['family_inherited']
@@ -304,8 +306,8 @@ test('shared authored answers, evidence and grading work for every case in all m
       assert.ok(family.factsUsed.every(fact => fact.paths.length), label);
       engine.ask('Do you have any allergies?');
       const evidence = engine.getDebrief().evidenceByIntent.allergies;
-      assert.equal(evidence.resolved, index < 2, label);
-      assert.equal(evidence.reason, index < 2 ? null : 'not_authored', label);
+      assert.equal(evidence.resolved, true, label);
+      assert.equal(evidence.reason, null, label);
       assert.ok(!engine.getDebrief().missedEssential.includes('allergies'), label);
     }
   }
@@ -327,4 +329,288 @@ test('structured text and uncertainty share the same answer path as legacy case 
   assert.equal(engine.getDebrief().evidenceByIntent.allergies.reason, 'unknown');
   assert.equal(engine.ask('Do you have trouble breathing?').reply, 'I have not felt short of breath.');
   assert.equal(engine.debugTurns.at(-1).answers[0].factsUsed[0].state, 'absent');
+});
+
+test('pilot intake wording reaches the correct authored answer for every patient', () => {
+  const checks = [
+    ['What is your date of your birth?', 'identity_dob'],
+    ['Where are zou from?', 'identity_residence'],
+    ['What is your marrital status?', 'intake_marital_status'],
+    ['Do you have kids?', 'intake_children'],
+    ['What is zour hight?', 'intake_height'],
+    ['How much do you weight?', 'intake_weight'],
+    ['When were you admited?', 'administrative_admission_time'],
+    ['How did you came to hospital?', 'administrative_arrival_method'],
+    ['Who is your next of kim?', 'intake_contact_person'],
+    ['What seems to be the problem?', 'chief_complaint'],
+    ['Have you ever had any serious illness?', 'pmh_chronic_diseases'],
+    ['Are you allergic to anything?', 'allergies'],
+    ['Do you take any medications?', 'medication_regular'],
+    ['How about unprescribed medicine?', 'medication_otc'],
+    ['Tell me something about your family?', 'family_history'],
+    ['Who do you live with?', 'social_household'],
+    ['Do you use any drugs?', 'substance_drugs']
+  ];
+  for (const patient of PATIENT_CASES) {
+    for (const [question, intent] of checks) {
+      const engine = make(patient);
+      const result = engine.ask(question);
+      assert.equal(result.detectedIntent, intent, `${patient.id}: ${question}`);
+      assert.ok(result.answeredIds.includes(intent), `${patient.id}: ${question}`);
+    }
+    const engine = make(patient);
+    assert.deepEqual(engine.ask('What is your height and weight?').answeredIds, ['intake_height', 'intake_weight']);
+    assert.equal(engine.ask('What is your phone number?').detection.responseScope, 'chart_details');
+    assert.equal(engine.ask('Hi, my name is Sam and I am your nurse today.').detection.responseScope, 'social');
+    assert.match(engine.ask('Do you take any drugs?').reply, /medicines.*recreational drugs/);
+  }
+});
+
+test('second pilot pass answers new everyday questions without substituting unrelated facts', () => {
+  const examples = [
+    ['Where were you born?', 'intake_birthplace'],
+    ['When did you born?', 'identity_dob'],
+    ['Do you have sister or brother?', 'intake_siblings'],
+    ['What kind of diet do you follow?', 'intake_diet'],
+    ['How is your sleep quality?', 'intake_sleep'],
+    ['What bring you here?', 'chief_complaint'],
+    ['Have you ever experienced anything like this?', 'hpi_previous_episodes'],
+    ['Have you been in hospital before?', 'pmh_hospitalizations'],
+    ['When were you addmited?', 'administrative_admission_time'],
+    ['How is your mobility?', 'social_current_function']
+  ];
+  for (const patient of PATIENT_CASES) {
+    for (const [question, intent] of examples) {
+      const response = make(patient).ask(question);
+      assert.equal(response.detectedIntent, intent, `${patient.id}: ${question}`);
+      assert.ok(response.answeredIds.includes(intent), `${patient.id}: ${question}`);
+    }
+  }
+  const engine = make();
+  engine.ask('Do you take any medications?');
+  assert.match(engine.ask('What does atorvastatin do?').reply, /cholesterol/i);
+  assert.equal(engine.ask('Do you take any drugs?').detectedIntent, 'medication_regular');
+  assert.match(make().ask('Do you take any drugs?').reply, /medicines.*recreational drugs/i);
+  assert.equal(engine.ask('What did you eat today?').detectedIntent, 'intake_last_meal');
+  assert.equal(engine.ask('Who is your referring doctor?').detection.responseScope, 'chart_details');
+  assert.equal(engine.ask('Where are you right now?').detection.responseScope, 'station_context');
+});
+
+test('question bank resolves every standalone variant against each patient in each mode', () => {
+  const seen = new Set();
+  for (const [intent, variants] of Object.entries(QUESTION_VARIANTS)) {
+    assert.ok(Object.hasOwn(INTENTS, intent), intent);
+    for (const phrase of variants) {
+      const key = normalize(phrase);
+      assert.ok(!seen.has(key), `Duplicate question: ${phrase}`);
+      seen.add(key);
+      for (const patient of PATIENT_CASES) {
+        for (const mode of ['teaching', 'practice', 'exam']) {
+          const engine = new PatientEngine(patient, { mode });
+          const response = engine.ask(`Please, ${phrase}`);
+          const label = `${patient.id} / ${mode} / ${phrase}`;
+          assert.equal(response.detectedIntent, intent, label);
+          assert.ok(response.answeredIds.includes(intent), label);
+          assert.ok(engine.debugTurns.at(-1).answers[0].factsUsed.some(fact => fact.paths.length), label);
+        }
+      }
+    }
+  }
+});
+
+test('question-bank follow-ups require their preceding topic', () => {
+  const setup = {
+    identity_dob: 'What is your date of birth?',
+    intake_birthplace: 'Where were you born?',
+    identity_residence: 'Where do you live?',
+    social_housing: 'What type of accommodation do you have?',
+    social_household: 'Who shares your home with you?',
+    allergies: 'Do you have any allergies?',
+    medication_regular: 'What regular medicines do you take?',
+    chief_complaint: 'What made you decide to get checked today?',
+    hpi_previous_episodes: 'Is this the first episode you can remember?',
+    hpi_onset: 'When did the chest pain start?',
+    social_baseline_function: 'What was your baseline function?'
+  };
+  for (const { phrase, after, intent } of QUESTION_FOLLOWUPS) {
+    for (const context of after) {
+      const engine = make();
+      assert.equal(engine.ask(setup[context]).detectedIntent, context);
+      const result = engine.ask(phrase);
+      assert.equal(result.detectedIntent, intent, phrase);
+      assert.ok(result.answeredIds.includes(intent), phrase);
+      assert.equal(result.detection.responseScope, 'contextual_followup');
+    }
+    const wrongContext = make();
+    wrongContext.ask('What is your name?');
+    const result = wrongContext.ask(phrase);
+    assert.equal(result.detection.responseScope, 'clarification', phrase);
+    assert.deepEqual(result.answeredIds, []);
+  }
+});
+
+test('social turns respond naturally and preserve the active clinical topic', () => {
+  for (const patient of PATIENT_CASES) {
+    for (const mode of ['teaching', 'practice', 'exam']) {
+      const engine = new PatientEngine(patient, { mode });
+      const examples = [
+        ['Hi, i am renata iam going to be your nurse today.', 'introduction', /nice to meet you/i],
+        ['Can I ask you a few questions?', 'permission', /go ahead/i],
+        ['That sounds frightening.', 'empathy', /appreciate/i],
+        ['Take your time.', 'reassurance', /helps/i],
+        ['okay, that is amaying', 'acknowledgment', /all right/i],
+        ['Thank you for telling me.', 'thanks', /welcome/i],
+        ['No.', 'acknowledgment', /all right/i],
+        ['I’ll be back soon.', 'closing', /thank you/i]
+      ];
+      for (const [question, act, reply] of examples) {
+        const result = engine.ask(question);
+        assert.equal(result.detection.socialAct, act, question);
+        assert.match(result.reply, reply, question);
+        assert.deepEqual(result.answeredIds, [], question);
+      }
+      assert.equal(engine.attemptedIntents.size, 0);
+      assert.equal(engine.askedIntents.size, 0);
+      engine.ask('What made you decide to get checked today?');
+      engine.ask('I see.');
+      assert.deepEqual(engine.ask('When did it start?').answeredIds, ['hpi_onset']);
+    }
+  }
+});
+
+test('mixed social and clinical clauses receive both replies without duplicate history credit', () => {
+  const engine = make();
+  const first = engine.ask('Hi, I am Alex and I will be your student nurse today. What is your name?');
+  assert.match(first.reply, /nice to meet you.*Peter Novak/i);
+  assert.deepEqual(first.answeredIds, ['identity_name']);
+  const second = engine.ask('Thanks! What made you decide to get checked today?');
+  assert.match(second.reply, /welcome.*pressure/i);
+  assert.deepEqual(second.answeredIds, ['chief_complaint']);
+  const third = engine.ask('I’m sorry to hear that, and when did the chest pain start?');
+  assert.match(third.reply, /appreciate.*2 hours/i);
+  assert.deepEqual(third.answeredIds, ['hpi_onset']);
+  assert.deepEqual([...engine.attemptedIntents], ['identity_name', 'chief_complaint', 'hpi_onset']);
+  const spoken = engine.ask('Okay when did it start');
+  assert.match(spoken.reply, /all right.*2 hours/i);
+  assert.deepEqual(spoken.answeredIds, ['hpi_onset']);
+});
+
+test('subject switches, corrections and unavailable details work in every patient and mode', () => {
+  for (const patient of PATIENT_CASES) {
+    for (const mode of ['teaching', 'practice', 'exam']) {
+      const engine = new PatientEngine(patient, { mode });
+      engine.ask('What brought you here?');
+      engine.ask('Do you have back pain?');
+      engine.ask('I see.');
+      const back = engine.ask('When did it start?');
+      assert.equal(back.detectedIntent, 'ros_back_pain', patient.id);
+      assert.match(back.reply, /back pain.*started/, patient.id);
+      assert.deepEqual(back.answeredIds, [], patient.id);
+      const meal = engine.ask('What did you eat today?');
+      assert.equal(meal.detectedIntent, 'intake_last_meal');
+      assert.deepEqual(meal.answeredIds, []);
+      assert.match(meal.reply, /last meal/);
+      assert.equal(engine.debugTurns.at(-1).answers[0].reason, 'not_authored');
+      engine.ask('Do you take any drugs?');
+      engine.ask('Okay.');
+      assert.equal(engine.ask('I meant recreational drugs.').detectedIntent, 'substance_drugs');
+      engine.ask('Which medicines do you take on a normal day?');
+      assert.equal(engine.ask('What do they do?').detectedIntent, 'medication_indication');
+    }
+  }
+  const peterEngine = make();
+  peterEngine.ask('Do you have back pain?');
+  assert.equal(peterEngine.ask('When did it start?').detectedIntent, 'ros_back_pain');
+  const resumed = make().restoreState(JSON.parse(JSON.stringify(peterEngine.exportState())));
+  assert.match(resumed.ask('No, I meant the chest pain.').reply, /2 hours before/);
+});
+
+test('a new synthetic case can supply a separate onset and last-meal fact', () => {
+  const patient = createAnamnesisCase({
+    id: 'new-context-test',
+    identity: { sex: 'female' },
+    presentingSymptom: { name: 'cough', region: 'breathing', aliases: /\bcough\b/ },
+    chiefComplaint: 'I have a cough.',
+    hpi: { onset: 'The cough began yesterday.' },
+    rosDetails: { gastrointestinal: { nausea: 'I also feel nauseous.' } },
+    subjectAliases: { ros_nausea: { name: 'nausea', aliases: ['feel queasy', 'queasiness'] } },
+    subjectHistory: { ros_nausea: { 'onset.time': 'I started feeling nauseous this morning.' } },
+    intake: { lastMeal: 'I ate toast at breakfast.' }
+  });
+  const engine = make(patient);
+  engine.ask('What brought you here?');
+  assert.equal(engine.ask('Do you feel queasy?').detectedIntent, 'ros_nausea');
+  assert.match(engine.ask('When did it start?').reply, /nauseous this morning/);
+  assert.match(engine.ask('No, I meant the cough.').reply, /cough began yesterday/);
+  assert.match(engine.ask('What did you eat today?').reply, /toast/);
+});
+
+test('an ambiguous symptom choice asks for clarification and reuses the original onset question', () => {
+  const engine = make();
+  const ambiguous = engine.ask('When did the chest pain and back pain start?');
+  assert.match(ambiguous.reply, /chest pressure or the back pain/);
+  assert.deepEqual(ambiguous.answeredIds, []);
+  assert.equal(engine.attemptedIntents.size, 0);
+  assert.match(engine.ask('I meant the chest pain.').reply, /2 hours before/);
+});
+
+test('a first-pass AI rescue is rate-limited and returns only authored case answers', async () => {
+  const savedFetch = globalThis.fetch;
+  const savedWindow = globalThis.window;
+  const requests = [];
+  globalThis.window = { ANAMNESIS_AI_ENABLED: true, location: { protocol: 'https:', hostname: 'example.test' } };
+  globalThis.fetch = async (_url, options) => {
+    const payload = JSON.parse(options.body);
+    requests.push(payload);
+    return Response.json({
+      success: true, intent: 'social_current_function', confidence: 0.97, ...payload.interpretation
+    });
+  };
+  try {
+    const engine = make();
+    for (let turn = 0; turn < 12; turn++) engine.ask('Okay.');
+    const text = 'Do you have problem with walking for long distance?';
+    const prepared = await prepareQuestionWithAI(engine, text);
+    assert.equal(prepared.event.finalResolutionSource, 'intent-rescue-ai');
+    assert.equal(engine.ask(text, prepared.detection).reply, engine.answerFor('social_current_function'));
+    assert.equal(requests.length, 1);
+    assert.deepEqual(requests[0].intents.map(item => item.id), ['social_current_function', 'hpi_exacerbating']);
+    assert.equal((await prepareQuestionWithAI(engine, 'Did you have any medical symptoms in past?')).event.aiAttempted, false);
+    assert.equal((await prepareQuestionWithAI(engine, 'Do you take any drugs?')).event.aiAttempted, false);
+  } finally {
+    globalThis.fetch = savedFetch;
+    if (savedWindow === undefined) delete globalThis.window;
+    else globalThis.window = savedWindow;
+  }
+});
+
+test('frequent pilot variants use authored answers or a targeted clarification', () => {
+  for (const patient of PATIENT_CASES) {
+    const engine = make(patient);
+    const arrival = engine.ask('Did you came here by car or by bus?');
+    assert.equal(arrival.detectedIntent, 'administrative_arrival_method', patient.id);
+    assert.equal(arrival.reply, engine.answerFor('administrative_arrival_method'));
+    const earlier = engine.ask('Have you experienced something similar before?');
+    assert.equal(earlier.detectedIntent, 'hpi_previous_episodes');
+    assert.ok(earlier.answeredIds.includes('hpi_previous_episodes'));
+    const bowel = engine.ask('How often do you have a bowl movement?');
+    assert.equal(bowel.detectedIntent, 'ros_bowel_frequency');
+    assert.deepEqual(bowel.answeredIds, []);
+    assert.match(bowel.reply, /how often I have a bowel movement/);
+    assert.match(engine.ask('Do you have family?').reply, /who I live with.*medical history/);
+    assert.equal(engine.ask('Who you live with.').detectedIntent, 'social_household');
+    assert.match(engine.ask('Drugs?').reply, /medicines.*recreational drugs/);
+    assert.equal(engine.ask('Recreational drugs.').detectedIntent, 'substance_drugs');
+  }
+  const engine = make(nina);
+  for (const question of ['When was your last visit at gynaecology?', 'When was your last visit at gynecolgist?']) {
+    const result = engine.ask(question);
+    assert.equal(result.detectedIntent, 'gyn_last_visit');
+    assert.deepEqual(result.answeredIds, []);
+    assert.match(result.reply, /last gynaecology visit/);
+  }
+  engine.ask('What brought you here?');
+  assert.equal(engine.ask('Did this happened before?').detectedIntent, 'hpi_previous_episodes');
+  assert.match(engine.ask('How long?').reply, /started.*lasts/);
+  assert.equal(engine.ask('When it started.').detectedIntent, 'hpi_onset');
 });

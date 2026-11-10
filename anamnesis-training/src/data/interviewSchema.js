@@ -2,9 +2,9 @@
 // Keep this structure aligned with the Internal/Surgery anamnesis sections in the main app.
 
 export const QUESTION_AREAS = [
-  { id: 'identification', title: 'Identification', required: true, modelQuestion: 'Confirm identity, age/date of birth, sex, residence, who provided the history, and admission context.', intents: ['identity_name', 'identity_age', 'identity_sex', 'identity_residence', 'history_source', 'administrative_admission_time', 'administrative_arrival_method'], optionalIntents: ['identity_dob'] },
+  { id: 'identification', title: 'Identification', required: true, modelQuestion: 'Confirm identity, age/date of birth, sex, residence, who provided the history, and admission context.', intents: ['identity_name', 'identity_age', 'identity_sex', 'identity_residence', 'history_source', 'administrative_admission_time', 'administrative_arrival_method'], optionalIntents: ['identity_dob', 'intake_birthplace', 'intake_height', 'intake_weight', 'administrative_arrival_mode'] },
   { id: 'chief_complaint', title: 'Chief Complaint', required: true, modelQuestion: 'Open with the patient’s own reason for seeking care.', intents: ['chief_complaint'] },
-  { id: 'hpi_socrates', title: 'HPI / SOCRATES', required: true, modelQuestion: 'Clarify site, onset, circumstances, character, radiation, associated symptoms, timing, provoking/relieving factors, severity, and course.', intents: ['hpi_site', 'hpi_onset', 'hpi_activity_at_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_timing', 'hpi_exacerbating', 'hpi_relieving', 'hpi_severity', 'hpi_course'] },
+  { id: 'hpi_socrates', title: 'HPI / SOCRATES', required: true, modelQuestion: 'Clarify site, onset, circumstances, character, radiation, associated symptoms, timing, provoking/relieving factors, severity, and course.', intents: ['hpi_site', 'hpi_onset', 'hpi_activity_at_onset', 'hpi_character', 'hpi_radiation', 'hpi_associated_symptoms', 'hpi_timing', 'hpi_exacerbating', 'hpi_relieving', 'hpi_severity', 'hpi_course'], optionalIntents: ['hpi_previous_episodes'] },
   {
     id: 'review_of_systems', title: 'Review Of Systems', required: true,
     modelQuestion: 'Use focused system questions rather than one question that attempts to cover a whole organ system.',
@@ -19,15 +19,16 @@ export const QUESTION_AREAS = [
       'ros_joint_pain', 'ros_stiffness', 'ros_back_pain',
       'ros_rash', 'ros_pruritus', 'ros_bruising'
     ],
+    optionalIntents: ['ros_bowel_frequency'],
     overviewIntents: ['ros_general', 'ros_head_neck', 'ros_cardiovascular', 'ros_respiratory', 'ros_gastrointestinal', 'ros_genitourinary', 'ros_neurological', 'ros_musculoskeletal', 'ros_skin']
   },
-  { id: 'past_medical_history', title: 'Past Medical History', required: true, modelQuestion: 'Ask chronic illness, specialist follow-up, previous admissions, operations, anaesthetic problems, and relevant previous investigations.', intents: ['pmh_chronic_diseases', 'pmh_cardiovascular_disease', 'pmh_specialists', 'pmh_hospitalizations', 'pmh_operations', 'pmh_anesthesia_complications', 'pmh_previous_exams'] },
-  { id: 'allergies_transfusions', title: 'Allergies And Transfusions', required: true, modelQuestion: 'Ask drug/other allergies, the actual reaction, and previous transfusions.', intents: ['allergies', 'allergy_reaction', 'allergy_environment_food', 'transfusions'] },
-  { id: 'medication', title: 'Medication', required: true, modelQuestion: 'Identify each regular drug and clarify dose, frequency, indication, adherence, recent changes, OTC medicines and supplements.', intents: ['medication_regular', 'medication_dose', 'medication_frequency', 'medication_indication', 'medication_adherence', 'medication_recent_changes', 'medication_otc', 'medication_supplements'], optionalIntents: ['medication_nitroglycerin_previous'] },
-  { id: 'family_history', title: 'Family History', required: true, modelQuestion: 'Ask major illnesses in first-degree relatives, premature cardiovascular disease, cancer, diabetes and inherited conditions.', intents: ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'] },
-  { id: 'epidemiology', title: 'Epidemiological History', required: true, modelQuestion: 'Ask travel, infectious contacts, animal/tick exposure, vaccination and relevant food/water exposure.', intents: ['epi_travel', 'epi_contacts', 'epi_animals_ticks', 'epi_vaccination_food'] },
-  { id: 'social_history', title: 'Social And Functional History', required: true, modelQuestion: 'Ask occupation, household/housing, support, baseline function and current change from baseline.', intents: ['identity_occupation', 'social_household', 'social_housing', 'social_support', 'social_baseline_function', 'social_current_function'] },
-  { id: 'gynecological', title: 'Gynecological History', required: false, modelQuestion: 'When relevant: LMP/cycle, pregnancy possibility, contraception and obstetric history.', intents: ['gyn_lmp', 'gyn_pregnancy', 'gyn_contraception', 'gyn_obstetric'] },
+  { id: 'past_medical_history', title: 'Past Medical History', required: true, modelQuestion: 'Ask chronic illness, specialist follow-up, previous admissions, operations, anaesthetic problems, and relevant previous investigations.', intents: ['pmh_chronic_diseases', 'pmh_cardiovascular_disease', 'pmh_specialists', 'pmh_hospitalizations', 'pmh_operations', 'pmh_anesthesia_complications', 'pmh_previous_exams'], optionalIntents: ['operation_date', 'operation_approach'] },
+  { id: 'allergies_transfusions', title: 'Allergies And Transfusions', required: true, modelQuestion: 'Ask drug/other allergies, the actual reaction, and previous transfusions.', intents: ['allergies', 'allergy_reaction', 'allergy_environment_food', 'transfusions'], optionalIntents: ['allergy_pollen'] },
+  { id: 'medication', title: 'Medication', required: true, modelQuestion: 'Identify each regular drug and clarify dose, frequency, indication, adherence, recent changes, OTC medicines and supplements.', intents: ['medication_regular', 'medication_dose', 'medication_frequency', 'medication_indication', 'medication_adherence', 'medication_recent_changes', 'medication_otc', 'medication_supplements'], optionalIntents: ['medication_nitroglycerin_previous'], overviewIntents: ['medication_otc_supplements'] },
+  { id: 'family_history', title: 'Family History', required: true, modelQuestion: 'Ask major illnesses in first-degree relatives, premature cardiovascular disease, cancer, diabetes and inherited conditions.', intents: ['family_cardiovascular', 'family_diabetes', 'family_cancer', 'family_inherited'], overviewIntents: ['family_history'] },
+  { id: 'epidemiology', title: 'Epidemiological History', required: true, modelQuestion: 'Ask travel, infectious contacts, animal/tick exposure, vaccination and relevant food/water exposure.', intents: ['epi_travel', 'epi_contacts', 'epi_animals_ticks', 'epi_vaccination_food'], overviewIntents: ['epidemiology'] },
+  { id: 'social_history', title: 'Social And Functional History', required: true, modelQuestion: 'Ask occupation, household/housing, support, baseline function and current change from baseline.', intents: ['identity_occupation', 'social_household', 'social_housing', 'social_support', 'social_baseline_function', 'social_current_function'], optionalIntents: ['intake_marital_status', 'intake_children', 'intake_siblings', 'intake_contact_person', 'intake_diet', 'intake_last_meal', 'intake_recent_fluids', 'intake_sleep', 'daily_independence'], overviewIntents: ['social_living'] },
+  { id: 'gynecological', title: 'Gynecological History', required: false, modelQuestion: 'When relevant: LMP/cycle, pregnancy possibility, contraception and obstetric history.', intents: ['gyn_lmp', 'gyn_pregnancy', 'gyn_contraception', 'gyn_obstetric'], optionalIntents: ['gyn_last_visit'], overviewIntents: ['gyn_history'] },
   { id: 'substance_use', title: 'Substance Use', required: true, modelQuestion: 'Ask tobacco use and quantify it; ask alcohol, caffeine and recreational drugs respectfully.', intents: ['substance_smoking', 'substance_smoking_quantity', 'substance_alcohol', 'substance_caffeine', 'substance_drugs'] },
   { id: 'closure', title: 'Consultation Closure', required: false, modelQuestion: 'Before finishing, check for anything else, the patient’s main concern, and whether they have understood the conversation.', intents: ['closure_anything_else', 'closure_concerns', 'closure_understanding'] },
   { id: 'objective', title: 'Vitals / Examination / Labs', required: false, modelQuestion: 'Objective findings belong to Anamnesis + Examination, not Anamnesis-only.', intents: ['vital_bp', 'vital_hr', 'vital_rr', 'vital_spo2', 'vital_temperature', 'exam_lungs', 'exam_heart', 'exam_abdomen', 'exam_bowel_sounds', 'lab_wbc', 'lab_crp', 'lab_creatinine', 'lab_potassium', 'lab_glucose', 'lab_tsh'] }
@@ -56,6 +57,21 @@ export const INTENTS = {
   administrative_admission_time: I('Admission time', ['when did you come', 'when did you arrive', 'when were you admitted', 'admission', 'got here'], ['administrative.admissionTime'], { domain: 'administrative', priority: 9, modelQuestions: ['When did you arrive at the hospital?'] }),
   administrative_arrival_method: I('Arrival method', ['how did you get here', 'how did you arrive', 'ambulance', 'who brought you', 'did someone drive you'], ['administrative.arrivalMethod'], { domain: 'administrative', priority: 8, modelQuestions: ['How did you get to the hospital?'] }),
   administrative_arrival_mode: I('Arrival mode', ['who brought you', 'came alone', 'ambulance', 'how did you come'], ['administrative.arrivalMethod', 'administrative.arrivalMode'], { domain: 'administrative' }),
+
+  intake_height: I('Reported height', ['how tall', 'height'], ['intake.height'], { domain: 'identity' }),
+  intake_weight: I('Reported weight', ['what do you weigh', 'how much do you weigh', 'current weight'], ['intake.weight'], { domain: 'identity' }),
+  intake_marital_status: I('Marital status', ['marital status', 'are you married'], ['intake.maritalStatus'], { domain: 'social' }),
+  intake_children: I('Children', ['do you have any children', 'do you have kids', 'how many children'], ['intake.children'], { domain: 'social' }),
+
+  intake_contact_person: I('Emergency contact', ['next of kin', 'emergency contact', 'contact person'], ['intake.contactPerson'], { domain: 'social' }),
+
+  intake_birthplace: I('Birthplace', ['birthplace'], ['intake.birthplace'], { domain: 'identity' }),
+  intake_siblings: I('Siblings', ['siblings'], ['intake.siblings'], { domain: 'social' }),
+  intake_diet: I('Usual diet', ['diet'], ['intake.diet'], { domain: 'social' }),
+  intake_last_meal: I('Last meal', ['last meal', 'ate today', 'did you eat'], ['intake.lastMeal'], { domain: 'social' }),
+  intake_recent_fluids: I('Recent fluid intake', ['drink water today', 'liquid did you drink today'], ['intake.recentFluids'], { domain: 'social' }),
+  intake_sleep: I('Sleep', ['sleep quality'], ['intake.sleep'], { domain: 'social' }),
+  hpi_previous_episodes: I('Previous episodes', ['similar symptoms before'], ['hpi.previousEpisodes'], { domain: 'hpi' }),
 
   chief_complaint: I('Chief complaint', ['what brought you', 'why did you come', 'why are you here', 'main problem', 'chief complaint', 'reason for admission', 'what happened', 'what is wrong', 'how can i help'], ['chiefComplaint'], { domain: 'hpi', priority: 9, modelQuestions: ['What brought you to hospital today?', 'What is the main problem bothering you?'] }),
   hpi_site: I('Site', ['where is the pain', 'where does it hurt', 'site of pain', 'location of pain', 'where exactly'], ['hpi.site'], { domain: 'hpi', priority: 8, modelQuestions: ['Where exactly do you feel it?'] }),
@@ -104,6 +120,7 @@ export const INTENTS = {
   ros_nausea: I('Nausea', ['nausea', 'nauseous', 'feel sick'], ['rosDetails.gastrointestinal.nausea'], { domain: 'ros', modelQuestions: ['Have you felt nauseous or sick?'] }),
   ros_vomiting: I('Vomiting', ['vomit', 'vomiting', 'threw up', 'sick up'], ['rosDetails.gastrointestinal.vomiting'], { domain: 'ros', modelQuestions: ['Have you vomited?'] }),
   ros_abdominal_pain: I('Abdominal pain', ['abdominal pain', 'stomach pain', 'belly pain', 'tummy pain'], ['rosDetails.gastrointestinal.abdominalPain'], { domain: 'ros', modelQuestions: ['Have you had abdominal pain anywhere else?'] }),
+  ros_bowel_frequency: I('Bowel movement frequency', ['bowel movement frequency'], ['rosDetails.gastrointestinal.bowelFrequency'], { domain: 'ros' }),
   ros_bowel_habit: I('Bowel habit', ['diarrhea', 'diarrhoea', 'constipation', 'bowel habit', 'stool frequency'], ['rosDetails.gastrointestinal.bowelHabit'], { domain: 'ros', modelQuestions: ['Has your bowel habit changed, such as diarrhoea or constipation?'] }),
   ros_gi_bleeding: I('GI bleeding', ['blood in stool', 'black stool', 'black stools', 'melena', 'melaena', 'vomit blood', 'hematemesis', 'haematemesis'], ['rosDetails.gastrointestinal.bleeding'], { domain: 'ros', modelQuestions: ['Have you passed black or bloody stool, or vomited blood?'] }),
   ros_jaundice: I('Jaundice', ['jaundice', 'yellow eyes', 'yellow skin', 'dark urine', 'pale stool'], ['rosDetails.gastrointestinal.jaundice'], { domain: 'ros', modelQuestions: ['Have you noticed yellowing of your eyes or skin, dark urine, or pale stools?'] }),
@@ -152,6 +169,7 @@ export const INTENTS = {
 
   // Legacy broad gyn intent remains for old saved sessions and recognition; the curriculum uses the atomic items below.
   gyn_history: I('Gynecological overview', ['gynecological history', 'gynaecological history', 'period pregnancy contraception children'], ['gynHistory'], { domain: 'gyn', priority: 2, sensitive: true, relatedIntents: ['gyn_lmp','gyn_pregnancy','gyn_contraception','gyn_obstetric'] }),
+  gyn_last_visit: I('Last gynaecology visit', ['last gynaecology visit'], ['gynDetails.lastVisit'], { domain: 'gyn', sensitive: true }),
   gyn_lmp: I('Menstrual history / LMP', ['period', 'menstruation', 'last period', 'lmp', 'cycle', 'menopause'], ['gynDetails.lmp'], { domain: 'gyn', sensitive: true, modelQuestions: ['When was your last menstrual period? Are your cycles regular?'] }),
   gyn_pregnancy: I('Pregnancy possibility', ['pregnant', 'pregnancy possibility', 'could you be pregnant'], ['gynDetails.pregnancy'], { domain: 'gyn', sensitive: true, priority: 7, modelQuestions: ['Is there any possibility you could be pregnant?'] }),
   gyn_contraception: I('Contraception', ['contraception', 'birth control', 'pill', 'iud', 'coil'], ['gynDetails.contraception'], { domain: 'gyn', sensitive: true, modelQuestions: ['Do you use contraception?'] }),

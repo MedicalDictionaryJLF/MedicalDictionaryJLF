@@ -15,6 +15,7 @@ export const janaKovacova = {
     "interpretation": ""
   },
   "openingLine": "I have strong pain under my right ribs and I feel sick.",
+  "intake": {"birthplace": "I was born in Martin.", "siblings": "I have a sister.", "diet": "I eat a mixed diet. I had a fatty meal before this pain.", "sleep": "I usually sleep well, but the pain kept me awake last night.", "contactPerson": "My husband.", "maritalStatus": "I am married.", "children": "I have two children.", "height": "I am about 166 centimetres tall.", "weight": "I weigh about 72 kilograms."},
   "historySource": "I can give you the history myself.",
   "administrative": {
     "admissionTime": "this morning",
@@ -38,6 +39,7 @@ export const janaKovacova = {
   },
   "chiefComplaint": "I came because of strong pain in the right upper part of my abdomen.",
   "hpi": {
+    "previousEpisodes": "I have had shorter spells of discomfort after meals before.",
     "site": "It is under the right ribs, more toward the upper abdomen.",
     "onset": "It started yesterday evening, about two hours after dinner.",
     "activityAtOnset": "I had eaten fried cheese and then watched TV. It began after that.",

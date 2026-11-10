@@ -1,4 +1,5 @@
-import { getChecklistItemsByCategory } from './categoryModel.js?v=134';
+import { transcriptLink } from './transcriptEvidence.js';
+import { getChecklistItemsByCategory } from './categoryModel.js?v=pilot-9';
 
 export function renderModeLayout({ container, mode, engine, patientCase }) {
   if (!container || !engine) return;
@@ -22,16 +23,16 @@ function renderPracticeCoverage(groups) {
     .map((item) => ({ ...item, group: group.title })));
   if (!covered.length) return '<p class="empty-panel-note">No topics covered yet.</p>';
   return `<div class="coverage-overview coverage-practice">${covered.map((item) => `
-    <div class="coverage-topic-row is-covered"><span class="coverage-topic-icon" aria-label="Covered">✓</span><span>${escapeHtml(item.label)}</span></div>`).join('')}</div>`;
+    <div class="coverage-topic-row is-covered"><span class="coverage-topic-icon" aria-label="Covered">✓</span><span>${transcriptLink(item.turn, escapeHtml(item.label))}</span></div>`).join('')}</div>`;
 }
 
 function renderTeachingCoverage(groups) {
   return `<div class="coverage-overview coverage-teaching">${groups.map((group) => `
     <section class="coverage-area"><h3>${escapeHtml(group.title)}</h3>${group.items
-      .filter((item) => item.status !== 'notApplicable')
+      .filter((item) => !item.optional || item.status !== 'notAsked')
       .map((item) => {
         const covered = item.status === 'complete';
-        return `<div class="coverage-topic-row ${covered ? 'is-covered' : 'is-missing'}"><span class="coverage-topic-icon" aria-label="${covered ? 'Covered' : 'Not yet covered'}">${covered ? '✓' : '✕'}</span><span>${escapeHtml(item.label)}</span></div>`;
+        return `<div class="coverage-topic-row ${covered ? 'is-covered' : 'is-missing'}"><span class="coverage-topic-icon" aria-label="${covered ? 'Covered' : 'Not yet covered'}">${covered ? '✓' : '✕'}</span><span>${transcriptLink(item.turn, escapeHtml(item.label))}</span></div>`;
       }).join('')}</section>`).join('')}</div>`;
 }
 

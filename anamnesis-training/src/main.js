@@ -1,24 +1,25 @@
-import { PATIENT_CASES } from './cases/index.js?v=pilot-2';
-import { INTENTS } from './data/interviewSchema.js?v=134';
+import { jumpToTranscript, transcriptRows } from './ui/transcriptEvidence.js';
+import { PATIENT_CASES } from './cases/index.js?v=pilot-4';
+import { INTENTS } from './data/interviewSchema.js?v=pilot-9';
 import { getPositionRequest } from './dialogue/positionRequests.js?v=positioning-all-modes';
 import { POSITIONING_COMMANDS, POSITIONING_REPLIES } from './data/positioningCommands.js?v=2';
-import { PatientEngine } from './patientEngine.js?v=pilot-2';
-import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=pilot-2';
+import { PatientEngine } from './patientEngine.js?v=pilot-9';
+import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=pilot-9';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
 import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, applyAvatarPositionRequest, isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=bed-contact';
-import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=pilot-2';
+import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=pilot-9';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
-import { renderModeLayout } from './ui/modeLayout.js?v=134';
+import { renderModeLayout } from './ui/modeLayout.js?v=pilot-9';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
 import { initVoiceInput } from './ui/voiceInput.js';
 import { closeModal, labsForGroup, openModal, renderLabsPanel, renderMedicationPanel } from './ui/actionPanels.js';
 import { buildEncounterReport, countCompletedNoteSections, createEncounterState, performExamination, recordEcgProgress, evaluateExamination } from './clinicalEncounter.js?v=positioning-all-modes';
-import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js?v=chat-positioning-1';
+import { renderClosingForm, renderClinicalNotesPanel, renderDifferentialPanel, renderEncounterReport, renderExaminationPanel } from './ui/clinicalEncounterPanels.js?v=pilot-9';
 import { PatientStateEngine } from './patientState.js';
 import { renderPatientStatePanel } from './ui/patientStatePanel.js';
-import { renderAnamnesisCompanion, buildWorksheetText, getCoverageTopicState } from './ui/anamnesisCompanion.js?v=134';
+import { renderAnamnesisCompanion, buildWorksheetText, getCoverageTopicState } from './ui/anamnesisCompanion.js?v=pilot-9';
 import { ptT } from './ui/trainerShell.js?v=134';
 import {
   buildAnonymizedPatientTrainerUpload,
@@ -33,7 +34,7 @@ import {
   PATIENT_TRAINER_AUTO_RETRY_LIMIT,
   PATIENT_TRAINER_CLIENT_VERSION,
   PATIENT_TRAINER_LOG_ENDPOINT
-} from './config.js?v=pilot-2';
+} from './config.js?v=pilot-9';
 
 const TRAINER_CASES = PATIENT_CASES.filter((item) => item && item.id);
 
@@ -123,6 +124,8 @@ const els = {
   sessionRecordContent: document.getElementById('patientTrainerRecordContent'),
   closeSessionRecordBtn: document.getElementById('closePatientTrainerRecordBtn')
 };
+
+document.addEventListener('click', event => jumpToTranscript(event, els.chatLog));
 
 let engine;
 let activeCase = TRAINER_CASES[0] || null;
@@ -366,7 +369,7 @@ function renderSetupPreview(randomChosen = false) {
     ? 'Exam mode hides coaching, semantic labels and coverage until the history is finished.'
     : currentMode === 'teaching'
       ? 'Teaching mode shows the relevant curriculum, model questions and live coverage.'
-      : 'Practice mode shows section-level progress only and does not reveal the missing questions.';
+      : 'Practice mode shows answered topics and section progress while keeping missed questions hidden.';
   const difficultyHelp = currentDifficulty === 'beginner'
     ? 'Beginner patients volunteer a little more information and are more forgiving of broad questions.'
     : currentDifficulty === 'advanced'
@@ -432,9 +435,14 @@ function renderPatientVisualState() {
   });
 }
 
-function addMessage(role, text, intent = '', feedbackLabel = '') {
+function addMessage(role, text, intent = '', feedbackLabel = '', turn = null) {
   const bubble = document.createElement('article');
   bubble.className = `message ${role}`;
+  if (role === 'patient' && Number.isInteger(turn) && turn > 0) {
+    bubble.id = `pt-live-turn-${turn}`;
+    bubble.dataset.liveTurn = String(turn);
+    bubble.tabIndex = -1;
+  }
   const showLabel = currentMode !== 'exam';
   const label = role === 'student' ? 'Student' : 'Patient';
   const tag = currentMode === 'teaching' && (feedbackLabel || intent) ? `<span>${escapeHtml(feedbackLabel || labelForIntent(intent))}</span>` : '';
@@ -472,7 +480,7 @@ async function handleQuestion(event) {
     }
     const reply = result.reply;
     removeResponseLoading(els.chatLog);
-    addMessage('patient', reply, result.detectedIntent, result.feedbackLabel);
+    addMessage('patient', reply, result.detectedIntent, result.feedbackLabel, result.turnNumber);
     finalizeSessionQuestion(question, reply, result, aiEvent);
     reactAvatarToPatientReply(reply, { ...result, studentInput: question });
     if (els.voiceToggle.checked) {
@@ -489,7 +497,6 @@ async function handleQuestion(event) {
     renderTerminologyHint(result.terminologySuggestion, result.detection?.terminologyEvent?.term);
     renderInterfacePanels();
     renderPatientMeta();
-    if (trainerExperience === 'anamnesis') renderAnamnesisCompanionPanel();
     persistCurrentSession();
   } catch (error) {
     removeResponseLoading(els.chatLog);
@@ -868,8 +875,9 @@ function finalizeSessionQuestion(question, reply, result, aiEvent = null) {
   const detectedIntent = String(result?.detectedIntent || detection.primaryIntent?.id || 'unknown');
   const topCandidate = detection.candidates?.[0] || null;
   const confidence = Number.isFinite(Number(result?.confidence)) ? Number(result.confidence) : Number(detection.confidence || 0);
-  const fallbackUsed = Boolean(aiEvent?.fallbackUsed) || detection.responseScope === 'clarification' || detection.responseScope === 'terminology_not_understood' || detectedIntent === 'unknown' || detection.parts?.some(part => part.responseScope === 'clarification');
+  const fallbackUsed = Boolean(aiEvent?.fallbackUsed) || detection.responseScope === 'clarification' || detection.responseScope === 'terminology_not_understood' || detection.parts?.some(part => part.responseScope === 'clarification');
   const diagnostics = {
+    engineTurn: result?.turnNumber ?? null,
     normalizedQuestion: String(detection.normalized || ''),
     detectedIntent,
     matchedIntent: String(detection.primaryIntent?.id || ''),
@@ -1154,13 +1162,13 @@ async function restorePatientTrainerSession(sessionId) {
 function renderStoredChat(messages) {
   els.chatLog.innerHTML = '';
   els.chatLog.classList.remove('empty-chat');
-  const rows = (messages || []).filter((message) => message && (message.speaker === 'student' || message.speaker === 'patient'));
+  const rows = transcriptRows(messages);
   if (!rows.length) {
     els.chatLog.innerHTML = '<div class="empty-chat-note">Start the interview by introducing yourself or asking the patient an opening question.</div>';
     els.chatLog.classList.add('empty-chat');
     return;
   }
-  rows.forEach((message) => addMessage(message.speaker, message.text || '', message.matchedIntent || message.detectedIntent || '', message.feedbackLabel || ''));
+  rows.forEach(({ message, turn }) => addMessage(message.speaker, message.text || '', message.matchedIntent || message.detectedIntent || '', message.feedbackLabel || '', turn));
 }
 
 function viewPatientTrainerRecord(sessionId) {
@@ -1186,6 +1194,13 @@ function viewPatientTrainerRecord(sessionId) {
     renderEncounterReport({ container: reportContainer, report: session.finalRecord.encounterReport });
     reportContainer.querySelector('.report-actions')?.remove();
     els.sessionRecordContent.prepend(reportContainer);
+  } else if (session.finalRecord?.debrief) {
+    const patient = TRAINER_CASES.find(item => item.id === session.caseId);
+    els.sessionRecordContent.insertAdjacentHTML('beforeend', renderAnamnesisDebrief({
+      debrief: session.finalRecord.debrief, priorities: patient?.debriefPriorities,
+      caseName: session.caseName, mode: session.mode, questionCount: session.messages.filter(item => item.speaker === 'student').length,
+      messages: session.messages, summary: session.finalRecord.summary, worksheet: session.finalRecord.worksheet
+    }));
   }
   bindUploadPanel(els.sessionRecordContent, session.sessionId);
   openModal(els.sessionRecordModal);
