@@ -1,7 +1,7 @@
 import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=134';
 import { retrieveFacts } from './dialogue/clinicalFacts.js';
 import { realizeEnglish } from './dialogue/responseTemplates.js';
-import { analyzeQuestion, splitQuestions } from './dialogue/questionAnalysis.js';
+import { analyzeQuestion, medicationSubject, sleepQuestion, splitQuestions } from './dialogue/questionAnalysis.js?v=pilot-1';
 import { PRESENTING_SYMPTOMS } from './cases/conversationFacts.js';
 
 const MATCH_THRESHOLD = 0.24;
@@ -61,6 +61,8 @@ export const MEDICAL_TERMINOLOGY = {
   diaphoresis: { intent: 'hpi_associated_symptoms', patientFriendly: 'Were you sweating unusually?', difficulty: 'high' }
 };
 
+const FAMILY_OVERVIEW = /\b(?:family history|(?:illnesses|diseases|conditions) (?:in|run in) (?:your|the) family|(?:are|were) your parents healthy|(?:do|did) your parents have (?:any )?(?:illnesses|diseases|medical conditions)|do you have ill parents|(?:your|you) parents (?:have (?:any )?)?(?:illnesses|diseases)|parents diseases)\b/;
+
 const DIRECT_RULES = [
   [/\b(what is your name|your name|who are you|full name)\b/, ['identity_name'], 'single_intent'],
   [/\b(date of birth|birth date|when were you born|birthday)\b/, ['identity_dob'], 'single_intent'],
@@ -68,15 +70,15 @@ const DIRECT_RULES = [
   [/\b(male or female|sex|gender)\b/, ['identity_sex'], 'single_intent'],
   [/\b(where are you from|where do you live|which town|what city|address|residence)\b/, ['identity_residence'], 'single_intent'],
   [/\b(are you giving (me )?the history|history yourself|who is giving (me )?the history|who can give (me )?the history)\b/, ['history_source'], 'single_intent'],
-  [/\b(when were you admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
-  [/\b(how did you get here|how did you arrive|how did you get to (the )?hospital|did you come by ambulance|did someone drive you|who brought you|were you brought by emergency services)\b/, ['administrative_arrival_method'], 'single_intent'],
-  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission)|^what was the reason$)\b/, ['chief_complaint'], 'broad_open_history'],
+  [/\b(when were you admit(?:ted|ed|tet|id)|when did you get admitted|when did you come|when did you arrive|what time did you come|when did you get here)\b/, ['administrative_admission_time'], 'single_intent'],
+  [/\b(how did you get here|how did you arrive|how did you come here|how did you (?:get|come) to (the )?hospital|did you come by ambulance|did someone drive you|who brought you|were you brought by emergency services)\b/, ['administrative_arrival_method'], 'single_intent'],
+  [/\b(what brought you|why did you come|why are you here|what happened|what is wrong|main problem|how can i help|tell me about the problem|reason for (coming|admission)|what is your (?:current complaint|medical problem|problem)|do you have any pain|what is bothering you today|what happend to you|^what was the reason$)\b/, ['chief_complaint'], 'broad_open_history'],
   [/\b(where is the pain|where does it hurt|site of pain|location of pain)\b/, ['hpi_site'], 'single_intent'],
   [/\b(when did (the )?(pain|symptom|problem) start|onset of pain|when did it start|since when)\b/, ['hpi_onset'], 'single_intent'],
   [/\b(what were you doing|doing when it started|activity at onset|circumstances at onset)\b/, ['hpi_activity_at_onset'], 'single_intent'],
   [/\b(character of (the )?pain|what type of pain|what kind of pain|what is the pain like|what does it feel like|describe (your|the) pain)\b/, ['hpi_character'], 'single_intent'],
   [/\b(does (it|the pain) radiate|does (it|the pain) spread|does it go anywhere|does it travel|radiation of (the )?pain)\b/, ['hpi_radiation'], 'single_intent'],
-  [/\b(associated symptoms|any other symptoms|anything else with it|symptoms accompanying)\b/, ['hpi_associated_symptoms'], 'single_intent'],
+  [/\b(associated symptoms|any other sympt(?:oms|homes|omes)|what other sympt(?:oms|homes|omes)|anything else with it|symptoms accompanying)\b/, ['hpi_associated_symptoms'], 'single_intent'],
   [/\b(for how long|how long .*last|duration|constant|continuous|intermittent|comes and goes|how often)\b/, ['hpi_timing'], 'single_intent'],
   [/\b(what makes it worse|worsens the pain|aggravating factors|exacerbating factors|what triggers it)\b/, ['hpi_exacerbating'], 'single_intent'],
   [/\b(what makes it better|relieving factors|what relieves|helps the pain|anything help)\b/, ['hpi_relieving'], 'single_intent'],
@@ -99,7 +101,7 @@ const DIRECT_RULES = [
   [/\b(leg swelling|ankle swelling|swollen legs|oedema|edema)\b/, ['ros_edema'], 'single_intent'],
   [/\b(faint|fainted|syncope|blackout|passed out|nearly faint)\b/, ['ros_syncope'], 'single_intent'],
   [/\b(orthopn|lying flat.*breath|pillows.*breath|wake.*night.*breath|pnd)\b/, ['ros_orthopnea'], 'single_intent'],
-  [/\b(shortness of breath|feel short of breath|breathless|trouble breathing|dyspn)\b/, ['ros_dyspnea'], 'single_intent'],
+  [/\b(shortness of breath|feel short of breath|breathless|trouble breathing|(?:problems?|difficult(?:y|ies)) (?:with )?breathing|dyspn)\b/, ['ros_dyspnea'], 'single_intent'],
   [/\b(cough|coughing)\b/, ['ros_cough'], 'single_intent'],
   [/\b(sputum|phlegm|mucus.*cough)\b/, ['ros_sputum'], 'single_intent'],
   [/\b(cough.*blood|coughed.*blood|ha?emoptysis)\b/, ['ros_hemoptysis'], 'single_intent'],
@@ -164,7 +166,7 @@ const DIRECT_RULES = [
   [/\b(diabetes in family|family diabetes)\b/, ['family_diabetes'], 'single_intent'],
   [/\b(cancer in family|family cancer)\b/, ['family_cancer'], 'single_intent'],
   [/\b(genetic disease|inherited disease|runs in (the )?family|sudden unexplained death)\b/, ['family_inherited'], 'single_intent'],
-  [/\b(family history|parents|mother|father|siblings|relatives)\b/, ['family_history'], 'single_intent'],
+  [FAMILY_OVERVIEW, ['family_history'], 'single_intent'],
 
   [/\b(travel|abroad|recent trip)\b/, ['epi_travel'], 'single_intent'],
   [/\b(sick contact|infectious contact|anyone ill|contact with infection)\b/, ['epi_contacts'], 'single_intent'],
@@ -309,14 +311,17 @@ export class PatientEngine {
     const evaluatedParts = parts.map(part => this.applyDisclosurePolicy(question, part));
     detection = evaluatedParts.length === 1 ? evaluatedParts[0] : { ...detection, parts: evaluatedParts };
     const rapportEvent = this.updateRapport(question, detection);
-    const attemptedIntentIds = explicitClauses
+    const inferredAttempts = explicitClauses
       ? [...new Set(parts.flatMap(part => this.inferAttemptedIntents(part.normalized, part)))]
       : this.inferAttemptedIntents(question, detection);
+    const { reply, answers } = this.composeReply(detection);
+    const answered = answers.filter(answer => answer.status === 'answered');
+    const creditedIds = answered.flatMap(answer => answer.creditedIntentIds ?? []);
+    const attemptedIntentIds = [...new Set([...inferredAttempts, ...creditedIds])];
+    const answeredIds = [...new Set([...answered.map(answer => answer.intent), ...creditedIds])];
     const previouslyAttempted = new Set(this.attemptedIntents);
     const previouslyResolved = new Set(this.askedIntents);
     attemptedIntentIds.forEach(intentId => this.attemptedIntents.add(intentId));
-    const { reply, answers } = this.composeReply(detection);
-    const answeredIds = [...new Set(answers.filter(answer => answer.status === 'answered').map(answer => answer.intent))];
     const communicationAssessment = this.assessCommunication(question, detection, attemptedIntentIds, previouslyAttempted, previouslyResolved);
     const feedbackLabel = this.makeFeedbackLabel(detection, communicationAssessment);
 
@@ -346,12 +351,14 @@ export class PatientEngine {
       candidates: unresolved.candidates.slice(0, 5)
     } : null;
     attemptedIntentIds.forEach((intentId) => {
+      const answer = answers.find(item => item.intent === intentId || item.creditedIntentIds?.includes(intentId));
       this.attemptEvents.push({
         turnNumber: this.turn,
         intentId,
         question,
-        recognized: recognizedIntents.includes(intentId),
-        outcome: answers.find(answer => answer.intent === intentId)?.status ?? 'unresolved',
+        recognized: recognizedIntents.includes(intentId) || creditedIds.includes(intentId),
+        outcome: answer?.status ?? 'unresolved',
+        reason: answer?.reason ?? null,
         resolved: answeredIds.includes(intentId),
         engineIntentIds: recognizedIntents,
         responseScope: detection.responseScope,
@@ -363,7 +370,7 @@ export class PatientEngine {
     this.communicationEvents.push({ turnNumber: this.turn, question, ...communicationAssessment });
     if (detection.terminologyEvent) this.terminologyEvents.push(detection.terminologyEvent);
     this.debugTurns.push({
-      ...this.makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds, communicationAssessment),
+      ...this.makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds, communicationAssessment, creditedIds),
       confidence: detection.confidence, recognizedIntents, answeredIds,
       interpretations: evaluatedParts.map(part => ({
         ...part.analysis, question: part.normalized, intent: part.primaryIntent?.id ?? null,
@@ -469,7 +476,7 @@ export class PatientEngine {
     const phrases = makeNgrams(tokens, 4);
     const questionType = this.classifyQuestionType(normalized, question);
 
-    if (!normalized) return this.makeDetection({ kind: 'empty', responseScope: 'clarification', normalized, tokens, phrases, questionType });
+    if (!normalized || sleepQuestion.test(normalized)) return this.makeDetection({ kind: normalized ? 'uncertain' : 'empty', responseScope: 'clarification', normalized, tokens, phrases, questionType });
 
     const term = this.detectMedicalTerminology(tokens);
     if (term && !term.patientUnderstood) {
@@ -602,12 +609,16 @@ export class PatientEngine {
     const statementMatch = this.resolveStatement(normalized);
     if (statementMatch) return statementMatch;
 
+    if (/^(?:do|did|are) you (?:use|take|on|taking) (?:some |any |a )?(?:blood pressure|hypertension) (?:medicines?|medications?|meds|pills?|tablets?)\b/.test(normalized)) {
+      return { candidates: [this.toCandidate('medication_regular', 6, ['explicit-medication-subject'])], scope: 'single_intent' };
+    }
+
     const contextMatch = this.resolveContextualFollowup(normalized, context);
     if (contextMatch) return contextMatch;
 
     for (const [pattern, ids, scope] of DIRECT_RULES) {
       if (!pattern.test(normalized)) continue;
-      const candidates = ids.map((id) => this.toCandidate(id, 6, ['direct'])).filter(Boolean);
+      const candidates = ids.filter(id => scope !== 'objective_exam_request' || !medicationSubject.test(normalized)).map((id) => this.toCandidate(id, 6, ['direct'])).filter(Boolean);
       if (!candidates.length) continue;
       return { candidates, scope };
     }
@@ -642,7 +653,7 @@ export class PatientEngine {
       if (/\b(reaction|what happens)\b/.test(normalized)) return this.contextCandidate('allergy_reaction', 'Allergy reaction follow-up.');
     }
 
-    if (lastDomain === 'medication' && /\b(what dose|dose|how often|frequency|why do you take it|why|indication)\b/.test(normalized)) {
+    if (lastDomain === 'medication' && /^(?:and )?(?:(?:what )?dose\b|how often(?:$| do you take (?:it|them)$)|frequency$|why(?:$| do you take (?:it|them)$)|indication$)/.test(normalized)) {
       if (/\b(dose)\b/.test(normalized)) return this.contextCandidate('medication_dose', 'Medication dose follow-up.');
       if (/\b(how often|frequency)\b/.test(normalized)) return this.contextCandidate('medication_frequency', 'Medication frequency follow-up.');
       return this.contextCandidate('medication_indication', 'Medication indication follow-up.');
@@ -736,6 +747,10 @@ export class PatientEngine {
   applySuppression(candidates, normalized) {
     const suppressed = [];
     const suppress = (id, reason) => { const c = candidates.find((x) => x.id === id); if (c) { c.score = Math.max(0, c.score - 5); suppressed.push({ intentId: id, reason }); } };
+    if (!FAMILY_OVERVIEW.test(normalized)) suppress('family_history', 'An overview requires an explicit family-history question');
+    if (medicationSubject.test(normalized)) {
+      for (const id of Object.keys(INTENTS).filter(id => INTENTS[id].domain === 'objective')) suppress(id, 'Medication question is not a measurement request');
+    }
     if (/character/.test(normalized)) { suppress('pmh_previous_exams', 'CT must not match inside character'); for (const c of candidates.filter((x) => INTENTS[x.id]?.domain === 'objective')) suppress(c.id, 'character question is not objective/vitals'); }
     if (/\b(admit|admitted|admission|arrive|came to hospital|get here)\b/.test(normalized) && !/\b(pain|symptom).*start/.test(normalized)) suppress('hpi_onset', 'admission time is administrative, not symptom onset');
     if (/\b(move|moving|spread|radiat|travel|shoot|arm|jaw|back)\b/.test(normalized)) suppress('hpi_site', 'movement/spread words indicate radiation, not site');
@@ -773,9 +788,7 @@ export class PatientEngine {
     const special = {
       terminology_not_understood: () => ['clarification_required', 'I don’t understand that term. Could you describe what you mean?'],
       guarded_withholding: () => ['withheld', this.guardedReply()],
-      clarification: () => ['clarification_required', analysis?.differentSymptom
-        ? 'Which symptom do you mean? Could you ask about one symptom at a time?'
-        : 'I am not sure what you mean. Could you ask that more directly?']
+      clarification: () => ['clarification_required', this.clarificationReply(detection)]
     }[responseScope]?.();
     if (special) return [{ intent: primaryIntent?.id, status: special[0], text: special[1], factsUsed: [], rules: [responseScope] }];
 
@@ -800,6 +813,8 @@ export class PatientEngine {
       }
       return {
         intent: candidate.id, attribute, target: analysis?.target ?? null,
+        ...(realized.length && candidate.id === 'family_history' && FAMILY_OVERVIEW.test(detection.normalized) &&
+          this.case.familyOverviewTopics?.length ? { creditedIntentIds: this.case.familyOverviewTopics } : {}),
         status: realized.length ? 'answered' : 'recognized_unknown',
         text: realized.length ? realized.map(item => item.text).join(' ') : 'I’m not sure about that.',
         factsUsed: realized.length ? facts.map(({ id, state }) => ({ id, state })) : [],
@@ -810,13 +825,21 @@ export class PatientEngine {
     });
   }
 
+  clarificationReply({ normalized, analysis }) {
+    if (analysis?.differentSymptom) return 'Which symptom do you mean? Could you ask about one symptom at a time?';
+    if (this.currentSymptom && /^(?:and )?how long$/.test(normalized)) {
+      return 'Do you mean when it started or how long it lasts?';
+    }
+    return 'I am not sure what you mean. Could you ask that more directly?';
+  }
+
   answerFor(intentId) {
     return retrieveFacts(this.case, intentId).map(fact => realizeEnglish(fact)?.text).filter(Boolean).join(' ');
   }
 
   disclosedAnswerFor(intentId) {
     const answers = this.debugTurns.flatMap(turn => turn.answers ?? [])
-      .filter(answer => answer.intent === intentId && answer.status === 'answered')
+      .filter(answer => (answer.intent === intentId || answer.creditedIntentIds?.includes(intentId)) && answer.status === 'answered')
       .map(answer => answer.text);
     return answers.length ? [...new Set(answers)].join(' ') : this.answerFor(intentId);
   }
@@ -1098,8 +1121,22 @@ export class PatientEngine {
     const missedEssential = priorities.essential.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
     const missedCaseCritical = priorities.caseCritical.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
     const missedRecommended = priorities.recommended.filter((intent) => !this.isIntentSatisfied(intent, this.attemptedIntents));
+    const evidenceByIntent = {};
+    const turns = new Map(this.debugTurns.map(turn => [turn.turnNumber, turn]));
+    for (const event of this.attemptEvents) {
+      const existing = evidenceByIntent[event.intentId];
+      if (existing?.resolved || (existing && !event.resolved && event.reason !== 'not_authored')) continue;
+      evidenceByIntent[event.intentId] = {
+        turnNumber: event.turnNumber,
+        question: event.question,
+        reply: event.recognized ? turns.get(event.turnNumber)?.patientAnswer : null,
+        resolved: event.resolved,
+        reason: event.reason
+      };
+    }
     return {
       score: this.getScore(),
+      evidenceByIntent,
       scoreBreakdown: this.getScoreBreakdown(),
       studentCoverage: this.getStudentCoverage(),
       engineResolvedCoverage: this.getCoverage(),
@@ -1166,7 +1203,7 @@ export class PatientEngine {
     };
   }
 
-  makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds = [], communicationAssessment = null) {
+  makeDebugTurn(question, detection, reply, feedbackLabel, attemptedIntentIds = [], communicationAssessment = null, creditedIds = []) {
     const resolvedIds = detection.answerIntents.map((intent) => intent.id);
     return {
       turnNumber: this.turn,
@@ -1178,7 +1215,7 @@ export class PatientEngine {
       selectedIntentIds: resolvedIds,
       selectedIntentLabels: detection.answerIntents.map((i) => INTENTS[i.id]?.title || i.id),
       selectedDomains: detection.answerIntents.map((i) => INTENTS[i.id]?.domain || 'unknown'),
-      studentEngineMismatch: attemptedIntentIds.length > 0 && attemptedIntentIds.some((id) => !resolvedIds.includes(id)),
+      studentEngineMismatch: attemptedIntentIds.some(id => !resolvedIds.includes(id) && !creditedIds.includes(id)),
       responseScope: detection.responseScope,
       patientAnswer: reply,
       feedbackLabel,

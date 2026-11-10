@@ -143,6 +143,16 @@ console.log(`Patient Trainer Anamnesis v84 regression: PASS (${PATIENT_CASES.len
     const markup = renderAnamnesisDebrief({ debrief, priorities, caseName: patientCase.title, summary: engine.generateSummary(), questionCount: engine.turn });
     for (const anchor of ['overview', 'priorities', 'coverage', 'feedback', 'history', 'submit']) assert.ok(markup.includes(`id="pt-debrief-${anchor}"`), `${anchor} section missing`);
   }
+  untouched.ask('What brought you in?');
+  untouched.ask('What helps with the pain?');
+  const reliefDebrief = untouched.getDebrief();
+  const reliefView = buildAnamnesisDebriefView(reliefDebrief, untouched.getDebriefPriorities());
+  const medicationCoverage = reliefView.coverage.find(row => row.id === 'medication');
+  assert.ok(medicationCoverage.missing.some(item => item.id === 'medication_nitroglycerin_previous'),
+    'Incidental disclosure during pain relief must not earn credit for separately graded nitroglycerin use');
+  const reliefMarkup = renderAnamnesisDebrief({ debrief: reliefDebrief, priorities: untouched.getDebriefPriorities() });
+  assert.match(reliefMarkup, /Asked and answered · turn 2/);
+
   const unsafe = renderAnamnesisDebrief({ debrief: emptyDebrief, priorities: untouched.getDebriefPriorities(), caseName: '<img src=x onerror=alert(1)>', worksheet: '<script>alert(1)</script>', messages: [{ speaker: 'student', text: '<svg onload=alert(1)>' }] });
   assert.ok(!unsafe.includes('<img src=x') && !unsafe.includes('<script>alert') && !unsafe.includes('<svg onload'), 'All user-authored content must be escaped');
 }

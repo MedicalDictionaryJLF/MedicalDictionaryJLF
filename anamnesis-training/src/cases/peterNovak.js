@@ -109,6 +109,7 @@ export const peterNovak = {
   },
   "gynHistory": "That does not apply to me.",
   "familyHistory": "My father died of a heart attack at 62. My mother has diabetes and high blood pressure.",
+  "familyOverviewTopics": ["family_cardiovascular", "family_diabetes"],
   "familyDetails": {
     "cardiovascular": "My father died of a heart attack at 62. My mother has high blood pressure.",
     "diabetes": "My mother has type 2 diabetes.",

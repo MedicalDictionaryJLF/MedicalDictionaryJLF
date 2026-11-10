@@ -1,6 +1,7 @@
 import { buildApiUrl, resolveIntentWithAI } from '../../src/ai/client.js';
 import { INTENTS } from './data/interviewSchema.js?v=134';
-import { normalize } from './patientEngine.js';
+import { medicationSubject, sleepQuestion } from './dialogue/questionAnalysis.js?v=pilot-1';
+import { normalize } from './patientEngine.js?v=pilot-1';
 
 const MAX_RESCUES = 2;
 const ACCEPT_CONFIDENCE = 0.9;
@@ -29,6 +30,7 @@ function rescueOptions(engine, detection) {
     if (candidate.score >= 0.48 && candidate.reasons?.some(reason => /^(phrase|token|fuzzy):/.test(reason))) options.add(candidate.id);
   }
   return [...options].filter(id => Object.hasOwn(INTENTS, id) && INTENTS[id].domain !== 'objective' &&
+    (!medicationSubject.test(detection.normalized) || INTENTS[id].domain === 'medication') &&
     (id !== 'allergy_reaction' || engine.lastMeaningfulDomain === 'allergy' ||
       /\b(?:allerg\w*|reaction|expos\w*)\b/.test(detection.normalized)));
 }
@@ -48,7 +50,7 @@ export async function prepareQuestionWithAI(engine, question, onRescueReserved =
   };
   const unchanged = { detection: local, event };
   if (!isAIAvailable() || local.primaryIntent || local.parts || local.responseScope !== 'clarification' ||
-      local.analysis?.unresolvedReference || local.analysis?.differentSymptom) return unchanged;
+      sleepQuestion.test(local.normalized) || local.analysis?.unresolvedReference || local.analysis?.differentSymptom) return unchanged;
 
   const key = questionKey(local.normalized);
   if (key.length < 12 || key.length > 240 || !QUESTION_FORM.test(key)) return unchanged;

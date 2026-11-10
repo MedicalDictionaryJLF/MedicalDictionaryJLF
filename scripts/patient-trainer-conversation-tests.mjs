@@ -232,3 +232,43 @@ test('network interception proves zero routine requests and constrains exception
     else globalThis.window = savedWindow;
   }
 });
+
+test('pilot wording preserves the subject of the current question and answers both clauses', () => {
+  for (const difficulty of ['beginner', 'intermediate', 'advanced']) {
+    const engine = make(peter, difficulty);
+    assert.equal(engine.ask('What is your current complaint?').detectedIntent, 'chief_complaint');
+    assert.match(engine.ask('When did it start?').reply, /2 hours before/);
+    assert.match(engine.ask('How often do you take your medications?').reply, /ramipril once each morning/i);
+    assert.match(engine.ask('Do you use some blood pressure medication?').reply, /ramipril/i);
+    assert.equal(engine.ask('Can zou sleep well at night?').answeredIds.length, 0);
+    assert.match(engine.ask('Do you have any problems with breathing?').reply, /short of breath/i);
+    assert.match(engine.ask('How did you come to the hospital?').reply, /wife drove/i);
+    const migraine = make(nina, difficulty);
+    assert.match(migraine.ask('Where does the pain radiate?').reply, /one side/i);
+    assert.match(migraine.ask('How long does the pain lasts?').reply, /4 to 12 hours/);
+    const compound = migraine.ask('What is making your pain worse and what is helping you?');
+    assert.deepEqual(compound.answeredIds, ['hpi_exacerbating', 'hpi_relieving']);
+    assert.doesNotMatch(migraine.ask('What medication are you taking?+').reply, /ask that more directly/);
+  }
+});
+
+test('family history credits only elicited topics and records the exchange in the debrief', () => {
+  const engine = make();
+  engine.ask('Do you have any other diseases?');
+  assert.equal(engine.askedIntents.has('family_cardiovascular'), false);
+  const question = 'Any family history of conditions we should be aware of?';
+  const result = engine.ask(question);
+  assert.deepEqual(result.answeredIds, ['family_history', 'family_cardiovascular', 'family_diabetes']);
+  assert.match(result.reply, /heart attack.*diabetes/);
+  const restored = make().restoreState(JSON.parse(JSON.stringify(engine.exportState())));
+  assert.equal(restored.getDebrief().evidenceByIntent.family_cardiovascular.question, question);
+  assert.equal(restored.getDebrief().evidenceByIntent.family_diabetes.reply, result.reply);
+  assert.equal(restored.askedIntents.has('family_cancer'), false);
+  assert.equal(restored.debugTurns.at(-1).studentEngineMismatch, false);
+
+  const migraine = make(nina);
+  migraine.ask('Do you have any allergies?');
+  assert.equal(migraine.getDebrief().evidenceByIntent.allergies.reason, 'not_authored');
+  assert.equal(migraine.getDebrief().missedEssential.includes('allergies'), false);
+  assert.equal(migraine.askedIntents.has('allergies'), false);
+});
