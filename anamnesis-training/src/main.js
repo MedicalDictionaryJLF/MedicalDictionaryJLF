@@ -4,13 +4,13 @@ import { PATIENT_CASES } from './cases/index.js?v=pilot-4';
 import { INTENTS } from './data/interviewSchema.js?v=pilot-9';
 import { getPositionRequest } from './dialogue/positionRequests.js?v=positioning-all-modes';
 import { POSITIONING_COMMANDS, POSITIONING_REPLIES } from './data/positioningCommands.js?v=2';
-import { PatientEngine } from './patientEngine.js?v=pilot-11';
+import { PatientEngine } from './patientEngine.js?v=pilot-12';
 import { renderAnamnesisDebrief } from './ui/anamnesisDebrief.js?v=pilot-9';
 import { speak, chooseVoiceForPatient, initVoices } from './speech.js';
 import { runSimulationTests } from './simulationRunner.js?v=134';
 import { openVitalsMonitor, closeVitalsMonitor, openEcgViewer, closeEcgViewer, resizeVisibleMonitor, setMonitorPatientStateSource } from './vitalsMonitor.js';
 import { initAvatarAnimator, bindAvatarToPatientState, reactAvatarToPatientReply, setAvatarEmotion, setAvatarSpeaking, pulseAvatarSpeechBoundary, setAvatarViewMode, setAvatarExamTool, applyAvatarPositionRequest, isAvatarEnvironmentReady, disposeAvatarAnimator, lockAvatarExaminations } from './avatarAnimator.js?v=bed-contact';
-import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=pilot-11';
+import { isAIAvailable, prepareAnonymousContribution, prepareQuestionWithAI } from './aiSupport.js?v=pilot-12';
 import { showResponseLoading, removeResponseLoading } from './ui/loadingIndicator.js';
 import { renderModeLayout } from './ui/modeLayout.js?v=pilot-9';
 import { renderDetailsPanel } from './ui/detailsPanel.js';
@@ -35,7 +35,7 @@ import {
   PATIENT_TRAINER_AUTO_RETRY_LIMIT,
   PATIENT_TRAINER_CLIENT_VERSION,
   PATIENT_TRAINER_LOG_ENDPOINT
-} from './config.js?v=pilot-11';
+} from './config.js?v=pilot-12';
 
 const TRAINER_CASES = PATIENT_CASES.filter((item) => item && item.id);
 const languageShadowMode = new URLSearchParams(window.location.search).get('languageShadow');
