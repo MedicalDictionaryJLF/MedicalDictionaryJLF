@@ -1,8 +1,8 @@
-import { ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js';
+import { ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js?v=pilot-11';
 import { buildApiUrl, resolveIntentWithAI } from '../../src/ai/client.js';
 import { INTENTS } from './data/interviewSchema.js?v=pilot-9';
-import { medicationSubject } from './dialogue/questionAnalysis.js?v=pilot-9';
-import { normalize } from './patientEngine.js?v=pilot-9';
+import { medicationSubject } from './dialogue/questionAnalysis.js?v=pilot-11';
+import { normalize } from './patientEngine.js?v=pilot-11';
 
 const MAX_RESCUES = 4;
 const TURNS_PER_RESCUE = 20;

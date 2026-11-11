@@ -1,3 +1,4 @@
+import { temporalCue, temporalFacet } from './temporalQuestions.js?v=pilot-11';
 import { MEDICATION_NAMES, PRESENTING_SYMPTOMS } from '../cases/conversationFacts.js';
 
 export const medicationSubject = /\b(?:medicines?|medications?|meds|pills?|tablets?|prescriptions?)\b/;
@@ -52,25 +53,30 @@ export function analyzeQuestion(normalized, patient, context = {}) {
   const competingSymptom = /\b(?:pain|burning) (?:when|while|on) (?:passing urine|urinat\w*|peeing)\b|\b(?:and|or) (?:the |your )?(?:cough|fever|headache|dizziness|vomiting)\b/.test(normalized);
   const site = normalized.match(/\b(?:(left|right) )?(arm|jaw|back|shoulder(?: blade)?|neck)\b/);
   const negative = normalized.match(/\b(?:not|never|no|(?:did|do|does|is|are|was|were|has|have)nt)\b/g) ?? [];
+  const cue = temporalCue(normalized);
+  const namedMedicines = [...new Set([...(patient.medicationFacts ?? []).map(item => item.name), ...MEDICATION_NAMES])]
+    .filter(name => ` ${normalized} `.includes(` ${name} `));
+  const namedMedicine = namedMedicines.length === 1 ? namedMedicines[0] : null;
+  const medicationMentioned = medicationSubject.test(normalized);
+  const timeFacet = temporalFacet(cue, normalized, explicit || active || pain,
+    namedMedicines.length > 0 || context.lastDomain === 'medication' || medicationMentioned, context.lastAttribute);
   const [intent, attribute] = (active && bareSite.test(normalized) && context.lastAttribute === 'radiation.sites')
     ? ['hpi_radiation', 'radiation.sites']
     : active && context.lastIntent === 'hpi_onset' && normalized === 'when exactly'
       ? ['hpi_onset', 'onset.time']
-      : facets.find(([, , rule]) => rule.test(normalized)) ?? [];
+      : timeFacet ?? facets.find(([, , rule]) => rule.test(normalized)) ?? [];
   const expectedValue = attribute === 'onset.type' ?
     /\b(?:sudden(?:ly)?|all at once|out of nowhere|fast)\b/.test(normalized) ? 'sudden' : 'gradual' : null;
   const hemoptysis = /\b(?:cough\w* up blood|blood (?:in (?:your )?(?:phlegm|sputum)|when (?:you )?cough))\b/.test(normalized);
-  const namedMedicine = [...(patient.medicationFacts ?? []).map(item => item.name), ...MEDICATION_NAMES]
-    .find(name => ` ${normalized} `.includes(` ${name} `));
-  const medicationMentioned = medicationSubject.test(normalized);
-  const medicine = namedMedicine ?? (!explicit && !specificOther && !medicationMentioned ? context.activeMedication : null);
-  const medicationAttribute = (medicine || medicationMentioned) && [
+  const medicine = namedMedicine ?? (!namedMedicines.length && !explicit && !specificOther && !medicationMentioned &&
+    !/\b(?:them|those|these)\b/.test(normalized) ? context.activeMedication : null);
+  const medicationAttribute = timeFacet?.[0] === 'medication_frequency' ? 'frequency' : (medicine || medicationMentioned) && [
     ['dose', /\b(?:dose|dosage|strength|mg|milligrams|how much|micrograms)\b/],
     ['frequency', /\b(?:how often|frequency|daily|how many times)\b/],
     ['indication', /\b(?:why|indication|what .* for|what does .* do)\b/]
   ].find(([, pattern]) => pattern.test(normalized))?.[0];
   const locationSide = normalized.match(/\b(left|right)\b/)?.[0] ?? null;
-  const type = /\b(?:just to confirm|to confirm|is that right|correct me if|so you said)\b/.test(normalized) ? 'confirmation' :
+  const type = (cue?.confirmation && timeFacet) || /\b(?:just to confirm|to confirm|is that right|correct me if|so you said)\b/.test(normalized) ? 'confirmation' :
     /\b(?:than|compared|versus)\b/.test(normalized) ? 'comparison' :
     /^(?:how (?:many|much|long|often|severe|bad)|on a scale)\b/.test(normalized) ? 'numerical' :
     normalized.match(/^(what|where|when|how|why|who)\b/)?.[0] ??
@@ -78,7 +84,8 @@ export function analyzeQuestion(normalized, patient, context = {}) {
       /^(?:tell|describe|explain)\b/.test(normalized) ? 'open' : 'follow_up');
 
   return {
-    symptomIntent: intent ?? null,
+    temporalCue: cue,
+    symptomIntent: intent?.startsWith('hpi_') ? intent : null,
     intent: medicationAttribute ? `medication_${medicationAttribute}` : hemoptysis ? 'ros_hemoptysis' : !specificOther && !competingSymptom && (explicit || active || (pain && (!symptom?.region || ['chest','abdomen','flank','head'].includes(symptom.region)))) ? intent ?? null : null,
     attribute: medicationAttribute ? (medicine ? `medication.${medicationAttribute}` : 'overview') : hemoptysis ? 'presence' : attribute ?? 'overview',
     type,

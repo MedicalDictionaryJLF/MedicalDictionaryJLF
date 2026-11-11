@@ -1,10 +1,10 @@
-import { explicitSymptoms, symptomSubject, medicationSubjectName, unavailableDetail, ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js';
+import { explicitSymptoms, symptomSubject, medicationSubjectName, unavailableDetail, ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js?v=pilot-11';
 import { getSocialAct, socialReply } from './dialogue/socialConversation.js';
 import { QUESTION_VARIANTS, QUESTION_FOLLOWUPS } from './data/questionVariants.js';
 import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=pilot-9';
 import { retrieveFacts } from './dialogue/clinicalFacts.js?v=pilot-9';
-import { realizeEnglish } from './dialogue/responseTemplates.js?v=pilot-4';
-import { analyzeQuestion, medicationSubject, splitQuestions } from './dialogue/questionAnalysis.js?v=pilot-9';
+import { realizeEnglish, realizePatientReply } from './dialogue/responseTemplates.js?v=pilot-11';
+import { analyzeQuestion, medicationSubject, splitQuestions } from './dialogue/questionAnalysis.js?v=pilot-11';
 import { PRESENTING_SYMPTOMS } from './cases/conversationFacts.js';
 
 const MATCH_THRESHOLD = 0.24;
@@ -556,6 +556,15 @@ export class PatientEngine {
     if (correction) return correction;
     const analysis = analyzeQuestion(normalized, this.case, context);
     const detection = this.detectLegacy(question, context);
+    const temporalRole = analysis.temporalCue?.role;
+    if ((temporalRole === 'event_relative' || temporalRole === 'one_off_medication') &&
+        (medicationSubject.test(normalized) || /\bdose\b/.test(normalized) || medicationSubjectName(this.case, normalized) ||
+          (context.lastDomain === 'medication' && /\b(?:it|them)\b/.test(normalized)))) {
+      const intent = temporalRole === 'event_relative' ? 'hpi_onset' : 'medication_adherence';
+      return this.focusedDetection(normalized, intent, { ...analysis,
+        attribute: temporalRole === 'event_relative' ? 'onset.medication_relation' : 'medication.specific_timing',
+        target: null });
+    }
     if (detection.primaryIntent?.reasons.includes('conversation-subject')) return detection;
     if (detection.primaryIntent?.reasons.includes('question-bank') ||
         ['ros_bowel_frequency', 'gyn_last_visit', 'hpi_previous_episodes', 'administrative_arrival_method'].includes(detection.primaryIntent?.id)) {
@@ -993,7 +1002,7 @@ export class PatientEngine {
         provenance: { paths: [`subjectHistory.${candidate.id}.${attribute}`] }
       }] : retrieveFacts(this.case, candidate.id, attribute, analysis?.target);
       const realizeFacts = (records) => records.flatMap(fact => {
-        const response = realizeEnglish(fact, analysis);
+        const response = realizePatientReply(fact, analysis ?? {}, this.options.interviewLanguage);
         return response ? [{ ...response, fact }] : [];
       });
       let realized = realizeFacts(facts);

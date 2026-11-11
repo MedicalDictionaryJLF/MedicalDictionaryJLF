@@ -45,8 +45,8 @@ const englishRules = {
   'timing.pattern': value => `It ${value}`,
   'timing.duration': value => {
     const episode = value.episode;
-    const duration = quantity(value);
-    if (episode === 'attacks') return `The attacks last ${duration}${value.condition ? ` ${value.condition}` : ''}`;
+    const duration = value.phrase ?? quantity(value);
+    if (episode === 'attacks') return `The attacks last ${duration}${value.condition ? ` ${value.condition}` : ''}${value.source ? `, according to ${value.source}` : ''}`;
     return `The ${episode} lasted ${duration}${value.source ? `, according to ${value.source}` : ''}`;
   },
   'timing.frequency': value => `I have passed ${value.count} ${value.event}${value.count === 1 ? '' : 's'} ${value.period}`,
@@ -81,19 +81,22 @@ function realizeMedication(drug, attribute) {
 function isComplete(value, attribute) {
   if (value == null) return false;
   if (['severity.current', 'severity.worst'].includes(attribute)) {
-    return Number.isFinite(value.value) && Number.isFinite(value.scale) && value.value >= 0 && value.value <= value.scale;
+    return Number.isFinite(value.value) && Number.isFinite(value.scale) && value.scale > 0 && value.value >= 0 && value.value <= value.scale;
   }
   if (['onset.time', 'timing.duration'].includes(attribute)) {
-    return Boolean(value.phrase) || (Number.isFinite(value.value) && value.value >= 0 &&
+    if (attribute === 'timing.duration' && (typeof value.episode !== 'string' || !value.episode.trim())) return false;
+    if (value.phrase != null) return typeof value.phrase === 'string' && Boolean(value.phrase.trim());
+    return Number.isFinite(value.value) && value.value >= 0 &&
       ['minute', 'hour', 'day', 'week', 'month', 'year'].includes(value.unit) &&
-      (value.max == null || (Number.isFinite(value.max) && value.max >= value.value)) &&
-      (attribute !== 'timing.duration' || Boolean(value.episode)));
+      (value.max == null || (Number.isFinite(value.max) && value.max >= value.value));
   }
   if (attribute === 'radiation.sites') return value.state === FACT_STATE.ABSENT ?
-    value.values?.length === 0 : Array.isArray(value.values) && value.values.length > 0;
+    value.values?.length === 0 : Array.isArray(value.values) && value.values.length > 0 && value.values.every(site => typeof site === 'string' && site.trim());
   if (attribute === 'onset.activity') return typeof value === 'string' ? Boolean(value) : typeof value.activity === 'string' && Boolean(value.activity);
   if (attribute === 'timing.frequency') return Number.isInteger(value.count) && value.count >= 0 && Boolean(value.event && value.period);
-  if (attribute === 'character.qualities') return Array.isArray(value.positive) && value.positive.length > 0;
+  if (attribute === 'character.qualities') return Array.isArray(value.positive) && value.positive.length > 0 &&
+    value.positive.every(item => typeof item === 'string' && item.trim()) &&
+    (value.negative == null || (Array.isArray(value.negative) && value.negative.every(item => typeof item === 'string' && item.trim())));
   return value !== '';
 }
 
@@ -122,4 +125,33 @@ export function realizeEnglish(fact, question = {}) {
   if (!pattern || !isComplete(value, attribute)) return null;
   const text = finish(pattern(value, question.target, intent));
   return text ? { text, rule: `english.${attribute}` } : null;
+}
+
+
+// Presentation is separate from lookup. Alternate wording is rendered from the
+// same structured value and never changes the associated fact or credit.
+export function realizePatientReply(fact, question = {}, language = 'en') {
+  const base = realizeEnglish(fact, question);
+  if (!base) return null;
+  const { value } = fact;
+  const simpleAdmissionOnset = base.rule === 'english.onset.time' && value?.reference === 'admission' &&
+    !value.phrase && !value.verb && !value.subject && !value.limit;
+  if (simpleAdmissionOnset && language === 'sk' && value.unit === 'hour' && Number.isInteger(value.value) && value.max == null) {
+    const hours = value.value === 1 ? 'hodinu' : value.value >= 2 && value.value <= 4 ? `${value.value} hodiny` : `${value.value} hodín`;
+    return { text: `Začalo sa to ${value.about ? 'asi ' : ''}${hours} pred príchodom do nemocnice.`, rule: 'sk.onset.admission' };
+  }
+  if (simpleAdmissionOnset && question.correction && question.subject?.name) {
+    return { text: `Oh, the ${question.subject.name}. That started ${quantity(value)} before I came in.`, rule: 'english.onset.correction' };
+  }
+  if (simpleAdmissionOnset && question.type === 'confirmation') {
+    return { text: finish(`${quantity(value)} before I arrived`), rule: 'english.onset.confirmation' };
+  }
+  if (question.type === 'confirmation' && base.rule === 'english.timing.duration' && value?.episode === 'attacks' && !value.phrase && !value.source) {
+    return { text: finish(`${quantity(value)}${value.condition ? ` ${value.condition}` : ''}`), rule: 'english.duration.confirmation' };
+  }
+  if (question.type === 'confirmation' && base.rule === 'english.severity.current') {
+    const when = value.reference === 'today' ? 'Today' : 'Right now';
+    return { text: finish(`${when}, I’d say ${value.qualifier ? `${value.qualifier} ` : ''}${value.value} out of ${value.scale}`), rule: 'english.severity.confirmation' };
+  }
+  return base;
 }

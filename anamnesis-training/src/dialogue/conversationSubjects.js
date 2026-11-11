@@ -66,6 +66,8 @@ export function unavailableDetail(attribute, subject, intent) {
   if (intent === 'ros_bowel_frequency') return 'I can’t say exactly how often I have a bowel movement.';
   if (intent === 'intake_last_meal') return 'I can describe my usual diet. I don’t have the details of my last meal.';
   if (intent === 'intake_recent_fluids') return 'I’m not sure how much I’ve had to drink today.';
+  if (attribute === 'onset.medication_relation') return 'I’m unsure of the exact timing relative to the medicine.';
+  if (attribute === 'medication.specific_timing') return 'I’m unsure whether I took anything at that specific time.';
   if (attribute === 'onset.time') return `I don’t remember exactly when ${subject ? `the ${subject.name}` : 'it'} started.`;
   if (attribute === 'onset.type') return 'I’m not sure whether it came on suddenly or gradually.';
   if (attribute === 'timing.duration') return 'I can’t say exactly how long it lasted.';

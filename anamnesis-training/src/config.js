@@ -4,5 +4,5 @@
 export const PATIENT_TRAINER_LOG_ENDPOINT = String(
   globalThis.PATIENT_TRAINER_LOG_ENDPOINT || 'https://medical-dictionary-jlf.vercel.app/api/patient-trainer-log'
 ).trim();
-export const PATIENT_TRAINER_CLIENT_VERSION = '3.0.0-anamnesis-engine-v92';
+export const PATIENT_TRAINER_CLIENT_VERSION = '3.0.0-anamnesis-engine-v94';
 export const PATIENT_TRAINER_AUTO_RETRY_LIMIT = 3;
