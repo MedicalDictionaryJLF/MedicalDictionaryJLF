@@ -90,3 +90,21 @@ Record clarifications, unavailable case details, and AI requests separately.
 Review a sample of fluent replies against the intended subject, the authored
 case fact, and the resulting coverage. Count wrong-topic replies, unsupported
 facts, and wrong coverage as distinct errors, even when the reply reads well.
+
+
+## Language prototype
+
+The default experience remains English. Onset, duration, and frequency cues
+interpret the student’s wording; their quantities never replace case facts.
+Reply variants keep the same fact identifiers and coverage.
+
+Open `?languageShadow=1` to see candidate rankings and elapsed time in the
+browser console for unresolved questions and existing AI rescues. Rankings
+never affect replies or scoring. Open `?languageShadow=benchmark` to see the
+held-out English and Slovak results in the browser console. The opt-in worker
+downloads Transformers.js and the quantized model on first use. The model
+weights alone are about 118 MB. A blocked download leaves the interview
+operational. Shadow rankings stay out of saved sessions and reports.
+
+The Slovak onset template is an experimental renderer for structured
+admission-relative onset facts. There is no Slovak interview option yet.

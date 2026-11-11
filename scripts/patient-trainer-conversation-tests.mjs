@@ -1,3 +1,6 @@
+import { realizePatientReply } from '../anamnesis-training/src/dialogue/responseTemplates.js';
+import { createShadowObserver } from '../anamnesis-training/src/dialogue/semanticShadowClient.js';
+import { evaluateShadow, LANGUAGE_PROBES, rankByIntent, SHADOW_EXAMPLES } from '../anamnesis-training/src/dialogue/semanticShadow.js';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PATIENT_CASES } from '../anamnesis-training/src/cases/index.js';
@@ -613,4 +616,184 @@ test('frequent pilot variants use authored answers or a targeted clarification',
   assert.equal(engine.ask('Did this happened before?').detectedIntent, 'hpi_previous_episodes');
   assert.match(engine.ask('How long?').reply, /started.*lasts/);
   assert.equal(engine.ask('When it started.').detectedIntent, 'hpi_onset');
+});
+
+test('time confirmations preserve the authored value and the same fact and credit', () => {
+  const engine = make();
+  engine.ask('What brought you here?');
+  const first = engine.ask('When did the chest pain start?');
+  const originalFact = engine.debugTurns.at(-1).answers[0].factsUsed[0].id;
+  const confirmation = engine.ask('Was it three hours before you arrived?');
+  assert.match(confirmation.reply, /about 2 hours before I arrived/i);
+  assert.doesNotMatch(confirmation.reply, /yes|three hours/i);
+  assert.deepEqual(confirmation.answeredIds, first.answeredIds);
+  assert.equal(engine.debugTurns.at(-1).answers[0].factsUsed[0].id, originalFact);
+  engine.ask('Do you have back pain?');
+  engine.ask('When did it start?');
+  const correction = engine.ask('No, I meant the chest pain.');
+  assert.match(correction.reply, /Oh, the chest pressure.*2 hours/);
+  assert.equal(engine.debugTurns.at(-1).answers[0].factsUsed[0].id, originalFact);
+  const slovak = new PatientEngine(peter, { interviewLanguage: 'sk' });
+  assert.match(slovak.ask('When did the chest pain start?').reply, /asi 2 hodiny pred príchodom/);
+  assert.equal(slovak.debugTurns.at(-1).answers[0].factsUsed[0].id, originalFact);
+  const duration = make(nina);
+  duration.ask('What brought you here?');
+  assert.match(duration.ask('Does each attack last two hours?').reply, /4 to 12 hours/);
+  const medicines = make();
+  medicines.ask('What medicines do you take regularly?');
+  assert.equal(medicines.ask('Do you take them twice a day?').detectedIntent, 'medication_frequency');
+});
+
+test('semantic shadow ranks distinct intents and cannot change the interview', async () => {
+  assert.equal(createShadowObserver('', () => { throw new Error('must not load'); }), null);
+  assert.ok(LANGUAGE_PROBES.every(([, phrase, intent]) => INTENTS[intent] &&
+    !SHADOW_EXAMPLES.some(item => item.phrase === phrase)));
+  const candidates = rankByIntent([1, 0], [
+    { intent: 'hpi_timing', vector: [0.8, 0.6] },
+    { intent: 'hpi_timing', vector: [1, 0] },
+    { intent: 'hpi_onset', vector: [0.6, 0.8] }
+  ]);
+  assert.deepEqual(candidates.map(item => item.intent), ['hpi_timing', 'hpi_onset']);
+  const engine = make();
+  const result = engine.ask('Blargleflim?');
+  const fakeWorker = { postMessage({ id }) { queueMicrotask(() => this.onmessage({ data: { id, candidates } })); } };
+  const observer = createShadowObserver('1', () => fakeWorker);
+  const pending = observer.rank('How long is one spell from beginning to end?');
+  assert.equal((await observer.rank('Another question')).status, 'busy');
+  assert.deepEqual((await pending).candidates, candidates);
+  assert.equal(result.detection.responseScope, 'clarification');
+  assert.equal(engine.askedIntents.size, 0);
+  const rows = await evaluateShadow(async () => candidates, [['en', 'Unseen duration phrasing', 'hpi_timing']]);
+  assert.equal(rows[0].top, 'hpi_timing');
+  assert.equal(rows[0].top3, true);
+  const blocked = createShadowObserver('1', () => { throw new Error('blocked'); });
+  assert.equal((await blocked.rank('A question')).status, 'unavailable');
+});
+
+test('temporal contrasts preserve the topic and never credit an unauthored event', async () => {
+  for (const patient of PATIENT_CASES) {
+    for (const mode of ['teaching', 'practice', 'exam']) {
+      for (const [question, intent, attribute] of [
+        ['Did it last two hours yesterday?', 'hpi_timing', 'timing.duration'],
+        ['Did it get worse since two days ago?', 'hpi_course', 'progression']
+      ]) {
+        const engine = new PatientEngine(patient, { mode });
+        engine.ask('What brought you here?');
+        const answer = engine.ask(question);
+        assert.equal(answer.detectedIntent, intent, patient.id + question);
+        assert.equal(answer.detection.analysis.attribute, attribute);
+        assert.ok(!answer.answeredIds.includes('hpi_onset'));
+      }
+      for (const question of [
+        'Did you take any medication two hours before you arrived?',
+        'Did you take your medication today?',
+        'What medication did you take today?',
+        'Did it start two hours after you took your pills?'
+      ]) {
+        const engine = new PatientEngine(patient, { mode });
+        engine.ask('What brought you here?');
+        const prepared = await prepareQuestionWithAI(engine, question);
+        const answer = engine.ask(question, prepared.detection);
+        assert.equal(prepared.event.aiAttempted, false);
+        assert.deepEqual(answer.answeredIds, [], patient.id + question);
+        assert.equal(engine.debugTurns.at(-1).answers[0].status, 'recognized_unknown');
+        assert.deepEqual(engine.debugTurns.at(-1).answers[0].factsUsed, []);
+        assert.match(answer.reply, /unsure/);
+      }
+    }
+  }
+  const engine = make();
+  engine.ask('When did the chest pain start?');
+  const previous = engine.debugTurns.at(-1).answers[0].factsUsed[0].id;
+  assert.match(engine.ask('Three hours ago?').reply, /2 hours/);
+  assert.equal(engine.debugTurns.at(-1).answers[0].factsUsed[0].id, previous);
+  engine.ask('What medicines do you take?');
+  assert.equal(engine.ask('Do you take ramipril twice a day?').reply, 'I take ramipril once each morning.');
+  const multiple = engine.ask('Do you take ramipril and atorvastatin twice a day?');
+  assert.equal(multiple.detection.analysis.target, null);
+  const collective = engine.ask('Do you take them twice a day?');
+  assert.equal(collective.detection.analysis.target, null);
+  assert.equal(collective.detection.analysis.attribute, 'overview');
+  assert.doesNotMatch(collective.reply, /^I take ramipril once each morning\.$/);
+});
+
+test('shadow failures settle pending work without trusting malformed model output', async () => {
+  for (const malformed of [null, {}, { id: 1, candidates: [] },
+    { id: 1, candidates: [{ intent: 'invented', score: 1 }] },
+    { id: 1, candidates: [{ intent: 'hpi_onset', score: NaN }] },
+    { id: 1, candidates: [{ intent: 'hpi_onset', score: 2 }] },
+    { id: 1, candidates: [{ intent: 'hpi_onset', score: 0.8 }, { intent: 'hpi_onset', score: 0.7 }] }]) {
+    let terminated = 0;
+    const worker = { terminate() { terminated++; }, postMessage() { queueMicrotask(() => this.onmessage({ data: malformed })); } };
+    const observer = createShadowObserver('1', () => worker, 50);
+    assert.equal((await observer.rank('A question?')).status, 'unavailable');
+    assert.equal(terminated, 1);
+    assert.equal((await observer.rank('Another question?')).status, 'unavailable');
+  }
+  for (const event of ['onerror', 'onmessageerror']) {
+    const worker = { terminate() { throw new Error('already closed'); }, postMessage() { queueMicrotask(() => this[event]()); } };
+    assert.equal((await createShadowObserver('1', () => worker, 50).rank('Question?')).status, 'unavailable');
+  }
+  for (const worker of [{ postMessage() {} }, { postMessage() { throw new Error('closed'); } }]) {
+    const observer = createShadowObserver('1', () => worker, 5);
+    assert.equal((await observer.rank('Question?')).status, 'unavailable');
+  }
+  let requests = 0;
+  const observer = createShadowObserver('1', () => { requests++; throw new Error('must not load'); });
+  for (const input of [null, undefined, '', '  ', 123, 'x'.repeat(241)]) {
+    assert.equal((await observer.rank(input)).status, 'invalid');
+  }
+  assert.equal(requests, 0);
+  assert.throws(() => rankByIntent([NaN], []));
+  assert.throws(() => rankByIntent([], []));
+  assert.throws(() => rankByIntent([1], [{ intent: 'hpi_onset', vector: [Infinity] }]));
+  for (const [intent, phrases] of Object.entries(QUESTION_VARIANTS)) {
+    for (const phrase of phrases) assert.ok(SHADOW_EXAMPLES.some(item => item.intent === intent && item.phrase === phrase));
+  }
+});
+
+
+test('reply variations retain narrative qualifiers and ignore unknown structured records', () => {
+  const onset = { intent: 'hpi_onset', attribute: 'onset.time', state: 'present',
+    value: { value: 2, unit: 'hour', reference: 'admission', text: 'My headache started yesterday after lunch.' } };
+  assert.equal(realizePatientReply(onset, { type: 'confirmation' }).text, onset.value.text);
+  assert.equal(realizePatientReply({ ...onset, state: 'not_authored' }, { type: 'confirmation' }), null);
+  const duration = { intent: 'hpi_timing', attribute: 'timing.duration', state: 'present',
+    value: { value: 2, unit: 'hour', episode: 'attacks', about: true, condition: 'if untreated', source: 'my daughter' } };
+  assert.match(realizePatientReply(duration, { type: 'confirmation' }).text, /about 2 hours if untreated, according to my daughter/);
+});
+
+test('malformed structured values remain unavailable instead of producing fabricated text', () => {
+  for (const [attribute, value] of [
+    ['onset.time', { phrase: 123 }], ['timing.duration', { phrase: {}, episode: 'attacks' }],
+    ['timing.duration', { phrase: 'half an hour' }],
+    ['onset.time', { phrase: {}, value: 2, unit: 'hour' }],
+    ['severity.current', { value: 0, scale: 0 }],
+    ['radiation.sites', { state: 'present', values: [123] }],
+    ['character.qualities', { positive: [123] }],
+    ['character.qualities', { positive: ['sharp'], negative: 'dull' }]
+  ]) {
+    assert.equal(realizePatientReply({ intent: 'hpi_onset', attribute, value, state: 'present' }), null);
+  }
+  const fact = { intent: 'hpi_timing', attribute: 'timing.duration', state: 'present',
+    value: { phrase: 'about half an hour', episode: 'attacks', condition: 'if untreated', source: 'my daughter' } };
+  assert.match(realizePatientReply(fact, { type: 'confirmation' }).text, /about half an hour if untreated, according to my daughter/);
+});
+
+test('new cases can author precise medication timing without changing generic answers', () => {
+  const patient = createAnamnesisCase({
+    id: 'new-medication-timing-test', identity: { sex: 'male' },
+    presentingSymptom: { name: 'cough', region: 'breathing', aliases: /\bcough\b/ },
+    chiefComplaint: 'I have a cough.', hpi: { onset: 'The cough began yesterday.' },
+    conversationFacts: {
+      hpi_onset: { 'onset.medication_relation': { text: 'The cough began before I took the tablet.' } },
+      medication_adherence: { 'medication.specific_timing': { text: 'I took my prescribed medicine at breakfast today.' } }
+    }
+  });
+  const engine = make(patient);
+  assert.equal(engine.ask('Did the cough start after you took your pills?').reply, 'The cough began before I took the tablet.');
+  assert.deepEqual(engine.debugTurns.at(-1).answeredIds, ['hpi_onset']);
+  const timing = engine.ask('Did you take your medication today?');
+  assert.equal(timing.reply, 'I took my prescribed medicine at breakfast today.');
+  assert.deepEqual(timing.answeredIds, ['medication_adherence']);
 });
