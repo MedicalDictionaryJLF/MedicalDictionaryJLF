@@ -797,3 +797,49 @@ test('new cases can author precise medication timing without changing generic an
   assert.equal(timing.reply, 'I took my prescribed medicine at breakfast today.');
   assert.deepEqual(timing.answeredIds, ['medication_adherence']);
 });
+
+test('explicit specialist, family and medication questions override a preceding symptom', () => {
+  for (const patient of PATIENT_CASES) {
+    for (const mode of ['teaching', 'practice', 'exam']) {
+      for (const [question, expected] of [
+        ['Do you go to cardiologist regullary?', 'pmh_specialists'],
+        ['Do you see your family doctor for high blood pressure?', 'pmh_specialists'],
+        ['Did anyone in your family had heart attack?', 'family_cardiovascular'],
+        ['Has your brother ever had a stroke?', 'family_cardiovascular'],
+        ['Do youd take any medications to treat chronical disease?', 'medication_indication']
+      ]) {
+        const engine = new PatientEngine(patient, { mode });
+        engine.ask('What brought you here?');
+        const result = engine.ask(question);
+        assert.equal(result.detectedIntent, expected, `${patient.id} ${mode} ${question}`);
+        assert.ok(result.answeredIds.every(id => id === expected));
+      }
+    }
+  }
+  const engine = make();
+  assert.match(engine.ask('Hi Peter, how old are you?').reply, /^Hello\. I am 58 years old\.$/);
+  assert.match(engine.ask('Do you go to cardiologist regullary?').reply, /no regular cardiologist/i);
+  assert.match(engine.ask('Did anyone in your family had heart attack?').reply, /my father died of a heart attack/i);
+  assert.match(engine.ask('Do youd take any medications to treat chronical disease?').reply, /ramipril is for high blood pressure/i);
+  assert.match(engine.ask('Have you traveled in recently?').reply, /not travelled abroad recently/i);
+});
+
+test('specific diet, blood donation and daily urination do not credit broader topics', () => {
+  const engine = make();
+  for (const [question, reply] of [
+    ['Do you eat meat?', /specific dietary detail/],
+    ['Are you vegetarian or vegan?', /specific dietary detail/],
+    ['Did you ever donate blood?', /donated blood/],
+    ['Did you pee today?', /last passed urine/],
+    ['Have you ever had any injuries or accidents?', /previous injuries or accidents/],
+    ['Do you have any mental illness?', /mental health history/],
+    ['How often do you go to the bathroom?', /passing urine or having a bowel movement/],
+    ['Does it graduate?', /gradually.*spread/]
+  ]) {
+    const result = engine.ask(question);
+    assert.match(result.reply, reply);
+    assert.deepEqual(result.answeredIds, [], question);
+  }
+  assert.equal(engine.ask('Did you receive a blood transfusion?').detectedIntent, 'transfusions');
+  assert.equal(engine.ask('What are your meals normally like?').detectedIntent, 'intake_diet');
+});

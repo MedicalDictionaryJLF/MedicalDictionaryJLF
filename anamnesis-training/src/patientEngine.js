@@ -1,4 +1,4 @@
-import { explicitSymptoms, symptomSubject, medicationSubjectName, unavailableDetail, ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js?v=pilot-11';
+import { explicitSymptoms, symptomSubject, medicationSubjectName, unavailableDetail, ambiguousDrugQuestion, ambiguousFamilyQuestion, ambiguousDurationQuestion } from './dialogue/conversationSubjects.js?v=pilot-12';
 import { getSocialAct, socialReply } from './dialogue/socialConversation.js';
 import { QUESTION_VARIANTS, QUESTION_FOLLOWUPS } from './data/questionVariants.js';
 import { INTENTS, QUESTION_AREAS, INTENT_TO_AREA, getModelQuestions } from './data/interviewSchema.js?v=pilot-9';
@@ -74,7 +74,7 @@ const TYPO_FIXES = Object.freeze({
   marrital: 'marital', marity: 'marital', hight: 'height', heigh: 'height',
   nasuea: 'nausea', anathing: 'anything', conctact: 'contact', spreeding: 'spreading',
   spreding: 'spreading', frecquently: 'frequently', fracquently: 'frequently',
-  chronical: 'chronic', mutch: 'much', discribe: 'describe', desiases: 'diseases',
+  chronical: 'chronic', regullary: 'regularly', youd: 'you', mutch: 'much', discribe: 'describe', desiases: 'diseases',
   diseasse: 'disease', relives: 'relieves', intens: 'intense', leps: 'helps',
   wher: 'where', hoiw: 'how', whitch: 'which', scael: 'scale', strart: 'start',
   gander: 'gender', genger: 'gender', continous: 'continuous', recurent: 'recurrent',
@@ -90,6 +90,20 @@ const questionKey = value => normalize(value).replace(/^(?:please|and please) | 
 const QUESTION_BY_PHRASE = new Map(Object.entries(QUESTION_VARIANTS)
   .flatMap(([intent, questions]) => questions.map(question => [questionKey(question), intent])));
 const FOLLOWUP_BY_PHRASE = new Map(QUESTION_FOLLOWUPS.map(followup => [questionKey(followup.phrase), followup]));
+
+// Explicit subjects take precedence over the previous symptom and keyword overlap.
+const FAMILY_MEMBER = /\b(?:family(?! (?:doctor|physician))|relatives?|parents?|mother|father|mum|mom|dad|siblings?|brothers?|sisters?|grandparents?|grandmother|grandfather|children|son|daughter)\b/;
+const FAMILY_HEART = /\b(?:heart attacks?|heart disease|heart conditions?|heart problems?|strokes?|hypertension|high blood pressure|cardiac disease|cardiovascular disease)\b/;
+const SPECIALTY = /\b(?:cardiologist|diabetologist|endocrinologist|nephrologist|pulmonologist|gastroenterologist|neurologist|rheumatologist|oncologist|urologist|psychiatrist)\b/;
+const CARE_VISIT = /\b(?:see|seeing|visit|visiting|go to|go see|followed by|under the care of|appointments? with|follow up with)\b/;
+const REGULAR_CARE = /\b(?:gp|g p|general practitioner|primary care (?:doctor|provider)|doctors? office|family doctor)\b/;
+const DIET_DETAIL = /\b(?:vegetarian|vegan|eat meat|eat (?:any )?animal products|plant based diet)\b/;
+const SCOPED_QUESTIONS = [
+  [/\b(?:injuries|injury|accidents?)\b/, /\b(?:ever|history|past|previous)\b/, 'I’m not sure about any previous injuries or accidents.'],
+  [/\b(?:mental illness(?:es)?|psychiatric (?:illness|disorder|history)|mental health (?:condition|diagnosis))\b/, /\b(?:have|had|history|diagnosed)\b/, 'I’m not sure about that part of my mental health history.'],
+  [/\b(?:donat\w*|give|given) blood\b/, /\b(?:you|ever|history)\b/, 'I’m not sure whether I’ve donated blood before.'],
+  [/\b(?:pee|peed|urinate|urinated|pass(?:ed)? urine)\b/, /\b(?:did|have) you\b.*\b(?:today|this morning)\b/, 'I’m not sure when I last passed urine.']
+];
 
 const DIRECT_RULES = [
   [/\b(what is your name|your name|who are you|full name)\b/, ['identity_name'], 'single_intent'],
@@ -212,7 +226,7 @@ const DIRECT_RULES = [
   [/\b(forget|adherence|take them regularly|took today|miss doses|missed dose)\b/, ['medication_adherence'], 'single_intent'],
 
 
-  [/\b(travel|abroad|recent trip|visited any countries)\b/, ['epi_travel'], 'single_intent'],
+  [/\b(travel(?:l?ed|l?ing)?|abroad|recent trip|visited any countries)\b/, ['epi_travel'], 'single_intent'],
   [/\b(sick contact|infectious contact|anyone ill|contact with infection)\b/, ['epi_contacts'], 'single_intent'],
   [/\b(pets|farm animals|animal exposure|tick bite|tick|animal bite|animal scratch)\b/, ['epi_animals_ticks'], 'single_intent'],
   [/\b(vaccination|vaccinated|suspicious food|unsafe water|food poisoning)\b/, ['epi_vaccination_food'], 'single_intent'],
@@ -581,7 +595,34 @@ export class PatientEngine {
         return this.focusedDetection(normalized, subject.intent, { ...analysis, subject, attribute: 'overview', target: null });
       }
     }
-    if (detection.responseScope !== 'chart_details' && analysis.symptomIntent && !analysis.explicitOtherTopic && !analysis.intent?.startsWith('medication_')) {
+    if (['chart_details', 'station_context', 'audio_check'].includes(detection.responseScope)) return detection;
+
+    const specialty = normalized.match(SPECIALTY)?.[0];
+    if (FAMILY_MEMBER.test(normalized) && FAMILY_HEART.test(normalized) &&
+        !/\b(?:genetic|inherited|sudden unexplained death)\b/.test(normalized)) {
+      return this.scopedHistoryDetection(detection, 'family_cardiovascular');
+    }
+    if (CARE_VISIT.test(normalized) && (specialty || REGULAR_CARE.test(normalized)) && !FAMILY_MEMBER.test(normalized)) {
+      // A named specialty needs a documented answer about that specialty.
+      const hasSpecialtyAnswer = specialty && retrieveFacts(this.case, 'pmh_specialists')
+        .some(fact => new RegExp(`\\b${specialty}s?\\b`, 'i').test(realizeEnglish(fact)?.text ?? ''));
+      return this.scopedHistoryDetection(detection, 'pmh_specialists',
+        specialty && !hasSpecialtyAnswer ? 'specialists.named' : 'overview');
+    }
+    if (/^(?:do|have|are) you\b.*\b(?:take|taking|use|using|on)\b/.test(normalized) &&
+        medicationSubject.test(normalized) && /\b(?:for|to (?:treat|manage|control))\b.*\bchronic\b/.test(normalized)) {
+      return this.scopedHistoryDetection(detection, 'medication_indication');
+    }
+    if (/\b(?:have|did) you (?:ever |recently )?travel(?:l?ed|l?ing)?\b/.test(normalized)) {
+      return this.scopedHistoryDetection(detection, 'epi_travel');
+    }
+    if (DIET_DETAIL.test(normalized) && !/\b(?:why|when|did)\b/.test(normalized)) {
+      return this.scopedHistoryDetection(detection, 'intake_diet', 'diet.restrictions');
+    }
+    const scoped = SCOPED_QUESTIONS.find(([topic, wording]) => topic.test(normalized) && wording.test(normalized));
+    if (scoped) return this.makeDetection({ ...detection, kind: 'direct', responseScope: 'unavailable_detail',
+      primaryIntent: null, answerIntents: [], candidates: [], analysis: { unavailableReply: scoped[2] } });
+    if (analysis.symptomIntent && !analysis.explicitOtherTopic && !analysis.intent?.startsWith('medication_')) {
       const explicit = explicitSymptoms(this.case, normalized);
       if (explicit.length > 1) {
         return this.makeDetection({
@@ -614,6 +655,13 @@ export class PatientEngine {
     return { ...detection, analysis: { ...analysis, attribute: 'overview' } };
   }
 
+  scopedHistoryDetection(detection, intent, attribute = 'overview') {
+    const candidate = this.toCandidate(intent, 6, ['explicit-subject']);
+    return this.makeDetection({ ...detection, kind: 'direct', responseScope: 'single_intent',
+      primaryIntent: candidate, answerIntents: [candidate], candidates: [candidate],
+      confidence: 0.94, contextUsed: false, analysis: { intent, attribute } });
+  }
+
   detectLegacy(question, context) {
     const normalized = normalize(question);
     const tokens = tokenize(normalized);
@@ -627,7 +675,10 @@ export class PatientEngine {
       return this.makeDetection({ kind: 'direct', responseScope: 'audio_check', normalized, tokens, phrases, questionType });
     }
     if (CHART_DETAILS.test(normalized)) return this.makeDetection({ kind: 'direct', responseScope: 'chart_details', normalized, tokens, phrases, questionType });
-    const socialAct = getSocialAct(normalized);
+    const addressed = normalized.match(/^(?:hi|hello|hey|good morning|good afternoon) (.+)$/)?.[1];
+    const name = normalize(this.case.identity?.name);
+    const socialAct = addressed && name && (addressed === name || addressed === name.split(' ')[0]) ?
+      'greeting' : getSocialAct(normalized);
     if (socialAct) return this.makeDetection({ kind: 'direct', responseScope: 'social', socialAct, normalized, tokens, phrases, questionType });
     if (ambiguousDrugQuestion.test(normalized)) {
       const intent = context.lastDomain === 'medication' ? 'medication_regular' :
@@ -738,7 +789,7 @@ export class PatientEngine {
   }
 
   inferAttemptedIntents(question, detection) {
-    if (detection?.socialAct || detection?.analysis?.choices?.length) return [];
+    if (detection?.socialAct || detection?.responseScope === 'unavailable_detail' || detection?.analysis?.choices?.length) return [];
     const normalized = normalize(question);
     const detectedIds = [...new Set((detection?.answerIntents ?? []).map(intent => intent.id).filter(id => INTENTS[id]))];
     // A scoped facet or explicit family/medication question is stronger
@@ -985,6 +1036,7 @@ export class PatientEngine {
         ? `We’re at the ${this.case.stationBrief?.location?.toLowerCase() ?? 'clinic'}.`
         : 'I don’t have a calendar or clock in front of me.'],
       chart_details: () => ['out_of_scope', 'Those details are not available in this station.'],
+      unavailable_detail: () => ['recognized_unknown', analysis.unavailableReply],
       social: () => ['acknowledged', socialReply(detection.socialAct)],
       terminology_not_understood: () => ['clarification_required', 'I don’t understand that term. Could you describe what you mean?'],
       guarded_withholding: () => ['withheld', this.guardedReply()],
@@ -1039,6 +1091,10 @@ export class PatientEngine {
   }
 
   clarificationReply({ normalized, analysis }) {
+    if (/^(?:does|did) it graduate$/.test(normalized)) return 'Do you mean whether it started gradually or whether it spread somewhere else?';
+    if (/^(?:how often|how many times) (?:do|did) you (?:go to|use) the (?:bathroom|toilet)$/.test(normalized)) {
+      return 'Do you mean passing urine or having a bowel movement?';
+    }
     if (ambiguousDrugQuestion.test(normalized)) {
       return 'Do you mean medicines I take or recreational drugs?';
     }
