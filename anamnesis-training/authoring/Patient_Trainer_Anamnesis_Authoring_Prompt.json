@@ -1,0 +1,2878 @@
+{
+  "title": "Patient Trainer case authoring and update prompt",
+  "version": "1.0.0",
+  "instructionsForUse": "Attach or paste this entire JSON as instructions. Supply a case brief for a new patient, or attach the existing case JSON files to update. If available, include the app schema, case loader, question router and grading code. The topic catalog is the checklist for each patient.",
+  "role": "You author and validate fictional patients for the Medical Dictionary Patient Trainer simulation.",
+  "objective": "Create or expand a clinically coherent patient that supports the internal medicine and surgery anamnesis guide, presentation-specific questions, and realistic follow-ups. Produce usable JSON with explicit disclosure rules and traceable coverage.",
+  "basis": {
+    "guide": "ANAMNESIS Internal.docx",
+    "workedExample": "Peter_Novak_Anamnesis_Guide_Patient.json",
+    "reuseRule": "Reuse the coverage structure and validation approach. Derive each patient’s details from that patient’s inputs and authorized fictional authoring, with no transfer of patient-specific facts between cases."
+  },
+  "inputs": {
+    "operation": {
+      "allowed": [
+        "create_new_case",
+        "update_existing_cases"
+      ],
+      "defaultRule": "Use update_existing_cases when current patient files are supplied, otherwise use create_new_case when a case brief is supplied."
+    },
+    "newCaseBrief": "Presentation, learning objectives, care setting, planned station scope, required diagnosis or differential if supplied, and any fixed patient facts.",
+    "existingCases": "One or more current case JSON files. Process every supplied file independently and report any file that could not be processed.",
+    "optionalAppContext": "Current schema and loader, authored intents, training modes, UI maneuvers, investigation/action IDs, supported assets, grading rules, locale and accepted language variants.",
+    "optionalAuthoringControls": "Explicit source corrections, limits on new fictional facts, case depth, content-language preferences, and desired deliverable filenames."
+  },
+  "workflow": [
+    "Inventory the supplied cases and identify the case format. Use the current app schema where available. Do not assume the example extension is already supported by the app.",
+    "For each case, build a fact inventory and encounter timeline. Identify patient-reported facts, objective findings, stage-dependent results, and instructor-only data.",
+    "Walk the full topic catalog for each patient. Split compound entries and each relevant follow-up into independently answerable topics where the questions need distinct facts. Record applicability, availability and evidence for each.",
+    "Keep history broad enough for a full general interview. Prioritize follow-ups that differentiate the actual complaint, establish relevant risks, clarify treatment and support the learning objectives.",
+    "Resolve gaps by adding clearly identified fictional facts consistent with that patient’s established history and the scenario brief, when authoring is authorized. Use genuine patient uncertainty, a known negative, or an explicit availability state where appropriate. Record residual authoring gaps truthfully.",
+    "Use the same patient identity, baseline and timeline across dialogue, exam, vitals, investigations, assets and simulation states. Tie each change in pain, posture, equipment or result availability to its intended stage.",
+    "Check learner-facing dialogue and app behavior separately. Validate case data first. If the app code is available and implementation is requested, exercise the normal student entry points in every applicable training mode."
+  ],
+  "modeRules": {
+    "create_new_case": [
+      "Create one full case in the supported Patient Trainer format. Include identity, admission and presenting story, case metadata, clinical history, exam, investigations, encounter timeline, simulation actions and stage transitions, and instructor-only diagnosis, differential, red flags and assessment criteria as appropriate.",
+      "Retain all fixed facts supplied in the brief. Record assumptions for new fictional details and any genuinely unresolved decisions.",
+      "Use known available assets or explicitly flag missing assets. Require the relevant maneuver or result release before disclosing findings."
+    ],
+    "update_existing_cases": [
+      "Return one full additive JSON version for each supplied current case. Preserve every existing key, value, nested object, ordered array item, patient reply, negative, unit, timestamp, asset reference, simulation action and grading criterion.",
+      "Add only at unused keys or an additive extension. Leave existing array order and length intact and use extension arrays for new entries. Report any separately requested source correction before applying it, and keep it outside the additive preservation claim.",
+      "Where source values disagree, log both exact JSON paths, original values and any genuine difference in scope or timing. A proposed timeline or interpretation is new authoring and must be identified as such. Do not silently choose one source value.",
+      "Reuse established patient wording when it answers the exact question. Avoid duplicate canonical facts and topic IDs. Link added follow-up records to their source context."
+    ]
+  },
+  "availabilityModel": {
+    "documented": "A specific supported or newly authored fact answers the question.",
+    "explicitly absent": "A scoped negative was authored. Keep qualifiers, timeframe and the person reporting it.",
+    "patient unsure": "The patient genuinely cannot recall or know. Include a natural patient reply and preserve uncertainty.",
+    "not authored": "The specific fact is missing. Use the literal string unknown as a placeholder and list it in the authoring gaps. It cannot be graded as answered.",
+    "not applicable": "The topic or conditional follow-up does not apply in this case. Record the reason. Exclude it from the factual checklist.",
+    "clinicalReleaseStatus": "Track unavailable, not assessed, not ordered, pending, released, and historical separately as appropriate. These are workflow states rather than a replacement for availability. A pending result or unperformed maneuver supplies no finding."
+  },
+  "topicRecordContract": {
+    "requiredProperties": {
+      "topicId": "Stable catalog ID or patient-specific extension ID. Use one ID per independently gradable fact.",
+      "jsonPath": "Exact path to the answer or field value in the output case.",
+      "value": "Typed value with any unit, temporal precision and appropriate qualifiers. Use unknown only for not authored.",
+      "dataType": "Declared type of the authored value, such as boolean, number, string, object or array.",
+      "availability": "One of the five factual statuses in availabilityModel.",
+      "response": "Natural patient reply for history or plain engine text for objective findings, including uncertainty or availability where relevant.",
+      "sampleQuestions": "At least one direct question and plausible rephrasings or follow-ups where relevant. Each should map to this fact only.",
+      "provenance": "Original source, derived from original source, newly authored fictional detail, or unresolved. Include source paths and derivation where applicable.",
+      "disclosure": "Speaker or engine, stage and trigger for release, plus any role or training-mode restriction that already applies.",
+      "checklistTopic": "Existing checklist ID if applicable, otherwise a proposed new ID. Pair it with the status and fact evidence used for credit.",
+      "requiresAppIntegration": "Flag each added field, route, action or grading behavior the current app does not support or whose support cannot be confirmed."
+    },
+    "disclosureByChannel": {
+      "patient_history": "Disclose only in response to the matching topic or an authored spontaneous line. Keep replies in the patient’s perspective and vocabulary.",
+      "examination": "Reveal findings after the relevant inspection or maneuver. Gate side, site and technique where relevant. Give an availability response if the maneuver was not assessed.",
+      "measurement": "Show current values after the measurement or baseline values from a visible chart entry. Identify source, time and stage.",
+      "investigation": "Reveal the appropriate historical or current result after the order/acquisition and release conditions are satisfied. Hide results that are pending.",
+      "instructor_only": "Expected diagnosis, differential, answer key, red flags for grading, source conflicts, scenario internals and scoring belong in instructor view or the appropriate debrief."
+    }
+  },
+  "simulationAndGrading": [
+    "Author start state, encounter clock, equipment, pain or other symptoms, patient position, movement, consent and cooperation as the case requires. Track changes by phase and recorded action. Keep scene assets and clinical state distinguishable.",
+    "For every supported action, record its ID or intent, prerequisites if authored, relevant stage, effect, visible feedback, and which observations become available. Keep exam maneuvers, positioning and ECG lead placement separate from result release.",
+    "Separate the patient’s worries from the instructor’s diagnosis. Keep grading signals and scoring rubrics out of dialogue.",
+    "Give factual credit only when the specific matching question or action receives its authored fact or scoped negative. For exams and investigations, require the corresponding maneuver or released result.",
+    "Handle compound questions and context-dependent follow-ups separately. Match a follow-up to the correct medication, relative, symptom, site or encounter stage before replying or awarding credit. If the reference is ambiguous, ask a short clarifying question.",
+    "Keep routine medication, taken-today status, actual dose, last dose and adherence separate. Keep usual diet, last intake, meat consumption and restrictions separate. Keep transfusion and donation, and historical and current results separate.",
+    "Retain authored uncertainty with no factual credit for the missing detail. Generic fallbacks and unsupported inferences cannot satisfy a checklist item. Exclude inapplicable items from applicable-topic credit.",
+    "For out-of-scope questions, use a short natural uncertainty or availability reply. Never invent a fact at runtime to make a response sound complete."
+  ],
+  "outputContract": {
+    "caseFiles": "Produce one valid full patient JSON per new or updated case. Keep filenames distinct and include the stable case identifier in the deliverable.",
+    "perPatientCoverage": "Provide one coverage record per catalog topic or applicable atomic subtopic. Include topic ID, coverage description, exact JSON paths, factual availability, and any residual suggested addition. Mark conditional non-applicable items with a reason.",
+    "reviewData": "For each patient list source conflicts with original path/value pairs, fictional additions and assumptions, unavailable assets, and the exact fields or behaviors needing code integration.",
+    "preservationReport": "For updates, report whether every original node retained its JSON type and value, and whether object keys and array order were preserved. List failures by path. Never claim preservation on an unchecked file.",
+    "runtimeReport": "State which app flows were tested, or state that only the dataset was validated if no app integration was exercised."
+  },
+  "validationChecklist": [
+    "Parse every case as strict JSON. Reject duplicate object keys. Confirm all case identifiers, topic IDs and exact JSON paths resolve.",
+    "For updates, recursively compare the input with the output at every original path. Check primitive values and types, nested containers, original keys and array order and length.",
+    "Verify coverage of all 16 guide sections and all 23 reference-table test topics, plus case-specific topics. Cover unavailable or inapplicable tests explicitly. A reference-table row never makes a test mandatory in the encounter.",
+    "Check date of birth versus age, admission and symptom times, usual versus actual medication dose, patient recall versus chart evidence, and measured values versus derived values. Validate units and phase-specific facts.",
+    "Use the specified local reference range when supplied. Keep the actual measured result, sample context, interval and interpretation distinct. Preserve original numerical values.",
+    "Review scope of each negative, uncertainty and applicability label. Reject generic answers that fail a specific follow-up.",
+    "Check representative direct questions, paraphrases, compound questions and ambiguous follow-ups for correct topic routing. Check that diagnoses, unavailable findings and unreleased results cannot leak and that false checklist credit is rejected.",
+    "Confirm every supplied patient is accounted for in the output. Report any incomplete coverage, unresolved decisions, missing assets or runtime behavior that was not verified."
+  ],
+  "topicCatalog": [
+    {
+      "number": 1,
+      "title": "Identification and admission",
+      "topics": [
+        {
+          "id": "identity.name",
+          "topic": "Full name",
+          "channel": "patient_history",
+          "samplePrompt": "Could you tell me your full name?",
+          "followUpCoverage": [
+            "preferred form of address",
+            "name confirmation"
+          ]
+        },
+        {
+          "id": "identity.dob",
+          "topic": "Date of birth",
+          "channel": "patient_history",
+          "samplePrompt": "What is your date of birth?",
+          "followUpCoverage": [
+            "full date",
+            "age consistency"
+          ]
+        },
+        {
+          "id": "identity.age",
+          "topic": "Age",
+          "channel": "patient_history",
+          "samplePrompt": "How old are you?",
+          "followUpCoverage": [
+            "age at the encounter"
+          ]
+        },
+        {
+          "id": "identity.sex",
+          "topic": "Sex when relevant to the case",
+          "channel": "patient_history",
+          "samplePrompt": "What sex is recorded for you?",
+          "followUpCoverage": [
+            "relevant clinical history and applicability without guessing"
+          ]
+        },
+        {
+          "id": "identity.residence",
+          "topic": "Address or city",
+          "channel": "patient_history",
+          "samplePrompt": "Where do you live?",
+          "followUpCoverage": [
+            "city",
+            "current residence if different"
+          ]
+        },
+        {
+          "id": "admission.date",
+          "topic": "Admission date",
+          "channel": "patient_history",
+          "samplePrompt": "What day did you come to hospital?",
+          "followUpCoverage": [
+            "calendar date or scenario-relative day"
+          ]
+        },
+        {
+          "id": "admission.time",
+          "topic": "Admission time",
+          "channel": "patient_history",
+          "samplePrompt": "About what time did you arrive?",
+          "followUpCoverage": [
+            "exact versus approximate",
+            "who provided the time"
+          ]
+        },
+        {
+          "id": "admission.location",
+          "topic": "Facility and unit",
+          "channel": "patient_history",
+          "samplePrompt": "Where are you being seen?",
+          "followUpCoverage": [
+            "department",
+            "ward",
+            "transfer from elsewhere"
+          ]
+        },
+        {
+          "id": "admission.transport",
+          "topic": "Arrival route",
+          "channel": "patient_history",
+          "samplePrompt": "How did you get here?",
+          "followUpCoverage": [
+            "who brought the patient",
+            "ambulance or transfer",
+            "events or care en route"
+          ]
+        },
+        {
+          "id": "admission.historySource",
+          "topic": "History source",
+          "channel": "patient_history",
+          "samplePrompt": "Are you able to tell me what happened yourself?",
+          "followUpCoverage": [
+            "caregiver or collateral account",
+            "reliability",
+            "why history is limited"
+          ]
+        },
+        {
+          "id": "admission.contact",
+          "topic": "Contact person",
+          "channel": "patient_history",
+          "samplePrompt": "Who should we contact or update?",
+          "followUpCoverage": [
+            "relationship",
+            "permission to share",
+            "who already knows"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Chief complaint",
+      "topics": [
+        {
+          "id": "complaint.opening",
+          "topic": "Opening line in patient words",
+          "channel": "patient_history",
+          "samplePrompt": "What brought you in today?",
+          "followUpCoverage": [
+            "principal complaint",
+            "accompanying complaints"
+          ]
+        },
+        {
+          "id": "complaint.reasonToday",
+          "topic": "Reason for seeking care today",
+          "channel": "patient_history",
+          "samplePrompt": "What made you decide to come in now?",
+          "followUpCoverage": [
+            "change from baseline",
+            "delay or trigger for seeking help"
+          ]
+        },
+        {
+          "id": "complaint.concerns",
+          "topic": "Patient concerns",
+          "channel": "patient_history",
+          "samplePrompt": "What worries you most about this?",
+          "followUpCoverage": [
+            "feared diagnosis",
+            "family experience",
+            "practical worries"
+          ]
+        },
+        {
+          "id": "complaint.expectations",
+          "topic": "Patient goals",
+          "channel": "patient_history",
+          "samplePrompt": "What were you hoping we could help with today?",
+          "followUpCoverage": [
+            "relief",
+            "explanation",
+            "functional priorities"
+          ]
+        },
+        {
+          "id": "complaint.closure",
+          "topic": "Closing questions and understanding",
+          "channel": "patient_history",
+          "samplePrompt": "Is there anything else you want to tell me or ask?",
+          "followUpCoverage": [
+            "unmentioned symptoms",
+            "understanding",
+            "questions about what happens next"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "History of present illness and SOCRATES",
+      "topics": [
+        {
+          "id": "hpi.site",
+          "topic": "Site and system",
+          "channel": "patient_history",
+          "samplePrompt": "Where do you feel it?",
+          "followUpCoverage": [
+            "side",
+            "precise point or area",
+            "single versus multiple sites"
+          ]
+        },
+        {
+          "id": "hpi.onset",
+          "topic": "Onset",
+          "channel": "patient_history",
+          "samplePrompt": "When did it first start?",
+          "followUpCoverage": [
+            "date and clock time or relative interval",
+            "abrupt versus gradual",
+            "time to peak",
+            "first or recurrent"
+          ]
+        },
+        {
+          "id": "hpi.activity",
+          "topic": "Activity and circumstances at onset",
+          "channel": "patient_history",
+          "samplePrompt": "What were you doing when it started?",
+          "followUpCoverage": [
+            "rest or exertion",
+            "meal, exposure, position, injury or precipitating event where relevant"
+          ]
+        },
+        {
+          "id": "hpi.character",
+          "topic": "Character",
+          "channel": "patient_history",
+          "samplePrompt": "What does it feel like?",
+          "followUpCoverage": [
+            "pressing, sharp, dull, burning, colicky or other patient description",
+            "episodic, progressive or fluctuating quality"
+          ]
+        },
+        {
+          "id": "hpi.radiation",
+          "topic": "Radiation or spread",
+          "channel": "patient_history",
+          "samplePrompt": "Does it move anywhere else?",
+          "followUpCoverage": [
+            "destinations and laterality",
+            "specifically denied destinations when relevant"
+          ]
+        },
+        {
+          "id": "hpi.associated",
+          "topic": "Associated symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "What else happened with it?",
+          "followUpCoverage": [
+            "fever, headache, nausea, vomiting, cough, dyspnea and palpitations",
+            "sequence and timing",
+            "complaint-specific positives and negatives"
+          ]
+        },
+        {
+          "id": "hpi.timing",
+          "topic": "Timing and duration",
+          "channel": "patient_history",
+          "samplePrompt": "How long does it last?",
+          "followUpCoverage": [
+            "duration of each episode",
+            "frequency",
+            "worst spell",
+            "continuous versus intermittent",
+            "symptom-free interval"
+          ]
+        },
+        {
+          "id": "hpi.triggers",
+          "topic": "Exacerbating factors",
+          "channel": "patient_history",
+          "samplePrompt": "What brings it on or makes it worse?",
+          "followUpCoverage": [
+            "movement, exertion, breathing, posture or meals when relevant"
+          ]
+        },
+        {
+          "id": "hpi.relief",
+          "topic": "Relieving factors",
+          "channel": "patient_history",
+          "samplePrompt": "What helps?",
+          "followUpCoverage": [
+            "rest, position or medication",
+            "extent and duration of relief"
+          ]
+        },
+        {
+          "id": "hpi.severity",
+          "topic": "Severity",
+          "channel": "patient_history",
+          "samplePrompt": "How bad was it at its worst and how bad is it now?",
+          "followUpCoverage": [
+            "current, peak and arrival ratings if authored",
+            "scale",
+            "time of each rating"
+          ]
+        },
+        {
+          "id": "hpi.course",
+          "topic": "Course",
+          "channel": "patient_history",
+          "samplePrompt": "How has it changed since it began?",
+          "followUpCoverage": [
+            "improving, worsening, unchanged or recurrent",
+            "progression to the current state"
+          ]
+        },
+        {
+          "id": "hpi.previousEpisodes",
+          "topic": "Prior similar symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Has this happened before?",
+          "followUpCoverage": [
+            "when first noticed",
+            "frequency",
+            "typical duration and trigger",
+            "previous evaluation and outcome"
+          ]
+        },
+        {
+          "id": "hpi.functionalImpact",
+          "topic": "Impact of the current illness",
+          "channel": "patient_history",
+          "samplePrompt": "What can you do now compared with normal?",
+          "followUpCoverage": [
+            "work, sleep, exercise, mobility, meals or daily activities"
+          ]
+        },
+        {
+          "id": "hpi.selfTreatment",
+          "topic": "Self-treatment",
+          "channel": "patient_history",
+          "samplePrompt": "What did you try before seeking help?",
+          "followUpCoverage": [
+            "each intervention, actual amount, time and effect",
+            "medication versus non-medication measures"
+          ]
+        },
+        {
+          "id": "hpi.relevantRisks",
+          "topic": "Presentation-specific exposures and warning symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "What else was happening around the time this started?",
+          "followUpCoverage": [
+            "separately authored red flags and negatives",
+            "recent injury, procedure, immobility, contacts or exposure if relevant"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Review of systems",
+      "topics": [
+        {
+          "id": "ros.fever",
+          "topic": "Fever and chills",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had fever or chills?",
+          "followUpCoverage": [
+            "measured maximum and unit",
+            "timing",
+            "relation to presenting complaint"
+          ]
+        },
+        {
+          "id": "ros.weightLoss",
+          "topic": "Weight loss over the past 12 months",
+          "channel": "patient_history",
+          "samplePrompt": "Have you lost weight over the past year?",
+          "followUpCoverage": [
+            "amount, duration and whether intentional"
+          ]
+        },
+        {
+          "id": "ros.weightGain",
+          "topic": "Weight gain over the past 12 months",
+          "channel": "patient_history",
+          "samplePrompt": "Have you gained weight over the past year?",
+          "followUpCoverage": [
+            "amount, duration and whether intentional"
+          ]
+        },
+        {
+          "id": "ros.fatigue",
+          "topic": "Fatigue",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been more tired than usual?",
+          "followUpCoverage": [
+            "onset",
+            "pattern",
+            "activity impact"
+          ]
+        },
+        {
+          "id": "ros.nightSweats",
+          "topic": "Night sweats",
+          "channel": "patient_history",
+          "samplePrompt": "Do you wake up drenched in sweat?",
+          "followUpCoverage": [
+            "frequency",
+            "duration"
+          ]
+        },
+        {
+          "id": "ros.appetite",
+          "topic": "Appetite",
+          "channel": "patient_history",
+          "samplePrompt": "Has your appetite changed?",
+          "followUpCoverage": [
+            "duration",
+            "relation to current illness"
+          ]
+        },
+        {
+          "id": "ros.headache",
+          "topic": "Headache",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had a headache?",
+          "followUpCoverage": [
+            "timing",
+            "severity",
+            "associated features if present"
+          ]
+        },
+        {
+          "id": "ros.dizziness",
+          "topic": "Dizziness",
+          "channel": "patient_history",
+          "samplePrompt": "Have you felt dizzy or lightheaded?",
+          "followUpCoverage": [
+            "spinning versus faintness",
+            "triggers",
+            "relation to pain"
+          ]
+        },
+        {
+          "id": "ros.speech",
+          "topic": "Speech symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed a change in your speech?",
+          "followUpCoverage": [
+            "onset",
+            "slurring versus difficulty finding words"
+          ]
+        },
+        {
+          "id": "ros.vision",
+          "topic": "Visual symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed a change in vision?",
+          "followUpCoverage": [
+            "one or both eyes",
+            "onset",
+            "character"
+          ]
+        },
+        {
+          "id": "ros.earPain",
+          "topic": "Ear pain",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had ear pain?",
+          "followUpCoverage": [
+            "side",
+            "timing",
+            "discharge"
+          ]
+        },
+        {
+          "id": "ros.hearing",
+          "topic": "Hearing and balance",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had hearing or balance problems?",
+          "followUpCoverage": [
+            "side",
+            "onset",
+            "tinnitus or vertigo when relevant"
+          ]
+        },
+        {
+          "id": "ros.soreThroat",
+          "topic": "Sore throat",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had a sore throat?",
+          "followUpCoverage": [
+            "onset",
+            "relation to swallowing and fever"
+          ]
+        },
+        {
+          "id": "ros.chestPain",
+          "topic": "Chest pain",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had chest discomfort?",
+          "followUpCoverage": [
+            "relation to exertion and rest",
+            "cross-reference symptom history"
+          ]
+        },
+        {
+          "id": "ros.palpitations",
+          "topic": "Palpitations",
+          "channel": "patient_history",
+          "samplePrompt": "Have you felt your heart racing or skipping beats?",
+          "followUpCoverage": [
+            "speed versus irregularity",
+            "duration",
+            "associated symptoms"
+          ]
+        },
+        {
+          "id": "ros.exertionalDyspnea",
+          "topic": "Dyspnea on exertion",
+          "channel": "patient_history",
+          "samplePrompt": "Do you get breathless on exertion?",
+          "followUpCoverage": [
+            "exercise threshold",
+            "baseline versus current"
+          ]
+        },
+        {
+          "id": "ros.priorMi",
+          "topic": "Prior myocardial infarction",
+          "channel": "patient_history",
+          "samplePrompt": "Have you ever had a heart attack before this visit?",
+          "followUpCoverage": [
+            "approximate date, treatment and outcomes if applicable"
+          ]
+        },
+        {
+          "id": "ros.syncope",
+          "topic": "Syncope or presyncope",
+          "channel": "patient_history",
+          "samplePrompt": "Did you pass out or nearly pass out?",
+          "followUpCoverage": [
+            "episode timing",
+            "prodrome",
+            "recovery"
+          ]
+        },
+        {
+          "id": "ros.orthopnea",
+          "topic": "Orthopnea",
+          "channel": "patient_history",
+          "samplePrompt": "Are you short of breath when lying flat?",
+          "followUpCoverage": [
+            "number of pillows",
+            "change from baseline"
+          ]
+        },
+        {
+          "id": "ros.pnd",
+          "topic": "Paroxysmal nocturnal dyspnea",
+          "channel": "patient_history",
+          "samplePrompt": "Do you wake up short of breath?",
+          "followUpCoverage": [
+            "frequency",
+            "relief by sitting up"
+          ]
+        },
+        {
+          "id": "ros.edema",
+          "topic": "Patient-reported edema",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed any swelling?",
+          "followUpCoverage": [
+            "side and site",
+            "timing"
+          ]
+        },
+        {
+          "id": "ros.dyspnea",
+          "topic": "Dyspnea at rest or with activity",
+          "channel": "patient_history",
+          "samplePrompt": "Have you felt short of breath?",
+          "followUpCoverage": [
+            "at rest versus with activity",
+            "timing and progression"
+          ]
+        },
+        {
+          "id": "ros.cough",
+          "topic": "Cough",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been coughing?",
+          "followUpCoverage": [
+            "onset",
+            "dry versus productive"
+          ]
+        },
+        {
+          "id": "ros.sputum",
+          "topic": "Sputum",
+          "channel": "patient_history",
+          "samplePrompt": "Are you bringing up phlegm?",
+          "followUpCoverage": [
+            "color",
+            "quantity",
+            "change"
+          ]
+        },
+        {
+          "id": "ros.hemoptysis",
+          "topic": "Hemoptysis",
+          "channel": "patient_history",
+          "samplePrompt": "Have you coughed up any blood?",
+          "followUpCoverage": [
+            "amount",
+            "frequency",
+            "timing"
+          ]
+        },
+        {
+          "id": "ros.wheeze",
+          "topic": "Wheeze",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed any wheezing?",
+          "followUpCoverage": [
+            "triggers",
+            "timing"
+          ]
+        },
+        {
+          "id": "ros.dysphagia",
+          "topic": "Dysphagia",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had trouble swallowing?",
+          "followUpCoverage": [
+            "solids versus liquids",
+            "progression",
+            "pain"
+          ]
+        },
+        {
+          "id": "ros.nausea",
+          "topic": "Nausea",
+          "channel": "patient_history",
+          "samplePrompt": "Have you felt sick to your stomach?",
+          "followUpCoverage": [
+            "timing",
+            "relation to symptoms or meals"
+          ]
+        },
+        {
+          "id": "ros.vomiting",
+          "topic": "Vomiting",
+          "channel": "patient_history",
+          "samplePrompt": "Have you vomited?",
+          "followUpCoverage": [
+            "frequency",
+            "contents",
+            "blood or coffee-ground appearance"
+          ]
+        },
+        {
+          "id": "ros.abdominalPain",
+          "topic": "Abdominal pain",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had abdominal pain?",
+          "followUpCoverage": [
+            "location",
+            "onset",
+            "relation to meals or bowel motions"
+          ]
+        },
+        {
+          "id": "ros.diarrhea",
+          "topic": "Diarrhea",
+          "channel": "patient_history",
+          "samplePrompt": "Have your stools been loose or more frequent?",
+          "followUpCoverage": [
+            "frequency",
+            "onset",
+            "stool characteristics"
+          ]
+        },
+        {
+          "id": "ros.constipation",
+          "topic": "Constipation",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been constipated?",
+          "followUpCoverage": [
+            "baseline",
+            "last bowel movement",
+            "stool change"
+          ]
+        },
+        {
+          "id": "ros.stoolBlood",
+          "topic": "Blood in stool or melena",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed red blood or black stools?",
+          "followUpCoverage": [
+            "color, amount and timing"
+          ]
+        },
+        {
+          "id": "ros.jaundice",
+          "topic": "Jaundice",
+          "channel": "patient_history",
+          "samplePrompt": "Have your skin or eyes turned yellow?",
+          "followUpCoverage": [
+            "onset",
+            "associated urine or stool change"
+          ]
+        },
+        {
+          "id": "ros.reflux",
+          "topic": "Reflux symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had heartburn or a sour taste coming back up?",
+          "followUpCoverage": [
+            "triggers",
+            "timing"
+          ]
+        },
+        {
+          "id": "ros.dysuria",
+          "topic": "Pain or burning on urination",
+          "channel": "patient_history",
+          "samplePrompt": "Does it hurt or burn when you pass urine?",
+          "followUpCoverage": [
+            "timing",
+            "associated symptoms"
+          ]
+        },
+        {
+          "id": "ros.frequency",
+          "topic": "Urinary frequency",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been passing urine more often?",
+          "followUpCoverage": [
+            "baseline",
+            "current frequency",
+            "urgency"
+          ]
+        },
+        {
+          "id": "ros.nocturia",
+          "topic": "Nocturia",
+          "channel": "patient_history",
+          "samplePrompt": "Do you wake up at night to pass urine?",
+          "followUpCoverage": [
+            "number of times",
+            "baseline versus change"
+          ]
+        },
+        {
+          "id": "ros.incontinence",
+          "topic": "Incontinence",
+          "channel": "patient_history",
+          "samplePrompt": "Have you leaked urine?",
+          "followUpCoverage": [
+            "timing",
+            "triggers"
+          ]
+        },
+        {
+          "id": "ros.hematuria",
+          "topic": "Hematuria",
+          "channel": "patient_history",
+          "samplePrompt": "Have you seen blood in your urine?",
+          "followUpCoverage": [
+            "color",
+            "amount",
+            "timing"
+          ]
+        },
+        {
+          "id": "ros.flankPain",
+          "topic": "Flank pain",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had pain in either flank?",
+          "followUpCoverage": [
+            "side",
+            "onset",
+            "associated urinary symptoms"
+          ]
+        },
+        {
+          "id": "ros.neurologic",
+          "topic": "Neurologic symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Any weakness, numbness, seizures or new trouble walking?",
+          "followUpCoverage": [
+            "separate each symptom",
+            "laterality",
+            "onset",
+            "progression"
+          ]
+        },
+        {
+          "id": "ros.musculoskeletal",
+          "topic": "Joint, muscle and back symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Do you have any joint or back problems?",
+          "followUpCoverage": [
+            "pain, swelling, stiffness and location",
+            "chronic versus new",
+            "function"
+          ]
+        },
+        {
+          "id": "ros.skin",
+          "topic": "Skin symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Have you noticed a rash, itching, wounds or unusual bruising?",
+          "followUpCoverage": [
+            "separate each symptom",
+            "sites",
+            "duration",
+            "unusual bleeding"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Past medical, specialist, surgical and investigation history",
+      "topics": [
+        {
+          "id": "pmh.hypertension",
+          "topic": "Hypertension",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been diagnosed with high blood pressure?",
+          "followUpCoverage": [
+            "diagnosis timing",
+            "home readings and follow-up"
+          ]
+        },
+        {
+          "id": "pmh.diabetes",
+          "topic": "Diabetes mellitus",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been told you have diabetes?",
+          "followUpCoverage": [
+            "type",
+            "treatment",
+            "monitoring",
+            "complications"
+          ]
+        },
+        {
+          "id": "pmh.dyslipidemia",
+          "topic": "Dyslipidemia",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been told your cholesterol is high?",
+          "followUpCoverage": [
+            "diagnosis timing",
+            "usual control and follow-up"
+          ]
+        },
+        {
+          "id": "pmh.cad",
+          "topic": "Coronary artery disease",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been diagnosed with angina or coronary artery disease?",
+          "followUpCoverage": [
+            "prior MI",
+            "procedures, stents or bypass",
+            "date and outcome"
+          ]
+        },
+        {
+          "id": "pmh.heartFailure",
+          "topic": "Chronic heart failure",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been diagnosed with heart failure?",
+          "followUpCoverage": [
+            "symptoms, prior admissions, treatment and baseline function"
+          ]
+        },
+        {
+          "id": "pmh.kidneyDisease",
+          "topic": "Chronic kidney disease",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been told you have kidney disease?",
+          "followUpCoverage": [
+            "stage or dialysis if known",
+            "baseline and follow-up"
+          ]
+        },
+        {
+          "id": "pmh.lungDisease",
+          "topic": "Chronic lung disease",
+          "channel": "patient_history",
+          "samplePrompt": "Do you have asthma, COPD or another lung disease?",
+          "followUpCoverage": [
+            "diagnosis",
+            "baseline symptoms",
+            "inhalers",
+            "exacerbations"
+          ]
+        },
+        {
+          "id": "pmh.thyroid",
+          "topic": "Thyroid disease",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been told your thyroid is underactive or overactive?",
+          "followUpCoverage": [
+            "type",
+            "treatment",
+            "follow-up"
+          ]
+        },
+        {
+          "id": "pmh.liverDisease",
+          "topic": "Chronic liver disease",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been told you have chronic liver disease?",
+          "followUpCoverage": [
+            "type",
+            "complications",
+            "follow-up"
+          ]
+        },
+        {
+          "id": "pmh.other",
+          "topic": "Other chronic and relevant diagnoses",
+          "channel": "patient_history",
+          "samplePrompt": "Do you have any other medical conditions?",
+          "followUpCoverage": [
+            "arrhythmia, stroke/TIA, cancer, clotting/bleeding, ulcers, aneurysm and other case-relevant diagnoses"
+          ]
+        },
+        {
+          "id": "pmh.mentalHealth",
+          "topic": "Mental health history",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been diagnosed with or treated for a mental health condition?",
+          "followUpCoverage": [
+            "diagnoses",
+            "episodes",
+            "treatment or care",
+            "baseline versus current distress"
+          ]
+        },
+        {
+          "id": "pmh.specialists",
+          "topic": "Specialist care",
+          "channel": "patient_history",
+          "samplePrompt": "Do you see any specialists?",
+          "followUpCoverage": [
+            "current versus past",
+            "specialty, reason, date, outcome and next appointment",
+            "GP follow-up separately"
+          ]
+        },
+        {
+          "id": "pmh.operations",
+          "topic": "Operations and procedures",
+          "channel": "patient_history",
+          "samplePrompt": "Have you ever had an operation or procedure?",
+          "followUpCoverage": [
+            "type, indication, date, approach, result, complications",
+            "scarring",
+            "anesthesia or airway problems"
+          ]
+        },
+        {
+          "id": "pmh.hospitalizations",
+          "topic": "Hospital admissions",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been in hospital before?",
+          "followUpCoverage": [
+            "date, reason, length, outcome and sequelae for each"
+          ]
+        },
+        {
+          "id": "pmh.plannedOperation",
+          "topic": "Planned operation",
+          "channel": "patient_history",
+          "samplePrompt": "Are you booked for any operation now?",
+          "followUpCoverage": [
+            "indication, date and whether planned before or during the encounter"
+          ]
+        },
+        {
+          "id": "pmh.previousExams",
+          "topic": "Previous tests",
+          "channel": "patient_history",
+          "samplePrompt": "What tests have you had before?",
+          "followUpCoverage": [
+            "ECG, blood tests, ultrasound, CT, MRI and other tests separately",
+            "indication, date, remembered outcome and record availability"
+          ]
+        },
+        {
+          "id": "pmh.injury",
+          "topic": "Prior or recent injuries",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had any significant injuries or fractures?",
+          "followUpCoverage": [
+            "site, date, treatment, recovery and residual symptoms"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Allergies, transfusions and donation",
+      "topics": [
+        {
+          "id": "allergies.drugs",
+          "topic": "Drug allergies",
+          "channel": "patient_history",
+          "samplePrompt": "Are you allergic to any medications?",
+          "followUpCoverage": [
+            "drug, reaction, timing, severity and treatment",
+            "allergy versus intolerance"
+          ]
+        },
+        {
+          "id": "allergies.other",
+          "topic": "Food, environmental and material allergies",
+          "channel": "patient_history",
+          "samplePrompt": "Any food, pollen, latex, contrast or other allergies?",
+          "followUpCoverage": [
+            "specific trigger and reaction",
+            "dietary restrictions separately"
+          ]
+        },
+        {
+          "id": "blood.transfusions",
+          "topic": "Prior blood transfusions",
+          "channel": "patient_history",
+          "samplePrompt": "Have you ever had a blood transfusion?",
+          "followUpCoverage": [
+            "count, date and reason",
+            "reaction and details only if applicable"
+          ]
+        },
+        {
+          "id": "blood.donation",
+          "topic": "Blood donation",
+          "channel": "patient_history",
+          "samplePrompt": "Have you ever donated blood?",
+          "followUpCoverage": [
+            "number or frequency if relevant",
+            "last date",
+            "reactions or reasons for stopping if relevant"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Medication and adherence",
+      "topics": [
+        {
+          "id": "medication.regular",
+          "topic": "Usual medication list",
+          "channel": "patient_history",
+          "samplePrompt": "Which medicines do you normally take?",
+          "followUpCoverage": [
+            "drug, dose, unit, route, frequency, schedule and indication per drug"
+          ]
+        },
+        {
+          "id": "medication.otc",
+          "topic": "Over-the-counter medication",
+          "channel": "patient_history",
+          "samplePrompt": "Do you take anything without a prescription?",
+          "followUpCoverage": [
+            "product",
+            "usual dose",
+            "actual last use",
+            "reason"
+          ]
+        },
+        {
+          "id": "medication.supplements",
+          "topic": "Supplements and herbal products",
+          "channel": "patient_history",
+          "samplePrompt": "Do you take vitamins, supplements or herbal remedies?",
+          "followUpCoverage": [
+            "name, dose, frequency, reason and last use"
+          ]
+        },
+        {
+          "id": "medication.takenToday",
+          "topic": "Medication actually taken today",
+          "channel": "patient_history",
+          "samplePrompt": "Did you take this particular medicine today?",
+          "followUpCoverage": [
+            "ask separately for each medication",
+            "actual amount, route and time",
+            "omitted or extra dose"
+          ]
+        },
+        {
+          "id": "medication.lastDose",
+          "topic": "Last dose",
+          "channel": "patient_history",
+          "samplePrompt": "When did you last take this specific medicine?",
+          "followUpCoverage": [
+            "calendar day or relative day, time, actual amount and route"
+          ]
+        },
+        {
+          "id": "medication.adherence",
+          "topic": "Adherence",
+          "channel": "patient_history",
+          "samplePrompt": "How often do you miss or change a dose?",
+          "followUpCoverage": [
+            "which drug, when, frequency, why and barriers"
+          ]
+        },
+        {
+          "id": "medication.recentChanges",
+          "topic": "Recent medication changes",
+          "channel": "patient_history",
+          "samplePrompt": "Has anything been started, stopped or changed recently?",
+          "followUpCoverage": [
+            "what, when, by whom and why"
+          ]
+        },
+        {
+          "id": "medication.misuse",
+          "topic": "Prescribed medication misuse",
+          "channel": "patient_history",
+          "samplePrompt": "Have you ever taken medicine in a way different from how it was prescribed?",
+          "followUpCoverage": [
+            "deliberate extra use, nonprescribed use, unintentional errors and ordinary missed doses separately"
+          ]
+        },
+        {
+          "id": "medication.acuteTreatment",
+          "topic": "Treatment for the current symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "What have you taken for this episode so far?",
+          "followUpCoverage": [
+            "pre-arrival versus treatment in facility",
+            "actual drug, dose, time, route and effect"
+          ]
+        },
+        {
+          "id": "medication.relevantAgents",
+          "topic": "Presentation-specific agents and interactions",
+          "channel": "patient_history",
+          "samplePrompt": "Have you recently taken a medicine relevant to this complaint?",
+          "followUpCoverage": [
+            "targeted questions selected for the case",
+            "exact last exposure and known reactions"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Reproductive and gynecological history when applicable",
+      "topics": [
+        {
+          "id": "reproductive.applicability",
+          "topic": "Applicability and patient comfort",
+          "channel": "patient_history",
+          "samplePrompt": "Is there any relevant reproductive or sexual health history?",
+          "followUpCoverage": [
+            "base applicability on authored history and station context",
+            "privacy and permission"
+          ]
+        },
+        {
+          "id": "reproductive.menstruation",
+          "topic": "Menstruation and cycle",
+          "channel": "patient_history",
+          "samplePrompt": "Are your periods regular?",
+          "followUpCoverage": [
+            "last menstrual period",
+            "frequency, duration, flow and symptoms"
+          ]
+        },
+        {
+          "id": "reproductive.menopause",
+          "topic": "Menopause",
+          "channel": "patient_history",
+          "samplePrompt": "Have you reached menopause?",
+          "followUpCoverage": [
+            "timing",
+            "postmenopausal bleeding if relevant"
+          ]
+        },
+        {
+          "id": "reproductive.contraception",
+          "topic": "Contraception",
+          "channel": "patient_history",
+          "samplePrompt": "Do you use contraception?",
+          "followUpCoverage": [
+            "method, adherence, last use and relevant changes"
+          ]
+        },
+        {
+          "id": "reproductive.pregnancy",
+          "topic": "Pregnancy possibility and history",
+          "channel": "patient_history",
+          "samplePrompt": "Could you be pregnant?",
+          "followUpCoverage": [
+            "current status, previous pregnancies and complications when applicable",
+            "uncertainty and test disclosure separately"
+          ]
+        },
+        {
+          "id": "reproductive.children",
+          "topic": "Children",
+          "channel": "patient_history",
+          "samplePrompt": "Do you have children?",
+          "followUpCoverage": [
+            "number and relevant details",
+            "distinguish children from delivery history"
+          ]
+        },
+        {
+          "id": "reproductive.deliveries",
+          "topic": "Deliveries",
+          "channel": "patient_history",
+          "samplePrompt": "Have you given birth before?",
+          "followUpCoverage": [
+            "number",
+            "vaginal or Cesarean",
+            "date and complications"
+          ]
+        },
+        {
+          "id": "reproductive.loss",
+          "topic": "Miscarriage or abortion",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had any pregnancy losses or terminations?",
+          "followUpCoverage": [
+            "number, dates and complications if applicable"
+          ]
+        },
+        {
+          "id": "reproductive.pelvicPain",
+          "topic": "Pelvic symptoms",
+          "channel": "patient_history",
+          "samplePrompt": "Have you had pelvic pain?",
+          "followUpCoverage": [
+            "onset, severity, relation to cycle or other symptoms"
+          ]
+        },
+        {
+          "id": "reproductive.sexualConcerns",
+          "topic": "Other sexual or reproductive concerns",
+          "channel": "patient_history",
+          "samplePrompt": "Are there any other sexual or reproductive concerns relevant to this visit?",
+          "followUpCoverage": [
+            "patient priorities",
+            "relevant symptoms or risk only"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Family history",
+      "topics": [
+        {
+          "id": "family.allergy",
+          "topic": "Allergies",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of allergies?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.hypertension",
+          "topic": "Hypertension",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of hypertension?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.diabetes",
+          "topic": "Diabetes mellitus",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of diabetes mellitus?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.cardiovascular",
+          "topic": "Cardiovascular disease including CAD or MI",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of cardiovascular disease including cad or mi?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.cancer",
+          "topic": "Cancer",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of cancer?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.cerebrovascular",
+          "topic": "Stroke or TIA",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of stroke or tia?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.kidney",
+          "topic": "Chronic kidney disease",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of chronic kidney disease?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.epilepsy",
+          "topic": "Epilepsy",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of epilepsy?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.thyroid",
+          "topic": "Thyroid disease",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of thyroid disease?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.autoimmune",
+          "topic": "Autoimmune disease",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of autoimmune disease?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.inherited",
+          "topic": "Genetic or inherited disease",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of genetic or inherited disease?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.suddenDeath",
+          "topic": "Sudden or unexplained death",
+          "channel": "patient_history",
+          "samplePrompt": "Does anyone in your family have a history of sudden or unexplained death?",
+          "followUpCoverage": [
+            "relation to the patient",
+            "condition or subtype",
+            "age at onset, outcome and relevant uncertainty"
+          ]
+        },
+        {
+          "id": "family.parents",
+          "topic": "Parents’ vital status and causes of death",
+          "channel": "patient_history",
+          "samplePrompt": "Are your parents still alive?",
+          "followUpCoverage": [
+            "each parent separately",
+            "cause and age at death when applicable"
+          ]
+        },
+        {
+          "id": "family.otherRelatives",
+          "topic": "Relevant history in other relatives",
+          "channel": "patient_history",
+          "samplePrompt": "Is there anything similar in your siblings, children or other relatives?",
+          "followUpCoverage": [
+            "affected relative",
+            "relation, age and condition"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Epidemiology and exposures",
+      "topics": [
+        {
+          "id": "epi.travel",
+          "topic": "Travel abroad in the past 12 months",
+          "channel": "patient_history",
+          "samplePrompt": "Have you traveled abroad in the last year?",
+          "followUpCoverage": [
+            "destination, dates and duration",
+            "activities and exposure"
+          ]
+        },
+        {
+          "id": "epi.domesticTravel",
+          "topic": "Domestic travel and prolonged journeys",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been on a long trip recently?",
+          "followUpCoverage": [
+            "timing, length and mode",
+            "unusual immobility versus usual work"
+          ]
+        },
+        {
+          "id": "epi.contacts",
+          "topic": "Sick contacts",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been around anyone who was ill?",
+          "followUpCoverage": [
+            "person, illness, contact date and exposure"
+          ]
+        },
+        {
+          "id": "epi.animals",
+          "topic": "Pets, farm animals and ticks",
+          "channel": "patient_history",
+          "samplePrompt": "Are you around pets or farm animals?",
+          "followUpCoverage": [
+            "species, nature and timing of exposure",
+            "tick bites separately"
+          ]
+        },
+        {
+          "id": "epi.foodWater",
+          "topic": "Food and water exposure",
+          "channel": "patient_history",
+          "samplePrompt": "Any unusual food or potentially unsafe water?",
+          "followUpCoverage": [
+            "type, timing, location and others affected"
+          ]
+        },
+        {
+          "id": "epi.covidVaccination",
+          "topic": "COVID-19 vaccination",
+          "channel": "patient_history",
+          "samplePrompt": "How many COVID vaccine doses have you had?",
+          "followUpCoverage": [
+            "dates and products if recalled",
+            "separate other vaccination history"
+          ]
+        },
+        {
+          "id": "epi.covidInfection",
+          "topic": "COVID-19 infection",
+          "channel": "patient_history",
+          "samplePrompt": "How many times have you had COVID?",
+          "followUpCoverage": [
+            "date, severity, admission, recovery and persistent symptoms"
+          ]
+        },
+        {
+          "id": "epi.workEnvironment",
+          "topic": "Occupational and environmental exposures",
+          "channel": "patient_history",
+          "samplePrompt": "Have you been exposed to fumes, dust or chemicals?",
+          "followUpCoverage": [
+            "source, duration, protection and timing",
+            "unusual versus baseline exposure"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Social history, function, and intake",
+      "topics": [
+        {
+          "id": "social.employment",
+          "topic": "Employment status",
+          "channel": "patient_history",
+          "samplePrompt": "Are you working, retired or unemployed?",
+          "followUpCoverage": [
+            "current status",
+            "how long",
+            "current and past jobs and work demands"
+          ]
+        },
+        {
+          "id": "social.relationship",
+          "topic": "Marital or relationship status",
+          "channel": "patient_history",
+          "samplePrompt": "What is your marital or relationship status?",
+          "followUpCoverage": [
+            "partner or relevant relationship context"
+          ]
+        },
+        {
+          "id": "social.household",
+          "topic": "Household",
+          "channel": "patient_history",
+          "samplePrompt": "Who do you live with?",
+          "followUpCoverage": [
+            "partner, children or others",
+            "living alone"
+          ]
+        },
+        {
+          "id": "social.housing",
+          "topic": "Housing and access",
+          "channel": "patient_history",
+          "samplePrompt": "What kind of home do you live in?",
+          "followUpCoverage": [
+            "house, apartment or unstable housing",
+            "floor, stairs and lift"
+          ]
+        },
+        {
+          "id": "social.support",
+          "topic": "Practical support",
+          "channel": "patient_history",
+          "samplePrompt": "Who could help you at home?",
+          "followUpCoverage": [
+            "relationship, availability and who knows about the admission"
+          ]
+        },
+        {
+          "id": "social.baselineFunction",
+          "topic": "Baseline function and independence",
+          "channel": "patient_history",
+          "samplePrompt": "What can you normally do on your own?",
+          "followUpCoverage": [
+            "activities of daily living",
+            "mobility, aids, exercise, stairs and work"
+          ]
+        },
+        {
+          "id": "social.currentFunction",
+          "topic": "Current function",
+          "channel": "patient_history",
+          "samplePrompt": "What are you having more trouble doing today?",
+          "followUpCoverage": [
+            "baseline comparison",
+            "tolerance and required help"
+          ]
+        },
+        {
+          "id": "social.sleep",
+          "topic": "Sleep",
+          "channel": "patient_history",
+          "samplePrompt": "How have you been sleeping?",
+          "followUpCoverage": [
+            "usual pattern",
+            "last night",
+            "symptoms disrupting sleep"
+          ]
+        },
+        {
+          "id": "diet.usual",
+          "topic": "Usual diet",
+          "channel": "patient_history",
+          "samplePrompt": "What do you normally eat?",
+          "followUpCoverage": [
+            "meal frequency and pattern",
+            "typical foods"
+          ]
+        },
+        {
+          "id": "diet.restrictions",
+          "topic": "Dietary restrictions",
+          "channel": "patient_history",
+          "samplePrompt": "Do you avoid any foods or follow a special diet?",
+          "followUpCoverage": [
+            "allergy, intolerance, preference, cultural reasons and medical restrictions separately"
+          ]
+        },
+        {
+          "id": "diet.meat",
+          "topic": "Meat consumption",
+          "channel": "patient_history",
+          "samplePrompt": "Do you eat meat?",
+          "followUpCoverage": [
+            "types and usual frequency"
+          ]
+        },
+        {
+          "id": "diet.lastMeal",
+          "topic": "Last solid meal",
+          "channel": "patient_history",
+          "samplePrompt": "When did you last eat and what did you have?",
+          "followUpCoverage": [
+            "exact or approximate time",
+            "contents",
+            "before or after onset"
+          ]
+        },
+        {
+          "id": "diet.lastFluids",
+          "topic": "Last fluid intake",
+          "channel": "patient_history",
+          "samplePrompt": "When did you last drink anything?",
+          "followUpCoverage": [
+            "drink type, amount, unit and time"
+          ]
+        },
+        {
+          "id": "elimination.lastUrination",
+          "topic": "Last urination",
+          "channel": "patient_history",
+          "samplePrompt": "When did you last pass urine?",
+          "followUpCoverage": [
+            "time",
+            "amount and appearance if known"
+          ]
+        },
+        {
+          "id": "elimination.lastBowelMovement",
+          "topic": "Last bowel movement",
+          "channel": "patient_history",
+          "samplePrompt": "When did you last open your bowels?",
+          "followUpCoverage": [
+            "time",
+            "appearance and change from baseline"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Substance use",
+      "topics": [
+        {
+          "id": "substance.smoking",
+          "topic": "Tobacco and nicotine",
+          "channel": "patient_history",
+          "samplePrompt": "Do you smoke or use nicotine?",
+          "followUpCoverage": [
+            "current/former/never",
+            "type, quantity, duration, start and quit dates",
+            "last use and quit attempts",
+            "compute pack-years only from usable data"
+          ]
+        },
+        {
+          "id": "substance.alcohol",
+          "topic": "Alcohol",
+          "channel": "patient_history",
+          "samplePrompt": "Do you drink alcohol?",
+          "followUpCoverage": [
+            "type, amount, serving size, frequency and last use",
+            "consequences when relevant"
+          ]
+        },
+        {
+          "id": "substance.coffee",
+          "topic": "Coffee",
+          "channel": "patient_history",
+          "samplePrompt": "Do you drink coffee?",
+          "followUpCoverage": [
+            "usual cups, today's intake and timing"
+          ]
+        },
+        {
+          "id": "substance.blackTea",
+          "topic": "Black tea",
+          "channel": "patient_history",
+          "samplePrompt": "Do you drink black tea?",
+          "followUpCoverage": [
+            "usual frequency, amount and today's intake"
+          ]
+        },
+        {
+          "id": "substance.otherCaffeine",
+          "topic": "Other caffeine",
+          "channel": "patient_history",
+          "samplePrompt": "Do you drink energy drinks or take other caffeine?",
+          "followUpCoverage": [
+            "type, frequency, amount and last use"
+          ]
+        },
+        {
+          "id": "substance.recreationalDrugs",
+          "topic": "Recreational drugs",
+          "channel": "patient_history",
+          "samplePrompt": "Do you use recreational drugs?",
+          "followUpCoverage": [
+            "substance, route, quantity, frequency, last use and contextual risk"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Status Praesens Generalis",
+      "topics": [
+        {
+          "id": "general.consciousness",
+          "topic": "Consciousness",
+          "channel": "examination",
+          "samplePrompt": "Is the patient alert and responsive?",
+          "followUpCoverage": [
+            "level and changes by scenario phase"
+          ]
+        },
+        {
+          "id": "general.orientationQuestions",
+          "topic": "Patient answers to orientation checks",
+          "channel": "patient_history",
+          "samplePrompt": "Who are you, where are you, and what day is it?",
+          "followUpCoverage": [
+            "separate person, place and time answers",
+            "match authored cognition and encounter clock"
+          ]
+        },
+        {
+          "id": "general.orientation",
+          "topic": "Exam interpretation of orientation",
+          "channel": "examination",
+          "samplePrompt": "Is the patient oriented to person, place and time?",
+          "followUpCoverage": [
+            "assess domains independently from patient responses"
+          ]
+        },
+        {
+          "id": "general.appearance",
+          "topic": "General appearance",
+          "channel": "examination",
+          "samplePrompt": "How does the patient look?",
+          "followUpCoverage": [
+            "calm, distress, pain, dyspnea, cachexia or other findings"
+          ]
+        },
+        {
+          "id": "general.hydration",
+          "topic": "Hydration",
+          "channel": "examination",
+          "samplePrompt": "What are the mucous membranes and skin turgor like?",
+          "followUpCoverage": [
+            "findings and degree only when assessed"
+          ]
+        },
+        {
+          "id": "general.nutrition",
+          "topic": "Nutrition",
+          "channel": "examination",
+          "samplePrompt": "What is the patient’s nutritional appearance?",
+          "followUpCoverage": [
+            "describe appearance",
+            "measured or calculated anthropometrics separately"
+          ]
+        },
+        {
+          "id": "general.habitus",
+          "topic": "Body habitus",
+          "channel": "examination",
+          "samplePrompt": "What is the patient’s body habitus?",
+          "followUpCoverage": [
+            "frame or build as appropriate to station"
+          ]
+        },
+        {
+          "id": "general.gait",
+          "topic": "Gait and mobility",
+          "channel": "examination",
+          "samplePrompt": "How is the patient’s gait?",
+          "followUpCoverage": [
+            "steady, ataxic, hemiparetic or shuffling",
+            "assistance or aid",
+            "prior observation versus active assessment"
+          ]
+        },
+        {
+          "id": "general.speech",
+          "topic": "Speech and language",
+          "channel": "examination",
+          "samplePrompt": "How is the patient’s speech?",
+          "followUpCoverage": [
+            "clear versus dysarthric, aphasic or slurred"
+          ]
+        },
+        {
+          "id": "general.position",
+          "topic": "Position",
+          "channel": "examination",
+          "samplePrompt": "What position is the patient in?",
+          "followUpCoverage": [
+            "active, passive or forced",
+            "clinical posture versus 3D state",
+            "phase"
+          ]
+        },
+        {
+          "id": "general.skin",
+          "topic": "Skin survey",
+          "channel": "examination",
+          "samplePrompt": "What do you see on general skin inspection?",
+          "followUpCoverage": [
+            "color, pallor, jaundice, cyanosis, rashes, lesions, scars and moisture"
+          ]
+        },
+        {
+          "id": "general.edema",
+          "topic": "Dependent edema",
+          "channel": "examination",
+          "samplePrompt": "Is there pretibial or sacral edema?",
+          "followUpCoverage": [
+            "location, laterality and degree"
+          ]
+        },
+        {
+          "id": "general.odor",
+          "topic": "Odor",
+          "channel": "examination",
+          "samplePrompt": "Is there an unusual odor?",
+          "followUpCoverage": [
+            "describe observed odor without inferring cause"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "Vital signs and measurements",
+      "topics": [
+        {
+          "id": "vitals.temperature",
+          "topic": "Temperature",
+          "channel": "measurement",
+          "samplePrompt": "What is the temperature?",
+          "followUpCoverage": [
+            "value, unit, time and method if relevant"
+          ]
+        },
+        {
+          "id": "vitals.spo2",
+          "topic": "Oxygen saturation",
+          "channel": "measurement",
+          "samplePrompt": "What is the oxygen saturation?",
+          "followUpCoverage": [
+            "percent",
+            "room air or oxygen device and flow if relevant",
+            "timing"
+          ]
+        },
+        {
+          "id": "vitals.hr",
+          "topic": "Heart rate",
+          "channel": "measurement",
+          "samplePrompt": "What is the heart rate?",
+          "followUpCoverage": [
+            "beats per minute",
+            "rhythm or regularity when known",
+            "current versus baseline"
+          ]
+        },
+        {
+          "id": "vitals.rr",
+          "topic": "Respiratory rate",
+          "channel": "measurement",
+          "samplePrompt": "What is the respiratory rate?",
+          "followUpCoverage": [
+            "breaths per minute",
+            "current versus baseline"
+          ]
+        },
+        {
+          "id": "vitals.bp",
+          "topic": "Blood pressure",
+          "channel": "measurement",
+          "samplePrompt": "What is the blood pressure?",
+          "followUpCoverage": [
+            "systolic and diastolic in mmHg",
+            "arm, position and repeat reading when relevant"
+          ]
+        },
+        {
+          "id": "vitals.weight",
+          "topic": "Weight",
+          "channel": "measurement",
+          "samplePrompt": "What is the recorded weight?",
+          "followUpCoverage": [
+            "kg",
+            "measured versus reported",
+            "time or estimation"
+          ]
+        },
+        {
+          "id": "vitals.height",
+          "topic": "Height",
+          "channel": "measurement",
+          "samplePrompt": "What is the recorded height?",
+          "followUpCoverage": [
+            "cm",
+            "measured versus reported"
+          ]
+        },
+        {
+          "id": "vitals.bmi",
+          "topic": "Body mass index",
+          "channel": "measurement",
+          "samplePrompt": "What is the BMI?",
+          "followUpCoverage": [
+            "kg/m²",
+            "calculate from supported measurements",
+            "keep basis and approximation"
+          ]
+        },
+        {
+          "id": "vitals.provenance",
+          "topic": "Measurement source and time",
+          "channel": "measurement",
+          "samplePrompt": "Where did these observations come from and when were they taken?",
+          "followUpCoverage": [
+            "monitor versus examination versus chart",
+            "intake versus current state",
+            "time and phase"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "Status Praesens Localis and device status",
+      "topics": [
+        {
+          "id": "device.peripheralIv",
+          "topic": "Peripheral IV",
+          "channel": "examination",
+          "samplePrompt": "Is a peripheral IV in place?",
+          "followUpCoverage": [
+            "site, patency if assessed, and when placed"
+          ]
+        },
+        {
+          "id": "device.centralLine",
+          "topic": "Central venous catheter",
+          "channel": "examination",
+          "samplePrompt": "Is there a central line?",
+          "followUpCoverage": [
+            "site and device state"
+          ]
+        },
+        {
+          "id": "device.foley",
+          "topic": "Foley catheter",
+          "channel": "examination",
+          "samplePrompt": "Is a urinary catheter in place?",
+          "followUpCoverage": [
+            "indication and output if relevant"
+          ]
+        },
+        {
+          "id": "device.drain",
+          "topic": "Drains",
+          "channel": "examination",
+          "samplePrompt": "Does the patient have any drains?",
+          "followUpCoverage": [
+            "type, site and output"
+          ]
+        },
+        {
+          "id": "device.oxygen",
+          "topic": "Oxygen therapy",
+          "channel": "examination",
+          "samplePrompt": "Is the patient receiving oxygen?",
+          "followUpCoverage": [
+            "device, flow, timing and phase"
+          ]
+        },
+        {
+          "id": "device.telemetry",
+          "topic": "ECG monitoring",
+          "channel": "examination",
+          "samplePrompt": "Is continuous ECG monitoring connected?",
+          "followUpCoverage": [
+            "telemetry versus a recorded tracing",
+            "before and after actions"
+          ]
+        },
+        {
+          "id": "device.monitor",
+          "topic": "Vital-sign monitor",
+          "channel": "examination",
+          "samplePrompt": "Is a bedside vital-sign monitor connected?",
+          "followUpCoverage": [
+            "attached sensors",
+            "placement and live measurements"
+          ]
+        },
+        {
+          "id": "exam.face",
+          "topic": "Face",
+          "channel": "examination",
+          "samplePrompt": "Is the face symmetric?",
+          "followUpCoverage": [
+            "droop, weakness or involuntary movements"
+          ]
+        },
+        {
+          "id": "exam.scalp",
+          "topic": "Scalp and hair",
+          "channel": "examination",
+          "samplePrompt": "Are there scalp or hair abnormalities?",
+          "followUpCoverage": [
+            "lesions, alopecia and infestation"
+          ]
+        },
+        {
+          "id": "exam.cnVisionPupils",
+          "topic": "Vision and pupils",
+          "channel": "examination",
+          "samplePrompt": "What do the visual and pupillary screens show?",
+          "followUpCoverage": [
+            "CN II and III where assessed",
+            "size, symmetry and reactivity"
+          ]
+        },
+        {
+          "id": "exam.cnEyeMovement",
+          "topic": "Ocular movement",
+          "channel": "examination",
+          "samplePrompt": "How are extraocular movements?",
+          "followUpCoverage": [
+            "CN III, IV and VI",
+            "limitation, strabismus and nystagmus"
+          ]
+        },
+        {
+          "id": "exam.cnFaceSensation",
+          "topic": "Facial sensation",
+          "channel": "examination",
+          "samplePrompt": "Is facial sensation intact?",
+          "followUpCoverage": [
+            "CN V screen",
+            "symmetry and distribution"
+          ]
+        },
+        {
+          "id": "exam.cnFaceMovement",
+          "topic": "Facial movement",
+          "channel": "examination",
+          "samplePrompt": "Is facial movement symmetric?",
+          "followUpCoverage": [
+            "CN VII screen",
+            "weakness and symmetry"
+          ]
+        },
+        {
+          "id": "exam.cnHearingBalance",
+          "topic": "Hearing and balance",
+          "channel": "examination",
+          "samplePrompt": "What does the hearing and balance screen show?",
+          "followUpCoverage": [
+            "CN VIII",
+            "formal assessment versus observation"
+          ]
+        },
+        {
+          "id": "exam.cnVoiceSwallow",
+          "topic": "Voice, swallow and palate",
+          "channel": "examination",
+          "samplePrompt": "Is there dysphonia or swallowing difficulty?",
+          "followUpCoverage": [
+            "CN IX and X",
+            "palate and gag only if assessed"
+          ]
+        },
+        {
+          "id": "exam.cnTongue",
+          "topic": "Tongue movement",
+          "channel": "examination",
+          "samplePrompt": "Is there tongue deviation or fasciculation?",
+          "followUpCoverage": [
+            "CN XII",
+            "movement and symmetry"
+          ]
+        },
+        {
+          "id": "exam.eyes",
+          "topic": "Eyes",
+          "channel": "examination",
+          "samplePrompt": "How do the eyes look on inspection?",
+          "followUpCoverage": [
+            "conjunctivae, sclerae and discharge",
+            "pupil and movement links"
+          ]
+        },
+        {
+          "id": "exam.earsNose",
+          "topic": "Ears and nose",
+          "channel": "examination",
+          "samplePrompt": "Are the ears and nose symmetric and free of discharge?",
+          "followUpCoverage": [
+            "hearing screen",
+            "asymmetry and discharge"
+          ]
+        },
+        {
+          "id": "exam.mouth",
+          "topic": "Mouth and pharynx",
+          "channel": "examination",
+          "samplePrompt": "What are the lips, tongue, teeth, gums and pharynx like?",
+          "followUpCoverage": [
+            "moisture and coating",
+            "teeth and gums",
+            "tonsils, swelling and exudate"
+          ]
+        },
+        {
+          "id": "exam.neckNodes",
+          "topic": "Neck lymph nodes",
+          "channel": "examination",
+          "samplePrompt": "Are any neck nodes enlarged?",
+          "followUpCoverage": [
+            "submandibular, cervical and supraclavicular sites"
+          ]
+        },
+        {
+          "id": "exam.thyroid",
+          "topic": "Thyroid",
+          "channel": "examination",
+          "samplePrompt": "What does thyroid examination show?",
+          "followUpCoverage": [
+            "size, consistency, tenderness and nodules"
+          ]
+        },
+        {
+          "id": "exam.trachea",
+          "topic": "Tracheal position",
+          "channel": "examination",
+          "samplePrompt": "Is the trachea midline?",
+          "followUpCoverage": [
+            "position or deviation"
+          ]
+        },
+        {
+          "id": "exam.jvp",
+          "topic": "Jugular venous pressure",
+          "channel": "examination",
+          "samplePrompt": "What does assessment of JVP show?",
+          "followUpCoverage": [
+            "position, angle and distension"
+          ]
+        },
+        {
+          "id": "exam.carotids",
+          "topic": "Carotids",
+          "channel": "examination",
+          "samplePrompt": "What are the carotid pulses and sounds like?",
+          "followUpCoverage": [
+            "pulse comparison and bruits"
+          ]
+        },
+        {
+          "id": "exam.neckMobility",
+          "topic": "Neck mobility",
+          "channel": "examination",
+          "samplePrompt": "Does the neck move comfortably?",
+          "followUpCoverage": [
+            "stiffness, pain and range"
+          ]
+        },
+        {
+          "id": "exam.chestInspection",
+          "topic": "Thorax inspection",
+          "channel": "examination",
+          "samplePrompt": "What is the shape and symmetry of the chest?",
+          "followUpCoverage": [
+            "deformity, scars, bruising and visible movement"
+          ]
+        },
+        {
+          "id": "exam.breathing",
+          "topic": "Breathing pattern",
+          "channel": "examination",
+          "samplePrompt": "What does breathing look like at rest?",
+          "followUpCoverage": [
+            "type, rate, depth and accessory muscle use"
+          ]
+        },
+        {
+          "id": "exam.chestExpansion",
+          "topic": "Chest expansion",
+          "channel": "examination",
+          "samplePrompt": "Is chest expansion symmetric?",
+          "followUpCoverage": [
+            "assessed sites",
+            "side differences"
+          ]
+        },
+        {
+          "id": "exam.chestPalpation",
+          "topic": "Chest wall palpation",
+          "channel": "examination",
+          "samplePrompt": "Does palpation reproduce the pain?",
+          "followUpCoverage": [
+            "focal tenderness, site and symptoms elicited"
+          ]
+        },
+        {
+          "id": "exam.lungPercussion",
+          "topic": "Chest percussion",
+          "channel": "examination",
+          "samplePrompt": "What is the percussion note on each side?",
+          "followUpCoverage": [
+            "site, laterality and character"
+          ]
+        },
+        {
+          "id": "exam.lungFremitus",
+          "topic": "Fremitus and bronchophony",
+          "channel": "examination",
+          "samplePrompt": "How are tactile fremitus and bronchophony?",
+          "followUpCoverage": [
+            "symmetric versus focal differences",
+            "assess separately"
+          ]
+        },
+        {
+          "id": "exam.lungAuscultation",
+          "topic": "Lung auscultation",
+          "channel": "examination",
+          "samplePrompt": "What can you hear over the lungs?",
+          "followUpCoverage": [
+            "air entry by side/site",
+            "crackles, wheeze, diminished sounds, pleural rub, rhonchi and stridor when assessed"
+          ]
+        },
+        {
+          "id": "exam.heartAuscultation",
+          "topic": "Heart rate, rhythm and sounds",
+          "channel": "examination",
+          "samplePrompt": "What do you hear on cardiac auscultation?",
+          "followUpCoverage": [
+            "exam-time rate and regularity",
+            "S1, S2, murmurs, pericardial rub, S3 and S4",
+            "auscultation quality and site"
+          ]
+        },
+        {
+          "id": "exam.abdominalInspection",
+          "topic": "Abdomen inspection",
+          "channel": "examination",
+          "samplePrompt": "What does the abdomen look like?",
+          "followUpCoverage": [
+            "contour, distension, scars, hernias and masses"
+          ]
+        },
+        {
+          "id": "exam.abdominalPalpation",
+          "topic": "Abdominal palpation",
+          "channel": "examination",
+          "samplePrompt": "What do you feel on palpation?",
+          "followUpCoverage": [
+            "site, tenderness, guarding, masses and organomegaly"
+          ]
+        },
+        {
+          "id": "exam.abdominalPercussion",
+          "topic": "Abdominal percussion",
+          "channel": "examination",
+          "samplePrompt": "What is the percussion note?",
+          "followUpCoverage": [
+            "tympany, shifting dullness and liver span if assessed"
+          ]
+        },
+        {
+          "id": "exam.bowelSounds",
+          "topic": "Abdominal auscultation",
+          "channel": "examination",
+          "samplePrompt": "What do the bowel sounds sound like?",
+          "followUpCoverage": [
+            "location and characteristics if authored"
+          ]
+        },
+        {
+          "id": "exam.blumberg",
+          "topic": "Rebound tenderness",
+          "channel": "examination",
+          "samplePrompt": "Is there rebound tenderness?",
+          "followUpCoverage": [
+            "site and result",
+            "gated to the relevant maneuver"
+          ]
+        },
+        {
+          "id": "exam.murphy",
+          "topic": "Murphy sign",
+          "channel": "examination",
+          "samplePrompt": "What is the result of the Murphy maneuver?",
+          "followUpCoverage": [
+            "actual response and whether the sign is elicited"
+          ]
+        },
+        {
+          "id": "exam.mcburney",
+          "topic": "McBurney point",
+          "channel": "examination",
+          "samplePrompt": "Is there focal McBurney-point tenderness?",
+          "followUpCoverage": [
+            "actual response and location"
+          ]
+        },
+        {
+          "id": "exam.rovsing",
+          "topic": "Rovsing sign",
+          "channel": "examination",
+          "samplePrompt": "Is the Rovsing sign elicited?",
+          "followUpCoverage": [
+            "actual response and location"
+          ]
+        },
+        {
+          "id": "exam.tapotement",
+          "topic": "Renal angle tenderness",
+          "channel": "examination",
+          "samplePrompt": "Is there tenderness at either costovertebral angle?",
+          "followUpCoverage": [
+            "laterality",
+            "percussion finding"
+          ]
+        },
+        {
+          "id": "exam.limbInspection",
+          "topic": "Limb inspection",
+          "channel": "examination",
+          "samplePrompt": "What do the limbs look like?",
+          "followUpCoverage": [
+            "color, swelling, deformity and edema"
+          ]
+        },
+        {
+          "id": "exam.limbTrophic",
+          "topic": "Trophic changes",
+          "channel": "examination",
+          "samplePrompt": "Are there ulcers or trophic changes?",
+          "followUpCoverage": [
+            "hair, nails, skin and ulcers"
+          ]
+        },
+        {
+          "id": "exam.limbFunction",
+          "topic": "Limb mobility and function",
+          "channel": "examination",
+          "samplePrompt": "Is movement symmetric?",
+          "followUpCoverage": [
+            "paresis, tremor and range"
+          ]
+        },
+        {
+          "id": "exam.joints",
+          "topic": "Joints",
+          "channel": "examination",
+          "samplePrompt": "Are joints swollen, red or painful?",
+          "followUpCoverage": [
+            "distribution, contractures and mobility"
+          ]
+        },
+        {
+          "id": "exam.peripheralPulses",
+          "topic": "Peripheral pulses",
+          "channel": "examination",
+          "samplePrompt": "Which pulses are present and symmetric?",
+          "followUpCoverage": [
+            "compare axillary, brachial, radial, femoral, popliteal, posterior tibial and dorsalis pedis by side when assessed"
+          ]
+        },
+        {
+          "id": "exam.capillaryRefill",
+          "topic": "Capillary refill and peripheral perfusion",
+          "channel": "examination",
+          "samplePrompt": "What is the capillary refill time?",
+          "followUpCoverage": [
+            "seconds and site",
+            "peripheral temperature and color"
+          ]
+        },
+        {
+          "id": "exam.spineAlignment",
+          "topic": "Spinal posture and curvature",
+          "channel": "examination",
+          "samplePrompt": "Is there abnormal spinal curvature?",
+          "followUpCoverage": [
+            "posture, scoliosis, kyphosis or lordosis"
+          ]
+        },
+        {
+          "id": "exam.spineMovement",
+          "topic": "Spinal mobility",
+          "channel": "examination",
+          "samplePrompt": "How does the spine move?",
+          "followUpCoverage": [
+            "flexion, lateral bending and rotation when appropriate"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "Laboratory reference table and additional investigations",
+      "topics": [
+        {
+          "id": "lab.hemoglobin",
+          "topic": "Hemoglobin (Hb)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Hemoglobin (Hb)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "g/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.rbc",
+          "topic": "Red blood cells (RBC)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Red blood cells (RBC)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "×10¹²/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.hematocrit",
+          "topic": "Hematocrit (Hct)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Hematocrit (Hct)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "L/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.wbc",
+          "topic": "White blood cells (WBC)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for White blood cells (WBC)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "×10⁹/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.platelets",
+          "topic": "Platelets (PLT)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Platelets (PLT)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "×10⁹/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.crp",
+          "topic": "C-reactive protein (CRP)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for C-reactive protein (CRP)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mg/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.creatinine",
+          "topic": "Creatinine",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Creatinine?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "µmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.urea",
+          "topic": "Urea",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Urea?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.sodium",
+          "topic": "Sodium (Na⁺)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Sodium (Na⁺)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.potassium",
+          "topic": "Potassium (K⁺)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Potassium (K⁺)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.chloride",
+          "topic": "Chloride (Cl⁻)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Chloride (Cl⁻)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.calciumTotal",
+          "topic": "Calcium (total)",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Calcium (total)?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.alt",
+          "topic": "ALT",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for ALT?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "U/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.ast",
+          "topic": "AST",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for AST?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "U/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.bilirubinTotal",
+          "topic": "Bilirubin – total",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Bilirubin – total?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "µmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.bilirubinDirect",
+          "topic": "Bilirubin – direct",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Bilirubin – direct?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "µmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.bilirubinIndirect",
+          "topic": "Bilirubin – indirect",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Bilirubin – indirect?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "µmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.glucoseFasting",
+          "topic": "Fasting glucose",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Fasting glucose?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.cholesterolTotal",
+          "topic": "Total cholesterol",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Total cholesterol?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.ldl",
+          "topic": "LDL cholesterol",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for LDL cholesterol?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.hdl",
+          "topic": "HDL cholesterol",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for HDL cholesterol?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.triglycerides",
+          "topic": "Triglycerides",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for Triglycerides?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mmol/L",
+          "requiredTest": false
+        },
+        {
+          "id": "lab.tsh",
+          "topic": "TSH",
+          "channel": "investigation",
+          "samplePrompt": "What is the result for TSH?",
+          "followUpCoverage": [
+            "value and unit",
+            "sample time, availability and release",
+            "use the supplied local reference interval if available"
+          ],
+          "referenceTableUnit": "mIU/L",
+          "requiredTest": false
+        },
+        {
+          "id": "investigation.glucoseNonfasting",
+          "topic": "Random or nonfasting glucose",
+          "channel": "investigation",
+          "samplePrompt": "Was this glucose fasting?",
+          "followUpCoverage": [
+            "sample context",
+            "separate fasting and nonfasting results"
+          ]
+        },
+        {
+          "id": "investigation.ecg",
+          "topic": "ECG",
+          "channel": "investigation",
+          "samplePrompt": "What does the 12-lead ECG show?",
+          "followUpCoverage": [
+            "availability, acquisition time, lead placement, tracing asset, findings, interpretation and previous comparison",
+            "additional leads if authored"
+          ]
+        },
+        {
+          "id": "investigation.labContext",
+          "topic": "Laboratory test context",
+          "channel": "investigation",
+          "samplePrompt": "When and how was the sample taken?",
+          "followUpCoverage": [
+            "specimen, collection time, release time, units and reference limits",
+            "distinguish historical, baseline and repeat values"
+          ]
+        },
+        {
+          "id": "investigation.additionalLab",
+          "topic": "Presentation-specific laboratory tests",
+          "channel": "investigation",
+          "samplePrompt": "What other case-relevant lab results are available?",
+          "followUpCoverage": [
+            "tests selected for the case, such as serial markers, coagulation or renal function",
+            "track ordered versus resulted"
+          ]
+        },
+        {
+          "id": "investigation.imaging",
+          "topic": "Imaging and procedures",
+          "channel": "investigation",
+          "samplePrompt": "Is the requested imaging or procedure result available?",
+          "followUpCoverage": [
+            "modality, time, asset or text report and release condition",
+            "prior or current"
+          ]
+        },
+        {
+          "id": "investigation.pending",
+          "topic": "Result status",
+          "channel": "investigation",
+          "samplePrompt": "Has the result come back yet?",
+          "followUpCoverage": [
+            "not ordered, pending, unavailable or released",
+            "no guessed results"
+          ]
+        }
+      ]
+    }
+  ]
+}
