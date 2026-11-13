@@ -54,6 +54,7 @@ import {
   formatClinicalCorrelationAnswer,
   searchClinicalCorrelations
 } from "./anatomy/clinical-correlation-search.js?v=1";
+import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage } from "./anamnesis/obstetric.js?v=1";
 import {
   anatomyMuscleToLegacyRows,
   buildAnatomyStructureIndex,
@@ -3469,6 +3470,7 @@ function applyAnamnesisTranslationsToDom(){
     }
   });
   renumberInternalAnamnesisSections(document.getElementById("anamnesis-form"));
+  applyObstetricLanguage(document.getElementById("anamnesis-obstetric-form"));
 }
 
 const TRANSLATION_LANG_CANON = {
@@ -10027,6 +10029,7 @@ function getActiveAnamnesisForm(){
   if(activeAnamnesisTab === "pediatrics"){
     return document.getElementById("anamnesis-pediatrics-form");
   }
+  if(activeAnamnesisTab === "obstetric") return document.getElementById("anamnesis-obstetric-form");
   return document.getElementById("anamnesis-form");
 }
 
@@ -10034,7 +10037,7 @@ function normalizeAnamnesisType(rawType){
   const value = String(rawType || "").trim().toLowerCase();
   if(value === "psychiatry") return "psychiatric";
   if(value === "surgery") return "internal";
-  if(value === "psychiatric" || value === "internal" || value === "pediatrics") return value;
+  if(value === "psychiatric" || value === "internal" || value === "pediatrics" || value === "obstetric") return value;
   return "internal";
 }
 
@@ -10042,6 +10045,7 @@ function getAnamnesisFormTabByType(type){
   const normalized = normalizeAnamnesisType(type);
   if(normalized === "psychiatric") return "psychiatry";
   if(normalized === "pediatrics") return "pediatrics";
+  if(normalized === "obstetric") return "obstetric";
   return "internal";
 }
 
@@ -10049,6 +10053,7 @@ function getAnamnesisTypeLabel(type){
   const normalized = normalizeAnamnesisType(type);
   if(normalized === "psychiatric") return tOr("anamnesis_type_psychiatric", "Psychiatric");
   if(normalized === "pediatrics") return tOr("anamnesis_type_pediatrics", "Pediatrics");
+  if(normalized === "obstetric") return tOr("anamnesis_type_obstetric", document.documentElement.lang === "sk" ? "Gynekológia a pôrodníctvo" : "Gynaecology & Obstetrics");
   return tOr("anamnesis_type_internal", "Internal/Surgery");
 }
 
@@ -10237,22 +10242,24 @@ function syncAgeFromDob(form){
 function normalizeAnamnesisDataByType(rawData, defaultType = "internal"){
   const normalizedType = normalizeAnamnesisType(defaultType);
   if(!rawData || typeof rawData !== "object" || Array.isArray(rawData)){
-    return { internal: {}, psychiatric: {}, pediatrics: {} };
+    return { internal: {}, psychiatric: {}, pediatrics: {}, obstetric: {} };
   }
-  const hasBuckets = ["internal", "psychiatric", "pediatrics", "psychiatry", "surgery"].some(key => rawData[key] && typeof rawData[key] === "object");
+  const hasBuckets = ["internal", "psychiatric", "pediatrics", "obstetric", "psychiatry", "surgery"].some(key => rawData[key] && typeof rawData[key] === "object");
   if(hasBuckets){
     return {
       internal: rawData.internal && typeof rawData.internal === "object" ? { ...rawData.internal } : {},
       psychiatric: rawData.psychiatric && typeof rawData.psychiatric === "object"
         ? { ...rawData.psychiatric }
         : (rawData.psychiatry && typeof rawData.psychiatry === "object" ? { ...rawData.psychiatry } : {}),
-      pediatrics: rawData.pediatrics && typeof rawData.pediatrics === "object" ? { ...rawData.pediatrics } : {}
+      pediatrics: rawData.pediatrics && typeof rawData.pediatrics === "object" ? { ...rawData.pediatrics } : {},
+      obstetric: rawData.obstetric && typeof rawData.obstetric === "object" ? { ...rawData.obstetric } : {}
     };
   }
   return {
     internal: normalizedType === "internal" ? { ...rawData } : {},
     psychiatric: normalizedType === "psychiatric" ? { ...rawData } : {},
-    pediatrics: normalizedType === "pediatrics" ? { ...rawData } : {}
+    pediatrics: normalizedType === "pediatrics" ? { ...rawData } : {},
+    obstetric: normalizedType === "obstetric" ? { ...rawData } : {}
   };
 }
 
@@ -10278,7 +10285,8 @@ function collectSharedFieldsFromBuckets(buckets){
   return {
     ...extractSharedAnamnesisFields(buckets.internal),
     ...extractSharedAnamnesisFields(buckets.pediatrics),
-    ...extractSharedAnamnesisFields(buckets.psychiatric)
+    ...extractSharedAnamnesisFields(buckets.psychiatric),
+    ...extractSharedAnamnesisFields(buckets.obstetric)
   };
 }
 
@@ -10294,6 +10302,7 @@ function createPatientAnamnesisRecord(seed = {}){
     sharedFields.ident_full_name ||
     buckets.internal?.ident_full_name ||
     buckets.pediatrics?.ident_full_name ||
+    buckets.obstetric?.ident_full_name ||
     buckets.psychiatric?.ident_full_name ||
     buckets.psychiatric?.psych_name ||
     "";
@@ -10302,6 +10311,7 @@ function createPatientAnamnesisRecord(seed = {}){
     sharedFields.ident_age ??
     buckets.internal?.ident_age ??
     buckets.pediatrics?.ident_age ??
+    buckets.obstetric?.ident_age ??
     buckets.psychiatric?.ident_age ??
     buckets.psychiatric?.psych_age ??
     null;
@@ -10310,6 +10320,7 @@ function createPatientAnamnesisRecord(seed = {}){
     sharedFields.chief_complaint ||
     buckets.internal?.chief_complaint ||
     buckets.pediatrics?.chief_complaint ||
+    buckets.obstetric?.chief_complaint ||
     buckets.psychiatric?.chief_complaint ||
     buckets.psychiatric?.psych_admission_reason ||
     "";
@@ -12064,6 +12075,7 @@ function getAnamnesisReportContextLabel(control){
 function getAnamnesisReportControlValue(control){
   if(!control) return "";
   if(control.tagName === "SELECT"){
+    if(!String(control.value || "").trim()) return "";
     const option = control.options && control.selectedIndex >= 0 ? control.options[control.selectedIndex] : null;
     return normalizeAnamnesisReportText(option ? option.textContent : control.value);
   }
@@ -12071,7 +12083,7 @@ function getAnamnesisReportControlValue(control){
 }
 
 function isAnamnesisReportControlEligible(control){
-  if(!control || !control.name || control.disabled || control.type === "hidden") return false;
+  if(!control || !control.name || control.disabled || control.readOnly || control.type === "hidden") return false;
   if(control.closest(".hidden, [hidden]")) return false;
   if(control.closest(".anam-psych-prompts")) return false;
   return true;
@@ -12180,8 +12192,9 @@ function buildStructuredAnamnesisReport(){
   ];
   if(admitted) lines.push(`${admittedLabel}: ${admitted}`);
   if(complaint) lines.push(`${chiefLabel}: ${complaint}`);
+  if(type === "obstetric") lines.push(`Pathway: ${getAnamnesisReportFormValue(form, "ob_pathway") === "postpartum" ? "Post-birth (Postpartum)" : "Pre-birth (Antenatal)"}`);
 
-  const sections = [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section"));
+  const sections = [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section") && isAnamnesisSectionVisible(el));
   sections.slice(2).forEach(section => {
     const entries = collectAnamnesisReportSectionEntries(section);
     if(entries.length === 0) return;
@@ -12729,20 +12742,58 @@ function syncInternalFormToMeta(targetName = ""){
 }
 
 async function setAnamnesisFormTab(tab){
-  const nextTab = tab === "psychiatry" ? "psychiatry" : (tab === "pediatrics" ? "pediatrics" : "internal");
+  const nextTab = tab === "psychiatry" ? "psychiatry" : (tab === "pediatrics" ? "pediatrics" : (tab === "obstetric" ? "obstetric" : "internal"));
   activeAnamnesisTab = nextTab;
   const internalWrap = document.getElementById("anamnesis-form-internal-wrap");
   const psychiatryWrap = document.getElementById("anamnesis-form-psychiatry-wrap");
   const pediatricsWrap = document.getElementById("anamnesis-form-pediatrics-wrap");
+  const obstetricWrap = document.getElementById("anamnesis-form-obstetric-wrap");
   if(internalWrap) internalWrap.classList.toggle("hidden", nextTab !== "internal");
   if(psychiatryWrap) psychiatryWrap.classList.toggle("hidden", nextTab !== "psychiatry");
   if(pediatricsWrap) pediatricsWrap.classList.toggle("hidden", nextTab !== "pediatrics");
+  if(obstetricWrap) obstetricWrap.classList.toggle("hidden", nextTab !== "obstetric");
   if(nextTab === "psychiatry") await ensurePsychiatryAnamnesisFormBuilt();
   if(nextTab === "pediatrics") ensurePediatricsAnamnesisFormBuilt();
+  if(nextTab === "obstetric") ensureObstetricAnamnesisFormBuilt();
   const activeForm = nextTab === "psychiatry"
     ? document.getElementById("anamnesis-psychiatry-form")
-    : (nextTab === "pediatrics" ? document.getElementById("anamnesis-pediatrics-form") : document.getElementById("anamnesis-form"));
+    : (nextTab === "pediatrics" ? document.getElementById("anamnesis-pediatrics-form") : (nextTab === "obstetric" ? document.getElementById("anamnesis-obstetric-form") : document.getElementById("anamnesis-form")));
   if(activeForm) await enhanceAnamnesisQuestionHelp(activeForm);
+}
+
+
+function ensureObstetricAnamnesisFormBuilt(){
+  const form = document.getElementById("anamnesis-obstetric-form");
+  if(!form || form.dataset.ready === "1") return;
+  buildObstetricAnamnesisForm(form, buildSharedIdentificationSection, buildSharedChiefComplaintSection, (sectionsChanged)=>{
+    if(sectionsChanged) rebuildAnamnesisSectionNavigator();
+    else updateAnamnesisDocumentationProgress();
+    scheduleAnamnesisSave();
+  });
+}
+async function loadObstetricAnamnesisForm(data = null){
+  ensureObstetricAnamnesisFormBuilt();
+  const form = document.getElementById("anamnesis-obstetric-form");
+  if(!form) return;
+  prepareObstetricFormForData(form, data, ()=>{
+    updateObstetricUi(form);
+    rebuildAnamnesisSectionNavigator();
+    scheduleAnamnesisSave();
+  });
+  if(data && typeof data === "object") applyAnamnesisData(form, data);
+  updateObstetricUi(form);
+  syncAgeFromDob(form);
+  enhanceAnamnesisSections(form);
+  applyObstetricLanguage(form);
+  await enhanceAnamnesisQuestionHelp(form);
+  refreshAnamnesisInputMode();
+}
+function clearObstetricAnamnesisForm(){
+  const form = document.getElementById("anamnesis-obstetric-form");
+  if(!form) return;
+  prepareObstetricFormForData(form, {}, null);
+  form.reset();
+  updateObstetricUi(form);
 }
 
 async function loadInternalAnamnesisForm(data = null){
@@ -12891,6 +12942,8 @@ async function loadAnamnesisForm(){
     await loadPsychiatryAnamnesisForm(mergeSharedFieldsIntoData(bucket.psychiatric || null, sharedData));
   } else if(activeAnamnesisTab === "pediatrics"){
     await loadPediatricsAnamnesisForm(mergeSharedFieldsIntoData(bucket.pediatrics || null, sharedData));
+  } else if(activeAnamnesisTab === "obstetric"){
+    await loadObstetricAnamnesisForm(mergeSharedFieldsIntoData(bucket.obstetric || null, sharedData));
   } else {
     const internalData = type === "pediatrics" ? (bucket.pediatrics || null) : (bucket.internal || null);
     await loadInternalAnamnesisForm(mergeSharedFieldsIntoData(internalData, sharedData));
@@ -12919,7 +12972,7 @@ function saveAnamnesisForm(opts = {}){
     ? document.getElementById("anamnesis-psychiatry-form")
     : (formTab === "pediatrics"
       ? document.getElementById("anamnesis-pediatrics-form")
-      : document.getElementById("anamnesis-form"));
+      : (formTab === "obstetric" ? document.getElementById("anamnesis-obstetric-form") : document.getElementById("anamnesis-form")));
   if(!form) return;
 
   const notes = document.getElementById("anamnesis-notes-text");
@@ -12943,6 +12996,7 @@ function saveAnamnesisForm(opts = {}){
       internal: mergeSharedFieldsIntoData(existingBuckets.internal, sharedFields),
       psychiatric: mergeSharedFieldsIntoData(existingBuckets.psychiatric, sharedFields),
       pediatrics: mergeSharedFieldsIntoData(existingBuckets.pediatrics, sharedFields),
+      obstetric: mergeSharedFieldsIntoData(existingBuckets.obstetric, sharedFields),
       [formType]: mergeSharedFieldsIntoData({ ...(existingBuckets[formType] || {}), ...collected }, sharedFields)
     }
   });
@@ -13004,6 +13058,7 @@ function clearAnamnesisForm(){
   const type = normalizeAnamnesisType(record.anamnesisType);
   if(getAnamnesisFormTabByType(type) === "psychiatry") clearPsychiatryAnamnesisForm();
   else if(getAnamnesisFormTabByType(type) === "pediatrics") clearPediatricsAnamnesisForm();
+  else if(getAnamnesisFormTabByType(type) === "obstetric") clearObstetricAnamnesisForm();
   else clearInternalAnamnesisForm();
   const notes = document.getElementById("anamnesis-notes-text");
   if(notes) notes.value = "";
@@ -13019,6 +13074,7 @@ function clearAnamnesisForm(){
       internal: {},
       psychiatric: {},
       pediatrics: {},
+      obstetric: {},
       [type]: {}
     }
   });
@@ -13147,7 +13203,8 @@ async function handleAnamnesisTypeChange(nextType){
     anamnesisData: {
       internal: { ...sharedOnlyBucket },
       psychiatric: { ...sharedOnlyBucket },
-      pediatrics: { ...sharedOnlyBucket }
+      pediatrics: { ...sharedOnlyBucket },
+      obstetric: { ...sharedOnlyBucket }
     },
     updatedAt: nowIso()
   });

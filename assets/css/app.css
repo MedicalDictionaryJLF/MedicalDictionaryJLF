@@ -12836,3 +12836,37 @@ input[name="vital_bmi"][readonly]{
     align-items:flex-start;
   }
 }
+
+
+/* Obstetric anamnesis: inherits the existing Anamnesis design tokens. */
+#anamnesis-obstetric-form .anam-ob-pathway {
+  display: grid; gap: 10px; margin: 16px 0 20px; padding: 16px;
+  border: 1px solid var(--border, var(--border-color, #bdc5d0));
+  border-radius: 14px; background: var(--card-bg, transparent);
+}
+#anamnesis-obstetric-form .anam-ob-pathway select { width: 100%; max-width: 540px; }
+#anamnesis-obstetric-form .anam-ob-field { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+#anamnesis-obstetric-form .anam-ob-field strong { font-size: .91em; font-weight: 600; }
+#anamnesis-obstetric-form .anam-ob-field input,
+#anamnesis-obstetric-form .anam-ob-field textarea,
+#anamnesis-obstetric-form .anam-ob-field select { width: 100%; min-width: 0; box-sizing: border-box; }
+#anamnesis-obstetric-form .anam-ob-field textarea { min-height: 68px; resize: vertical; }
+#anamnesis-obstetric-form .anam-ob-field input[readonly] { opacity: .78; }
+#anamnesis-obstetric-form .anam-ob-repeat { margin: 14px 0; }
+#anamnesis-obstetric-form .anam-ob-repeat-rows { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+#anamnesis-obstetric-form .anam-ob-repeat-row {
+  border: 1px solid var(--border, var(--border-color, #bdc5d0));
+  border-radius: 12px; padding: 12px;
+}
+#anamnesis-obstetric-form .anam-ob-repeat-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+#anamnesis-obstetric-form .anam-ob-add { margin-top: 8px; }
+#anamnesis-obstetric-form .anam-ob-review-panel {
+  margin: 18px 0; border: 1px solid var(--border, var(--border-color, #bdc5d0));
+  padding: 16px; border-radius: 12px;
+}
+#anamnesis-obstetric-form .anam-ob-warning { font-weight: 600; color: var(--danger, #bd394c); }
+#anamnesis-obstetric-form .hidden { display: none !important; }
+@media (max-width: 680px) {
+  #anamnesis-obstetric-form .anam-ob-pathway, #anamnesis-obstetric-form .anam-ob-repeat-row { padding: 12px; }
+  #anamnesis-obstetric-form .anam-ob-grid { grid-template-columns: minmax(0,1fr); }
+}

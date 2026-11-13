@@ -1,0 +1,26 @@
+name: Obstetric anamnesis regression
+on:
+  pull_request:
+    paths:
+      - 'assets/js/anamnesis/obstetric.js'
+      - 'assets/js/app.js'
+      - 'assets/css/app.css'
+      - 'index.html'
+      - 'scripts/obstetric-anamnesis-tests.mjs'
+      - '.github/workflows/obstetric-anamnesis.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --check assets/js/anamnesis/obstetric.js
+      - run: node --check assets/js/app.js
+      - run: node scripts/obstetric-anamnesis-tests.mjs
+      - run: npm run test:anamnesis-ui
+      - run: npm run build
