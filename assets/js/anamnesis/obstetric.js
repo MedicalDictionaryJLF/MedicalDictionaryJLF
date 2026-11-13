@@ -217,11 +217,13 @@ const redFlags = [
   ['antenatal_ruq','Epigastric or RUQ pain','Bolesť epigastria alebo pravého podrebria'],
   ['antenatal_dyspnoea','Chest pain or dyspnoea','Bolesť na hrudníku alebo dýchavica'],
   ['antenatal_leg','Unilateral leg swelling','Jednostranný opuch končatiny'],
+  ['antenatal_fever','Fever during pregnancy','Horúčka v tehotenstve'],
   ['post_bleeding_heavy','Heavy postpartum bleeding','Silné popôrodné krvácanie'],
   ['post_fever','Postpartum fever','Popôrodná horúčka'],
   ['post_chest','Chest pain or dyspnoea','Bolesť na hrudníku alebo dýchavica'],
   ['post_leg','Unilateral leg swelling','Jednostranný opuch končatiny'],
-  ['post_psychosis','Severe mental-state symptoms','Závažné psychické príznaky']
+  ['post_psychosis','Severe mental-state symptoms','Závažné psychické príznaky'],
+  ['post_mastitis','Breast inflammation symptoms','Zápalové príznaky prsníka']
 ];
 function updateReview(form){
   const view = form.querySelector('[data-ob-review]');
@@ -253,12 +255,17 @@ export function updateObstetricUi(form){
     const days = daysSince(value(form,'antenatal_lmp'));
     weeks = days === null ? NaN : Math.floor(days/7);
   }
-  const showNeonatal = !['miscarriage','termination','ectopic','stillbirth','neonatal_death'].includes(value(form,'post_outcome'));
+  const showNeonatal = !['miscarriage','termination','ectopic'].includes(value(form,'post_outcome'));
+  const feedingRelevant = !['miscarriage','termination','ectopic','stillbirth','neonatal_death'].includes(value(form,'post_outcome'));
+  const birthOutcomeKnown = !!value(form,'post_outcome');
   form.querySelectorAll('[data-ob-scope]').forEach(section => {
     const scope = section.dataset.obScope;
     section.classList.toggle('hidden',scope !== 'shared' && scope !== pathway);
     if(scope==='postpartum' && section.querySelector('[data-ob-repeat="baby"]')){
-      section.classList.toggle('hidden',pathway !== 'postpartum' || !showNeonatal);
+      section.classList.toggle('hidden',pathway !== 'postpartum' || (birthOutcomeKnown && !showNeonatal));
+    }
+    if(scope==='postpartum' && section.querySelector('[name="ob_post_feeding_mode"]')){
+      section.classList.toggle('hidden',pathway !== 'postpartum' || (birthOutcomeKnown && !feedingRelevant));
     }
   });
   form.querySelectorAll('[data-ob-when]').forEach(field=>{
