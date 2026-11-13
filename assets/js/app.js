@@ -3470,6 +3470,7 @@ function applyAnamnesisTranslationsToDom(){
     }
   });
   renumberInternalAnamnesisSections(document.getElementById("anamnesis-form"));
+  applyObstetricLanguage(document.getElementById("anamnesis-obstetric-form"));
 }
 
 const TRANSLATION_LANG_CANON = {
@@ -12074,6 +12075,7 @@ function getAnamnesisReportContextLabel(control){
 function getAnamnesisReportControlValue(control){
   if(!control) return "";
   if(control.tagName === "SELECT"){
+    if(!String(control.value || "").trim()) return "";
     const option = control.options && control.selectedIndex >= 0 ? control.options[control.selectedIndex] : null;
     return normalizeAnamnesisReportText(option ? option.textContent : control.value);
   }
@@ -12081,7 +12083,7 @@ function getAnamnesisReportControlValue(control){
 }
 
 function isAnamnesisReportControlEligible(control){
-  if(!control || !control.name || control.disabled || control.type === "hidden") return false;
+  if(!control || !control.name || control.disabled || control.readOnly || control.type === "hidden") return false;
   if(control.closest(".hidden, [hidden]")) return false;
   if(control.closest(".anam-psych-prompts")) return false;
   return true;
