@@ -1198,7 +1198,7 @@
               </div>
               <div class="anamnesis-registry-stat">
                 <span data-i18n="anamnesis_workflows">Workflows</span>
-                <strong>3</strong>
+                <strong>4</strong>
               </div>
             </div>
             <div id="anamnesis-patient-list" class="anamnesis-patient-list" role="list" aria-label="Patient anamnesis records" data-i18n-aria-label="anamnesis_patient_records"></div>
@@ -1247,6 +1247,7 @@
                       <option value="psychiatric" data-i18n="anamnesis_type_psychiatric">Psychiatric</option>
                       <option value="internal" data-i18n="anamnesis_type_internal">Internal</option>
                       <option value="pediatrics" data-i18n="anamnesis_type_pediatrics">Pediatrics</option>
+                      <option value="obstetric" data-i18n="anamnesis_type_obstetric">Gynaecology &amp; Obstetrics</option>
                     </select>
                   </label>
                   <label class="anamnesis-toolbar-field">
@@ -2425,6 +2426,9 @@
                 <div id="anamnesis-form-pediatrics-wrap" class="hidden">
                   <form id="anamnesis-pediatrics-form"></form>
                 </div>
+                <div id="anamnesis-form-obstetric-wrap" class="hidden">
+                  <form id="anamnesis-obstetric-form"></form>
+                </div>
               </div>
             </div>
           </section>
@@ -2487,10 +2491,15 @@
                 <span class="anamnesis-workflow-icon" aria-hidden="true">PSY</span>
                 <span><strong data-i18n="anamnesis_type_psychiatric">Psychiatric</strong><small data-i18n="anamnesis_workflow_psychiatric_copy">Psychiatric interview with structured mental-state documentation.</small></span>
               </button>
+              <button type="button" class="anamnesis-workflow-option" data-anamnesis-workflow="obstetric" role="radio" aria-checked="false">
+                <span class="anamnesis-workflow-icon" aria-hidden="true">OB</span>
+                <span><strong data-i18n="anamnesis_type_obstetric">Gynaecology &amp; Obstetrics</strong><small data-i18n="anamnesis_workflow_obstetric_copy">Pre-birth and post-birth structured obstetric history.</small></span>
+              </button>
               <select id="anamnesis-new-type" class="anamnesis-workflow-select" aria-hidden="true" tabindex="-1">
                 <option value="internal" selected data-i18n="anamnesis_type_internal">Internal</option>
                 <option value="pediatrics" data-i18n="anamnesis_type_pediatrics">Pediatrics</option>
                 <option value="psychiatric" data-i18n="anamnesis_type_psychiatric">Psychiatric</option>
+                <option value="obstetric" data-i18n="anamnesis_type_obstetric">Gynaecology &amp; Obstetrics</option>
               </select>
             </div>
             <div class="row" style="justify-content:flex-end; margin-top:14px">
@@ -2526,7 +2535,7 @@
   </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="assets/js/app-shell.js?v=51" defer></script>
-<script type="module" src="assets/js/app.js?v=80"></script>
+<script type="module" src="assets/js/app.js?v=81"></script>
 </body>
 </html>
 
