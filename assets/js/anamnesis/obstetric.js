@@ -185,17 +185,24 @@ function addRow(form, type, index, onChange) {
   target.appendChild(item);
   return item;
 }
-function daysSince(iso){
+function parseClinicalDate(iso) {
   if(!/^\d{4}-\d\d-\d\d$/.test(iso || '')) return null;
-  const date = new Date(iso + 'T12:00:00');
+  const date = new Date(iso + 'T00:00:00Z');
   if(Number.isNaN(date.getTime()) || date.toISOString().slice(0,10) !== iso) return null;
-  return Math.floor((Date.now() - date.getTime()) / 86400000);
+  return date;
+}
+function daysSince(iso){
+  const date = parseClinicalDate(iso);
+  if(!date) return null;
+  const now = new Date();
+  const todayUtc = Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  return Math.round((todayUtc - date.getTime()) / 86400000);
 }
 function addDays(iso, amount){
-  const date = new Date(iso + 'T12:00:00');
-  if(Number.isNaN(date.getTime())) return '';
-  date.setDate(date.getDate()+amount);
-  return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+  const date = parseClinicalDate(iso);
+  if(!date) return '';
+  date.setUTCDate(date.getUTCDate()+amount);
+  return date.toISOString().slice(0,10);
 }
 function applyDerived(form){
   const lmp = value(form,'antenatal_lmp');
