@@ -20,11 +20,13 @@
     "test:patient-assets": "node scripts/validate-patient-assets.mjs",
     "build:clinical-preview": "node scripts/build-clinical-preview.mjs",
     "test:patient-rendering": "node scripts/patient-rendering-regression.mjs",
-    "test:patient-bedside": "node scripts/patient-bedside-regression.mjs"
+    "test:patient-bedside": "node scripts/patient-bedside-regression.mjs",
+    "test:obstetric": "node scripts/obstetric-anamnesis-tests.mjs && node scripts/obstetric-dom-tests.cjs"
   },
   "devDependencies": {
-    "vite": "^7.0.0",
-    "gltf-validator": "2.0.0-dev.3.10"
+    "gltf-validator": "2.0.0-dev.3.10",
+    "jsdom": "^31.0.1",
+    "vite": "^7.0.0"
   },
   "dependencies": {
     "three": "0.180.0"

@@ -31,7 +31,7 @@ function el(tag, className = '') {
   if(className) node.className = className;
   return node;
 }
-const yn = [['', '—', '—'], ['yes', 'Yes', 'Áno'], ['no','No','Nie'], ['unknown','Unknown','Neznáme'], ['not_asked','Not asked','Nepýtané'], ['not_applicable','Not applicable','Nerelevantné']];
+const yn = [['', 'Not recorded', 'Nezaznamenané'], ['yes', 'Yes', 'Áno'], ['no','No','Nie'], ['unknown','Unknown','Neznáme'], ['not_asked','Not asked','Nepýtané'], ['not_applicable','Not applicable','Nerelevantné']];
 const optionSets = {
   conception: [['','—','—'],['spontaneous','Spontaneous','Spontánne'],['assisted','Assisted reproduction','Asistovaná reprodukcia'],['unknown','Unknown','Neznáme']],
   multiplicity: [['','—','—'],['singleton','Singleton','Jednoplodová'],['twins','Twins','Dvojčatá'],['higher','Higher-order multiple','Viacplodová'],['unknown','Unknown','Neznáme']],
@@ -83,10 +83,32 @@ const GROUPS = [
  ['postpartum','17. Psychological wellbeing and family planning','17. Psychický stav a plánovanie rodiny',
  'post_mood|Mood changes and anxiety|Zmeny nálady a úzkosť|text;post_depression|Depression symptoms|Príznaky depresie|yn;post_sleep|Severe sleep disturbance|Závažná porucha spánku|yn;post_psychosis|Confusion, hallucinations or severe behavioural change|Zmätenosť, halucinácie alebo závažná zmena správania|yn;post_selfharm|Thoughts of self-harm or harm to infant (ask sensitively)|Myšlienky na sebapoškodenie alebo ublíženie dieťaťu (citlivo)|text;post_birth_trauma|Traumatic birth experience|Traumatický zážitok z pôrodu|text;post_support|Available support and safety|Dostupná podpora a bezpečie|text;post_screen|Validated screening tool if administered|Validovaný skríningový nástroj, ak použitý|text;post_menses|Return of menstruation|Návrat menštruácie|text;post_sexual|Sexual health and pain|Sexuálne zdravie a bolesti|text;post_contraception|Current or planned contraception|Súčasná alebo plánovaná antikoncepcia|text;post_future|Future pregnancy plans|Plány ďalšej gravidity|text;post_followup|Postpartum follow-up appointments|Popôrodné kontroly|text']
 ];
+// Additions keep every established key and value compatible with saved records.
+const EXTRA = {
+ present_reason: 'present_frequency|Symptom frequency|Frekvencia príznakov|text',
+ ob_gravida: 'ob_previous_count|Number of previous pregnancies (excluding current pregnancy)|Počet predchádzajúcich gravidít (bez terajšej)|number;ob_parity_convention|Parity convention / gestational threshold used|Konvencia parity / použitá gestačná hranica|text',
+ antenatal_lmp: 'antenatal_ga_reference|Date of documented gestational age|Dátum zaznamenaného gestačného veku|date;antenatal_ga_accepted|Current GA from accepted EDD (estimate)|Aktuálny gestačný vek podľa stanoveného TP (odhad)|readonly',
+ antenatal_first: 'antenatal_urinary|Urinary symptoms|Močové ťažkosti|text;antenatal_discharge|Vaginal discharge|Vaginálny výtok|text;antenatal_htn_details|Documented hypertension: blood pressure, symptoms, investigations, treatment and follow-up|Dokumentovaná hypertenzia: tlak, príznaky, vyšetrenia, liečba a kontroly|long|antenatal_htn=yes',
+ post_delivery_date: 'post_caesarean_urgency|Caesarean urgency (planned / emergency / unknown)|Naliehavosť cisárskeho rezu (plánovaný / urgentný / neznáme)|urgency|post_delivery_mode=caesarean;post_augmentation|Labour induction or augmentation and response|Indukcia alebo stimulácia pôrodu a priebeh|text',
+ post_mood: 'post_blues|Postpartum blues symptoms|Príznaky popôrodného blues|text;post_intrusive|Intrusive thoughts (content and distress)|Vtieravé myšlienky (obsah a distres)|text;post_harm_concern|Current concern about self-harm or harm to infant|Aktuálna obava zo sebapoškodenia alebo ublíženia dieťaťu|yn;post_psych_diagnoses|Documented psychiatric diagnoses (separate from symptoms)|Dokumentované psychiatrické diagnózy (odlíšiť od príznakov)|long',
+ post_pph: 'post_hypertension_details|Blood pressure, symptoms, results, treatment and follow-up|Tlak, príznaky, výsledky, liečba a kontroly|long|post_hypertension=yes'
+};
+optionSets.urgency = [['','Not recorded','Nezaznamenané'],['planned','Planned','Plánovaný'],['emergency','Emergency','Urgentný'],['unknown','Unknown','Neznáme']];
+GROUPS.forEach(group => {
+  const firstKey = group[3].split('|')[0];
+  if(EXTRA[firstKey]) group[3] += ';' + EXTRA[firstKey];
+  const existing = new Set(group[3].split(';').map(row => row.split('|')[0]));
+  const followups = group[3].split(';').map(row => row.split('|')).filter(([key,en,sk,type]) => type === 'yn' && !existing.has(key + '_details')).map(([key,en,sk]) => key + '_details|' + en + ': timing, details and follow-up|' + sk + ': čas, podrobnosti a kontroly|long|' + key + '=yes');
+  group[3] += ';' + followups.join(';');
+  group[3] += ';' + firstKey + '_section_notes|Additional section notes|Ďalšie poznámky k oddielu|long';
+});
+GROUPS.push(['antenatal','15. Documented pregnancy risk factors','15. Dokumentované rizikové faktory gravidity',
+ 'risk_caesarean|Previous Caesarean delivery|Predchádzajúci cisársky rez|yn;risk_preterm|Previous preterm birth|Predchádzajúci predčasný pôrod|yn;risk_preeclampsia|Previous pre-eclampsia|Predchádzajúca preeklampsia|yn;risk_pph|Previous postpartum haemorrhage|Predchádzajúce popôrodné krvácanie|yn;risk_multiple|Multiple pregnancy|Viacplodová gravidita|yn;risk_placenta|Placental abnormality|Abnormalita placenty|yn;risk_chronic|Maternal chronic disease|Chronické ochorenie matky|yn;risk_fetal|Known fetal complications|Známe komplikácie plodu|yn;risk_trauma|Previous obstetric trauma|Predchádzajúca pôrodnícka trauma|yn;risk_anaesthetic|Previous anaesthetic complications|Predchádzajúce komplikácie anestézie|yn;risk_notes|Documented details and follow-up (no automatic risk classification)|Dokumentované podrobnosti a kontroly (bez automatickej klasifikácie rizika)|long']);
 const REPEAT = {
- preg: {title:['Previous pregnancy','Predchádzajúca gravidita'], fields: 'year|Year|Rok|number;weeks|Gestational age at outcome|Gestačný vek pri ukončení|text;outcome|Pregnancy outcome|Výsledok gravidity|outcome;mode|Delivery method|Spôsob pôrodu|delivery;maternal|Maternal complications|Komplikácie u matky|long;baby|Neonatal outcome and complications|Stav dieťaťa a komplikácie|long'},
+ test: {title:['Investigation','Vyšetrenie'], fields:'name|Investigation name|Názov vyšetrenia|text;date|Date|Dátum|date;result|Result|Výsledok|text;units|Units|Jednotky|text;reference|Reference information|Referenčné informácie|text;followup|Follow-up|Kontroly|long'},
+ preg: {title:['Previous pregnancy','Predchádzajúca gravidita'], fields: 'year|Year|Rok|number;weeks|Gestational age at outcome|Gestačný vek pri ukončení|text;outcome|Pregnancy outcome|Výsledok gravidity|outcome;mode|Delivery method|Spôsob pôrodu|delivery;weight|Birth weight (g), if known|Pôrodná hmotnosť (g), ak známa|number;maternal|Maternal complications|Komplikácie u matky|long;baby|Neonatal outcome and complications|Stav dieťaťa a komplikácie|long'},
  fetus: {title:['Fetus','Plod'], fields: 'identifier|Fetus identifier|Označenie plodu|text;growth|Growth and measurements|Rast a biometria|text;presentation|Presentation|Poloha a naliehanie|text;ultrasound|Ultrasound findings|Ultrazvukové nálezy|long;concerns|Known complications|Známe komplikácie|long'},
- baby: {title:['Newborn','Novorodenec'], fields: 'identifier|Newborn identifier|Označenie novorodenca|text;outcome|Neonatal outcome|Stav dieťaťa|outcome;weight|Birth weight (g)|Pôrodná hmotnosť (g)|number;apgar|Apgar scores|Apgar skóre|text;resuscitation|Resuscitation required|Potrebná resuscitácia|yn;nicu|NICU and complications|JIS a komplikácie|long'},
+ baby: {title:['Newborn','Novorodenec'], fields: 'identifier|Newborn identifier|Označenie novorodenca|text;outcome|Neonatal outcome|Stav dieťaťa|outcome;weight|Birth weight (g)|Pôrodná hmotnosť (g)|number;apgar|Apgar scores|Apgar skóre|text;resuscitation|Resuscitation required|Potrebná resuscitácia|yn;nicu|NICU and complications|JIS a komplikácie|long;anomalies|Congenital anomalies|Vrodené chyby|text;condition|Current condition and feeding concerns|Aktuálny stav a problémy s kŕmením|long;followup|Paediatric follow-up|Pediatrické kontroly|text'},
  visit: {title:['Clinical encounter','Klinický kontakt'], fields: 'date|Date of encounter|Dátum kontaktu|date;context|Pregnancy / postpartum stage|Štádium gravidity / po pôrode|text;symptoms|Symptoms and changes|Príznaky a zmeny|long;results|Investigations and findings|Vyšetrenia a nálezy|long;treatment|Treatment and follow-up|Liečba a kontroly|long'}
 };
 function parse(raw) {
@@ -135,9 +157,10 @@ function makeField(def, override = '') {
   return host;
 }
 function makeSection(scope,en,sk,defs,repeatType) {
-  const section = el('div','anam-section anam-ob-section');
+  const section = el('details','anam-section anam-ob-section');
+  section.open = false;
   section.dataset.obScope = scope;
-  translated(section.appendChild(el('h3')),en,sk);
+  translated(section.appendChild(el('summary')).appendChild(el('strong')),en,sk);
   const grid = el('div','anam-grid anam-ob-grid');
   parse(defs).forEach(def => grid.appendChild(makeField(def)));
   section.appendChild(grid);
@@ -160,7 +183,7 @@ function rowIndices(raw, type) {
     const match = key.match(new RegExp('^ob_' + type + '_(\\d+)_'));
     if(match) ids.add(Number(match[1]));
   });
-  return [...ids].filter(x => x > 0 && x < 100).sort((a,b)=>a-b);
+  return [...ids].filter(x => Number.isSafeInteger(x) && x > 0).sort((a,b)=>a-b);
 }
 function addRow(form, type, index, onChange) {
   const target = form.querySelector('[data-ob-repeat="' + type + '"] .anam-ob-repeat-rows');
@@ -209,11 +232,15 @@ function applyDerived(form){
   const elapsed = daysSince(lmp);
   const due = form.elements.namedItem('ob_antenatal_edd_lmp');
   const weeks = form.elements.namedItem('ob_antenatal_ga_lmp');
-  if(due) due.value = elapsed !== null ? addDays(lmp,280) : '';
+  if(due) due.value = elapsed !== null && elapsed >= 0 && elapsed <= 315 ? addDays(lmp,280) : '';
   if(weeks) weeks.value = elapsed !== null && elapsed >= 0 && elapsed <= 315 ? Math.floor(elapsed/7) + 'w ' + (elapsed%7) + 'd' : '';
+  const accepted = form.elements.namedItem('ob_antenatal_ga_accepted');
+  const eddDays = daysSince(value(form,'antenatal_edd_clinical'));
+  const ga = eddDays === null ? null : 280 + eddDays;
+  if(accepted) accepted.value = ga !== null && ga >= 0 && ga <= 315 ? Math.floor(ga/7) + 'w ' + ga%7 + 'd' : '';
   const delivery = daysSince(value(form,'post_delivery_date'));
   const interval = form.elements.namedItem('ob_post_interval');
-  if(interval) interval.value = delivery !== null && delivery >= 0 ? delivery+' days' : '';
+  if(interval) interval.value = delivery !== null && delivery >= 0 ? delivery + local(' days',' dní') : '';
 }
 const redFlags = [
   ['antenatal_bleeding','Vaginal bleeding','Vaginálne krvácanie'],
@@ -229,6 +256,7 @@ const redFlags = [
   ['post_fever','Postpartum fever','Popôrodná horúčka'],
   ['post_chest','Chest pain or dyspnoea','Bolesť na hrudníku alebo dýchavica'],
   ['post_leg','Unilateral leg swelling','Jednostranný opuch končatiny'],
+  ['post_harm_concern','Concern about harm to self or infant','Obava z ublíženia sebe alebo dieťaťu'],
   ['post_psychosis','Severe mental-state symptoms','Závažné psychické príznaky'],
   ['post_mastitis','Breast inflammation symptoms','Zápalové príznaky prsníka']
 ];
@@ -239,7 +267,7 @@ function updateReview(form){
   const required = pathway === 'antenatal'
     ? ['antenatal_lmp','antenatal_dating_source','antenatal_ga_weeks','antenatal_multiplicity','antenatal_movements_change','antenatal_bleeding','antenatal_membranes']
     : ['post_delivery_date','post_delivery_mode','post_outcome','post_bleeding_heavy','post_fever','post_feeding_mode','post_mood'];
-  const missing = required.filter(k=>!value(form,k));
+  const missing = required.filter(k=> { const field = form.elements.namedItem('ob_' + k); return field && !field.closest('.hidden') && (!value(form,k) || value(form,k) === 'not_asked'); });
   const concerns = redFlags.filter(([key]) => value(form,key)==='yes' && ((pathway==='antenatal') === key.startsWith('antenatal')));
   view.textContent = '';
   const description = translated(el('p','muted'), 'Education only. The form does not diagnose patients.', 'Iba na výučbu. Formulár nestanovuje diagnózu.');
@@ -259,8 +287,9 @@ export function updateObstetricUi(form){
   const pathway = value(form,'pathway') === 'postpartum' ? 'postpartum' : 'antenatal';
   let weeks = Number(value(form,'antenatal_ga_weeks'));
   if(!value(form,'antenatal_ga_weeks')) {
-    const days = daysSince(value(form,'antenatal_lmp'));
-    weeks = days === null ? NaN : Math.floor(days/7);
+    const accepted = daysSince(value(form,'antenatal_edd_clinical'));
+    const days = accepted === null ? daysSince(value(form,'antenatal_lmp')) : 280 + accepted;
+    weeks = days === null || days < 0 || days > 315 ? NaN : Math.floor(days/7);
   }
   const showNeonatal = !['miscarriage','termination','ectopic'].includes(value(form,'post_outcome'));
   const feedingRelevant = !['miscarriage','termination','ectopic','stillbirth','neonatal_death'].includes(value(form,'post_outcome'));
@@ -272,7 +301,11 @@ export function updateObstetricUi(form){
       section.classList.toggle('hidden',pathway !== 'postpartum' || (birthOutcomeKnown && !showNeonatal));
     }
     if(scope==='postpartum' && section.querySelector('[name="ob_post_feeding_mode"]')){
-      section.classList.toggle('hidden',pathway !== 'postpartum' || (birthOutcomeKnown && !feedingRelevant));
+      section.classList.toggle('hidden',pathway !== 'postpartum');
+      section.querySelectorAll('.anam-ob-field').forEach(field => {
+        const name = field.querySelector('[name]')?.name || '';
+        if(['ob_post_feeding_mode','ob_post_feeding_intent','ob_post_feeding_other'].includes(name)) field.classList.toggle('hidden',birthOutcomeKnown && !feedingRelevant);
+      });
     }
   });
   form.querySelectorAll('[data-ob-when]').forEach(field=>{
@@ -281,15 +314,28 @@ export function updateObstetricUi(form){
     if(rule.startsWith('week>=')){
       const cutoff = Number(rule.slice(6));
       // Unknown gestation should not silently hide clinically relevant questions.
-      visible = !Number.isFinite(weeks) || weeks >= cutoff;
+      visible = !Number.isFinite(weeks) || weeks >= cutoff || !!field.querySelector('input,select,textarea')?.value;
     } else {
       const parts = rule.split('=');
       visible = parts.length !== 2 || parts[1].split(',').includes(value(form,parts[0]));
     }
+    if(rule.startsWith('post_feeding_mode=') && birthOutcomeKnown && !feedingRelevant) visible = false;
     field.classList.toggle('hidden',!visible);
   });
+  // An explicit zero hides the empty repeater; previously recorded rows stay accessible.
+  const previous = form.querySelector('[data-ob-repeat="preg"]');
+  if(previous) previous.classList.toggle('hidden', value(form,'ob_previous_count') === '0' && !previous.querySelector('[data-ob-row]'));
   applyDerived(form);
   updateReview(form);
+  form.querySelectorAll('.anam-ob-section').forEach(section => {
+    const controls = [...section.querySelectorAll('input[name],select[name],textarea[name]')].filter(c => !c.readOnly && !c.closest('.hidden') && !c.name.endsWith('_section_notes'));
+    const answered = controls.filter(c => c.value && c.value !== 'not_asked').length;
+    const state = !answered ? 'Unanswered' : answered < controls.length ? 'Partially documented' : 'Documented';
+    section.dataset.obCompletion = state;
+    let status = section.querySelector(':scope > summary > small');
+    if(!status) { status = el('small','muted'); section.querySelector(':scope > summary').appendChild(status); }
+    status.textContent = ' — ' + local(state, !answered ? 'Nevyplnené' : answered < controls.length ? 'Čiastočne vyplnené' : 'Zdokumentované') + ' (' + answered + '/' + controls.length + ')';
+  });
 }
 export function applyObstetricLanguage(form){
   if(!form) return;
@@ -307,6 +353,8 @@ export function buildObstetricAnamnesisForm(form, buildIdentification, buildChie
   const switchGrid=el('div','anam-ob-pathway-choices');
   const select = el('select');
   select.name = 'ob_pathway';
+  select.dataset.obAriaEn = TEXT.pathway[0];
+  select.dataset.obAriaSk = TEXT.pathway[1];
   select.setAttribute('aria-label',local(TEXT.pathway[0],TEXT.pathway[1]));
   [['antenatal',...TEXT.antenatal],['postpartum',...TEXT.postpartum]].forEach(([key,en,sk])=>{
     const option=translated(el('option'),en,sk);
@@ -317,11 +365,17 @@ export function buildObstetricAnamnesisForm(form, buildIdentification, buildChie
   switcher.appendChild(switchGrid);
   form.appendChild(switcher);
   GROUPS.forEach(([scope,en,sk,fields])=> {
-    const repeatType = en.includes('Previous obstetric history') ? 'preg' : en.includes('Fetal assessment') ? 'fetus' : en.includes('Newborn history') ? 'baby' : null;
+    const repeatType = en.includes('Previous obstetric history') ? 'preg' : en.includes('Fetal assessment') ? 'fetus' : en.includes('Newborn history') ? 'baby' : en.includes('Antenatal investigations') ? 'test' : null;
     form.appendChild(makeSection(scope,en,sk,fields,repeatType));
   });
+  form.appendChild(makeSection('shared','19. Examination, results and clinical assessment','19. Vyšetrenie, výsledky a klinické hodnotenie',
+    'clinical_reported|Patient-reported additional information|Ďalšie informácie od pacientky|long;clinical_examination|Examination findings (only if performed)|Objektívny nález (iba ak vyšetrené)|long;clinical_results|Investigation results with date and source|Výsledky vyšetrení s dátumom a zdrojom|long;clinical_assessment|Clinician assessment and documented diagnoses|Klinické hodnotenie a dokumentované diagnózy|long;clinical_notes|Additional clinical notes|Ďalšie klinické poznámky|long'));
   const encounter = makeSection('shared','20. Dated clinical encounters','20. Dátované klinické kontakty','', 'visit');
   form.appendChild(encounter);
+  const definitions = translated(el('p','muted'),
+    'Gravidity counts pregnancies, including the current pregnancy. Parity counts pregnancies reaching the documented gestational threshold, not the number of babies. Record the convention used. Blank answers are not recorded, never negative. Newborn history supplements, and does not replace, the neonatal record.',
+    'Gravidita počíta gravidity vrátane terajšej. Parita počíta gravidity dosahujúce uvedenú gestačnú hranicu, nie počet detí. Uveďte použitú konvenciu. Prázdne odpovede sú nezaznamenané, nie negatívne. Anamnéza novorodenca nenahrádza jeho zdravotnú dokumentáciu.');
+  switcher.appendChild(definitions);
   const review = el('div','anam-ob-review-panel');
   translated(review.appendChild(el('h4')),TEXT.review[0],TEXT.review[1]);
   const reviewContent = el('div');
@@ -361,3 +415,12 @@ export function prepareObstetricFormForData(form, data, onChange){
   form.reset();
 }
 export const OBSTETRIC_FIELD_COUNT = GROUPS.reduce((sum,g)=>sum+parse(g[3]).length,0);
+
+// Only removed repeaters are pruned; unknown future-schema keys remain intact.
+export function mergeObstetricData(previous = {}, collected = {}) {
+  const result = {...(previous || {})};
+  for(const key of Object.keys(result)) {
+    if(/^ob_(preg|fetus|baby|visit|test)_\d+_/.test(key) && !(key in collected)) delete result[key];
+  }
+  return {...result, ...collected, ob_schema_version: '2'};
+}
