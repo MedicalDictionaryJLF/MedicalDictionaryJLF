@@ -54,7 +54,7 @@ import {
   formatClinicalCorrelationAnswer,
   searchClinicalCorrelations
 } from "./anatomy/clinical-correlation-search.js?v=1";
-import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage } from "./anamnesis/obstetric.js?v=1";
+import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage, mergeObstetricData } from "./anamnesis/obstetric.js?v=2";
 import {
   anatomyMuscleToLegacyRows,
   buildAnatomyStructureIndex,
@@ -11071,13 +11071,15 @@ function enhanceAnamnesisSections(form){
       return;
     }
     if(section.tagName === "DETAILS"){
-      section.open = true;
+      if(!section.classList.contains("anam-ob-section")) section.open = true;
       return;
     }
     const title = section.querySelector(":scope > h3");
     if(!title) return;
     const details = document.createElement("details");
     details.className = section.className;
+    for(const [key, val] of Object.entries(section.dataset)) details.dataset[key] = val;
+    details.id = section.id;
     details.open = true;
     const summary = document.createElement("summary");
     const strong = document.createElement("strong");
@@ -12037,6 +12039,13 @@ function getAnamnesisReportOptionLabel(control){
 
 function getAnamnesisReportContextLabel(control){
   if(!control) return "";
+  const obField = control.closest(".anam-ob-field");
+  if(obField){
+    const label = getAnamnesisReportTextWithoutControls(obField.querySelector(":scope > strong"));
+    const repeat = control.closest(".anam-ob-repeat-row");
+    const rowTitle = repeat ? getAnamnesisReportTextWithoutControls(repeat.querySelector(".anam-ob-repeat-heading > strong")) : "";
+    return rowTitle ? `${rowTitle} — ${label}` : label;
+  }
   const tableLabel = getAnamnesisReportTableLabel(control);
   if(tableLabel) return tableLabel;
 
@@ -12083,7 +12092,7 @@ function getAnamnesisReportControlValue(control){
 }
 
 function isAnamnesisReportControlEligible(control){
-  if(!control || !control.name || control.disabled || control.readOnly || control.type === "hidden") return false;
+  if(!control || !control.name || control.disabled || (control.readOnly && !control.closest("#anamnesis-obstetric-form")) || control.type === "hidden") return false;
   if(control.closest(".hidden, [hidden]")) return false;
   if(control.closest(".anam-psych-prompts")) return false;
   return true;
@@ -12192,7 +12201,10 @@ function buildStructuredAnamnesisReport(){
   ];
   if(admitted) lines.push(`${admittedLabel}: ${admitted}`);
   if(complaint) lines.push(`${chiefLabel}: ${complaint}`);
-  if(type === "obstetric") lines.push(`Pathway: ${getAnamnesisReportFormValue(form, "ob_pathway") === "postpartum" ? "Post-birth (Postpartum)" : "Pre-birth (Antenatal)"}`);
+  if(type === "obstetric") {
+    lines.push(`${document.documentElement.lang === "sk" ? "Stav pacientky" : "Patient status"}: ${getAnamnesisReportFormValue(form, "ob_pathway")}`);
+    lines.push(document.documentElement.lang === "sk" ? "Prázdne odpovede nie sú negatívne nálezy. Vyšetrenia a diagnózy sú zahrnuté len podľa dokumentácie." : "Unanswered questions are not negative findings. Examinations and diagnoses are included only as documented.");
+  }
 
   const sections = [...form.children].filter(el => el && el.classList && el.classList.contains("anam-section") && isAnamnesisSectionVisible(el));
   sections.slice(2).forEach(section => {
@@ -12997,7 +13009,7 @@ function saveAnamnesisForm(opts = {}){
       psychiatric: mergeSharedFieldsIntoData(existingBuckets.psychiatric, sharedFields),
       pediatrics: mergeSharedFieldsIntoData(existingBuckets.pediatrics, sharedFields),
       obstetric: mergeSharedFieldsIntoData(existingBuckets.obstetric, sharedFields),
-      [formType]: mergeSharedFieldsIntoData({ ...(existingBuckets[formType] || {}), ...collected }, sharedFields)
+      [formType]: mergeSharedFieldsIntoData(formType === "obstetric" ? mergeObstetricData(existingBuckets[formType], collected) : { ...(existingBuckets[formType] || {}), ...collected }, sharedFields)
     }
   });
 
