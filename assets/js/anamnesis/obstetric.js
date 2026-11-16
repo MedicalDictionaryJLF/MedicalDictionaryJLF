@@ -1,3 +1,4 @@
+import { WORKSHEET_GROUPS, WORKSHEET_CHECKLISTS, WORKSHEET_OPTIONS } from './worksheet-content.js';
 /*
  * Obstetric Anamnesis
  * Native, schema-driven addition to the existing Medical Dictionary workspace.
@@ -18,6 +19,7 @@ const TEXT = {
   notasked: ['Not asked', 'Nepýtané'],
   notapplicable: ['Not applicable', 'Nerelevantné']
 };
+TEXT.gynaecology = ['Gynaecology (general)', 'Gynekológia (všeobecná)'];
 const lang = () => document.documentElement.lang === 'sk' ? 1 : 0;
 function local(en, sk) { return lang() ? (sk || en) : en; }
 function translated(node, en, sk) {
@@ -31,7 +33,7 @@ function el(tag, className = '') {
   if(className) node.className = className;
   return node;
 }
-const yn = [['', 'Not recorded', 'Nezaznamenané'], ['yes', 'Yes', 'Áno'], ['no','No','Nie'], ['unknown','Unknown','Neznáme'], ['not_asked','Not asked','Nepýtané'], ['not_applicable','Not applicable','Nerelevantné']];
+const yn = [['', 'Not recorded', 'Nezaznamenané'], ['yes', 'Yes', 'Áno'], ['no','No','Nie'], ['unknown','Unknown','Neznáme'], ['not_asked','Not asked','Nepýtané'], ['not_applicable','Not applicable','Nerelevantné'], ['declined','Declined','Odmietnuté']];
 const optionSets = {
   conception: [['','—','—'],['spontaneous','Spontaneous','Spontánne'],['assisted','Assisted reproduction','Asistovaná reprodukcia'],['unknown','Unknown','Neznáme']],
   multiplicity: [['','—','—'],['singleton','Singleton','Jednoplodová'],['twins','Twins','Dvojčatá'],['higher','Higher-order multiple','Viacplodová'],['unknown','Unknown','Neznáme']],
@@ -40,6 +42,7 @@ const optionSets = {
   outcome: [['','—','—'],['live_birth','Live birth','Živonarodené dieťa'],['stillbirth','Stillbirth','Mŕtvonarodené dieťa'],['miscarriage','Miscarriage','Spontánny potrat'],['termination','Pregnancy termination','Umelé prerušenie tehotenstva'],['ectopic','Ectopic pregnancy','Mimomaternicová gravidita'],['neonatal_death','Neonatal death','Novorodenecké úmrtie'],['unknown','Unknown','Neznáme']],
   source: [['','—','—'],['lmp','Last menstrual period','Posledná menštruácia'],['ultrasound','Dating ultrasound','Datovací ultrazvuk'],['ivf','Assisted reproduction dating','Datovanie podľa asistovanej reprodukcie'],['clinical','Clinical documentation','Zdravotná dokumentácia'],['unknown','Unknown','Neznáme']]
 };
+for(const [key, options] of Object.entries(WORKSHEET_OPTIONS)) optionSets[key] = [['','Not recorded','Nezaznamenané'], ...options.split('|').map(row=>row.split(':'))];
 // Field rows: stable key | English label | Slovak label | control kind | optional condition
 const GROUPS = [
  ['shared','3. Presenting illness','3. Terajšie ochorenie',
@@ -94,6 +97,7 @@ const EXTRA = {
  post_pph: 'post_hypertension_details|Blood pressure, symptoms, results, treatment and follow-up|Tlak, príznaky, výsledky, liečba a kontroly|long|post_hypertension=yes'
 };
 optionSets.urgency = [['','Not recorded','Nezaznamenané'],['planned','Planned','Plánovaný'],['emergency','Emergency','Urgentný'],['unknown','Unknown','Neznáme']];
+GROUPS.push(...WORKSHEET_GROUPS);
 GROUPS.forEach(group => {
   const firstKey = group[3].split('|')[0];
   if(EXTRA[firstKey]) group[3] += ';' + EXTRA[firstKey];
@@ -105,6 +109,9 @@ GROUPS.forEach(group => {
 GROUPS.push(['antenatal','15. Documented pregnancy risk factors','15. Dokumentované rizikové faktory gravidity',
  'risk_caesarean|Previous Caesarean delivery|Predchádzajúci cisársky rez|yn;risk_preterm|Previous preterm birth|Predchádzajúci predčasný pôrod|yn;risk_preeclampsia|Previous pre-eclampsia|Predchádzajúca preeklampsia|yn;risk_pph|Previous postpartum haemorrhage|Predchádzajúce popôrodné krvácanie|yn;risk_multiple|Multiple pregnancy|Viacplodová gravidita|yn;risk_placenta|Placental abnormality|Abnormalita placenty|yn;risk_chronic|Maternal chronic disease|Chronické ochorenie matky|yn;risk_fetal|Known fetal complications|Známe komplikácie plodu|yn;risk_trauma|Previous obstetric trauma|Predchádzajúca pôrodnícka trauma|yn;risk_anaesthetic|Previous anaesthetic complications|Predchádzajúce komplikácie anestézie|yn;risk_notes|Documented details and follow-up (no automatic risk classification)|Dokumentované podrobnosti a kontroly (bez automatickej klasifikácie rizika)|long']);
 const REPEAT = {
+ med: {title:['Medication','Liek'], fields:'name|Medication / hormonal agent / supplement|Liek / hormonálny prípravok / doplnok|text;dose|Dose and units|Dávka a jednotky|text;frequency|Frequency|Frekvencia|text;indication|Indication|Indikácia|text'},
+ allergy: {title:['Allergy','Alergia'], fields:'allergen|Allergen|Alergén|text;reaction|Reaction / severity|Reakcia / závažnosť|text;treatment|Treatment required|Potrebná liečba|text'},
+ procedure: {title:['Procedure or hospitalisation','Výkon alebo hospitalizácia'], fields:'date|Date / year|Dátum / rok|text;indication|Procedure / admission and indication|Výkon / hospitalizácia a indikácia|text;outcome|Outcome / complications / specialist follow-up|Výsledok / komplikácie / odborné kontroly|long'},
  test: {title:['Investigation','Vyšetrenie'], fields:'name|Investigation name|Názov vyšetrenia|text;date|Date|Dátum|date;result|Result|Výsledok|text;units|Units|Jednotky|text;reference|Reference information|Referenčné informácie|text;followup|Follow-up|Kontroly|long'},
  preg: {title:['Previous pregnancy','Predchádzajúca gravidita'], fields: 'year|Year|Rok|number;weeks|Gestational age at outcome|Gestačný vek pri ukončení|text;outcome|Pregnancy outcome|Výsledok gravidity|outcome;mode|Delivery method|Spôsob pôrodu|delivery;weight|Birth weight (g), if known|Pôrodná hmotnosť (g), ak známa|number;maternal|Maternal complications|Komplikácie u matky|long;baby|Neonatal outcome and complications|Stav dieťaťa a komplikácie|long'},
  fetus: {title:['Fetus','Plod'], fields: 'identifier|Fetus identifier|Označenie plodu|text;growth|Growth and measurements|Rast a biometria|text;presentation|Presentation|Poloha a naliehanie|text;ultrasound|Ultrasound findings|Ultrazvukové nálezy|long;concerns|Known complications|Známe komplikácie|long'},
@@ -140,9 +147,12 @@ function makeField(def, override = '') {
     });
   } else {
     control = el('input');
-    control.type = def.type === 'readonly' ? 'text' : def.type;
+    control.type = def.type === 'readonly' ? 'text' : def.type === 'decimal' ? 'number' : def.type;
     if(def.type === 'readonly') control.readOnly = true;
     if(def.type === 'number') { control.min = '0'; control.step = '1'; }
+    if(def.type === 'decimal') { control.min = '0'; control.step = 'any'; }
+    if(def.key === 'ws_pain_vas') control.max = '10';
+    if(def.key === 'ws_spo2') control.max = '100';
     if(def.key === 'antenatal_ga_days') control.max = '6';
     control.placeholder = local(def.en,def.sk);
     control.dataset.obPlaceholderEn = def.en;
@@ -153,8 +163,57 @@ function makeField(def, override = '') {
   control.dataset.obAriaEn = def.en;
   control.dataset.obAriaSk = def.sk;
   host.appendChild(control);
+  if(control.tagName === 'SELECT') checkboxChoices(control);
   if(def.when) host.dataset.obWhen = def.when;
   return host;
+}
+// The select remains the single canonical value for legacy save/restore and conditions.
+// Visible checkbox choices are mutually exclusive and have no duplicate storage keys.
+function checkboxChoices(control) {
+  control.classList.add('anam-ob-canonical');
+  control.tabIndex = -1;
+  control.setAttribute('aria-hidden','true');
+  const choices = el('div','anam-row anam-ob-checkbox-choices');
+  choices.setAttribute('role','group');
+  choices.dataset.obChoiceFor = control.name;
+  choices.setAttribute('aria-label', control.getAttribute('aria-label') || '');
+  for(const option of control.options) {
+    if(!option.value) continue;
+    const label = el('label');
+    const box = el('input'); box.type = 'checkbox';
+    box.dataset.obChoice = option.value;
+    const caption = translated(el('span'), option.dataset.obEn, option.dataset.obSk);
+    label.append(box, caption); choices.appendChild(label);
+    box.addEventListener('input', event => {
+      event.stopPropagation();
+      control.value = box.checked ? option.value : '';
+      syncChoices(control.form);
+      control.dispatchEvent(new control.ownerDocument.defaultView.Event('change',{bubbles:true}));
+    });
+    box.addEventListener('change', event => event.stopPropagation());
+  }
+  control.after(choices);
+}
+function syncChoices(form) {
+  if(!form) return;
+  form.querySelectorAll('[data-ob-choice-for]').forEach(group => {
+    const control = form.elements.namedItem(group.dataset.obChoiceFor);
+    group.setAttribute('aria-label',control.getAttribute('aria-label') || '');
+    group.querySelectorAll('[data-ob-choice]').forEach(box => box.checked = box.dataset.obChoice === control.value);
+  });
+}
+function makeChecklist([id,en,sk,options]) {
+  const section = makeSection('shared',en,sk,'');
+  const grid = section.querySelector('.anam-ob-grid');
+  const row = el('div','anam-row anam-ob-checkbox-choices');
+  options.split('|').forEach(option => {
+    const [key,en,sk] = option.split(':');
+    const label = el('label'); const input = el('input'); input.type='checkbox';
+    input.name = 'ob_ws_' + id + '_' + key;
+    label.append(input,translated(el('span'),en,sk)); row.appendChild(label);
+  });
+  grid.append(row,makeField({key:'ws_'+id+'_notes',en:'Details / explicit negatives / not assessed',sk:'Podrobnosti / výslovné negatívne nálezy / nehodnotené',type:'long'}));
+  return section;
 }
 function makeSection(scope,en,sk,defs,repeatType) {
   const section = el('details','anam-section anam-ob-section');
@@ -243,6 +302,8 @@ function applyDerived(form){
   if(interval) interval.value = delivery !== null && delivery >= 0 ? delivery + local(' days',' dní') : '';
 }
 const redFlags = [
+  ['ws_seizure','Seizure reported','Hlásený záchvat','antenatal'],
+  ['ws_post_headache','Postpartum hypertensive warning symptoms','Popôrodné hypertenzné varovné príznaky','postpartum'],
   ['antenatal_bleeding','Vaginal bleeding','Vaginálne krvácanie'],
   ['antenatal_movements_change','Changed fetal movements','Zmena pohybov plodu'],
   ['antenatal_membranes','Possible rupture of membranes','Možný odtok plodovej vody'],
@@ -264,11 +325,11 @@ function updateReview(form){
   const view = form.querySelector('[data-ob-review]');
   if(!view) return;
   const pathway = value(form,'pathway') || 'antenatal';
-  const required = pathway === 'antenatal'
+  const required = pathway === 'gynaecology' ? ['ws_lmp','ws_exam_consent','ws_plan'] : pathway === 'antenatal'
     ? ['antenatal_lmp','antenatal_dating_source','antenatal_ga_weeks','antenatal_multiplicity','antenatal_movements_change','antenatal_bleeding','antenatal_membranes']
     : ['post_delivery_date','post_delivery_mode','post_outcome','post_bleeding_heavy','post_fever','post_feeding_mode','post_mood'];
   const missing = required.filter(k=> { const field = form.elements.namedItem('ob_' + k); return field && !field.closest('.hidden') && (!value(form,k) || value(form,k) === 'not_asked'); });
-  const concerns = redFlags.filter(([key]) => value(form,key)==='yes' && ((pathway==='antenatal') === key.startsWith('antenatal')));
+  const concerns = redFlags.filter(([key,en,sk,scope]) => value(form,key)==='yes' && (scope ? scope===pathway : pathway==='antenatal' ? key.startsWith('antenatal') : pathway==='postpartum' ? key.startsWith('post_') : false));
   view.textContent = '';
   const description = translated(el('p','muted'), 'Education only. The form does not diagnose patients.', 'Iba na výučbu. Formulár nestanovuje diagnózu.');
   view.appendChild(description);
@@ -284,7 +345,8 @@ function updateReview(form){
 }
 export function updateObstetricUi(form){
   if(!form || form.dataset.ready !== '1') return;
-  const pathway = value(form,'pathway') === 'postpartum' ? 'postpartum' : 'antenatal';
+  const pathway = ['postpartum','gynaecology'].includes(value(form,'pathway')) ? value(form,'pathway') : 'antenatal';
+  syncChoices(form);
   let weeks = Number(value(form,'antenatal_ga_weeks'));
   if(!value(form,'antenatal_ga_weeks')) {
     const accepted = daysSince(value(form,'antenatal_edd_clinical'));
@@ -329,7 +391,7 @@ export function updateObstetricUi(form){
   updateReview(form);
   form.querySelectorAll('.anam-ob-section').forEach(section => {
     const controls = [...section.querySelectorAll('input[name],select[name],textarea[name]')].filter(c => !c.readOnly && !c.closest('.hidden') && !c.name.endsWith('_section_notes'));
-    const answered = controls.filter(c => c.value && c.value !== 'not_asked').length;
+    const answered = controls.filter(c => c.type === 'checkbox' ? c.checked : c.value && c.value !== 'not_asked').length;
     const state = !answered ? 'Unanswered' : answered < controls.length ? 'Partially documented' : 'Documented';
     section.dataset.obCompletion = state;
     let status = section.querySelector(':scope > summary > small');
@@ -342,6 +404,7 @@ export function applyObstetricLanguage(form){
   form.querySelectorAll('[data-ob-en]').forEach(node=>node.textContent=local(node.dataset.obEn,node.dataset.obSk));
   form.querySelectorAll('[data-ob-placeholder-en]').forEach(node=>node.placeholder=local(node.dataset.obPlaceholderEn,node.dataset.obPlaceholderSk));
   form.querySelectorAll('[data-ob-aria-en]').forEach(node=>node.setAttribute('aria-label',local(node.dataset.obAriaEn,node.dataset.obAriaSk)));
+  syncChoices(form);
 }
 export function buildObstetricAnamnesisForm(form, buildIdentification, buildChief, notify){
   if(!form || form.dataset.ready==='1') return;
@@ -356,18 +419,25 @@ export function buildObstetricAnamnesisForm(form, buildIdentification, buildChie
   select.dataset.obAriaEn = TEXT.pathway[0];
   select.dataset.obAriaSk = TEXT.pathway[1];
   select.setAttribute('aria-label',local(TEXT.pathway[0],TEXT.pathway[1]));
-  [['antenatal',...TEXT.antenatal],['postpartum',...TEXT.postpartum]].forEach(([key,en,sk])=>{
+  [['gynaecology',...TEXT.gynaecology],['antenatal',...TEXT.antenatal],['postpartum',...TEXT.postpartum]].forEach(([key,en,sk])=>{
     const option=translated(el('option'),en,sk);
     option.value=key;
     select.appendChild(option);
   });
+  select.value = 'antenatal';
+  select.querySelector('[value=antenatal]').defaultSelected = true;
   switchGrid.appendChild(select);
+  checkboxChoices(select);
   switcher.appendChild(switchGrid);
   form.appendChild(switcher);
   GROUPS.forEach(([scope,en,sk,fields])=> {
     const repeatType = en.includes('Previous obstetric history') ? 'preg' : en.includes('Fetal assessment') ? 'fetus' : en.includes('Newborn history') ? 'baby' : en.includes('Antenatal investigations') ? 'test' : null;
     form.appendChild(makeSection(scope,en,sk,fields,repeatType));
   });
+  for(const [type,en,sk] of [['med','Structured medication history','Štruktúrovaná lieková anamnéza'],['allergy','Structured allergy history','Štruktúrovaná alergologická anamnéza'],['procedure','Procedures and hospitalisations','Výkony a hospitalizácie']]) {
+    form.appendChild(makeSection('shared',en,sk,'',type));
+  }
+  WORKSHEET_CHECKLISTS.forEach(def=>form.appendChild(makeChecklist(def)));
   form.appendChild(makeSection('shared','19. Examination, results and clinical assessment','19. Vyšetrenie, výsledky a klinické hodnotenie',
     'clinical_reported|Patient-reported additional information|Ďalšie informácie od pacientky|long;clinical_examination|Examination findings (only if performed)|Objektívny nález (iba ak vyšetrené)|long;clinical_results|Investigation results with date and source|Výsledky vyšetrení s dátumom a zdrojom|long;clinical_assessment|Clinician assessment and documented diagnoses|Klinické hodnotenie a dokumentované diagnózy|long;clinical_notes|Additional clinical notes|Ďalšie klinické poznámky|long'));
   const encounter = makeSection('shared','20. Dated clinical encounters','20. Dátované klinické kontakty','', 'visit');
@@ -420,7 +490,7 @@ export const OBSTETRIC_FIELD_COUNT = GROUPS.reduce((sum,g)=>sum+parse(g[3]).leng
 export function mergeObstetricData(previous = {}, collected = {}) {
   const result = {...(previous || {})};
   for(const key of Object.keys(result)) {
-    if(/^ob_(preg|fetus|baby|visit|test)_\d+_/.test(key) && !(key in collected)) delete result[key];
+    if(/^ob_(preg|fetus|baby|visit|test|med|allergy|procedure)_\d+_/.test(key) && !(key in collected)) delete result[key];
   }
-  return {...result, ...collected, ob_schema_version: '2'};
+  return {...result, ...collected, ob_schema_version: '3'};
 }
