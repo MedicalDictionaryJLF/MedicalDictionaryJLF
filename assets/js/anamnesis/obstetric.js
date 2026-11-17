@@ -1,3 +1,4 @@
+import { organizeClinicalWorksheet } from './clinical-layout.js';
 import { WORKSHEET_GROUPS, WORKSHEET_CHECKLISTS, WORKSHEET_OPTIONS } from './worksheet-content.js';
 /*
  * Obstetric Anamnesis
@@ -129,8 +130,12 @@ function value(form, name) {
   return item && 'value' in item ? String(item.value || '') : '';
 }
 function makeField(def, override = '') {
-  const host = el('div', 'anam-ob-field');
-  const strong = translated(el('strong'), def.en, def.sk);
+  const host = el('div', 'anam-row anam-ob-field');
+  host.dataset.obField = def.key;
+  host.dataset.obHelpEn = 'Ask about ' + def.en.toLowerCase() + '. Record the answer and relevant timing or details; do not assume a negative answer.';
+  host.dataset.obHelpSk = 'Opýtajte sa na: ' + def.sk + '. Zaznamenajte odpoveď, čas a relevantné podrobnosti; nepredpokladajte negatívnu odpoveď.';
+  const strong = translated(el('span'), def.en, def.sk);
+  strong.classList.add('anam-ob-label');
   host.appendChild(strong);
   const name = override || 'ob_' + def.key;
   let control;
@@ -173,7 +178,7 @@ function checkboxChoices(control) {
   control.classList.add('anam-ob-canonical');
   control.tabIndex = -1;
   control.setAttribute('aria-hidden','true');
-  const choices = el('div','anam-row anam-ob-checkbox-choices');
+  const choices = el('div','anam-ob-checkbox-choices');
   choices.setAttribute('role','group');
   choices.dataset.obChoiceFor = control.name;
   choices.setAttribute('aria-label', control.getAttribute('aria-label') || '');
@@ -220,7 +225,7 @@ function makeSection(scope,en,sk,defs,repeatType) {
   section.open = false;
   section.dataset.obScope = scope;
   translated(section.appendChild(el('summary')).appendChild(el('strong')),en,sk);
-  const grid = el('div','anam-grid anam-ob-grid');
+  const grid = el('div','anam-ob-grid');
   parse(defs).forEach(def => grid.appendChild(makeField(def)));
   section.appendChild(grid);
   if(repeatType) {
@@ -261,7 +266,7 @@ function addRow(form, type, index, onChange) {
   });
   header.appendChild(remove);
   item.appendChild(header);
-  const grid = el('div','anam-grid anam-ob-grid');
+  const grid = el('div','anam-ob-repeat-fields');
   parse(REPEAT[type].fields).forEach(def => grid.appendChild(makeField(def,'ob_' + type + '_' + index + '_' + def.key)));
   item.appendChild(grid);
   target.appendChild(item);
@@ -387,6 +392,12 @@ export function updateObstetricUi(form){
   // An explicit zero hides the empty repeater; previously recorded rows stay accessible.
   const previous = form.querySelector('[data-ob-repeat="preg"]');
   if(previous) previous.classList.toggle('hidden', value(form,'ob_previous_count') === '0' && !previous.querySelector('[data-ob-row]'));
+  let sectionNumber=3;
+  form.querySelectorAll(':scope > .anam-ob-section').forEach(section=>{
+    if(section.classList.contains('hidden')) return;
+    const title=section.querySelector(':scope > summary > strong');
+    if(title) title.textContent=sectionNumber++ + '. ' + local(title.dataset.obEn,title.dataset.obSk);
+  });
   applyDerived(form);
   updateReview(form);
   form.querySelectorAll('.anam-ob-section').forEach(section => {
@@ -394,17 +405,19 @@ export function updateObstetricUi(form){
     const answered = controls.filter(c => c.type === 'checkbox' ? c.checked : c.value && c.value !== 'not_asked').length;
     const state = !answered ? 'Unanswered' : answered < controls.length ? 'Partially documented' : 'Documented';
     section.dataset.obCompletion = state;
-    let status = section.querySelector(':scope > summary > small');
-    if(!status) { status = el('small','muted'); section.querySelector(':scope > summary').appendChild(status); }
-    status.textContent = ' — ' + local(state, !answered ? 'Nevyplnené' : answered < controls.length ? 'Čiastočne vyplnené' : 'Zdokumentované') + ' (' + answered + '/' + controls.length + ')';
+    section.querySelector(':scope > summary')?.setAttribute('aria-description', local(state, !answered ? 'Nevyplnené' : answered < controls.length ? 'Čiastočne vyplnené' : 'Zdokumentované'));
   });
 }
 export function applyObstetricLanguage(form){
   if(!form) return;
-  form.querySelectorAll('[data-ob-en]').forEach(node=>node.textContent=local(node.dataset.obEn,node.dataset.obSk));
+  form.querySelectorAll('[data-ob-en]').forEach(node=>{
+    const buttons=[...node.children].filter(child=>child.classList.contains('anam-question-help-button'));
+    node.replaceChildren(document.createTextNode(local(node.dataset.obEn,node.dataset.obSk)),...buttons);
+  });
   form.querySelectorAll('[data-ob-placeholder-en]').forEach(node=>node.placeholder=local(node.dataset.obPlaceholderEn,node.dataset.obPlaceholderSk));
   form.querySelectorAll('[data-ob-aria-en]').forEach(node=>node.setAttribute('aria-label',local(node.dataset.obAriaEn,node.dataset.obAriaSk)));
   syncChoices(form);
+  updateObstetricUi(form);
 }
 export function buildObstetricAnamnesisForm(form, buildIdentification, buildChief, notify){
   if(!form || form.dataset.ready==='1') return;
@@ -442,6 +455,7 @@ export function buildObstetricAnamnesisForm(form, buildIdentification, buildChie
     'clinical_reported|Patient-reported additional information|Ďalšie informácie od pacientky|long;clinical_examination|Examination findings (only if performed)|Objektívny nález (iba ak vyšetrené)|long;clinical_results|Investigation results with date and source|Výsledky vyšetrení s dátumom a zdrojom|long;clinical_assessment|Clinician assessment and documented diagnoses|Klinické hodnotenie a dokumentované diagnózy|long;clinical_notes|Additional clinical notes|Ďalšie klinické poznámky|long'));
   const encounter = makeSection('shared','20. Dated clinical encounters','20. Dátované klinické kontakty','', 'visit');
   form.appendChild(encounter);
+  organizeClinicalWorksheet(form,{el,translated,makeSection,makeField});
   const definitions = translated(el('p','muted'),
     'Gravidity counts pregnancies, including the current pregnancy. Parity counts pregnancies reaching the documented gestational threshold, not the number of babies. Record the convention used. Blank answers are not recorded, never negative. Newborn history supplements, and does not replace, the neonatal record.',
     'Gravidita počíta gravidity vrátane terajšej. Parita počíta gravidity dosahujúce uvedenú gestačnú hranicu, nie počet detí. Uveďte použitú konvenciu. Prázdne odpovede sú nezaznamenané, nie negatívne. Anamnéza novorodenca nenahrádza jeho zdravotnú dokumentáciu.');
@@ -483,6 +497,11 @@ export function prepareObstetricFormForData(form, data, onChange){
     rowIndices(data,type).forEach(index=>addRow(form,type,index,onChange));
   });
   form.reset();
+}
+export function revealRecordedObstetricDetails(form) {
+  form?.querySelectorAll('.anam-ob-additional').forEach(details=>{
+    details.open=[...details.querySelectorAll('[name]')].some(c=>c.type==='checkbox'?c.checked:!!c.value);
+  });
 }
 export const OBSTETRIC_FIELD_COUNT = GROUPS.reduce((sum,g)=>sum+parse(g[3]).length,0);
 

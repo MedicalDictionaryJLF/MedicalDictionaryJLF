@@ -54,7 +54,7 @@ import {
   formatClinicalCorrelationAnswer,
   searchClinicalCorrelations
 } from "./anatomy/clinical-correlation-search.js?v=1";
-import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage, mergeObstetricData } from "./anamnesis/obstetric.js?v=3";
+import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage, mergeObstetricData, revealRecordedObstetricDetails } from "./anamnesis/obstetric.js?v=4";
 import {
   anatomyMuscleToLegacyRows,
   buildAnatomyStructureIndex,
@@ -2647,6 +2647,10 @@ function isClinicalAnamnesisQuestionTarget(target){
 }
 
 function getExplicitAnamnesisQuestionPrompt(target, explicitLabel = ""){
+  const obPrompt = target?.closest?.('[data-ob-help-en]');
+  if(obPrompt){
+    return { en: obPrompt.dataset.obHelpEn, sk: obPrompt.dataset.obHelpSk, kind: 'history', followupsEn: [], followupsSk: [], positiveEn: [], positiveSk: [] };
+  }
   const keys = [];
   if(target && target.name) keys.push(normalizeAnamnesisQuestionKey(target.name));
   if(target && target.dataset && target.dataset.anamQuestionKey) keys.push(normalizeAnamnesisQuestionKey(target.dataset.anamQuestionKey));
@@ -2918,6 +2922,7 @@ function toggleAnamnesisQuestionPopover(button, anchor, prompt){
 
 function isAnamnesisQuestionHelpRelevant(target, explicitLabel = ""){
   if(!target) return false;
+  if(target.classList?.contains('anam-ob-label') && target.closest('.anam-ob-brief, .anam-ob-notes')) return false;
   const name = String(target.name || "").trim().toLowerCase();
   const placeholder = cleanAnamnesisQuestionLabelText(target.getAttribute && target.getAttribute("placeholder") || "").toLowerCase();
   const labelText = cleanAnamnesisQuestionLabelText(explicitLabel || target.textContent || "").toLowerCase();
@@ -2984,7 +2989,9 @@ function decorateAnamnesisQuestionControl(control){
     delete control.dataset.anamQuestionReady;
     if(label) delete label.dataset.anamQuestionReady;
   }
-  if(control.type === "hidden" || control.closest(".anam-question-popover")) return;
+  if(control.type === "hidden" || control.classList.contains("anam-ob-canonical") || control.closest(".anam-question-popover")) return;
+  const obRow=control.closest('.anam-ob-field');
+  if(obRow && !obRow.classList.contains('anam-ob-brief') && obRow.querySelector(':scope > .anam-ob-label .anam-question-help-button, :scope > span .anam-question-help-button')) return;
   if(control.closest(".anam-repeater-head")) return;
 
   const psychField = control.closest(".anam-psych-field");
@@ -12041,7 +12048,7 @@ function getAnamnesisReportContextLabel(control){
   if(!control) return "";
   const obField = control.closest(".anam-ob-field");
   if(obField){
-    const label = getAnamnesisReportTextWithoutControls(obField.querySelector(":scope > strong"));
+    const label = getAnamnesisReportTextWithoutControls(obField.querySelector(":scope > .anam-ob-label, :scope > strong, :scope > span"));
     const repeat = control.closest(".anam-ob-repeat-row");
     const rowTitle = repeat ? getAnamnesisReportTextWithoutControls(repeat.querySelector(".anam-ob-repeat-heading > strong")) : "";
     return rowTitle ? `${rowTitle} — ${label}` : label;
@@ -12794,6 +12801,7 @@ async function loadObstetricAnamnesisForm(data = null){
   });
   if(data && typeof data === "object") applyAnamnesisData(form, data);
   updateObstetricUi(form);
+  revealRecordedObstetricDetails(form);
   syncAgeFromDob(form);
   enhanceAnamnesisSections(form);
   applyObstetricLanguage(form);
