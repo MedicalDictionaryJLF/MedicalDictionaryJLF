@@ -54,7 +54,7 @@ import {
   formatClinicalCorrelationAnswer,
   searchClinicalCorrelations
 } from "./anatomy/clinical-correlation-search.js?v=1";
-import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage, mergeObstetricData } from "./anamnesis/obstetric.js?v=2";
+import { buildObstetricAnamnesisForm, prepareObstetricFormForData, updateObstetricUi, applyObstetricLanguage, mergeObstetricData } from "./anamnesis/obstetric.js?v=3";
 import {
   anatomyMuscleToLegacyRows,
   buildAnatomyStructureIndex,
