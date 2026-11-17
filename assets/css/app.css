@@ -12845,12 +12845,7 @@ input[name="vital_bmi"][readonly]{
   border-radius: 14px; background: var(--card-bg, transparent);
 }
 #anamnesis-obstetric-form .anam-ob-pathway select { width: 100%; max-width: 540px; }
-#anamnesis-obstetric-form .anam-ob-field { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
-#anamnesis-obstetric-form .anam-ob-field strong { font-size: .91em; font-weight: 600; }
-#anamnesis-obstetric-form .anam-ob-field input,
-#anamnesis-obstetric-form .anam-ob-field textarea,
-#anamnesis-obstetric-form .anam-ob-field select { width: 100%; min-width: 0; box-sizing: border-box; }
-#anamnesis-obstetric-form .anam-ob-field textarea { min-height: 68px; resize: vertical; }
+#anamnesis-obstetric-form .anam-ob-field { min-width: 0; margin: 8px 0; }
 #anamnesis-obstetric-form .anam-ob-field input[readonly] { opacity: .78; }
 #anamnesis-obstetric-form .anam-ob-repeat { margin: 14px 0; }
 #anamnesis-obstetric-form .anam-ob-repeat-rows { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
@@ -12879,3 +12874,27 @@ input[name="vital_bmi"][readonly]{
 #anamnesis-obstetric-form .anam-ob-checkbox-choices { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 #anamnesis-obstetric-form .anam-ob-checkbox-choices label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
 #anamnesis-obstetric-form .anam-ob-checkbox-choices input[type="checkbox"] { width: auto; min-width: 0; flex: 0 0 auto; }
+
+/* Gyn/Ob uses the Internal/Surgery clinical rows; only layout-specific exceptions. */
+#anamnesis-obstetric-form .anam-ob-field > .anam-ob-checkbox-choices { flex: 1 1 480px; min-width: 0; }
+#anamnesis-obstetric-form .anam-ob-field > .anam-question-control-wrap { flex: 1 1 320px; width: auto; min-width: 0; }
+#anamnesis-obstetric-form .anam-ob-field > input:not([type=checkbox]):not([type=radio]),
+#anamnesis-obstetric-form .anam-ob-field > textarea { flex: 1 1 320px; min-width: 0; }
+#anamnesis-obstetric-form .anam-ob-brief { display: block; margin: 0; }
+#anamnesis-obstetric-form .anam-ob-brief > .anam-ob-label,
+#anamnesis-obstetric-form .anam-ob-notes > .anam-ob-label {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);
+}
+#anamnesis-obstetric-form .anam-ob-brief input,
+#anamnesis-obstetric-form .anam-ob-notes textarea { width: 100%; box-sizing: border-box; }
+#anamnesis-obstetric-form .anam-ob-notes textarea { min-height: 90px; }
+#anamnesis-obstetric-form .anam-ob-additional { margin-top: 12px; }
+#anamnesis-obstetric-form .anam-ob-additional > summary { font-size: .9em; color: var(--muted); cursor: pointer; }
+#anamnesis-obstetric-form .anam-ob-system-row { margin-top: 12px; }
+#anamnesis-obstetric-form .anam-ob-canonical { min-width: 0 !important; max-width: 1px !important; }
+#anamnesis-obstetric-form .anam-ob-field .anam-ob-checkbox-choices label { width: auto; }
+@media (max-width: 680px) {
+  #screen-anamnesis #anamnesis-obstetric-form .anam-grid { grid-template-columns: minmax(0, 1fr); }
+  #screen-anamnesis #anamnesis-obstetric-form .anam-row > .anam-ob-label { flex-basis: 100%; }
+  #anamnesis-obstetric-form .anam-ob-field > .anam-ob-checkbox-choices { flex-basis: 100%; }
+}
