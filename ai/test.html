@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Medical Dictionary AI Test</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f4f6f9;
+            color: #202938;
+        }
+
+        section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        button, select, textarea {
+            font: inherit;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 5px 0;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        textarea, select, progress {
+            width: 100%;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #f4f6f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Medical Dictionary AI</h1>
+<p>Local AI integration test</p>
+
+<section>
+    <h2>1. Initialize AI</h2>
+
+    <p>
+        The model runs locally on your device.
+        No API key, payment or account is required.
+        The first download may be large.
+    </p>
+
+    <select id="model"></select>
+
+    <button id="load" disabled>
+        Download and initialize AI
+    </button>
+
+    <progress id="progress" value="0" max="100">
+    </progress>
+
+    <p id="status">Checking compatibility...</p>
+</section>
+
+<section>
+    <h2>2. Test AI</h2>
+
+    <textarea id="question" rows="4"
+        placeholder="Enter your medical question..."
+    ></textarea>
+
+    <button id="send" disabled>
+        Generate response
+    </button>
+
+    <button id="reset" disabled>
+        Clear conversation
+    </button>
+
+    <h3>AI response</h3>
+    <pre id="answer">AI not initialized.</pre>
+
+    <h3>Performance</h3>
+    <pre id="performance">No data yet.</pre>
+</section>
+
+<section>
+    <h2>3. Diagnostics</h2>
+    <pre id="diagnostics"></pre>
+</section>
+
+<script type="module">
+    const $ = id => document.getElementById(id);
+
+    let engine = null;
+    let messages = [];
+
+    const systemPrompt = {
+        role: "system",
+        content:
+            "You are an educational medical assistant. " +
+            "Answer clearly and accurately. " +
+            "Do not invent clinical information. " +
+            "State uncertainty when appropriate."
+    };
+
+    messages = [systemPrompt];
+
+    async function initializePage() {
+        try {
+            $("diagnostics").textContent =
+                JSON.stringify({
+                    secureContext: window.isSecureContext,
+                    webGPU: !!navigator.gpu,
+                    cpuThreads: navigator.hardwareConcurrency,
+                    inference: "Local only",
+                    apiKey: "Not required"
+                }, null, 2);
+
+            if (!navigator.gpu) {
+                throw new Error("WebGPU unavailable");
+            }
+
+            const adapter =
+                await navigator.gpu.requestAdapter();
+
+            if (!adapter) {
+                throw new Error("No compatible GPU");
+            }
+
+            $("status").textContent =
+                "Loading WebLLM library...";
+
+            const webllm = await import(
+                "https://esm.run/@mlc-ai/web-llm@0.2.89"
+            );
+
+            const models =
+                webllm.prebuiltAppConfig.model_list;
+
+            const preferred = models.filter(model =>
+                /Qwen2\.5-(0\.5B|1\.5B|3B)-Instruct/
+                    .test(model.model_id) &&
+                model.model_id.includes("q4f16_1")
+            );
+
+            const available =
+                preferred.length ? preferred : models;
+
+            for (const model of available) {
+                const option =
+                    document.createElement("option");
+
+                option.value = model.model_id;
+                option.textContent = model.model_id;
+
+                $("model").appendChild(option);
+            }
+
+            const recommended =
+                "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
+
+            if (available.some(
+                model => model.model_id === recommended
+            )) {
+                $("model").value = recommended;
+            }
+
+            $("status").textContent =
+                "Compatible device. Ready to load AI.";
+
+            $("load").disabled = false;
+
+            $("load").onclick = async () => {
+                $("load").disabled = true;
+                $("model").disabled = true;
+
+                try {
+                    engine = await webllm.CreateMLCEngine(
+                        $("model").value,
+                        {
+                            initProgressCallback: report => {
+                                $("progress").value =
+                                    report.progress * 100;
+
+                                $("status").textContent =
+                                    report.text;
+                            }
+                        }
+                    );
+
+                    $("progress").value = 100;
+                    $("status").textContent =
+                        "AI READY — Running locally";
+
+                    $("send").disabled = false;
+                    $("reset").disabled = false;
+                    $("answer").textContent =
+                        "Enter a question to begin.";
+
+                } catch (error) {
+                    $("status").textContent =
+                        "Initialization failed: " +
+                        error.message;
+
+                    $("load").disabled = false;
+                    $("model").disabled = false;
+                    console.error(error);
+                }
+            };
+
+        } catch (error) {
+            $("status").textContent =
+                "Error: " + error.message;
+
+            console.error(error);
+        }
+    }
+
+    $("send").onclick = async () => {
+        const question = $("question").value.trim();
+
+        if (!question || !engine) return;
+
+        $("send").disabled = true;
+        $("reset").disabled = true;
+        $("answer").textContent = "Thinking...";
+
+        const start = performance.now();
+
+        try {
+            const request = [
+                ...messages,
+                {
+                    role: "user",
+                    content: question
+                }
+            ];
+
+            const response =
+                await engine.chat.completions.create({
+                    messages: request,
+                    temperature: 0.2,
+                    max_tokens: 256
+                });
+
+            const answer =
+                response.choices[0].message.content;
+
+            const elapsed =
+                (performance.now() - start) / 1000;
+
+            $("answer").textContent = answer;
+
+            messages = [
+                ...request,
+                {
+                    role: "assistant",
+                    content: answer
+                }
+            ];
+
+            $("performance").textContent =
+                JSON.stringify({
+                    seconds: elapsed.toFixed(2),
+                    usage: response.usage,
+                    inference: "Local",
+                    API_charges: "0 EUR"
+                }, null, 2);
+
+        } catch (error) {
+            $("answer").textContent =
+                "Generation error: " + error.message;
+
+            console.error(error);
+        } finally {
+            $("send").disabled = false;
+            $("reset").disabled = false;
+        }
+    };
+
+    $("reset").onclick = () => {
+        messages = [systemPrompt];
+        $("answer").textContent = "Conversation cleared.";
+        $("performance").textContent = "No data yet.";
+    };
+
+    initializePage();
+</script>
+
+</body>
+</html>
